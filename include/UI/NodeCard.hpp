@@ -1,20 +1,27 @@
 #pragma once
+#include "ICharacterData.hpp"
+#include "character.hpp"
 #include "node.hpp"
-#include "statSheet.hpp"
+#include "observer.hpp"
+#include "talent.hpp"
 #include "widget.hpp"
-#include <variant>
-#include <vector>
 
 namespace Squishy {
     struct NodeCard {
         // Args
         squi::Widget::Args widget;
         Nodes::NodesVec &nodes;
-        StatSheet &sheet;
+        Character &character;
+        ICharacterData::Conditionals &conditionals;
+        Talent talent;
+        squi::VoidObservable &observable;
         std::string_view name = "Node Card";
-    
-        struct Storage {
+
+		struct Storage {
             // Data
+            Nodes::NodesVec &nodes;
+            Character &character;
+            bool shouldUpdate = false;
         };
     
         operator squi::Child() const;

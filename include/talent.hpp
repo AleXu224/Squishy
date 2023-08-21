@@ -10,6 +10,8 @@ namespace Squishy {
     
     enum class Talent {
         Normal,
+        Charged,
+        Plunge,
         Skill,
         Burst,
         Passive1,

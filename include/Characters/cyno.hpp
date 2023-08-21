@@ -1,5 +1,8 @@
 #pragma once
 #include "../ICharacterData.hpp"
+#include "node.hpp"
+#include "statSheet.hpp"
+#include <unordered_map>
 
 namespace Squishy {
 	static const ICharacterData Cyno = {
@@ -58,10 +61,33 @@ namespace Squishy {
 				{80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80},
 			},
 		},
-		.modsSetup = [](StatSheet &stats, const ICharacterData::TalentMultipliers &multipliers) {
-			// TODO: Implement mods setup
+		.conditionalsSetup = [](StatSheet &stats) -> ICharacterData::Conditionals {
+			return {
+				{"burstActive", {"Burst Active", Talent::Burst}},
+				{"judication", {"Triggering the Judication effect", Talent::Passive1}},
+			};
 		},
-		.nodeSetup = [](StatSheet &stats, const ICharacterData::TalentMultipliers &multipliers) -> Nodes {
+		.modsSetup = [](StatSheet &sheet, const ICharacterData::TalentMultipliers &multipliers, const ICharacterData::Conditionals &conditionals) {
+			if (conditionals.at("burstActive")) {
+				sheet.stats.EM += multipliers.burst.at(11).at(sheet.talents.burst);
+			}
+			if (conditionals.at("judication") && sheet.ascension >= 1) sheet.stats.Skill.DMG += 0.35f;
+		},
+		.nodeSetup = [](StatSheet &sheet, const ICharacterData::TalentMultipliers &multipliers, const ICharacterData::Conditionals &conditionals) -> Nodes {
+			const auto a4BurstBuff = [&]() {
+				std::vector<StatModifier> ret{};
+				if (sheet.ascension >= 4) ret.emplace_back([](const StatSheet &sheet) {
+					return sheet.stats.EM.getTotal(sheet) * 1.5;
+				});
+				return ret;
+			};
+			const auto a4SkillBoltBuff = [&]() {
+				std::vector<StatModifier> ret{};
+				if (sheet.ascension >= 4) ret.emplace_back([](const StatSheet &sheet) {
+					return sheet.stats.EM.getTotal(sheet) * 2.5;
+				});
+				return ret;
+			};
 			return Nodes{
 				.normal{
 					DmgNode{
@@ -70,7 +96,7 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(0).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(0).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -80,7 +106,7 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(1).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(1).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -90,11 +116,11 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(2).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(2).at(sheet.talents.normal),
 							},
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(3).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(3).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -104,7 +130,7 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(4).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(4).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -116,13 +142,13 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(5).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(5).at(sheet.talents.normal),
 							},
 						},
 					},
 					InfoNode{
 						.name = "Charged Attack Stamina Cost",
-						.value = multipliers.normal.at(6).at(stats.talents.normal),
+						.value = multipliers.normal.at(6).at(sheet.talents.normal),
 					},
 				},
 				.plunge{
@@ -132,7 +158,7 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(7).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(7).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -142,11 +168,11 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(8).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(8).at(sheet.talents.normal),
 							},
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.normal.at(9).at(stats.talents.normal),
+								.multiplier = multipliers.normal.at(9).at(sheet.talents.normal),
 							},
 						},
 					},
@@ -158,7 +184,7 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.skill.at(0).at(stats.talents.skill),
+								.multiplier = multipliers.skill.at(0).at(sheet.talents.skill),
 							},
 						},
 					},
@@ -168,139 +194,187 @@ namespace Squishy {
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.skill.at(1).at(stats.talents.skill),
+								.multiplier = multipliers.skill.at(1).at(sheet.talents.skill),
 							},
 						},
 					},
 					InfoNode{
 						.name = "Pactsworn Pathclearer Duration Bonus",
-						.value = multipliers.skill.at(2).at(stats.talents.skill),
+						.value = multipliers.skill.at(2).at(sheet.talents.skill),
 					},
 					InfoNode{
 						.name = "CD",
-						.value = multipliers.skill.at(3).at(stats.talents.skill),
+						.value = multipliers.skill.at(3).at(sheet.talents.skill),
 					},
 					InfoNode{
 						.name = "Mortuary Rite CD",
-						.value = multipliers.skill.at(4).at(stats.talents.skill),
+						.value = multipliers.skill.at(4).at(sheet.talents.skill),
 					},
 				},
 				.burst{
 					DmgNode{
 						.name = "1-Hit DMG",
 						.attackType = AttackType::Normal,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(0).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(0).at(sheet.talents.burst),
 							},
+						},
+						.buffs{
+							.AdditiveDmg = a4BurstBuff(),
 						},
 					},
 					DmgNode{
 						.name = "2-Hit DMG",
 						.attackType = AttackType::Normal,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(1).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(1).at(sheet.talents.burst),
 							},
+						},
+						.buffs{
+							.AdditiveDmg = a4BurstBuff(),
 						},
 					},
 					DmgNode{
 						.name = "3-Hit DMG",
 						.attackType = AttackType::Normal,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(2).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(2).at(sheet.talents.burst),
 							},
+						},
+						.buffs{
+							.AdditiveDmg = a4BurstBuff(),
 						},
 					},
 					DmgNode{
 						.name = "4-Hit DMG",
 						.attackType = AttackType::Normal,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(3).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(3).at(sheet.talents.burst),
 							},
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(4).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(4).at(sheet.talents.burst),
 							},
+						},
+						.buffs{
+							.AdditiveDmg = a4BurstBuff(),
 						},
 					},
 					DmgNode{
 						.name = "5-Hit DMG",
 						.attackType = AttackType::Normal,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(5).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(5).at(sheet.talents.burst),
 							},
+						},
+						.buffs{
+							.AdditiveDmg = a4BurstBuff(),
 						},
 					},
 					DmgNode{
 						.name = "Charged Attack DMG",
 						.attackType = AttackType::Charged,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(6).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(6).at(sheet.talents.burst),
 							},
 						},
 					},
 					InfoNode{
 						.name = "Charged Attack Stamina Cost",
-						.value = multipliers.burst.at(7).at(stats.talents.burst),
+						.value = multipliers.burst.at(7).at(sheet.talents.burst),
 					},
 					DmgNode{
 						.name = "Plunge DMG",
 						.attackType = AttackType::Plunge,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(8).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(8).at(sheet.talents.burst),
 							},
 						},
 					},
 					DmgNode{
 						.name = "Low/High Plunge DMG",
 						.attackType = AttackType::Plunge,
-						.element = static_cast<DMGElement>(stats.element),
+						.element = static_cast<DMGElement>(sheet.element),
 						.statMultipliers{
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(9).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(9).at(sheet.talents.burst),
 							},
 							DmgNode::StatMultiplier{
 								.stat = AbilityScalingStat::ATK,
-								.multiplier = multipliers.burst.at(10).at(stats.talents.burst),
+								.multiplier = multipliers.burst.at(10).at(sheet.talents.burst),
 							},
 						},
 					},
 					InfoNode{
 						.name = "Elemental Mastery Bonus",
-						.value = multipliers.burst.at(11).at(stats.talents.burst),
+						.active = conditionals.at("burstActive"),
+						.value = multipliers.burst.at(11).at(sheet.talents.burst),
 					},
 					InfoNode{
 						.name = "Basic Duration",
-						.value = multipliers.burst.at(12).at(stats.talents.burst),
+						.value = multipliers.burst.at(12).at(sheet.talents.burst),
 					},
 					InfoNode{
 						.name = "CD",
-						.value = multipliers.burst.at(13).at(stats.talents.burst),
+						.value = multipliers.burst.at(13).at(sheet.talents.burst),
 					},
 					InfoNode{
 						.name = "Energy Cost",
-						.value = multipliers.burst.at(14).at(stats.talents.burst),
+						.value = multipliers.burst.at(14).at(sheet.talents.burst),
+					},
+				},
+				.passive1{
+					DmgNode{
+						.name = "Duststalker Bolt DMG",
+						.attackType = AttackType::Skill,
+						.element = static_cast<DMGElement>(sheet.element),
+						.statMultipliers{
+							DmgNode::StatMultiplier{
+								.stat = AbilityScalingStat::ATK,
+								.multiplier = 1,
+							},
+						},
+						.buffs{
+							.AdditiveDmg = a4SkillBoltBuff(),
+						},
+					},
+				},
+				.passive2{
+					StatModifierNode{
+						.name = "Pactsworn Pathclearer's Normal Attack DMG Increase",
+						.modifier = [](const StatSheet &sheet) {
+							if (sheet.ascension < 4) return 0.0f;
+							return sheet.stats.EM.getTotal(sheet) * 1.5f;
+						},
+					},
+					StatModifierNode{
+						.name = "Duststalker Bolt DMG Inc.",
+						.modifier = [](const StatSheet &sheet) {
+							if (sheet.ascension < 4) return 0.0f;
+							return sheet.stats.EM.getTotal(sheet) * 2.5f;
+						},
 					},
 				},
 			};

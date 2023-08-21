@@ -1,6 +1,5 @@
 #include "UI/CharacterCard.hpp"
 #include "UI/Card.hpp"
-#include "UI/Screens/CharacterScreen.hpp"
 #include "align.hpp"
 #include "box.hpp"
 #include "column.hpp"
@@ -43,16 +42,24 @@ struct StatDisplay {
 					},
 					.alignment = Row::Alignment::center,
 					.children{
-						Text{
-							.text = std::string{name},
-							.fontSize = 14.f,
-							.lineWrap = true,
-						},
 						Container{
 							.widget{
-								.width = 12.f,
+								.height = Size::Shrink,
+							},
+							.child = Text{
+								.widget{
+									.margin = Margin{0.f, 12.f, 0.f, 0.f},
+								},
+								.text = std::string{name},
+								.fontSize = 14.f,
+								.lineWrap = true,
 							},
 						},
+						// Container{
+						// 	.widget{
+						// 		.width = 12.f,
+						// 	},
+						// },
 						Text{
 							.widget{
 								.onUpdate = [storage, isPercent = isPercent](Widget &widget) {

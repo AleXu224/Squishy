@@ -6,7 +6,6 @@
 #include "statSheet.hpp"
 #include "node.hpp"
 #include <vector>
-#include "conditional.hpp"
 
 namespace Squishy {
     struct ICharacterData {
@@ -42,9 +41,19 @@ namespace Squishy {
         };
         const TalentMultipliers talentMultipliers;
 
-        const std::unordered_map<std::string_view, uint32_t> conditionals;
-        std::function<void(StatSheet &, const TalentMultipliers &)> modsSetup;
-        std::function<Nodes(StatSheet &, const TalentMultipliers &)> nodeSetup;
+        struct Conditional {
+            std::string name;
+            Talent location = Talent::Normal;
+            bool value = false;
+
+            operator bool() const {
+                return value;
+            }
+        };
+		using Conditionals = std::unordered_map<std::string, Conditional>;
+        std::function<Conditionals(StatSheet &)> conditionalsSetup;
+		std::function<void(StatSheet &, const TalentMultipliers &, const Conditionals&)> modsSetup;
+        std::function<Nodes(StatSheet &, const TalentMultipliers &, const Conditionals&)> nodeSetup;
 
         void addStatSheetData(StatSheet &stats) const {
             stats.base.HP = baseStats.baseHP * CharacterCurves.at(static_cast<size_t>(baseStats.hpCurve)).at(stats.level - 1) + baseStats.hpUpgrade.at(stats.ascension);

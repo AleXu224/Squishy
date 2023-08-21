@@ -14,10 +14,8 @@ namespace Squishy {
             float spacing;
             float minChildWidth;
 
-            void layoutChildren(squi::vec2 &maxSize, squi::vec2 &minSize) final;
+            squi::vec2 layoutChildren(squi::vec2 maxSize, squi::vec2 minSize, ShouldShrink shouldShrink) final;
             void arrangeChildren(squi::vec2 &pos) final;
-
-			float getMinHeight(const squi::vec2 &maxSize) final;
 
 		public:
             Impl(const Masonry &args);

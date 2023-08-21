@@ -1,8 +1,5 @@
 #pragma once
-#include "character.hpp"
-#include "child.hpp"
 #include "widget.hpp"
-#include <optional>
 
 namespace Squishy {
     struct CharacterScreen {

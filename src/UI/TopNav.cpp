@@ -1,15 +1,11 @@
 #include "UI/TopNav.hpp"
 #include "align.hpp"
 #include "box.hpp"
-#include "child.hpp"
 #include "column.hpp"
-#include "container.hpp"
 #include "gestureDetector.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "text.hpp"
-#include <functional>
-#include <optional>
 #include <vector>
 
 using namespace squi;
@@ -31,12 +27,12 @@ struct TopNavButton {
 		auto storage = std::make_shared<Storage>(child, state);
 
 		return GestureDetector{
-			.onClick = [storage](auto &, auto &) {
+			.onClick = [storage](auto) {
 				if (auto selectedTab = storage->state->selectedTab.lock()) {
-					selectedTab->flags.visible = false;
+					selectedTab->setVisible(false);
 				}
 				if (auto newTab = storage->child.lock()) {
-					newTab->flags.visible = true;
+					newTab->setVisible(true);
 				}
 				storage->state->selectedTab = storage->child;
 			},
@@ -61,7 +57,7 @@ struct TopNavButton {
 								.width = 16.f,
 								.height = 3.f,
 								.onUpdate = [state = state, storage](Widget &w){
-									w.flags.visible = state->selectedTab.lock() == storage->child.lock();
+									w.setVisible(state->selectedTab.lock() == storage->child.lock());
 								},
 							},
 							.borderRadius = 1.5f,
@@ -78,6 +74,7 @@ Squishy::TopNav::operator squi::Child() const {
 	if (!tabs.empty()) state->selectedTab = tabs.front().child;
 
 	return Column{
+		.widget{widget},
 		.children{
 			Row{
 				.widget{
@@ -110,10 +107,10 @@ Squishy::TopNav::operator squi::Child() const {
 						std::vector<Child> ret{};
 						ret.reserve(tabs.size());
 						for (const auto &tab: tabs) {
-							tab.child->flags.visible = false;
+							tab.child->setVisible(false);
 							ret.push_back(tab.child);
 						}
-						if (!ret.empty()) ret.front()->flags.visible = true;
+						if (!ret.empty()) ret.front()->setVisible(true);
 						return ret;
 					}(),
 				},

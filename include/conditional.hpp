@@ -1,17 +1,17 @@
 #pragma once
 #include "vector"
 #include "string"
-#include <variant>
+#include <utility>
 
 namespace Squishy {
-    struct ValueList {
-        size_t value;
-        std::vector<float> values;
-    };
-    struct StringList {
-        size_t value;
-        std::vector<std::string> values;
-    };
+    // struct Conditional {
+    //     std::string name{};
+    //     bool value{false};
+    // };
 
-    using Conditional = std::variant<int, ValueList, StringList>;
+    // struct ValuePicker {
+    //     std::string name{};
+    //     int32_t value{};
+    //     std::vector<std::pair<std::string, int32_t>> values{};
+    // };
 }

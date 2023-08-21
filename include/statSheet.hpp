@@ -5,11 +5,8 @@
 #include "talent.hpp"
 #include <array>
 #include <functional>
-#include <numeric>
-#include <stdexcept>
 #include <utility>
-#include <vector>
-
+#include "stdexcept"
 
 namespace Squishy {
 	struct StatSheet {
@@ -31,11 +28,8 @@ namespace Squishy {
 			float value{0};
 			std::array<std::function<float(const StatSheet &)>, 8> modifiers{};
 			std::array<std::function<float(const StatSheet &)>, 8> totalModifiers{};
-			// std::vector<std::function<float(const StatSheet &)>> modifiers{};
-			// std::vector<std::function<float(const StatSheet &)>> totalModifiers{};
 			float artifactValue{0};
 			std::array<std::function<float(const StatSheet &)>, 4> artifactModifiers{};
-			// std::vector<std::function<float(const StatSheet &)>> artifactModifiers{};
 
 #ifndef NDEBUG
 			mutable bool inside = false;
@@ -55,12 +49,6 @@ namespace Squishy {
 				for (uint8_t i = 0; i < totalModifierCount; ++i) {
 					result += totalModifiers[i](statSheet);
 				}
-				// for (const auto &modifier: modifiers) {
-				// 	result += modifier(statSheet);
-				// }
-				// for (const auto &modifier: artifactModifiers) {
-				// 	result += modifier(statSheet);
-				// }
 #ifndef NDEBUG
 				inside = false;
 #endif
@@ -70,6 +58,7 @@ namespace Squishy {
 			[[nodiscard]] inline float getTotal(const StatSheet &statSheet) const {
 				// Way faster to repeat the code than to call get()
 				float result = value + artifactValue;
+				// constexpr auto noop = [](const StatSheet &) { return 0; };
 				for (uint8_t i = 0; i < modifierCount; ++i) {
 					result += modifiers[i](statSheet);
 				}
@@ -79,15 +68,6 @@ namespace Squishy {
 				for (uint8_t i = 0; i < artifactModifierCount; ++i) {
 					result += artifactModifiers[i](statSheet);
 				}
-				// for (const auto &modifier: modifiers) {
-				// 	result += modifier(statSheet);
-				// }
-				// for (const auto &modifier: totalModifiers) {
-				// 	result += modifier(statSheet);
-				// }
-				// for (const auto &modifier: artifactModifiers) {
-				// 	result += modifier(statSheet);
-				// }
 
 				return result;
 			}
@@ -98,21 +78,21 @@ namespace Squishy {
 
 			inline void operator+=(const std::function<float(const StatSheet &)> &&modifier) {
 				modifiers[modifierCount++] = modifier;
-				// modifiers.emplace_back(modifier);
+			}
+
+			inline void addTotal(const std::function<float(const StatSheet &)> &&modifier) {
+				totalModifiers[totalModifierCount++] = modifier;
 			}
 
 			inline void clear() {
 				modifierCount = 0;
 				totalModifierCount = 0;
 				value = 0;
-				// modifiers.clear();
-				// totalModifiers.clear();
 			}
 
 			inline void clearArtifacts() {
 				artifactModifierCount = 0;
 				artifactValue = 0;
-				// artifactModifiers.clear();
 			}
 		};
 
@@ -126,6 +106,10 @@ namespace Squishy {
 		CharacterTalents talents;
 		uint8_t level{1};
 		uint8_t ascension{0};
+		uint8_t constellation{0};
+		uint8_t weaponLevel{1};
+		uint8_t weaponAscension{0};
+		uint8_t weaponRefinement{1};
 		Element element{Element::Anemo};
 
 		struct Stats {
@@ -269,7 +253,7 @@ namespace Squishy {
 				clearSkillStats(Burst);
 			}
 
-			[[nodiscard]] inline Stat& getStat(ArtifactStat stat) {
+			[[nodiscard]] inline Stat &getStat(ArtifactStat stat) {
 				switch (stat) {
 					case ArtifactStat::HP:
 						return HP;
@@ -336,4 +320,5 @@ namespace Squishy {
 			}
 		} stats;
 	};
+	using StatModifier = std::function<float(const StatSheet &)>;
 }// namespace Squishy

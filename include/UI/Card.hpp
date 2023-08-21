@@ -1,5 +1,4 @@
 #pragma once
-#include "child.hpp"
 #include "widget.hpp"
 
 namespace Squishy {

@@ -3,13 +3,13 @@
 #include "functional"
 #include "stat.hpp"
 #include "statSheet.hpp"
-#include "talent.hpp"
 #include <array>
+#include <functional>
 #include <optional>
-#include <span>
 #include <string>
 #include <utility>
 #include <variant>
+#include <vector>
 
 
 namespace Squishy {
@@ -24,6 +24,7 @@ namespace Squishy {
 
 	struct DmgNode {
 		std::string name;
+		bool active{true};
 		AttackType attackType = AttackType::Normal;
 		std::optional<DMGElement> element{};
 		struct StatMultiplier {
@@ -31,6 +32,12 @@ namespace Squishy {
 			float multiplier{0.0f};
 		};
 		std::array<StatMultiplier, 2> statMultipliers;
+		struct Buffs {
+			std::vector<std::function<float(const StatSheet &)>> BaseDmg{};
+			std::vector<std::function<float(const StatSheet &)>> AdditiveDmg{};
+			std::vector<std::function<float(const StatSheet &)>> Dmg{};
+		};
+		Buffs buffs;
 
 		[[nodiscard]] inline DMGElement getDMGElement(const StatSheet &stats) const {
 			if (!element.has_value() && (attackType == AttackType::Normal || attackType == AttackType::Charged || attackType == AttackType::Plunge)) {
@@ -39,151 +46,74 @@ namespace Squishy {
 			return element.value_or(static_cast<DMGElement>(stats.element));
 		}
 
+		// This should never be called in performance critical code
+		// The only purpose of this function is to display the damage in the UI
+		[[nodiscard]] inline float calculate(const StatSheet &sheet) const {
+			const NodeFormula formula = bakeFormula(sheet);
+			return formula(sheet);
+		}
+		
 		// Perform all the necessary precomputations and return a function that calculates the damage
 		// This needs to be refreshed every time a talent level or character level changes
-		[[nodiscard]] inline float calculate(const StatSheet &sheet) const {
-			const StatSheet::Stats::SkillStats &talentStats = [&]() -> const StatSheet::Stats::SkillStats & {
-				switch (attackType) {
-					case AttackType::Normal:
-						return sheet.stats.Normal;
-					case AttackType::Charged:
-						return sheet.stats.Charged;
-					case AttackType::Plunge:
-						return sheet.stats.Plunge;
-					case AttackType::Skill:
-						return sheet.stats.Skill;
-					case AttackType::Burst:
-						return sheet.stats.Burst;
-					default:
-						std::unreachable();
-				}
-			}();
-
-			const StatSheet::Stats::SkillStats &elementStats = [&]() -> const StatSheet::Stats::SkillStats & {
-				DMGElement elementUsed = getDMGElement(sheet);
-				switch (elementUsed) {
-					case DMGElement::Anemo:
-						return sheet.stats.Anemo;
-					case DMGElement::Cryo:
-						return sheet.stats.Cryo;
-					case DMGElement::Dendro:
-						return sheet.stats.Dendro;
-					case DMGElement::Electro:
-						return sheet.stats.Electro;
-					case DMGElement::Geo:
-						return sheet.stats.Geo;
-					case DMGElement::Hydro:
-						return sheet.stats.Hydro;
-					case DMGElement::Pyro:
-						return sheet.stats.Pyro;
-					case DMGElement::Physical:
-						return sheet.stats.Physical;
-					default:
-						std::unreachable();
-				}
-			}();
-
-			const StatSheet::Stats &stat = sheet.stats;
-			const float totalAdditiveDMG = [&]() {
-				return stat.All.AdditiveDMG.getTotal(sheet) + talentStats.AdditiveDMG.getTotal(sheet) + elementStats.AdditiveDMG.getTotal(sheet);
-			}();
-			const float totalDMG = [&]() {
-				return stat.All.DMG.getTotal(sheet) + talentStats.DMG.getTotal(sheet) + elementStats.DMG.getTotal(sheet);
-			}();
-			const float totalCritRate = [&]() {
-				return stat.All.CritRate.getTotal(sheet) + talentStats.CritRate.getTotal(sheet) + elementStats.CritRate.getTotal(sheet);
-			}();
-			const float totalCritDMG = [&]() {
-				return stat.All.CritDMG.getTotal(sheet) + talentStats.CritDMG.getTotal(sheet) + elementStats.CritDMG.getTotal(sheet);
-			}();
-			const float totalBaseDMG = [&]() {
-				float total = 0.0f;
-				for (const auto &statMultiplier: statMultipliers) {
-					if (statMultiplier.multiplier == 0.0f) {
-						continue;
-					}
-					switch (statMultiplier.stat) {
-						case AbilityScalingStat::HP:
-							total += sheet.stats.HP.getTotal(sheet) * statMultiplier.multiplier;
-							break;
-						case AbilityScalingStat::ATK:
-							total += sheet.stats.ATK.getTotal(sheet) * statMultiplier.multiplier;
-							break;
-						case AbilityScalingStat::DEF:
-							total += sheet.stats.DEF.getTotal(sheet) * statMultiplier.multiplier;
-							break;
-						case AbilityScalingStat::EM:
-							total += sheet.stats.EM.getTotal(sheet) * statMultiplier.multiplier;
-							break;
-						default:
-							std::unreachable();
-					}
-				}
-				return total;
-			}();
-			return (
-				(totalBaseDMG + totalAdditiveDMG) *
-				(1.0f + totalDMG) *
-				(1.0f + std::min(1.0f, totalCritRate) * totalCritDMG) *
-				(0.5f) *     // Enemy def
-				(1.0f - 0.1f)// Enemy resistance
-			);
-		}
 		[[nodiscard]] inline NodeFormula bakeFormula(const StatSheet &sheet) const {
 			const DMGElement element = getDMGElement(sheet);
-			return [=](const StatSheet &stats) -> float {
-				const StatSheet::Stats::SkillStats &talentStats = [&]() -> const StatSheet::Stats::SkillStats & {
-					switch (attackType) {
-						case AttackType::Normal:
-							return stats.stats.Normal;
-						case AttackType::Charged:
-							return stats.stats.Charged;
-						case AttackType::Plunge:
-							return stats.stats.Plunge;
-						case AttackType::Skill:
-							return stats.stats.Skill;
-						case AttackType::Burst:
-							return stats.stats.Burst;
-						default:
-							std::unreachable();
-					}
-				}();
+			const auto elementStatsPtr = [&]() {
+				switch (element) {
+					case DMGElement::Anemo:
+						return &StatSheet::Stats::Anemo;
+					case DMGElement::Cryo:
+						return &StatSheet::Stats::Cryo;
+					case DMGElement::Dendro:
+						return &StatSheet::Stats::Dendro;
+					case DMGElement::Electro:
+						return &StatSheet::Stats::Electro;
+					case DMGElement::Geo:
+						return &StatSheet::Stats::Geo;
+					case DMGElement::Hydro:
+						return &StatSheet::Stats::Hydro;
+					case DMGElement::Pyro:
+						return &StatSheet::Stats::Pyro;
+					case DMGElement::Physical:
+						return &StatSheet::Stats::Physical;
+					default:
+						std::unreachable();
+				}
+			}();
+			const auto talentStatsPtr = [&]() {
+				switch (attackType) {
+					case AttackType::Normal:
+						return &StatSheet::Stats::Normal;
+					case AttackType::Charged:
+						return &StatSheet::Stats::Charged;
+					case AttackType::Plunge:
+						return &StatSheet::Stats::Plunge;
+					case AttackType::Skill:
+						return &StatSheet::Stats::Skill;
+					case AttackType::Burst:
+						return &StatSheet::Stats::Burst;
+					default:
+						std::unreachable();
+				}
+			}();
+			return [buffs = buffs,
+					statMultipliers = statMultipliers,
+					elementStatsPtr = elementStatsPtr,
+					talentStatsPtr = talentStatsPtr](const StatSheet &sheet) -> float {
+				const StatSheet::Stats::SkillStats &talentStats = std::invoke(talentStatsPtr, sheet.stats);
+				const StatSheet::Stats::SkillStats &elementStats = std::invoke(elementStatsPtr, sheet.stats);
 
-				const StatSheet::Stats::SkillStats &elementStats = [&]() -> const StatSheet::Stats::SkillStats & {
-					switch (element) {
-						case DMGElement::Anemo:
-							return stats.stats.Anemo;
-						case DMGElement::Cryo:
-							return stats.stats.Cryo;
-						case DMGElement::Dendro:
-							return stats.stats.Dendro;
-						case DMGElement::Electro:
-							return stats.stats.Electro;
-						case DMGElement::Geo:
-							return stats.stats.Geo;
-						case DMGElement::Hydro:
-							return stats.stats.Hydro;
-						case DMGElement::Pyro:
-							return stats.stats.Pyro;
-						case DMGElement::Physical:
-							return stats.stats.Physical;
-						default:
-							std::unreachable();
-					}
-				}();
-
-				const StatSheet::Stats &stat = stats.stats;
+				const StatSheet::Stats &stat = sheet.stats;
 				const float totalAdditiveDMG = [&]() {
-					return stat.All.AdditiveDMG.getTotal(stats) + talentStats.AdditiveDMG.getTotal(stats) + elementStats.AdditiveDMG.getTotal(stats);
+					return stat.All.AdditiveDMG.getTotal(sheet) + talentStats.AdditiveDMG.getTotal(sheet) + elementStats.AdditiveDMG.getTotal(sheet);
 				}();
 				const float totalDMG = [&]() {
-					return stat.All.DMG.getTotal(stats) + talentStats.DMG.getTotal(stats) + elementStats.DMG.getTotal(stats);
+					return stat.All.DMG.getTotal(sheet) + talentStats.DMG.getTotal(sheet) + elementStats.DMG.getTotal(sheet);
 				}();
 				const float totalCritRate = [&]() {
-					return stat.All.CritRate.getTotal(stats) + talentStats.CritRate.getTotal(stats) + elementStats.CritRate.getTotal(stats);
+					return stat.All.CritRate.getTotal(sheet) + talentStats.CritRate.getTotal(sheet) + elementStats.CritRate.getTotal(sheet);
 				}();
 				const float totalCritDMG = [&]() {
-					return stat.All.CritDMG.getTotal(stats) + talentStats.CritDMG.getTotal(stats) + elementStats.CritDMG.getTotal(stats);
+					return stat.All.CritDMG.getTotal(sheet) + talentStats.CritDMG.getTotal(sheet) + elementStats.CritDMG.getTotal(sheet);
 				}();
 				const float totalBaseDMG = [&]() {
 					float total = 0.0f;
@@ -193,16 +123,16 @@ namespace Squishy {
 						}
 						switch (statMultiplier.stat) {
 							case AbilityScalingStat::HP:
-								total += stats.stats.HP.getTotal(stats) * statMultiplier.multiplier;
+								total += sheet.stats.HP.getTotal(sheet) * statMultiplier.multiplier;
 								break;
 							case AbilityScalingStat::ATK:
-								total += stats.stats.ATK.getTotal(stats) * statMultiplier.multiplier;
+								total += sheet.stats.ATK.getTotal(sheet) * statMultiplier.multiplier;
 								break;
 							case AbilityScalingStat::DEF:
-								total += stats.stats.DEF.getTotal(stats) * statMultiplier.multiplier;
+								total += sheet.stats.DEF.getTotal(sheet) * statMultiplier.multiplier;
 								break;
 							case AbilityScalingStat::EM:
-								total += stats.stats.EM.getTotal(stats) * statMultiplier.multiplier;
+								total += sheet.stats.EM.getTotal(sheet) * statMultiplier.multiplier;
 								break;
 							default:
 								std::unreachable();
@@ -210,9 +140,30 @@ namespace Squishy {
 					}
 					return total;
 				}();
+				const float totalSkillBaseDMGMultiplier = [&]() {
+					float total = 1.f;
+					for (const auto &multiplier: buffs.BaseDmg) {
+						total += multiplier(sheet);
+					}
+					return total;
+				}();
+				const float totalSkillAdditiveDMG = [&]() {
+					float total = 0.f;
+					for (const auto &multiplier: buffs.AdditiveDmg) {
+						total += multiplier(sheet);
+					}
+					return total;
+				}();
+				const float totalSkillDMG = [&]() {
+					float total = 0.f;
+					for (const auto &multiplier: buffs.Dmg) {
+						total += multiplier(sheet);
+					}
+					return total;
+				}();
 				return (
-					(totalBaseDMG + totalAdditiveDMG) *
-					(1.0f + totalDMG) *
+					(totalBaseDMG * totalSkillBaseDMGMultiplier + totalAdditiveDMG + totalSkillAdditiveDMG) *
+					(1.0f + totalDMG + totalSkillDMG) *
 					(1.0f + std::min(1.0f, totalCritRate) * totalCritDMG) *
 					(0.5f) *     // Enemy def
 					(1.0f - 0.1f)// Enemy resistance
@@ -223,11 +174,18 @@ namespace Squishy {
 
 	struct InfoNode {
 		std::string name;
+		bool active{true};
 		bool isPercentage = false;
 		float value;
 	};
 
-	using Node = std::variant<DmgNode, InfoNode>;
+	struct StatModifierNode {
+		std::string name;
+		bool active{true};
+		StatModifier modifier;
+	};
+
+	using Node = std::variant<DmgNode, InfoNode, StatModifierNode>;
 
 	struct Nodes {
 		using NodesVec = std::vector<Node>;
