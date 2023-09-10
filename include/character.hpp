@@ -1,8 +1,11 @@
 #pragma once
 #include "ICharacterData.hpp"
 #include "IWeaponData.hpp"
+#include "artifact.hpp"
 #include "statSheet.hpp"
+#include <array>
 #include <functional>
+#include <memory>
 
 namespace Squishy {
     struct Character {
@@ -13,6 +16,7 @@ namespace Squishy {
         IWeaponData::Conditionals weaponConditionals{};
         Nodes nodes{};
         std::vector<Node> weaponNodes{};
+        std::array<std::weak_ptr<Artifact>, 5> artifacts{};
 
         Character(const ICharacterData &data, const IWeaponData &weaponData) : data(data), weaponData(weaponData) {
             conditionals = data.conditionalsSetup(sheet);

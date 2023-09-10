@@ -1,15 +1,21 @@
 #pragma once
+#include "ICharacterData.hpp"
 #include "IWeaponData.hpp"
+#include "artifact.hpp"
 #include "character.hpp"
 #include "memory"
-#include <unordered_map>
+#include <vector>
 
 namespace Squishy {
-    struct CharacterStore {
-        // Data
-        static const std::unordered_map<std::string, ICharacterData> charactersData;
-        static const std::unordered_map<std::string, IWeaponData> weaponsData;
-        
-        static std::vector<std::unique_ptr<Character>> characters;
-    };
-}
+
+	struct Store {
+		// Data
+		struct Data {
+			static const std::vector<ICharacterData> characters;
+			static const std::vector<IWeaponData> weapons;
+		};
+
+		static std::vector<std::shared_ptr<Character>> characters;
+		static std::vector<std::shared_ptr<Artifact>> artifacts;
+	};
+}// namespace Squishy
