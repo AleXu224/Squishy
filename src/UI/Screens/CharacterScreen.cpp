@@ -158,13 +158,13 @@ struct DropdownWithName {
 	}
 };
 
-Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Character> character) {
+Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Character>& character) {
 	return {
 		DropdownWithName{
 			.text = "Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.level,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					if (item.value > 80) character->sheet.ascension = 6;
 					else if (item.value > 70)
 						character->sheet.ascension = 5;
@@ -197,7 +197,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Ascension",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.ascension,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -216,7 +216,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Constellation",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.constellation,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -233,7 +233,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Weapon Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponLevel,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					if (item.value > 80) character->sheet.weaponAscension = 6;
 					else if (item.value > 70)
 						character->sheet.weaponAscension = 5;
@@ -266,7 +266,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Weapon Ascension",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponAscension,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -285,7 +285,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Weapon Refinement",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponRefinement,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -302,7 +302,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Normal Attack Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.normal,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -319,7 +319,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Elemental Skill Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.skill,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
@@ -336,7 +336,7 @@ Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Characte
 			.text = "Elemental Burst Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.burst,
-				.onSelect = [&observable, &character = character](auto item) {
+				.onSelect = [&observable, character](auto item) {
 					character->update();
 					observable.notify();
 				},
