@@ -11,7 +11,7 @@ namespace Squishy {
         // Args
         squi::Widget::Args widget;
         Nodes::NodesVec &nodes;
-        Character &character;
+        std::shared_ptr<Character> character;
         ICharacterData::Conditionals &conditionals;
         Talent talent;
         squi::VoidObservable &observable;
@@ -20,7 +20,7 @@ namespace Squishy {
 		struct Storage {
             // Data
             Nodes::NodesVec &nodes;
-            Character &character;
+            std::shared_ptr<Character> character;
             bool shouldUpdate = false;
         };
     

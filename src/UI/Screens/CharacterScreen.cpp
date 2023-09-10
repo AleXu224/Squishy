@@ -30,7 +30,7 @@ using namespace Squishy;
 struct CharacterDetailsContent {
 	// Args
 	Widget::Args widget;
-	Character &character;
+	std::shared_ptr<Character> character;
 	VoidObservable &observable;
 
 	operator Child() const {
@@ -48,15 +48,15 @@ struct CharacterDetailsContent {
 						.minChildWidth = 300.f,
 						.children{
 							CharacterCard{
-								.sheet = character.sheet,
+								.sheet = character->sheet,
 							},
 							NodeCard{
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.normal,
+								.nodes = character->nodes.normal,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Normal,
 								.observable = observable,
 								.name = "Normal Attack",
@@ -65,9 +65,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.charged,
+								.nodes = character->nodes.charged,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Charged,
 								.observable = observable,
 								.name = "Charged Attack",
@@ -76,9 +76,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.plunge,
+								.nodes = character->nodes.plunge,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Plunge,
 								.observable = observable,
 								.name = "Plunge Attack",
@@ -87,9 +87,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.skill,
+								.nodes = character->nodes.skill,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Skill,
 								.observable = observable,
 								.name = "Skill",
@@ -98,9 +98,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.burst,
+								.nodes = character->nodes.burst,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Burst,
 								.observable = observable,
 								.name = "Burst",
@@ -109,9 +109,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.passive1,
+								.nodes = character->nodes.passive1,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Passive1,
 								.observable = observable,
 								.name = "Passive 1",
@@ -120,9 +120,9 @@ struct CharacterDetailsContent {
 								.widget{
 									.height = Size::Shrink,
 								},
-								.nodes = character.nodes.passive2,
+								.nodes = character->nodes.passive2,
 								.character = character,
-								.conditionals = character.conditionals,
+								.conditionals = character->conditionals,
 								.talent = Talent::Passive2,
 								.observable = observable,
 								.name = "Passive 2",
@@ -158,27 +158,27 @@ struct DropdownWithName {
 	}
 };
 
-Children getDetailsChildren(VoidObservable &observable, Character &character) {
+Children getDetailsChildren(VoidObservable &observable, std::shared_ptr<Character> character) {
 	return {
 		DropdownWithName{
 			.text = "Level",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.level,
+				.value = character->sheet.level,
 				.onSelect = [&observable, &character = character](auto item) {
-					if (item.value > 80) character.sheet.ascension = 6;
+					if (item.value > 80) character->sheet.ascension = 6;
 					else if (item.value > 70)
-						character.sheet.ascension = 5;
+						character->sheet.ascension = 5;
 					else if (item.value > 60)
-						character.sheet.ascension = 4;
+						character->sheet.ascension = 4;
 					else if (item.value > 50)
-						character.sheet.ascension = 3;
+						character->sheet.ascension = 3;
 					else if (item.value > 40)
-						character.sheet.ascension = 2;
+						character->sheet.ascension = 2;
 					else if (item.value > 20)
-						character.sheet.ascension = 1;
+						character->sheet.ascension = 1;
 					else
-						character.sheet.ascension = 0;
-					character.update();
+						character->sheet.ascension = 0;
+					character->update();
 					observable.notify();
 				},
 				.items{
@@ -196,9 +196,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Ascension",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.ascension,
+				.value = character->sheet.ascension,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items{
@@ -215,9 +215,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Constellation",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.constellation,
+				.value = character->sheet.constellation,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items = []() {
@@ -232,22 +232,22 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Weapon Level",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.weaponLevel,
+				.value = character->sheet.weaponLevel,
 				.onSelect = [&observable, &character = character](auto item) {
-					if (item.value > 80) character.sheet.weaponAscension = 6;
+					if (item.value > 80) character->sheet.weaponAscension = 6;
 					else if (item.value > 70)
-						character.sheet.weaponAscension = 5;
+						character->sheet.weaponAscension = 5;
 					else if (item.value > 60)
-						character.sheet.weaponAscension = 4;
+						character->sheet.weaponAscension = 4;
 					else if (item.value > 50)
-						character.sheet.weaponAscension = 3;
+						character->sheet.weaponAscension = 3;
 					else if (item.value > 40)
-						character.sheet.weaponAscension = 2;
+						character->sheet.weaponAscension = 2;
 					else if (item.value > 20)
-						character.sheet.weaponAscension = 1;
+						character->sheet.weaponAscension = 1;
 					else
-						character.sheet.weaponAscension = 0;
-					character.update();
+						character->sheet.weaponAscension = 0;
+					character->update();
 					observable.notify();
 				},
 				.items{
@@ -265,9 +265,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Weapon Ascension",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.weaponAscension,
+				.value = character->sheet.weaponAscension,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items{
@@ -284,9 +284,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Weapon Refinement",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.weaponRefinement,
+				.value = character->sheet.weaponRefinement,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items = []() {
@@ -301,9 +301,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Normal Attack Level",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.talents.normal,
+				.value = character->sheet.talents.normal,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items = []() {
@@ -318,9 +318,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Elemental Skill Level",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.talents.skill,
+				.value = character->sheet.talents.skill,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items = []() {
@@ -335,9 +335,9 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 		DropdownWithName{
 			.text = "Elemental Burst Level",
 			.child = DropdownButton<uint8_t>{
-				.value = character.sheet.talents.burst,
+				.value = character->sheet.talents.burst,
 				.onSelect = [&observable, &character = character](auto item) {
-					character.update();
+					character->update();
 					observable.notify();
 				},
 				.items = []() {
@@ -355,7 +355,7 @@ Children getDetailsChildren(VoidObservable &observable, Character &character) {
 struct CharacterDetails {
 	// Args
 	Widget::Args widget;
-	Character &character;
+	std::shared_ptr<Character> character;
 
 	struct Storage {
 		// Data
@@ -426,12 +426,12 @@ struct CharacterDetails {
 struct CharacterSummary {
 	// Args
 	Widget::Args widget;
-	Character &character;
+	std::shared_ptr<Character> character;
 	std::shared_ptr<CharacterScreen::State> state;
 
 	struct Storage {
 		// Data
-		Character &character;
+		std::shared_ptr<Character> character;
 	};
 
 	operator Child() const {
@@ -459,7 +459,7 @@ struct CharacterSummary {
 							.child = Align{
 								.xAlign = 0.f,
 								.child = Text{
-									.text = character.data.name,
+									.text = character->data.name,
 									.fontSize = 24.f,
 								},
 							},
@@ -469,7 +469,7 @@ struct CharacterSummary {
 						.widget{
 							.margin = 4.f,
 						},
-						.sheet = character.sheet,
+						.sheet = character->sheet,
 					},
 				},
 			},
@@ -502,13 +502,13 @@ CharacterScreen::operator Child() const {
 							.minChildWidth = 250.f,
 							.children = [&]() -> Children {
 								std::vector<Child> ret{};
-								ret.reserve(CharacterStore::characters.size());
-								for (auto &character: CharacterStore::characters) {
+								ret.reserve(Store::characters.size());
+								for (auto &character: Store::characters) {
 									ret.emplace_back(CharacterSummary{
 										.widget{
 											.height = Size::Shrink,
 										},
-										.character = *character,
+										.character = character,
 										.state = state,
 									});
 								}

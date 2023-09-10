@@ -140,8 +140,8 @@ NodeCard::operator Child() const {
 		.child = Column{
 			.widget{
 				.onUpdate = [talent = talent, storage](Widget &w) {
-					if (talent == Talent::Passive1 && storage->character.sheet.ascension < 1) w.setVisible(false);
-					else if (talent == Talent::Passive2 && storage->character.sheet.ascension < 4) w.setVisible(false);
+					if (talent == Talent::Passive1 && storage->character->sheet.ascension < 1) w.setVisible(false);
+					else if (talent == Talent::Passive2 && storage->character->sheet.ascension < 4) w.setVisible(false);
 					else w.setVisible(true);
 				},
 			},
@@ -168,13 +168,13 @@ NodeCard::operator Child() const {
 						.margin = 4.f,
 						.onUpdate = [generateChildren, storage](Widget &widget) {
 							if (storage->shouldUpdate) {
-								widget.setChildren(generateChildren(storage->nodes, storage->character.sheet));
+								widget.setChildren(generateChildren(storage->nodes, storage->character->sheet));
 								storage->shouldUpdate = false;
 							}
 						},
 					},
 					.spacing = 4.f,
-					.children = generateChildren(nodes, character.sheet),
+					.children = generateChildren(nodes, character->sheet),
 				},
 				Box{
 					.widget{
@@ -207,7 +207,7 @@ NodeCard::operator Child() const {
 										.text = conditional.second.name,
 										.value = conditional.second.value,
 										.onChange = [&observable = observable, storage](bool value) {
-											storage->character.update();
+											storage->character->update();
 											observable.notify();
 										},
 									},
