@@ -7,7 +7,7 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /fp:fast /arch:AVX2")
 else()
     add_compile_options(-Wall -Wextra -Wno-unused-parameter -Werror)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math -ferror-limit=0 -march=native")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math -march=native")
 endif()
 
 include(CTest)
@@ -23,7 +23,7 @@ target_include_directories(SquishyLib PUBLIC include)
 add_subdirectory(glt)
 target_link_libraries(SquishyLib PUBLIC glt)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SquishyLib)
+target_link_libraries(Squishy PRIVATE SquishyLib)
 
 target_link_libraries(SquishyBenchmark PRIVATE SquishyLib)
 
