@@ -5,6 +5,7 @@
 #include "observer.hpp"
 #include "talent.hpp"
 #include "widget.hpp"
+#include <memory>
 
 namespace Squishy {
     struct NodeCard {
@@ -14,13 +15,14 @@ namespace Squishy {
         std::shared_ptr<Character> character;
         ICharacterData::Conditionals &conditionals;
         Talent talent;
-        squi::VoidObservable &observable;
+        std::weak_ptr<squi::VoidObservable> observable;
         std::string_view name = "Node Card";
 
 		struct Storage {
             // Data
             Nodes::NodesVec &nodes;
             std::shared_ptr<Character> character;
+            std::shared_ptr<squi::VoidObservable::Observer> observer;
             bool shouldUpdate = false;
         };
     

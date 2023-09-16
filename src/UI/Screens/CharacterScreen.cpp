@@ -31,7 +31,7 @@ struct CharacterDetailsContent {
 	// Args
 	Widget::Args widget;
 	std::shared_ptr<Character> character;
-	VoidObservable &observable;
+	std::weak_ptr<VoidObservable> observable;
 
 	operator Child() const {
 		return ScrollableFrame{
@@ -158,13 +158,13 @@ struct DropdownWithName {
 	}
 };
 
-Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Character>& character) {
+Children getDetailsChildren(const std::weak_ptr<VoidObservable>& observable, const std::shared_ptr<Character>& character) {
 	return {
 		DropdownWithName{
 			.text = "Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.level,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					if (item.value > 80) character->sheet.ascension = 6;
 					else if (item.value > 70)
 						character->sheet.ascension = 5;
@@ -179,7 +179,8 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 					else
 						character->sheet.ascension = 0;
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items{
 					{"1", 1},
@@ -197,9 +198,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Ascension",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.ascension,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items{
 					{"0", 0},
@@ -216,9 +218,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Constellation",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.constellation,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items = []() {
 					std::vector<DropdownButton<uint8_t>::Item> ret{};
@@ -233,7 +236,7 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Weapon Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponLevel,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					if (item.value > 80) character->sheet.weaponAscension = 6;
 					else if (item.value > 70)
 						character->sheet.weaponAscension = 5;
@@ -248,7 +251,8 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 					else
 						character->sheet.weaponAscension = 0;
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items{
 					{"1", 1},
@@ -266,9 +270,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Weapon Ascension",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponAscension,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items{
 					{"0", 0},
@@ -285,9 +290,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Weapon Refinement",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.weaponRefinement,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items = []() {
 					std::vector<DropdownButton<uint8_t>::Item> ret{};
@@ -302,9 +308,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Normal Attack Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.normal,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items = []() {
 					std::vector<DropdownButton<uint8_t>::Item> ret{};
@@ -319,9 +326,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Elemental Skill Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.skill,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items = []() {
 					std::vector<DropdownButton<uint8_t>::Item> ret{};
@@ -336,9 +344,10 @@ Children getDetailsChildren(VoidObservable &observable, const std::shared_ptr<Ch
 			.text = "Elemental Burst Level",
 			.child = DropdownButton<uint8_t>{
 				.value = character->sheet.talents.burst,
-				.onSelect = [&observable, character](auto item) {
+				.onSelect = [observable, character](auto item) {
 					character->update();
-					observable.notify();
+					if (auto obs = observable.lock())
+						obs->notify();
 				},
 				.items = []() {
 					std::vector<DropdownButton<uint8_t>::Item> ret{};
@@ -360,7 +369,7 @@ struct CharacterDetails {
 	struct Storage {
 		// Data
 		bool shouldClose = false;
-		VoidObservable observable{};
+		std::shared_ptr<VoidObservable> observable = VoidObservable::create();
 	};
 
 	operator Child() const {

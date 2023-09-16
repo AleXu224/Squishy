@@ -110,9 +110,11 @@ struct NodeDisplay {
 NodeCard::operator Child() const {
 	auto storage = std::make_shared<Storage>(nodes, character);
 
-	observable.observe([storage]() {
-		storage->shouldUpdate = true;
-	});
+	if (auto event = observable.lock()) {
+		storage->observer = event->observe([storage]() {
+			storage->shouldUpdate = true;
+		});
+	}
 
 	constexpr auto generateChildren = [](Nodes::NodesVec &nodes, StatSheet &sheet) -> Children {
 		Children ret;
@@ -206,9 +208,10 @@ NodeCard::operator Child() const {
 										},
 										.text = conditional.second.name,
 										.value = conditional.second.value,
-										.onChange = [&observable = observable, storage](bool value) {
+										.onChange = [observable = observable, storage](bool value) {
 											storage->character->update();
-											observable.notify();
+											if (auto obs = observable.lock())
+												obs->notify();
 										},
 									},
 								});
