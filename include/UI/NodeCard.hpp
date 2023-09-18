@@ -15,7 +15,7 @@ namespace Squishy {
         std::shared_ptr<Character> character;
         ICharacterData::Conditionals &conditionals;
         Talent talent;
-        std::weak_ptr<squi::VoidObservable> observable;
+        std::weak_ptr<squi::VoidObservable> statsChangedEvent;
         std::string_view name = "Node Card";
 
 		struct Storage {

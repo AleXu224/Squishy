@@ -110,7 +110,7 @@ struct NodeDisplay {
 NodeCard::operator Child() const {
 	auto storage = std::make_shared<Storage>(nodes, character);
 
-	if (auto event = observable.lock()) {
+	if (auto event = statsChangedEvent.lock()) {
 		storage->observer = event->observe([storage]() {
 			storage->shouldUpdate = true;
 		});
@@ -208,7 +208,7 @@ NodeCard::operator Child() const {
 										},
 										.text = conditional.second.name,
 										.value = conditional.second.value,
-										.onChange = [observable = observable, storage](bool value) {
+										.onChange = [observable = statsChangedEvent, storage](bool value) {
 											storage->character->update();
 											if (auto obs = observable.lock())
 												obs->notify();
