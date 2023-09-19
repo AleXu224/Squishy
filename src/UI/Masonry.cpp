@@ -2,6 +2,8 @@
 #include "widget.hpp"
 #include <algorithm>
 #include <cmath>
+#include <vector>
+#include "ranges"
 
 using namespace squi;
 using namespace Squishy;
@@ -11,7 +13,7 @@ Masonry::Impl::Impl(const Masonry &args) : Widget(args.widget, Widget::Flags::De
 }
 
 vec2 Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize, ShouldShrink shouldShrink) {
-	auto &children = getChildren();
+	auto children = std::views::filter(getChildren(), [](const Child &child) { return child->flags.visible; });
 
 	if (shouldShrink.width) {
 		float maxWidth = minSize.x;
@@ -52,7 +54,7 @@ void Squishy::Masonry::Impl::arrangeChildren(squi::vec2 &pos) {
 
 	std::vector<float> columnHeights(static_cast<size_t>(columnCount), 0.f);
 
-	for (auto &child: getChildren()) {
+	for (auto &child: getChildren() | std::ranges::views::filter([](const Child &child) { return child->flags.visible; })) {
 		const auto childSize = child->getLayoutSize();
 
 		const auto minColumn = std::min_element(columnHeights.begin(), columnHeights.end());
