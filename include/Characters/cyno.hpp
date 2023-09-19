@@ -65,6 +65,7 @@ namespace Squishy {
 			return {
 				{"burstActive", {"Burst Active", Talent::Burst}},
 				{"judication", {"Triggering the Judication effect", Talent::Passive1}},
+				{"c2NAHits", {"Normal Attack Hits", Talent::Constellation2, {1, 2, 3 ,4, 5}}}
 			};
 		},
 		.modsSetup = [](StatSheet &sheet, const ICharacterData::TalentMultipliers &multipliers, const ICharacterData::Conditionals &conditionals) {
@@ -72,6 +73,7 @@ namespace Squishy {
 				sheet.stats.EM += multipliers.burst.at(11).at(sheet.talents.burst);
 			}
 			if (conditionals.at("judication") && sheet.ascension >= 1) sheet.stats.Skill.DMG += 0.35f;
+			if (auto value = conditionals.at("c2NAHits"); value.active && sheet.constellation >= 1)  sheet.stats.Electro.DMG += value.value * 0.1f;
 		},
 		.nodeSetup = [](StatSheet &sheet, const ICharacterData::TalentMultipliers &multipliers, const ICharacterData::Conditionals &conditionals) -> Nodes {
 			const auto a4BurstBuff = [&]() {
@@ -375,6 +377,25 @@ namespace Squishy {
 							if (sheet.ascension < 4) return 0.0f;
 							return sheet.stats.EM.getTotal(sheet) * 2.5f;
 						},
+					},
+				},
+				.constellation1{
+					InfoNode{
+						.name = "Normal Attack SPD Inc.",
+						.isPercentage = true,
+						.value = 0.20f,
+					},
+					InfoNode{
+						.name = "Duration",
+						.value = 10.0f,
+					},
+				},
+				.constellation2{
+					InfoNode{
+						.name = "Electro DMG Bonus",
+						.active = conditionals.at("c2NAHits"),
+						.isPercentage = true,
+						.value = conditionals.at("c2NAHits").value * 0.1f,
 					},
 				},
 			};
