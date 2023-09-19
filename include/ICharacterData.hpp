@@ -44,10 +44,13 @@ namespace Squishy {
         struct Conditional {
             std::string name;
             Talent location = Talent::Normal;
-            bool value = false;
+            // Optionally a list of values to use for the conditional
+            std::vector<float> values{};
+            float value = 0.f;
+            bool active = false;
 
             operator bool() const {
-                return value;
+                return active;
             }
         };
 		using Conditionals = std::unordered_map<std::string, Conditional>;
