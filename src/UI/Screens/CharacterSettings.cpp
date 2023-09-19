@@ -1,5 +1,6 @@
 #include "UI/Screens/CharacterSettings.hpp"
 #include "UI/DropdownButton.hpp"
+#include "column.hpp"
 #include "expander.hpp"
 #include "scrollableFrame.hpp"
 
@@ -15,9 +16,11 @@ Squishy::CharacterSettings::operator squi::Child() const {
 		.scrollableWidget{
 			.padding = 8.f,
 		},
+		.alignment = Column::Alignment::center,
 		.spacing = 8.f,
 		.children{
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Character Level",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.level,
@@ -51,6 +54,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Character Ascension",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.ascension,
@@ -70,6 +74,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Constellation",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.constellation,
@@ -87,6 +92,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Weapon Level",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.weaponLevel,
@@ -120,6 +126,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Weapon Ascension",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.weaponAscension,
@@ -139,6 +146,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Weapon Refinement",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.weaponRefinement,
@@ -156,6 +164,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Normal Attack Level",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.talents.normal,
@@ -173,6 +182,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Elemental Skill Level",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.talents.skill,
@@ -190,6 +200,7 @@ Squishy::CharacterSettings::operator squi::Child() const {
 				},
 			},
 			Expander{
+				.widget{.sizeConstraints{.maxWidth = 800.f}},
 				.heading = "Elemental Burst Level",
 				.child = DropdownButton<uint8_t>{
 					.value = storage->character->sheet.talents.burst,
