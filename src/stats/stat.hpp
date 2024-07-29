@@ -1,0 +1,197 @@
+#pragma once
+
+#include "Element.hpp"
+#include "array"
+#include "unordered_map"
+#include "utils/stringify.hpp"// IWYU pragma: keep
+#include <format>
+
+
+// An underscore after the stat name means %
+// Ex: hp_ -> HP%
+enum class Stat {
+	hp,
+	hp_,
+	baseHp,
+	atk,
+	atk_,
+	baseAtk,
+	// Attack given by characters like yunjin
+	additionalAtk,
+	def,
+	def_,
+	baseDef,
+	// Energy recharge
+	er,
+	// Elemental Mastery
+	em,
+	// Crit Rate
+	cr,
+	// Crit Damage
+	cd,
+	// Healing bonus
+	hb,
+	pyroDmg,
+	hydroDmg,
+	cryoDmg,
+	electroDmg,
+	dendroDmg,
+	anemoDmg,
+	geoDmg,
+	physicalDmg,
+	allDmg,
+};
+
+namespace Stats {
+	[[maybe_unused]] inline bool isPercentage(const Stat &stat) {
+		switch (stat) {
+			case Stat::hp:
+				return false;
+			case Stat::hp_:
+				return true;
+			case Stat::baseHp:
+			case Stat::atk:
+			case Stat::additionalAtk:
+				return false;
+			case Stat::atk_:
+				return true;
+			case Stat::baseAtk:
+			case Stat::def:
+				return false;
+			case Stat::def_:
+				return true;
+			case Stat::baseDef:
+				return false;
+			case Stat::er:
+				return true;
+			case Stat::em:
+				return false;
+			case Stat::cr:
+			case Stat::cd:
+			case Stat::hb:
+			case Stat::pyroDmg:
+			case Stat::hydroDmg:
+			case Stat::cryoDmg:
+			case Stat::electroDmg:
+			case Stat::dendroDmg:
+			case Stat::anemoDmg:
+			case Stat::geoDmg:
+			case Stat::physicalDmg:
+			case Stat::allDmg:
+				return true;
+		};
+	}
+
+	[[maybe_unused]] inline Stat fromElement(const Element &element) {
+		switch (element) {
+			case Element::pyro:
+				return Stat::pyroDmg;
+			case Element::hydro:
+				return Stat::hydroDmg;
+			case Element::cryo:
+				return Stat::cryoDmg;
+			case Element::electro:
+				return Stat::electroDmg;
+			case Element::dendro:
+				return Stat::dendroDmg;
+			case Element::anemo:
+				return Stat::anemoDmg;
+			case Element::geo:
+				return Stat::geoDmg;
+			case Element::physical:
+				return Stat::physicalDmg;
+		}
+	}
+
+	namespace Values {
+		const std::unordered_map<Stat, std::array<float, 21>> mainStat = {
+			{Stat::hp, {717, 920, 1123, 1326, 1530, 1733, 1936, 2139, 2342, 2545, 2749, 2952, 3155, 3358, 3561, 3764, 3967, 4171, 4374, 4577, 4780}},
+			{Stat::hp_, {.070, .090, .110, .129, .149, .69, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::atk, {47, 60, 73, 86, 100, 113, 126, 139, 152, 166, 179, 192, 205, 219, 232, 245, 258, 272, 285, 298, 311}},
+			{Stat::atk_, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::pyroDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::hydroDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::cryoDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::electroDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::dendroDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::anemoDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::geoDmg, {.070, .090, .110, .129, .149, .169, .189, .209, .228, .248, .268, .288, .308, .328, .347, .367, .387, .407, .427, .446, .466}},
+			{Stat::physicalDmg, {.087, .112, .137, .162, .186, .211, .236, .261, .286, .31, .335, .36, .385, .409, .434, .459, .484, .508, .533, .558, .583}},
+			{Stat::er, {.078, .100, .122, .144, .166, .188, .210, .232, .254, .276, .298, .320, .342, .364, .386, .408, .430, .452, .474, .496, .518}},
+			{Stat::em, {28.0, 35.9, 43.8, 51.8, 59.7, 67.6, 75.5, 83.5, 91.4, 99.3, 107.2, 115.2, 123.1, 131.0, 138.9, 146.9, 154.8, 162.7, 170.6, 178.6, 186.5}},
+			{Stat::cr, {.047, .060, .073, .086, .099, .113, .126, .139, .152, .166, .179, .192, .205, .218, .232, .245, .258, .271, .284, .298, .311}},
+			{Stat::cd, {.093, .120, .146, .173, .199, .225, .252, .278, .305, .331, .357, .384, .410, .437, .463, .490, .516, .542, .569, .596, .622}},
+			{Stat::hb, {.054, .069, .084, .100, .115, .130, .145, .161, .176, .191, .206, .221, .237, .252, .267, .282, .298, .313, .328, .343, .359}},
+		};
+	}
+}// namespace Stats
+
+
+struct StatValue {
+	Stat stat;
+	float value;
+};
+
+namespace Utils {
+	template<>
+	constexpr std::string Stringify<>(const Stat &stat) {
+		switch (stat) {
+			case Stat::hp:
+				return "HP";
+			case Stat::hp_:
+				return "HP%";
+			case Stat::baseHp:
+				return "Base HP";
+			case Stat::atk:
+				return "ATK";
+			case Stat::atk_:
+				return "ATK%";
+			case Stat::baseAtk:
+				return "Base ATK";
+			case Stat::def:
+				return "DEF";
+			case Stat::def_:
+				return "DEF%";
+			case Stat::baseDef:
+				return "Base DEF";
+			case Stat::er:
+				return "Energy Recharge";
+			case Stat::em:
+				return "Elemental Mastery";
+			case Stat::cr:
+				return "Crit Rate";
+			case Stat::cd:
+				return "Crit DMG";
+			case Stat::hb:
+				return "Healing Bonus";
+			case Stat::pyroDmg:
+				return "Pyro DMG Bonus";
+			case Stat::hydroDmg:
+				return "Hydro DMG Bonus";
+			case Stat::cryoDmg:
+				return "Cryo DMG Bonus";
+			case Stat::electroDmg:
+				return "Electro DMG Bonus";
+			case Stat::dendroDmg:
+				return "Dendro DMG Bonus";
+			case Stat::anemoDmg:
+				return "Anemo DMG Bonus";
+			case Stat::geoDmg:
+				return "Geo DMG Bonus";
+			case Stat::physicalDmg:
+				return "Physical DMG Bonus";
+			case Stat::additionalAtk:
+				return "Additive DMG Bonus";
+			case Stat::allDmg:
+				return "All DMG Bonus";
+		}
+	}
+
+	template<>
+	constexpr std::string Stringify<>(const StatValue &stat) {
+		if (Stats::isPercentage(stat.stat)) {
+			return std::format("{:.1f}%", stat.value * 100.f);
+		}
+		return std::format("{:.0f}", stat.value);
+	}
+}// namespace Utils

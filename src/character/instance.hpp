@@ -1,0 +1,47 @@
+#pragma once
+
+#include "Conditional.hpp"
+#include "character/characters.hpp"
+#include "character/data.hpp"
+#include "stats/character.hpp"
+#include "weapon/data.hpp"
+
+
+#include "array"
+#include "string_view"
+
+
+struct SavedCharData;
+
+namespace Character {
+	struct Instance {
+		const Key key;
+		Stats::Character stats;
+		Weapon::Key weaponKey;
+
+		// The array of artifacts in the order of flower, plume, sands, goblet, circlet
+		// An artifact with an id of 0 means that the slot is empty
+		std::array<unsigned int, 5> arts{0};
+
+		// Conditionals will be stored in an unordered_map for fast access
+		// the initial slow add of a new key will not be a problem since it is rarely done
+		// An alternative could be doing it as a vector with an enum of keys
+		// but that would get really troublesome to maintain
+		// WARNING: keys should be added during the collection of modifiers to avoid
+		// the penalty of checking if they exist on every modifier that uses them
+		std::unordered_map<std::string_view, Conditional> conditionals{};
+
+		explicit Instance(const Key &key, const Weapon::Key &weaponKey)
+			: key(key), stats(Character::list.at(key).baseStats), weaponKey(weaponKey) {
+			collectStats();
+		}
+
+		// Instance(const Key &key, SavedCharData &data);
+
+		void collectStats();
+
+		void getArtifactStats();
+
+		void getArtifactModifiers();
+	};
+}// namespace Character

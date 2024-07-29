@@ -1,56 +1,160 @@
-#include "UI/Screens/ArtifactsScreen.hpp"
-#include "UI/Screens/CharacterScreen.hpp"
-#include "UI/TopNav.hpp"
-#include "Weapons/Staff_of_the_Scarlet_Sands.hpp"
-#include "artifact.hpp"
-#include "character.hpp"
-#include "characterStore.hpp"
+#include "artifact/instance.hpp"
+#include "artifact/sets.hpp"// IWYU pragma: keep
+#include "store.hpp"
+
+#include "Ui/home/homePage.hpp"
+
 #include "window.hpp"
-#include <memory>
-#include <print>
+#include <GLFW/glfw3.h>
 
-int main(int, char **) {
-	using namespace squi;
-	using namespace Squishy;
+// #include "random"
 
-	for (const auto &charData: Store::Data::characters) {
-		Store::characters.emplace_back(std::make_unique<Character>(charData, Staff_of_the_Scarlet_Sands));
-	}
+//#include "benchmark/benchmark.h"
+//benchmark::State& state
+int main() {
+	Weapon::initWeapons();
+	Character::initCharacters();
+	Artifact::initArtifacts();
 
-	Store::artifacts.emplace_back(std::make_shared<Artifact>(Artifact{
-		.level = 16,
-		.rarity = 4,
-		.slot = ArtifactSlot::Flower,
-		.mainStat{
-			.stat = ArtifactStat::HP,
-			.value = 4780.f,
-		},
-		.subStats{
-			Artifact::SubStat{
-				.stat = ArtifactStat::HP,
-				.value = 4780.f,
-			},
-			Artifact::SubStat{
-				.stat = ArtifactStat::EM,
-				.value = 60.f,
-			},
-			Artifact::SubStat{
-				.stat = ArtifactStat::ER,
-				.value = 58.f,
-			},
-			Artifact::SubStat{
-				.stat = ArtifactStat::CritRate,
-				.value = 3.7f,
-			},
-		},
-	}));
+	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
+	weapon.stats.sheet.level = 90;
+	weapon.stats.sheet.ascension = 6;
+	weapon.stats.sheet.refinement = 1;
+	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
+	character.stats.sheet.level = 90;
+	character.stats.sheet.ascension = 6;
+	character.stats.sheet.talents.burst = 10;
+	character.stats.sheet.talents.skill = 10;
+	character.stats.sheet.constellation = 1;
+	character.arts = {1, 2, 3, 4, 5};
 
-	Window window;
-	window.addChild(TopNav{
-		.tabs{
-			{"Artifacts", ArtifactsScreen{}},
-			{"Characters", CharacterScreen{}},
+	Store::artifacts.insert({
+		++Store::lastId,
+		Artifact::Instance{
+			.set = Artifact::Sets::gildedDreams.key,
+			.slot = Artifact::Slot::flower,
+			.mainStat = Stat::hp,
+			.subStats = {
+				StatValue{Stat::cr, 0.062f},
+				StatValue{Stat::def_, 0.058f},
+				StatValue{Stat::cd, 0.202f},
+				StatValue{Stat::er, 0.123f},
+			},
+			.level = 20,
+			.rarity = Rarity::fiveStar,
+			.equippedCharacter = Character::Datas::cyno.key,
 		},
 	});
+	Store::artifacts.insert({
+		++Store::lastId,
+		Artifact::Instance{
+			.set = Artifact::Sets::gildedDreams.key,
+			.slot = Artifact::Slot::plume,
+			.mainStat = Stat::atk,
+			.subStats = {
+				StatValue{Stat::def, 19.f},
+				StatValue{Stat::hp, 269.f},
+				StatValue{Stat::cd, 0.148f},
+				StatValue{Stat::cr, 0.132f},
+			},
+			.level = 20,
+			.rarity = Rarity::fiveStar,
+			.equippedCharacter = Character::Datas::cyno.key,
+		},
+	});
+	Store::artifacts.insert({
+		++Store::lastId,
+		Artifact::Instance{
+			.set = Artifact::Sets::gildedDreams.key,
+			.slot = Artifact::Slot::sands,
+			.mainStat = Stat::em,
+			.subStats = {
+				StatValue{Stat::cr, 0.101f},
+				StatValue{Stat::er, 0.104f},
+				StatValue{Stat::cd, 0.070f},
+				StatValue{Stat::def_, 0.139f},
+			},
+			.level = 20,
+			.rarity = Rarity::fiveStar,
+			.equippedCharacter = Character::Datas::cyno.key,
+		},
+	});
+	Store::artifacts.insert({
+		++Store::lastId,
+		Artifact::Instance{
+			.set = Artifact::Sets::gildedDreams.key,
+			.slot = Artifact::Slot::goblet,
+			.mainStat = Stat::electroDmg,
+			.subStats = {
+				StatValue{Stat::atk_, 0.152f},
+				StatValue{Stat::def, 37.f},
+				StatValue{Stat::cr, 0.078f},
+				StatValue{Stat::cd, 0.124f},
+			},
+			.level = 20,
+			.rarity = Rarity::fiveStar,
+			.equippedCharacter = Character::Datas::cyno.key,
+		},
+	});
+	Store::artifacts.insert({
+		++Store::lastId,
+		Artifact::Instance{
+			.set = Artifact::Sets::gildedDreams.key,
+			.slot = Artifact::Slot::circlet,
+			.mainStat = Stat::cd,
+			.subStats = {
+				StatValue{Stat::atk_, 0.058f},
+				StatValue{Stat::cr, 0.109f},
+				StatValue{Stat::hp, 598.0f},
+				StatValue{Stat::em, 47.f},
+			},
+			.level = 20,
+			.rarity = Rarity::fiveStar,
+			.equippedCharacter = Character::Datas::cyno.key,
+		},
+	});
+
+	// character.collectStats();
+	character.getArtifactStats();
+	character.getArtifactModifiers();
+
+	auto attacknode = Character::Datas::cyno.nodes.normal.at(3);
+	if (attacknode.modifier) attacknode.modifier(Character::Datas::cyno, character.stats);
+	character.stats.sheet.print();
+	auto cr = character.stats.sheet.getStat(Stat::cr);
+	std::println("Cr: {}", cr);
+	float val = attacknode.getValue(Character::Datas::cyno, character.stats);
+	std::println("{}", val);
+
+	using namespace squi;
+	Window window{};
+	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");
+	// window.setChild(new TopNav(TopNavArgs{
+	// 	.tabs{
+	// 		TopNavTab{
+	// 			.name{"Artifacts"},
+	// 			.child = new ArtifactPage(ArtifactPageArgs{}),
+	// 		},
+	// 		TopNavTab{
+	// 			.name{"Characters"},
+	// 			.child = new CharacterPage(CharacterPageArgs{}),
+	// 		},
+	// 	},
+	// }));
+	window.addChild(UI::homePage{});
 	window.run();
+
+	// screen.child = std::make_shared<TopNav::NavigationView>(TopNav::NavigationViewArgs{
+	// 	.pages {
+	// 		TopNav::NavBarPage{
+	// 			.name{"Artifacts"},
+	// 			.child = std::make_shared<ArtifactPage>()
+	// 		},
+	// 		TopNav::NavBarPage{
+	// 			.name{"Characters"},
+	// 			.child = std::make_shared<CharacterPage>()
+	// 		}
+	// 	}
+	// });
+	// screen.run();
 }
