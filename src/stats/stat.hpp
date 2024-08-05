@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Element.hpp"
+#include "misc/element.hpp"
 #include "array"
 #include "unordered_map"
 #include "utils/stringify.hpp"// IWYU pragma: keep
@@ -43,6 +43,16 @@ enum class Stat {
 };
 
 namespace Stats {
+	const inline std::vector<Stat> characterDisplayStats{
+		Stat::hp,
+		Stat::atk,
+		Stat::def,
+		Stat::em,
+		Stat::er,
+		Stat::cr,
+		Stat::cd
+	};
+
 	[[maybe_unused]] inline bool isPercentage(const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
@@ -82,23 +92,23 @@ namespace Stats {
 		};
 	}
 
-	[[maybe_unused]] inline Stat fromElement(const Element &element) {
+	[[maybe_unused]] inline Stat fromElement(const Misc::Element &element) {
 		switch (element) {
-			case Element::pyro:
+			case Misc::Element::pyro:
 				return Stat::pyroDmg;
-			case Element::hydro:
+			case Misc::Element::hydro:
 				return Stat::hydroDmg;
-			case Element::cryo:
+			case Misc::Element::cryo:
 				return Stat::cryoDmg;
-			case Element::electro:
+			case Misc::Element::electro:
 				return Stat::electroDmg;
-			case Element::dendro:
+			case Misc::Element::dendro:
 				return Stat::dendroDmg;
-			case Element::anemo:
+			case Misc::Element::anemo:
 				return Stat::anemoDmg;
-			case Element::geo:
+			case Misc::Element::geo:
 				return Stat::geoDmg;
-			case Element::physical:
+			case Misc::Element::physical:
 				return Stat::physicalDmg;
 		}
 	}

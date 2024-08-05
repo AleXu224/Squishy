@@ -1,11 +1,17 @@
 #include "characterCard.hpp"
+
 #include "Ui/utils/card.hpp"
+#include "Ui/utils/statDisplay.hpp"
+#include "Ui/utils/trueFalse.hpp"
+#include "character/characters.hpp"
+
 #include "column.hpp"
 #include "container.hpp"
 #include "image.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "text.hpp"
+
 
 using namespace squi;
 
@@ -70,6 +76,24 @@ UI::CharacterCard::operator squi::Child() const {
 			.children{
 				CharacterCardBanner{
 					.character = character,
+				},
+				Column{
+					.widget{
+						.onInit = [&character = character](Widget &w) {
+							auto statsToDisplay = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.base.element)}};
+
+							for (const auto &[stat, transparent]: std::views::zip(
+									 std::views::join(statsToDisplay),
+									 Utils::trueFalse
+								 )) {
+								auto val = character.stats.sheet.fromStat(stat).getTotal(character.stats.sheet);
+								w.addChild(StatDisplay{
+									.isTransparent = transparent,
+									.stat = StatValue{.stat = stat, .value = val},
+								});
+							}
+						},
+					},
 				},
 			},
 		},

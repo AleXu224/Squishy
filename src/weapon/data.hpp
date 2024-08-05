@@ -13,6 +13,7 @@ namespace Weapon {
 	
 	struct Data {
 		const Key key;
+		const std::string name;
 		const Stats::WeaponBase baseStats;
 		const std::vector<std::vector<float>> multipliers;
 		const std::function<void(Character::Instance &character)> collectModifiers;

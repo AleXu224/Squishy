@@ -3,6 +3,7 @@
 
 const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 	.key = 13511,
+	.name = "Staff of the Scarlet Sands",
 	.baseStats{
 		.type = WeaponType::polearm,
 		.baseAtk = 44.3358,

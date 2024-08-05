@@ -10,7 +10,7 @@ namespace Stats {
 		Stats::CharacterSheet sheet;
 
 		explicit Character(const Stats::CharacterBase &base)
-			: base(base), sheet{base} {}
+			: base(base), sheet{.base = base} {}
 	};
 
 }// namespace Stats

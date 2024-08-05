@@ -2,24 +2,44 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"
 #include "store.hpp"
+#include "character/characters.hpp"
 
+
+Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
+	: key(key),
+	  weaponKey(weaponKey),
+	  stats(Character::list.at(key).baseStats),
+	  nodes(Character::list.at(key).getNodes(stats)),
+	  conditionals(Character::list.at(key).getConds(stats)) {
+	collectStats();
+
+	const auto &character = Character::list.at(key);
+	character.getMods(stats);
+}
 
 void Character::Instance::collectStats() {
 	const auto &weapon = Store::weapons.at(weaponKey);
+	const auto &characterData = Character::list.at(key);
 	// weapon.collectStats(stats);
 	weapon.data.collectModifiers(*this);
-	Character::list.at(key).collectModifiers(*this);
+	characterData.modsSetup(Character::Data::ModsSetup{
+		.stats = stats,
+		.multipliers = characterData.multipliers,
+	});
 
-	stats.sheet.addModifier(stats.base.ascensionStat, [&base = stats.base](const Stats::CharacterSheet &sheet) {
+	stats.sheet.fromStat(stats.base.ascensionStat).modifiers.emplace_back([&base = stats.base](const Stats::CharacterSheet &sheet) {
 		return base.getAscensionStatAt(sheet.ascension);
 	});
-	stats.sheet.addModifier(Stat::baseAtk, [wepKey = weapon.data.key](const Stats::CharacterSheet &) {
-		const auto &weapon = Store::weapons.at(wepKey);
-		return weapon.stats.sheet.atk.calculateValue(weapon.stats.sheet);
+	stats.sheet.baseAtk.modifiers.emplace_back([&base = stats.base](const Stats::CharacterSheet &sheet) {
+		return base.getAscensionStatAt(sheet.ascension);
 	});
-	stats.sheet.addModifier(weapon.data.baseStats.substat.stat, [wepKey = weapon.data.key](const Stats::CharacterSheet &) {
+	stats.sheet.baseAtk.modifiers.emplace_back([wepKey = weapon.data.key](const Stats::CharacterSheet &) {
 		const auto &weapon = Store::weapons.at(wepKey);
-		return weapon.stats.sheet.subStat.calculateValue(weapon.stats.sheet);
+		return weapon.stats.sheet.atk.getTotal(weapon.stats.sheet);
+	});
+	stats.sheet.fromStat(weapon.data.baseStats.substat.stat).modifiers.emplace_back([wepKey = weapon.data.key](const Stats::CharacterSheet &) {
+		const auto &weapon = Store::weapons.at(wepKey);
+		return weapon.stats.sheet.subStat.getTotal(weapon.stats.sheet);
 	});
 }
 
@@ -27,11 +47,11 @@ void Character::Instance::getArtifactStats() {
 	for (auto &art: arts) {
 		if (art == 0) continue;
 		auto &artifact = Store::artifacts.at(art);
-		stats.sheet.addArtifactModifier(artifact.mainStat, [mainStat = artifact.mainStat, level = artifact.level](const Stats::CharacterSheet &) {
+		stats.sheet.fromStat(artifact.mainStat).artifactModifiers.emplace_back([mainStat = artifact.mainStat, level = artifact.level](const Stats::CharacterSheet &) {
 			return Stats::Values::mainStat.at(mainStat).at(level);
 		});
 		for (auto &subStat: artifact.subStats) {
-			stats.sheet.addArtifactModifier(subStat.stat, [subStat = subStat](const Stats::CharacterSheet &) {
+			stats.sheet.fromStat(subStat.stat).artifactModifiers.emplace_back([subStat = subStat](const Stats::CharacterSheet &) {
 				return subStat.value;
 			});
 		}

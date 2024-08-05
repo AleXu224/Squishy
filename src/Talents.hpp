@@ -26,6 +26,8 @@ struct Talents {
 	[[nodiscard]] uint8_t getLevel(const Talent &t) const {
 		switch(t) {
 			case Talent::normal:
+			case Talent::charged:
+			case Talent::plunge:
 				return normal;
 				break;
 			case Talent::skill:

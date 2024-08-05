@@ -1,6 +1,7 @@
 #include "artifactCard.hpp"
-#include "Ui/RarityToColor.hpp"
+#include "Ui/rarityToColor.hpp"
 #include "Ui/utils/card.hpp"
+#include "Ui/utils/statDisplay.hpp"
 #include "align.hpp"
 #include "artifact/sets.hpp"
 #include "box.hpp"
@@ -8,7 +9,6 @@
 #include "image.hpp"
 #include "stack.hpp"
 #include "text.hpp"
-
 
 
 using namespace squi;
@@ -30,7 +30,7 @@ struct ArtifactHeader {
 			.widget{
 				.height = 64.f,
 			},
-			.color = Util::rarityToColor.at(Rarity::fiveStar),
+			.color = Utils::rarityToColor.at(Rarity::fiveStar),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
 			.child = Stack{
 				.children{
@@ -65,48 +65,6 @@ struct ArtifactHeader {
 	}
 };
 
-struct ArtifactStat {
-	// Args
-	bool isTransparent;
-	StatValue subStat;
-
-	struct Storage {
-		// Data
-	};
-
-	operator squi::Child() const {
-		auto storage = std::make_shared<Storage>();
-
-		return Box{
-			.widget{
-				.height = 36.f,
-				.margin = Margin{4.f, 2.f},
-				.padding = Padding{12.f, 0.f},
-			},
-			.color = isTransparent ? Color{1.f, 1.f, 1.f, 0.0419f} : Color{0.f, 0.f, 0.f, 0.f},
-			.borderRadius{4.f},
-			.child{
-				Stack{
-					.children{
-						Align{
-							.xAlign = 0.f,
-							.child = Text{
-								.text = Utils::Stringify(subStat.stat),
-							},
-						},
-						Align{
-							.xAlign = 1.f,
-							.child = Text{
-								.text = Utils::Stringify(subStat),
-							},
-						},
-					},
-				},
-			}
-		};
-	}
-};
-
 UI::ArtifactCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
@@ -131,9 +89,9 @@ UI::ArtifactCard::operator squi::Child() const {
 							auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));
 
 							for (const auto &[transparent, substat]: std::views::zip(trueFalseInf, artifact.subStats)) {
-								w.addChild(ArtifactStat{
+								w.addChild(StatDisplay{
 									.isTransparent = transparent,
-									.subStat = substat,
+									.stat = substat,
 								});
 							}
 						},

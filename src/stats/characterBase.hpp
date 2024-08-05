@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Curves.hpp"
-#include "Element.hpp"
+#include "misc/element.hpp"
 #include "array"
 #include "stat.hpp"
 
@@ -20,7 +20,7 @@ namespace Stats {
 		const Stat ascensionStat;
 		const ConstellationTalent c3Talent;
 		const ConstellationTalent c5Talent;
-		const Element element;
+		const Misc::Element element;
 		const CharacterCurveType hpCurve;
 		const CharacterCurveType atkCurve;
 		const CharacterCurveType defCurve;

@@ -1,6 +1,7 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"// IWYU pragma: keep
 #include "store.hpp"
+#include "character/characters.hpp"
 
 #include "Ui/home/homePage.hpp"
 
@@ -23,8 +24,8 @@ int main() {
 	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	character.stats.sheet.level = 90;
 	character.stats.sheet.ascension = 6;
-	character.stats.sheet.talents.burst = 10;
-	character.stats.sheet.talents.skill = 10;
+	character.stats.sheet.talents.burst = 9;
+	character.stats.sheet.talents.skill = 9;
 	character.stats.sheet.constellation = 1;
 	character.arts = {1, 2, 3, 4, 5};
 
@@ -118,13 +119,13 @@ int main() {
 	character.getArtifactStats();
 	character.getArtifactModifiers();
 
-	auto attacknode = Character::Datas::cyno.nodes.normal.at(3);
-	if (attacknode.modifier) attacknode.modifier(Character::Datas::cyno, character.stats);
-	character.stats.sheet.print();
-	auto cr = character.stats.sheet.getStat(Stat::cr);
-	std::println("Cr: {}", cr);
-	float val = attacknode.getValue(Character::Datas::cyno, character.stats);
-	std::println("{}", val);
+	// auto attacknode = Character::Datas::cyno.nodeSetup().normal.at(3);
+	// if (attacknode.modifier) attacknode.modifier(Character::Datas::cyno, character.stats);
+	// character.stats.sheet.print();
+	// auto cr = character.stats.sheet.getStat(Stat::cr);
+	// std::println("Cr: {}", cr);
+	// float val = attacknode.getValue(Character::Datas::cyno, character.stats);
+	// std::println("{}", val);
 
 	using namespace squi;
 	Window window{};
