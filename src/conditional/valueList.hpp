@@ -3,6 +3,7 @@
 #include "string_view"
 #include <optional>
 #include <vector>
+#include <cstdint>
 
 namespace Conditional {
 	struct ValueList {

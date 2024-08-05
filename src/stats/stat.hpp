@@ -5,6 +5,7 @@
 #include "unordered_map"
 #include "utils/stringify.hpp"// IWYU pragma: keep
 #include <format>
+#include <vector>
 
 
 // An underscore after the stat name means %

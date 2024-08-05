@@ -5,6 +5,7 @@
 #include "valueList.hpp"
 #include "variant"
 #include <unordered_map>
+#include <functional>
 
 
 namespace Conditional {

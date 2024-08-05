@@ -37,6 +37,15 @@ float &getLowest(std::vector<float> &vals) {
 	return *lowest;
 }
 
+float &getHighest(std::vector<float> &vals) {
+	assert(!vals.empty());
+	float *highest = &vals.front();
+	for (auto &val: vals) {
+		if (val > *highest) highest = &val;
+	}
+	return *highest;
+}
+
 size_t getLowestIndex(std::vector<float> &vals) {
 	assert(!vals.empty());
 	size_t lowest = 0;
@@ -81,7 +90,7 @@ squi::vec2 UI::Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minS
 
 	return {
 		(maxSize.x * static_cast<float>(columns)) + (static_cast<float>(columns - 1) * spacing),
-		std::ranges::max(columnSizes),
+		getHighest(columnSizes),
 	};
 }
 
