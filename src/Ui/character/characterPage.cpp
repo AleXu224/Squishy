@@ -43,7 +43,7 @@ UI::CharacterPage::operator squi::Child() const {
 										}
 									},
 									.child = CharacterCard{
-										.character = character,
+										.characterKey = character.key,
 									},
 								});
 							}

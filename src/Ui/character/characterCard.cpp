@@ -4,6 +4,7 @@
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/trueFalse.hpp"
 #include "character/characters.hpp"
+#include "store.hpp"
 
 #include "column.hpp"
 #include "container.hpp"
@@ -65,14 +66,12 @@ struct CharacterCardBanner {
 	}
 };
 
-UI::CharacterCard::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
+struct Contents {
+	// Args
+	Character::Instance &character;
 
-	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
-		.child = Column{
+	operator squi::Child() const {
+		return Column{
 			.children{
 				CharacterCardBanner{
 					.character = character,
@@ -87,7 +86,7 @@ UI::CharacterCard::operator squi::Child() const {
 									 Utils::trueFalse
 								 )) {
 								auto val = character.stats.character.sheet.fromStat(stat).getTotal(character.stats);
-								w.addChild(StatDisplay{
+								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},
 								});
@@ -96,6 +95,24 @@ UI::CharacterCard::operator squi::Child() const {
 					},
 				},
 			},
+		};
+	}
+};
+
+UI::CharacterCard::operator squi::Child() const {
+	auto storage = std::make_shared<Storage>();
+
+	return Card{
+		.widget{
+			.padding = Padding{1.f},
+			.onInit = [characterKey = characterKey](Widget &w) {
+				w.customState.add(Store::characters.at(characterKey).updateEvent.observe([characterKey, &w]() {
+					w.setChildren({Contents{.character = Store::characters.at(characterKey)}});
+				}));
+			},
+		},
+		.child = Contents{
+			.character = Store::characters.at(characterKey),
 		},
 	};
 }

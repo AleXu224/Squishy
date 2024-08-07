@@ -1,13 +1,14 @@
 #pragma once
 
+#include "character/key.hpp"
 #include "widget.hpp"
-#include "character/instance.hpp"
+
 
 namespace UI {
 	struct CharacterCard {
 		// Args
 		squi::Widget::Args widget{};
-        Character::Instance &character;
+		Character::Key characterKey;
 
 		struct Storage {
 			// Data
