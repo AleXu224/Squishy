@@ -54,7 +54,7 @@ struct CharacterCardBanner {
 									.fontSize = 24.f,
 								},
 								Text{
-									.text = std::format("Lvl {}", character.stats.sheet.level),
+									.text = std::format("Lvl {}", character.stats.character.sheet.level),
 								},
 							},
 						},
@@ -80,13 +80,13 @@ UI::CharacterCard::operator squi::Child() const {
 				Column{
 					.widget{
 						.onInit = [&character = character](Widget &w) {
-							auto statsToDisplay = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.base.element)}};
+							auto statsToDisplay = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 
 							for (const auto &[stat, transparent]: std::views::zip(
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								auto val = character.stats.sheet.fromStat(stat).getTotal(character.stats.sheet);
+								auto val = character.stats.character.sheet.fromStat(stat).getTotal(character.stats);
 								w.addChild(StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},

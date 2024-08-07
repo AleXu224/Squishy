@@ -1,7 +1,11 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"// IWYU pragma: keep
-#include "store.hpp"
+#include "artifact/sets/GildedDreams.hpp"
 #include "character/characters.hpp"
+#include "character/characters/Cyno.hpp"
+#include "store.hpp"
+#include "weapon/weapons/StaffOfTheScarletSands.hpp"
+
 
 #include "Ui/home/homePage.hpp"
 
@@ -22,11 +26,11 @@ int main() {
 	weapon.stats.sheet.ascension = 6;
 	weapon.stats.sheet.refinement = 1;
 	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
-	character.stats.sheet.level = 90;
-	character.stats.sheet.ascension = 6;
-	character.stats.sheet.talents.burst = 9;
-	character.stats.sheet.talents.skill = 9;
-	character.stats.sheet.constellation = 1;
+	character.stats.character.sheet.level = 90;
+	character.stats.character.sheet.ascension = 6;
+	character.stats.character.sheet.talents.burst = 9;
+	character.stats.character.sheet.talents.skill = 9;
+	character.stats.character.sheet.constellation = 1;
 	character.arts = {1, 2, 3, 4, 5};
 
 	Store::artifacts.insert({

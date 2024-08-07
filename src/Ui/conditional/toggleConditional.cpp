@@ -3,6 +3,7 @@
 #include "fontIcon.hpp"
 #include "observer.hpp"
 #include "row.hpp"
+#include "store.hpp"
 
 using namespace squi;
 
@@ -75,9 +76,11 @@ UI::ToggleConditional::operator squi::Child() const {
 			},
 		},
 		.style = ButtonStyle::Subtle(),
-		.onClick = [storage, switchEvent](GestureDetector::Event) {
+		.onClick = [storage, switchEvent, &conditional = conditional, characterKey = characterKey](GestureDetector::Event) {
 			storage->active = !storage->active;
+			conditional.active = storage->active;
 			switchEvent.notify(storage->active);
+			Store::characters.at(characterKey).updateEvent.notify();
 		},
 		.child = Row{
 			.alignment = squi::Row::Alignment::center,

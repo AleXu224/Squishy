@@ -7,9 +7,9 @@ namespace Stats {
 	struct WeaponSheet {
 		unsigned short level{1};
 		uint8_t ascension{0};
-		unsigned short refinement{1};
+		unsigned short refinement{0};
 
-		Value<WeaponSheet> atk{0};
+		Value<WeaponSheet> atk{};
 		Value<WeaponSheet> subStat{0};
 
 		explicit WeaponSheet(const WeaponBase &base) {

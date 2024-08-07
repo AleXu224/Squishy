@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Rarity.hpp"
-#include "character/data.hpp"
+#include "character/key.hpp"
 #include "stats/stat.hpp"
 #include "utils/stringify.hpp"// IWYU pragma: keep
 
@@ -33,7 +33,7 @@ namespace Artifact {
 
 namespace Utils {
 	template<>
-	constexpr std::string Stringify<>(const Artifact::Slot &slot) {
+	inline std::string Stringify<>(const Artifact::Slot &slot) {
 		switch (slot) {
 			case Artifact::Slot::flower:
 				return "Flower";

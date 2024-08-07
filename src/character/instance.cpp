@@ -1,45 +1,37 @@
 #include "instance.hpp"
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"
-#include "store.hpp"
 #include "character/characters.hpp"
+#include "store.hpp"
 
 
 Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
 	: key(key),
 	  weaponKey(weaponKey),
-	  stats(Character::list.at(key).baseStats),
-	  nodes(Character::list.at(key).getNodes(stats)),
-	  conditionals(Character::list.at(key).getConds(stats)) {
+	  stats(Stats::Sheet{
+		  .character = Stats::Character(Character::list.at(key).baseStats),
+		  .weapon = Store::weapons.at(weaponKey).stats,
+		  .artifact{},
+	  }) {
 	collectStats();
 
 	const auto &character = Character::list.at(key);
-	character.getMods(stats);
+	character.getConds(stats.character.conditionals, stats);
+	character.getMods(stats.character.conditionals, stats);
+	character.getNodes(stats.character.conditionals, nodes, stats);
+
+	stats.character.sheet.init(stats);
 }
 
 void Character::Instance::collectStats() {
 	const auto &weapon = Store::weapons.at(weaponKey);
-	const auto &characterData = Character::list.at(key);
-	// weapon.collectStats(stats);
-	weapon.data.collectModifiers(*this);
-	characterData.modsSetup(Character::Data::ModsSetup{
-		.stats = stats,
-		.multipliers = characterData.multipliers,
-	});
 
-	stats.sheet.fromStat(stats.base.ascensionStat).modifiers.emplace_back([&base = stats.base](const Stats::CharacterSheet &sheet) {
-		return base.getAscensionStatAt(sheet.ascension);
-	});
-	stats.sheet.baseAtk.modifiers.emplace_back([&base = stats.base](const Stats::CharacterSheet &sheet) {
-		return base.getAscensionStatAt(sheet.ascension);
-	});
-	stats.sheet.baseAtk.modifiers.emplace_back([wepKey = weapon.data.key](const Stats::CharacterSheet &) {
-		const auto &weapon = Store::weapons.at(wepKey);
-		return weapon.stats.sheet.atk.getTotal(weapon.stats.sheet);
-	});
-	stats.sheet.fromStat(weapon.data.baseStats.substat.stat).modifiers.emplace_back([wepKey = weapon.data.key](const Stats::CharacterSheet &) {
-		const auto &weapon = Store::weapons.at(wepKey);
-		return weapon.stats.sheet.subStat.getTotal(weapon.stats.sheet);
+	weapon.data.getConds(stats.weapon.conditionals, stats);
+	weapon.data.getMods(stats.weapon.conditionals, stats);
+	weapon.data.getNodes(stats.weapon.conditionals, nodes, stats);
+
+	stats.character.sheet.fromStat(weapon.data.baseStats.substat.stat).modifiers.emplace_back([](const Stats::Sheet &stats) {
+		return stats.weapon.sheet.subStat.getTotal(stats.weapon.sheet);
 	});
 }
 
@@ -47,11 +39,11 @@ void Character::Instance::getArtifactStats() {
 	for (auto &art: arts) {
 		if (art == 0) continue;
 		auto &artifact = Store::artifacts.at(art);
-		stats.sheet.fromStat(artifact.mainStat).artifactModifiers.emplace_back([mainStat = artifact.mainStat, level = artifact.level](const Stats::CharacterSheet &) {
+		stats.character.sheet.fromStat(artifact.mainStat).artifactModifiers.emplace_back([mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) {
 			return Stats::Values::mainStat.at(mainStat).at(level);
 		});
 		for (auto &subStat: artifact.subStats) {
-			stats.sheet.fromStat(subStat.stat).artifactModifiers.emplace_back([subStat = subStat](const Stats::CharacterSheet &) {
+			stats.character.sheet.fromStat(subStat.stat).artifactModifiers.emplace_back([subStat = subStat](const Stats::Sheet &) {
 				return subStat.value;
 			});
 		}
@@ -77,10 +69,14 @@ void Character::Instance::getArtifactModifiers() {
 		if (occurence.second >= 2) {
 			// Cache the ArtifactData to avoid doing two accesses
 			const Artifact::Set &artifactData = Artifact::sets.at(occurence.first);
-			artifactData.twoSet(*this);
+			artifactData.getModsTwo(stats.artifact.conditionals, stats);
 			// The second check should not be be outside since a four set can only happen
 			// only if there is a two set
-			if (occurence.second >= 4) artifactData.fourSet(*this);
+			if (occurence.second >= 4) {
+				artifactData.getConds(stats.artifact.conditionals, stats);
+				artifactData.getModsFour(stats.artifact.conditionals, stats);
+				artifactData.getNodes(stats.artifact.conditionals, nodes, stats);
+			}
 		}
 		// Set the value to zero instead of clearing since this is way faster
 		// Clearing takes ~70 nanoseconds on my machine

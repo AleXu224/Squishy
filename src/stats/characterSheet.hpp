@@ -1,71 +1,30 @@
 #pragma once
 
 #include "Talents.hpp"
-#include "characterBase.hpp"
 #include "misc/attackSource.hpp"
 #include "stat.hpp"
 #include "value.hpp"
 
 
 namespace Stats {
-	struct CharacterSheet;
-	using CharacterValue = Stats::Value<CharacterSheet>;
+	struct Sheet;
+	using CharacterValue = Stats::Value<Stats::Sheet>;
 
 	struct Skill {
-		CharacterValue DMG;
-		CharacterValue additiveDMG;
-		CharacterValue multiplicativeDMG;
-		CharacterValue critRate;
-		CharacterValue critDMG;
+		CharacterValue DMG{};
+		CharacterValue additiveDMG{};
+		CharacterValue multiplicativeDMG{};
+		CharacterValue critRate{};
+		CharacterValue critDMG{};
 	};
 	struct CharacterSheet {
-		const Stats::CharacterBase &base;
-		CharacterValue hp{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return (sheet.baseHp.getTotal(sheet) + 1.f) * sheet.hp_.getTotal(sheet);
-				},
-			},
-		};
+		CharacterValue hp{};
 		CharacterValue hp_{};
-		CharacterValue baseHp{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return sheet.base.getHpAt(sheet.level, sheet.ascension);
-				}
-			}
-		};
-		CharacterValue atk{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return (sheet.baseAtk.getTotal(sheet) + 1.f) * sheet.atk_.getTotal(sheet);
-				},
-			},
-		};
+		CharacterValue atk{};
 		CharacterValue atk_{};
-		CharacterValue baseAtk{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return sheet.base.getAtkAt(sheet.level, sheet.ascension);
-				}
-			}
-		};
 		CharacterValue additionalAtk{};
-		CharacterValue def{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return (sheet.baseDef.getTotal(sheet) + 1.f) * sheet.def_.getTotal(sheet);
-				},
-			},
-		};
+		CharacterValue def{};
 		CharacterValue def_{};
-		CharacterValue baseDef{
-			.modifiers{
-				[](const CharacterSheet &sheet) {
-					return sheet.base.getDefAt(sheet.level, sheet.ascension);
-				}
-			}
-		};
 		// CharacterValue er{1};// Er starts at 100%
 		CharacterValue er{.value = 1.f};
 		CharacterValue em{};
@@ -95,38 +54,40 @@ namespace Stats {
 		unsigned short level{1};
 		unsigned short ascension{0};
 
-		void print() const {
-			std::println("level: {}", level);
-			std::println("ascension: {}", ascension);
-			std::println("constellation: {}", constellation);
-			std::println("normal lvl: {}", talents.normal);
-			std::println("skill lvl: {}", talents.skill);
-			std::println("burst lvl: {}", talents.burst);
-			std::println("hp: {}", hp.getTotal(*this));
-			std::println("hp_: {}", hp_.getTotal(*this));
-			std::println("baseHp: {}", baseHp.getTotal(*this));
-			std::println("atk: {}", atk.getTotal(*this));
-			std::println("atk_: {}", atk_.getTotal(*this));
-			std::println("baseAtk: {}", baseAtk.getTotal(*this));
-			std::println("additionalAtk: {}", additionalAtk.getTotal(*this));
-			std::println("def: {}", def.getTotal(*this));
-			std::println("def_: {}", def_.getTotal(*this));
-			std::println("baseDef: {}", baseDef.getTotal(*this));
-			std::println("er: {}", er.getTotal(*this));
-			std::println("em: {}", em.getTotal(*this));
-			std::println("cr: {}", cr.getTotal(*this));
-			std::println("cd: {}", cd.getTotal(*this));
-			std::println("hb: {}", hb.getTotal(*this));
-			std::println("pyroDmg: {}", pyro.DMG.getTotal(*this));
-			std::println("hydroDmg: {}", hydro.DMG.getTotal(*this));
-			std::println("cryoDmg: {}", cryo.DMG.getTotal(*this));
-			std::println("electroDmg: {}", electro.DMG.getTotal(*this));
-			std::println("dendroDmg: {}", dendro.DMG.getTotal(*this));
-			std::println("anemoDmg: {}", anemo.DMG.getTotal(*this));
-			std::println("geoDmg: {}", geo.DMG.getTotal(*this));
-			std::println("physicalDmg: {}", physical.DMG.getTotal(*this));
-			std::println("allDmg: {}", all.DMG.getTotal(*this));
-		}
+		void init(Stats::Sheet &sheet);
+
+		// static inline void print(Stats::Sheet &sheet) {
+		// 	std::println("level: {}", level);
+		// 	std::println("ascension: {}", ascension);
+		// 	std::println("constellation: {}", constellation);
+		// 	std::println("normal lvl: {}", talents.normal);
+		// 	std::println("skill lvl: {}", talents.skill);
+		// 	std::println("burst lvl: {}", talents.burst);
+		// 	std::println("hp: {}", hp.getTotal(*this));
+		// 	std::println("hp_: {}", hp_.getTotal(*this));
+		// 	std::println("baseHp: {}", baseHp.getTotal(*this));
+		// 	std::println("atk: {}", atk.getTotal(*this));
+		// 	std::println("atk_: {}", atk_.getTotal(*this));
+		// 	std::println("baseAtk: {}", baseAtk.getTotal(*this));
+		// 	std::println("additionalAtk: {}", additionalAtk.getTotal(*this));
+		// 	std::println("def: {}", def.getTotal(*this));
+		// 	std::println("def_: {}", def_.getTotal(*this));
+		// 	std::println("baseDef: {}", baseDef.getTotal(*this));
+		// 	std::println("er: {}", er.getTotal(*this));
+		// 	std::println("em: {}", em.getTotal(*this));
+		// 	std::println("cr: {}", cr.getTotal(*this));
+		// 	std::println("cd: {}", cd.getTotal(*this));
+		// 	std::println("hb: {}", hb.getTotal(*this));
+		// 	std::println("pyroDmg: {}", pyro.DMG.getTotal(*this));
+		// 	std::println("hydroDmg: {}", hydro.DMG.getTotal(*this));
+		// 	std::println("cryoDmg: {}", cryo.DMG.getTotal(*this));
+		// 	std::println("electroDmg: {}", electro.DMG.getTotal(*this));
+		// 	std::println("dendroDmg: {}", dendro.DMG.getTotal(*this));
+		// 	std::println("anemoDmg: {}", anemo.DMG.getTotal(*this));
+		// 	std::println("geoDmg: {}", geo.DMG.getTotal(*this));
+		// 	std::println("physicalDmg: {}", physical.DMG.getTotal(*this));
+		// 	std::println("allDmg: {}", all.DMG.getTotal(*this));
+		// }
 
 		[[nodiscard]] Skill &fromElement(const Misc::Element &element) {
 			switch (element) {
@@ -155,22 +116,16 @@ namespace Stats {
 					return hp;
 				case Stat::hp_:
 					return hp_;
-				case Stat::baseHp:
-					return baseHp;
 				case Stat::atk:
 					return atk;
 				case Stat::atk_:
 					return atk_;
-				case Stat::baseAtk:
-					return baseAtk;
 				case Stat::additionalAtk:
 					return additionalAtk;
 				case Stat::def:
 					return def;
 				case Stat::def_:
 					return def_;
-				case Stat::baseDef:
-					return baseDef;
 				case Stat::er:
 					return er;
 				case Stat::em:
@@ -203,12 +158,17 @@ namespace Stats {
 		}
 
 		[[nodiscard]] Skill fromAttackSource(const Misc::AttackSource &attackSource) {
-			switch (attackSource) {	
-				case Misc::AttackSource::normal: return normal;
-				case Misc::AttackSource::charged: return charged;
-				case Misc::AttackSource::plunge: return plunge;
-				case Misc::AttackSource::skill: return skill;
-				case Misc::AttackSource::burst: return burst;
+			switch (attackSource) {
+				case Misc::AttackSource::normal:
+					return normal;
+				case Misc::AttackSource::charged:
+					return charged;
+				case Misc::AttackSource::plunge:
+					return plunge;
+				case Misc::AttackSource::skill:
+					return skill;
+				case Misc::AttackSource::burst:
+					return burst;
 			}
 		}
 	};

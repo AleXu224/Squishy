@@ -1,11 +1,12 @@
 #pragma once
 
-#include "misc/element.hpp"
 #include "array"
+#include "misc/element.hpp"
 #include "unordered_map"
 #include "utils/stringify.hpp"// IWYU pragma: keep
 #include <format>
 #include <vector>
+
 
 
 // An underscore after the stat name means %
@@ -13,15 +14,12 @@
 enum class Stat {
 	hp,
 	hp_,
-	baseHp,
 	atk,
 	atk_,
-	baseAtk,
 	// Attack given by characters like yunjin
 	additionalAtk,
 	def,
 	def_,
-	baseDef,
 	// Energy recharge
 	er,
 	// Elemental Mastery
@@ -60,19 +58,15 @@ namespace Stats {
 				return false;
 			case Stat::hp_:
 				return true;
-			case Stat::baseHp:
 			case Stat::atk:
 			case Stat::additionalAtk:
 				return false;
 			case Stat::atk_:
 				return true;
-			case Stat::baseAtk:
 			case Stat::def:
 				return false;
 			case Stat::def_:
 				return true;
-			case Stat::baseDef:
-				return false;
 			case Stat::er:
 				return true;
 			case Stat::em:
@@ -145,26 +139,20 @@ struct StatValue {
 
 namespace Utils {
 	template<>
-	constexpr std::string Stringify<>(const Stat &stat) {
+	inline std::string Stringify<>(const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
 				return "HP";
 			case Stat::hp_:
 				return "HP%";
-			case Stat::baseHp:
-				return "Base HP";
 			case Stat::atk:
 				return "ATK";
 			case Stat::atk_:
 				return "ATK%";
-			case Stat::baseAtk:
-				return "Base ATK";
 			case Stat::def:
 				return "DEF";
 			case Stat::def_:
 				return "DEF%";
-			case Stat::baseDef:
-				return "Base DEF";
 			case Stat::er:
 				return "Energy Recharge";
 			case Stat::em:
@@ -199,7 +187,7 @@ namespace Utils {
 	}
 
 	template<>
-	constexpr std::string Stringify<>(const StatValue &stat) {
+	inline std::string Stringify<>(const StatValue &stat) {
 		if (Stats::isPercentage(stat.stat)) {
 			return std::format("{:.1f}%", stat.value * 100.f);
 		}

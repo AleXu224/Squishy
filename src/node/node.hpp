@@ -5,22 +5,23 @@
 #include "variant"
 
 
-
 namespace Node {
 	using Types = std::variant<Node::Atk>;
 
 	struct List {
-		const std::vector<Node::Types> normal;
-		const std::vector<Node::Types> charged;
-		const std::vector<Node::Types> plunge;
-		const std::vector<Node::Types> skill;
-		const std::vector<Node::Types> burst;
-		const std::vector<Node::Types> passive1{};
-		const std::vector<Node::Types> passive2{};
-		const std::vector<Node::Types> constellation1{};
-		const std::vector<Node::Types> constellation2{};
-		const std::vector<Node::Types> constellation4{};
-		const std::vector<Node::Types> constellation6{};
+		std::vector<Node::Types> normal;
+		std::vector<Node::Types> charged;
+		std::vector<Node::Types> plunge;
+		std::vector<Node::Types> skill;
+		std::vector<Node::Types> burst;
+		std::vector<Node::Types> passive1{};
+		std::vector<Node::Types> passive2{};
+		std::vector<Node::Types> constellation1{};
+		std::vector<Node::Types> constellation2{};
+		std::vector<Node::Types> constellation4{};
+		std::vector<Node::Types> constellation6{};
+		std::vector<Node::Types> weapon{};
+		std::vector<Node::Types> artifact{};
 
 		[[nodiscard]] static inline auto getMembers() {
 			return std::array{
@@ -35,7 +36,17 @@ namespace Node {
 				&List::constellation2,
 				&List::constellation4,
 				&List::constellation6,
+				&List::weapon,
+				&List::artifact,
 			};
+		}
+
+		static inline void combineNodes(Node::List &to, const Node::List &from) {
+			for (auto listPtr : List::getMembers()) {
+				for (auto &node: std::invoke(listPtr, from)) {
+					std::invoke(listPtr, to).emplace_back(std::move(node));
+				}
+			}
 		}
 	};
 }// namespace Node

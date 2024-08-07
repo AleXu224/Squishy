@@ -36,3 +36,5 @@
 /.vscode/
 /build/
 /.cache/
+/.vs/
+/out/

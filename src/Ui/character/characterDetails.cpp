@@ -136,14 +136,14 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		.title = "Stats",
 		.children = [&character]() {
 			Children ret{};
-			auto displayStats = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.base.element)}};
+			auto displayStats = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				ret.emplace_back(UI::StatDisplay{
 					.isTransparent = transparent,
 					.stat{
 						.stat = stat,
-						.value = character.stats.sheet.fromStat(stat).getTotal(character.stats.sheet),
+						.value = character.stats.character.sheet.fromStat(stat).getTotal(character.stats),
 					},
 				});
 			}
@@ -151,11 +151,17 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		}(),
 	});
 
-	const auto names = {"Normal attack", "Charged attack", "Plunge attack", "Elemental skill", "Elemental burst", "Passive 1", "Passive 2", "Constellation 1", "Constellation 2", "Constellation 4", "Constellation 6"};
+	std::vector<std::reference_wrapper<std::unordered_map<std::string_view, Conditional::Types>>> conditionals{};
+	for (auto &condPtr: Conditional::CharacterMap::getMembers()) {
+		conditionals.emplace_back(std::invoke(condPtr, character.stats.character.conditionals));
+	}
+	conditionals.emplace_back(character.stats.weapon.conditionals);
+	conditionals.emplace_back(character.stats.artifact.conditionals);
+	const std::vector<std::string_view> names = {"Normal attack", "Charged attack", "Plunge attack", "Elemental skill", "Elemental burst", "Passive 1", "Passive 2", "Constellation 1", "Constellation 2", "Constellation 4", "Constellation 6", Weapon::list.at(character.weaponKey).name, "Artifact"};
 
-	for (const auto &[nodePtr, conditionalPtr, name]: std::views::zip(Node::List::getMembers(), Conditional::ListMapped::getMembers(), names)) {
+	for (const auto &[nodePtr, conditionalWrapper, name]: std::views::zip(Node::List::getMembers(), conditionals, names)) {
 		auto &nodes = std::invoke(nodePtr, character.nodes);
-		auto &conditionals = std::invoke(conditionalPtr, character.conditionals);
+		auto &conditionals = conditionalWrapper.get();
 		if (nodes.empty() && conditionals.empty()) continue;
 
 		w.addChild(CharacterDetailsSkill{
@@ -195,11 +201,13 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 										[&](Conditional::Boolean &cond) {
 											ret.emplace_back(UI::ToggleConditional{
 												.conditional = cond,
+												.characterKey = characterKey,
 											});
 										},
 										[&](Conditional::ValueList &cond) {
 											ret.emplace_back(UI::ValueListConditional{
 												.conditional = cond,
+												.characterKey = characterKey,
 											});
 										},
 									},
@@ -235,6 +243,12 @@ UI::CharacterDetails::operator squi::Child() const {
 							.height = Size::Shrink,
 							.padding = Padding{8.f},
 							.onInit = [characterKey = characterKey](Widget &w) {
+								w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey]() {
+									if (auto w = wPtr.lock()) {
+										w->setChildren({});
+										initializeList(characterKey, *w);
+									}
+								}));
 								initializeList(characterKey, w);
 							},
 						},

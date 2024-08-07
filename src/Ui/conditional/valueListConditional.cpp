@@ -1,11 +1,13 @@
 #include "valueListConditional.hpp"
-#include "button.hpp"
 
+#include "button.hpp"
 #include "container.hpp"
 #include "contextMenu.hpp"
 #include "fontIcon.hpp"
 #include "row.hpp"
+#include "store.hpp"
 #include "window.hpp"
+
 
 #include "vector"
 
@@ -19,6 +21,10 @@ UI::ValueListConditional::operator squi::Child() const {
 	return Button{
 		.widget{
 			.width = Size::Expand,
+			.height = Size::Shrink,
+			.sizeConstraints{
+				.minHeight = 32.f,
+			},
 			.onInit = [readyEvent, valueChangedEvent, &conditional = conditional](Widget &w) {
 				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newVal) {
 					if (newVal.has_value()) {
@@ -33,16 +39,17 @@ UI::ValueListConditional::operator squi::Child() const {
 			},
 		},
 		.style = ButtonStyle::Standard(),
-		.onClick = [valueChangedEvent, &conditional = conditional](GestureDetector::Event event) {
+		.onClick = [valueChangedEvent, &conditional = conditional, characterKey = characterKey](GestureDetector::Event event) {
 			Window::of(&event.widget).addOverlay(ContextMenu{
 				.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
 				.items = [&]() {
 					std::vector<ContextMenu::Item> ret{
 						ContextMenu::Item{
 							.text = "Not Active",
-							.content = [valueChangedEvent, &conditional]() {
+							.content = [valueChangedEvent, &conditional, characterKey]() {
 								conditional.currentIndex = std::nullopt;
 								valueChangedEvent.notify(conditional.getValue());
+								Store::characters.at(characterKey).updateEvent.notify();
 							},
 						},
 						ContextMenu::Item{
@@ -54,9 +61,10 @@ UI::ValueListConditional::operator squi::Child() const {
 					for (auto [index, item]: std::views::enumerate(conditional.values)) {
 						ret.emplace_back(ContextMenu::Item{
 							.text = std::format("{}", item),
-							.content = [index, valueChangedEvent, &conditional]() {
+							.content = [index, valueChangedEvent, &conditional, characterKey]() {
 								conditional.currentIndex = index;
 								valueChangedEvent.notify(conditional.getValue());
+								Store::characters.at(characterKey).updateEvent.notify();
 							},
 						});
 					}
@@ -87,6 +95,7 @@ UI::ValueListConditional::operator squi::Child() const {
 								},
 							},
 							.text = "placeholder",
+							.lineWrap = true,
 						},
 					},
 				},

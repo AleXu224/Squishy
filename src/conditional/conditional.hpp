@@ -4,14 +4,14 @@
 #include "ranges"
 #include "valueList.hpp"
 #include "variant"
-#include <unordered_map>
 #include <functional>
+#include <unordered_map>
 
 
 namespace Conditional {
 	using Types = std::variant<Boolean, ValueList>;
 
-	struct List {
+	struct CharacterList {
 		const std::vector<Types> normal{};
 		const std::vector<Types> charged{};
 		const std::vector<Types> plunge{};
@@ -25,11 +25,15 @@ namespace Conditional {
 		const std::vector<Types> constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
-			return std::array{&List::normal, &List::charged, &List::plunge, &List::skill, &List::burst, &List::passive1, &List::passive2, &List::constellation1, &List::constellation2, &List::constellation4, &List::constellation6};
+			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};
 		}
 	};
 
-	struct ListMapped {
+	using WeaponList = std::vector<Types>;
+
+	using ArtifactList = std::vector<Types>;
+
+	struct CharacterMap {
 		std::unordered_map<std::string_view, Types> normal{};
 		std::unordered_map<std::string_view, Types> charged{};
 		std::unordered_map<std::string_view, Types> plunge{};
@@ -43,14 +47,16 @@ namespace Conditional {
 		std::unordered_map<std::string_view, Types> constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
-			return std::array{&ListMapped::normal, &ListMapped::charged, &ListMapped::plunge, &ListMapped::skill, &ListMapped::burst, &ListMapped::passive1, &ListMapped::passive2, &ListMapped::constellation1, &ListMapped::constellation2, &ListMapped::constellation4, &ListMapped::constellation6};
+			return std::array{&CharacterMap::normal, &CharacterMap::charged, &CharacterMap::plunge, &CharacterMap::skill, &CharacterMap::burst, &CharacterMap::passive1, &CharacterMap::passive2, &CharacterMap::constellation1, &CharacterMap::constellation2, &CharacterMap::constellation4, &CharacterMap::constellation6};
 		}
 	};
 
-	inline ListMapped mapConditionals(const List &vals) {
-		ListMapped ret{};
+	using WeaponMap = std::unordered_map<std::string_view, Types>;
 
-		for (auto [listMember, mappedMember]: std::views::zip(List::getMembers(), ListMapped::getMembers())) {
+	using ArtifactMap = std::unordered_map<std::string_view, Types>;
+
+	inline void mapConditionals(CharacterMap &ret, const CharacterList &vals) {
+		for (auto [listMember, mappedMember]: std::views::zip(CharacterList::getMembers(), CharacterMap::getMembers())) {
 			const auto &_ = std::invoke(listMember, vals);
 
 			for (auto &val: _) {
@@ -62,7 +68,28 @@ namespace Conditional {
 				);
 			}
 		}
-
-		return ret;
 	}
+
+	inline void mapConditionals(WeaponMap &ret, const WeaponList &vals) {
+		for (auto &val: vals) {
+			std::visit(
+				[&](auto &&v) {
+					ret.insert({v.key, v});
+				},
+				val
+			);
+		}
+	}
+
+	// No need for this at the moment
+	// inline void mapConditionals(ArtifactMap &ret, const ArtifactList &vals) {
+	// 	for (auto &val: vals) {
+	// 		std::visit(
+	// 			[&](auto &&v) {
+	// 				ret.insert({v.key, v});
+	// 			},
+	// 			val
+	// 		);
+	// 	}
+	// }
 }// namespace Conditional

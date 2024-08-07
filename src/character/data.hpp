@@ -23,48 +23,56 @@ namespace Character {
 	};
 
 	struct Data {
-		struct NodeSetup {
-			Stats::Character &stats;
+		struct CondsSetup {
+			Stats::Sheet &stats;
 			const Multipliers &multipliers;
 		};
 
 		struct ModsSetup {
-			Stats::Character &stats;
+			Stats::Sheet &stats;
 			const Multipliers &multipliers;
+			const Conditional::CharacterMap &conditionals;
 		};
 
-		struct CondsSetup {
-			Stats::Character &stats;
+		struct NodeSetup {
+			Stats::Sheet &stats;
 			const Multipliers &multipliers;
+			const Conditional::CharacterMap &conditionals;
 		};
 
 		const Key key;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
 		const Multipliers multipliers;
-		const std::function<Conditional::List(Character::Data::CondsSetup data)> condsSetup;
+		const std::function<Conditional::CharacterList(Character::Data::CondsSetup data)> condsSetup;
 		const std::function<void(Character::Data::ModsSetup data)> modsSetup;
 		const std::function<Node::List(Character::Data::NodeSetup data)> nodeSetup;
 
-		[[nodiscard]] Conditional::ListMapped getConds(Stats::Character &stats) const {
-			return Conditional::mapConditionals(
+		void getConds(Conditional::CharacterMap &conditionals, Stats::Sheet &stats) const {
+			Conditional::mapConditionals(
+				conditionals,
 				condsSetup(CondsSetup{
 					.stats = stats,
 					.multipliers = multipliers,
 				})
 			);
 		}
-		void getMods(Stats::Character &stats) const {
+		void getMods(Conditional::CharacterMap &conditionals, Stats::Sheet &stats) const {
 			modsSetup(ModsSetup{
 				.stats = stats,
 				.multipliers = multipliers,
+				.conditionals = conditionals,
 			});
 		}
-		[[nodiscard]] Node::List getNodes(Stats::Character &stats) const {
-			return nodeSetup(NodeSetup{
-				.stats = stats,
-				.multipliers = multipliers,
-			});
+		void getNodes(Conditional::CharacterMap &conditionals, Node::List &nodes, Stats::Sheet &stats) const {
+			Node::List::combineNodes(
+				nodes,
+				nodeSetup(NodeSetup{
+					.stats = stats,
+					.multipliers = multipliers,
+					.conditionals = conditionals,
+				})
+			);
 		}
 	};
 }// namespace Character

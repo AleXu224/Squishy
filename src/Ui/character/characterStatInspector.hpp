@@ -1,13 +1,14 @@
 #pragma once
 
+#include "navigator.hpp"
 #include "widget.hpp"
-#include "conditional/valueList.hpp"
+
 #include "character/key.hpp"
 
+
 namespace UI {
-	struct ValueListConditional {
+	struct CharacterStatInspector {
 		// Args
-        Conditional::ValueList &conditional;
 		Character::Key characterKey;
 
 		struct Storage {

@@ -4,7 +4,7 @@
 
 namespace Utils {
 	template<class T>
-	constexpr std::string Stringify(const T & /*unused*/) {
+	inline std::string Stringify(const T & /*unused*/) {
 		return "Cannot stringify";
 	}
 }// namespace Utils

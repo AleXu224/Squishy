@@ -59,8 +59,11 @@ namespace Character::Datas {
 				{20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
 				{80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80},
 			},
+			.passive1{
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			},
 		},
-		.condsSetup = [](Character::Data::CondsSetup data) -> Conditional::List {
+		.condsSetup = [](Character::Data::CondsSetup data) -> Conditional::CharacterList {
 			return {
 				.burst{
 					Conditional::Boolean{
@@ -73,10 +76,32 @@ namespace Character::Datas {
 						.values{1, 2, 3, 4},
 					}
 				},
+				.passive1{
+					Conditional::Boolean{
+						.key = "endseerStance",
+						.name = "During Endseer stance",
+					},
+				},
 			};
 		},
-		.modsSetup = [](Character::Data::ModsSetup data) {},
+		.modsSetup = [](Character::Data::ModsSetup data) {
+			data.stats.character.sheet.em.modifiers.emplace_back([](const Stats::Sheet &stats) {
+				auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.burst.at("burstActive")).active;
+				return cond ? 100.f : 0.f;
+			});
+		},
 		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::List {
+			auto a4BurstBonus = Stats::Skill{
+				.additiveDMG{
+					.modifiers{
+						[](const Stats::Sheet &stats) {
+							auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.passive1.at("endseerStance")).active;
+							return cond ? 0.35f : 0.f;
+						},
+					},
+				},
+			};
+
 			return Node::List{
 				.normal{
 					Node::Atk{
@@ -141,6 +166,16 @@ namespace Character::Datas {
 						.name{"Mortuary Rite DMG"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::skill,
+						.stats{
+							.DMG{
+								.modifiers{
+									[](const Stats::Sheet &stats) {
+										auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.passive1.at("endseerStance")).active;
+										return cond ? 0.35f : 0.f;
+									},
+								},
+							},
+						},
 						.formula = Node::makeFormula(Stat::atk, Talent::skill, data.multipliers.skill[1]),
 					},
 				},
@@ -149,31 +184,54 @@ namespace Character::Datas {
 						.name{"1-Hit DMG"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::normal,
+						.stats{a4BurstBonus},
 						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[0]),
 					},
 					Node::Atk{
 						.name{"2-Hit DMG"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::normal,
+						.stats{a4BurstBonus},
 						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[1]),
 					},
 					Node::Atk{
 						.name{"3-Hit DMG"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::normal,
+						.stats{a4BurstBonus},
 						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[2]),
 					},
 					Node::Atk{
 						.name{"4-Hit DMG (2)"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::normal,
+						.stats{a4BurstBonus},
 						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[3]),
 					},
 					Node::Atk{
 						.name{"5-Hit DMG"},
 						.attackElement = Misc::Element::electro,
 						.atkSource = Misc::AttackSource::normal,
+						.stats{a4BurstBonus},
 						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[5]),
+					},
+				},
+				.passive1{
+					Node::Atk{
+						.name{"Duststalker bolt DMG"},
+						.attackElement = Misc::Element::electro,
+						.atkSource = Misc::AttackSource::skill,
+						.stats{
+							.additiveDMG{
+								.modifiers{
+									[](const Stats::Sheet &stats) {
+										if (stats.character.sheet.ascension < 1) return 0.f;
+										return stats.character.sheet.em.getTotal(stats) * 2.5f;
+									},
+								},
+							},
+						},
+						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.passive1[0]),
 					},
 				},
 			};

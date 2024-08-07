@@ -64,17 +64,23 @@ squi::vec2 UI::Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minS
 	assert(!columnSizes.empty());
 
 	float maxWidth = 0.f;
-	auto newMax = (maxSize - static_cast<float>(columns) * spacing) / static_cast<float>(columns);
-	auto newMin = (minSize - static_cast<float>(columns) * spacing) / static_cast<float>(columns);
+	auto newMax = vec2{
+		(maxSize.x - static_cast<float>(columns) * spacing) / static_cast<float>(columns),
+		maxSize.y,
+	};
+	auto newMin = vec2{
+		std::max((minSize.y - static_cast<float>(columns) * spacing) / static_cast<float>(columns), 0.f),
+		0.f,
+	};
 	for (auto &child: children) {
 		auto size = child->layout(newMax, newMin, {true, true}, false);
 		maxWidth = std::max(maxWidth, size.x);
 	}
 
 	maxSize = {maxWidth, maxSize.y};
-	minSize = {maxWidth, 0.f};
+	minSize = {0.f};
 	if (!shouldShrink.width) {
-		minSize.x = maxSize.x = std::max(maxSize.x, newMax.x);
+		maxSize.x = std::max(maxSize.x, newMax.x);
 	}
 	for (auto &child: children) {
 		auto size = child->layout(maxSize, minSize, {false, true}, final);
@@ -105,7 +111,7 @@ void UI::Masonry::Impl::arrangeChildren(squi::vec2 &pos) {
 		auto &column = columnHeights.at(index);
 
 		if (column != 0.f) column += spacing;
-		
+
 		float xCursor = (columnWidth + spacing) * index;
 		child->arrange(newPos + vec2{xCursor, column});
 		column += child->getLayoutSize().y;
