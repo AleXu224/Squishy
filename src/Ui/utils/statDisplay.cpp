@@ -10,7 +10,7 @@ UI::StatDisplay::operator squi::Child() const {
 	return Box{
 		.widget{
 			.height = 36.f,
-			.margin = Margin{4.f, 2.f},
+			.margin = Margin{0.f},
 			.padding = Padding{12.f, 0.f},
 		},
 		.color = isTransparent ? Color{1.f, 1.f, 1.f, 0.0419f} : Color{0.f, 0.f, 0.f, 0.f},

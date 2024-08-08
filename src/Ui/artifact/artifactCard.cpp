@@ -84,6 +84,7 @@ UI::ArtifactCard::operator squi::Child() const {
 				},
 				Column{
 					.widget{
+						.padding = Padding{4.f},
 						.onInit = [artifact = artifact](Widget &w) {
 							auto trueFalse = {false, true};
 							auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));

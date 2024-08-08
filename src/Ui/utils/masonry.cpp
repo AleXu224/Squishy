@@ -113,7 +113,7 @@ void UI::Masonry::Impl::arrangeChildren(squi::vec2 &pos) {
 		if (column != 0.f) column += spacing;
 
 		float xCursor = (columnWidth + spacing) * index;
-		child->arrange(newPos + vec2{xCursor, column});
+		child->arrange(newPos + vec2{xCursor, column}.rounded());
 		column += child->getLayoutSize().y;
 	}
 }

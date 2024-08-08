@@ -78,6 +78,7 @@ struct Contents {
 				},
 				Column{
 					.widget{
+						.padding = Padding{4.f},
 						.onInit = [&character = character](Widget &w) {
 							auto statsToDisplay = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 

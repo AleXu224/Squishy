@@ -38,7 +38,7 @@ struct CharacterDetailsSkillHeader {
 
 		return Box{
 			.widget{
-				.height = 64.f,
+				.height = Size::Shrink,
 				.padding = Padding{16.f},
 			},
 			.color{1.f, 1.f, 1.f, 0.1f},
@@ -48,6 +48,8 @@ struct CharacterDetailsSkillHeader {
 				.child = Text{
 					.text = name,
 					.fontSize = 20.f,
+					.lineWrap = true,
+					.font = FontStore::defaultFontBold,
 				},
 			},
 		};
@@ -71,7 +73,7 @@ struct SkillEntry {
 		return Box{
 			.widget{
 				.height = 36.f,
-				.margin = Margin{4.f, 2.f},
+				.margin = Margin{0.f},
 				.padding = Padding{12.f, 0.f},
 			},
 			.color = isTransparent ? Color{1.f, 1.f, 1.f, 0.0419f} : Color{0.f, 0.f, 0.f, 0.f},
@@ -140,8 +142,10 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 			Children ret{};
 			auto displayStats = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 
+			Children ret2{};
+
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				ret.emplace_back(UI::StatDisplay{
+				ret2.emplace_back(UI::StatDisplay{
 					.isTransparent = transparent,
 					.stat{
 						.stat = stat,
@@ -149,6 +153,12 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 					},
 				});
 			}
+			ret.emplace_back(Column{
+				.widget{
+					.padding = Padding{4.f},
+				},
+				.children = ret2,
+			});
 			return ret;
 		}(),
 	});
@@ -192,25 +202,36 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 			.title = name,
 			.children = [&]() -> Children {
 				Children ret{};
-				for (auto [node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
-					std::visit(
-						[&](auto &&skill) {
-							ret.emplace_back(SkillEntry{
-								.isTransparent = transparent,
-								.name = skill.name,
-								.value = skill.calculate(character.stats),
-								.color = Utils::elementToColor(skill.getElement(character.stats)),
-							});
+
+				if (!nodes.empty()) {
+					Children ret2{};
+					for (auto [node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
+						std::visit(
+							[&](auto &&skill) {
+								ret2.emplace_back(SkillEntry{
+									.isTransparent = transparent,
+									.name = skill.name,
+									.value = skill.calculate(character.stats),
+									.color = Utils::elementToColor(skill.getElement(character.stats)),
+								});
+							},
+							node
+						);
+					}
+					ret.emplace_back(Column{
+						.widget{
+							.padding = Padding{4.f},
 						},
-						node
-					);
+						.children = ret2,
+					});
 				}
+
 				if (conditionals.empty()) return ret;
 
 				ret.emplace_back(Box{
 					.widget{
 						.height = Size::Shrink,
-						.padding = Padding{8.f},
+						.padding = Padding{4.f},
 					},
 					.color{1.f, 1.f, 1.f, 0.1f},
 					.borderRadius{0.f, 0.f, 7.f, 7.f},
