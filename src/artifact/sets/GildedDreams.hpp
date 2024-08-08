@@ -22,21 +22,17 @@ namespace Artifact::Sets {
 			};
 		},
 		.twoPcModsSetup = [](Artifact::Set::ModsSetup data) {
-			data.stats.character.sheet.em.artifactModifiers.emplace_back([](const Stats::Sheet &) {
-				return 80.f;
-			});
+			Stats::addModifier(data.stats.sheet.em, Stats::SV::Constant(80.f));
 		},
 		.fourPcModsSetup = [](Artifact::Set::ModsSetup data) {
-			data.stats.character.sheet.atk_.artifactModifiers.emplace_back([](const Stats::Sheet &stats) {
-				auto cond = std::get<Conditional::ValueList>(stats.artifact.conditionals.at("gildedSameElement"));
-				return 0.14f * cond.getValue().value_or(0.f);
+			Stats::addModifier(data.stats.sheet.atk_, [](const Stats::Sheet &stats) {
+				return 0.14f * Conditional::getFloat(stats.artifact.conditionals, "gildedSameElement");
 			});
-			data.stats.character.sheet.em.artifactModifiers.emplace_back([](const Stats::Sheet &stats) {
-				auto cond = std::get<Conditional::ValueList>(stats.artifact.conditionals.at("gildedOtherElement"));
-				return 50.f * cond.getValue().value_or(0.f);
+			Stats::addModifier(data.stats.sheet.em, [](const Stats::Sheet &stats) {
+				return 50.f * Conditional::getFloat(stats.artifact.conditionals, "gildedOtherElement");
 			});
 		},
-		.nodeSetup = [](Artifact::Set::NodeSetup data) -> Node::List {
+		.nodeSetup = []() -> Node::ArtifactList {
 			return {};
 		},
 	};

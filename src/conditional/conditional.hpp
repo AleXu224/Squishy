@@ -11,6 +11,16 @@
 namespace Conditional {
 	using Types = std::variant<Boolean, ValueList>;
 
+	using TypesMap = std::unordered_map<std::string_view, Types>;
+
+	inline bool getBool(const TypesMap &conditionals, std::string_view key) {
+		return std::get<Conditional::Boolean>(conditionals.at(key)).active;
+	}
+
+	inline float getFloat(const TypesMap &conditionals, std::string_view key, float defaultValue = 0.f) {
+		return std::get<Conditional::ValueList>(conditionals.at(key)).getValue().value_or(defaultValue);
+	}
+
 	struct CharacterList {
 		const std::vector<Types> normal{};
 		const std::vector<Types> charged{};
@@ -34,26 +44,26 @@ namespace Conditional {
 	using ArtifactList = std::vector<Types>;
 
 	struct CharacterMap {
-		std::unordered_map<std::string_view, Types> normal{};
-		std::unordered_map<std::string_view, Types> charged{};
-		std::unordered_map<std::string_view, Types> plunge{};
-		std::unordered_map<std::string_view, Types> skill{};
-		std::unordered_map<std::string_view, Types> burst{};
-		std::unordered_map<std::string_view, Types> passive1{};
-		std::unordered_map<std::string_view, Types> passive2{};
-		std::unordered_map<std::string_view, Types> constellation1{};
-		std::unordered_map<std::string_view, Types> constellation2{};
-		std::unordered_map<std::string_view, Types> constellation4{};
-		std::unordered_map<std::string_view, Types> constellation6{};
+		TypesMap normal{};
+		TypesMap charged{};
+		TypesMap plunge{};
+		TypesMap skill{};
+		TypesMap burst{};
+		TypesMap passive1{};
+		TypesMap passive2{};
+		TypesMap constellation1{};
+		TypesMap constellation2{};
+		TypesMap constellation4{};
+		TypesMap constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
 			return std::array{&CharacterMap::normal, &CharacterMap::charged, &CharacterMap::plunge, &CharacterMap::skill, &CharacterMap::burst, &CharacterMap::passive1, &CharacterMap::passive2, &CharacterMap::constellation1, &CharacterMap::constellation2, &CharacterMap::constellation4, &CharacterMap::constellation6};
 		}
 	};
 
-	using WeaponMap = std::unordered_map<std::string_view, Types>;
+	using WeaponMap = TypesMap;
 
-	using ArtifactMap = std::unordered_map<std::string_view, Types>;
+	using ArtifactMap = TypesMap;
 
 	inline void mapConditionals(CharacterMap &ret, const CharacterList &vals) {
 		for (auto [listMember, mappedMember]: std::views::zip(CharacterList::getMembers(), CharacterMap::getMembers())) {

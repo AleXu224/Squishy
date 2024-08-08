@@ -8,18 +8,20 @@
 #include <vector>
 
 
-
 // An underscore after the stat name means %
 // Ex: hp_ -> HP%
 enum class Stat {
 	hp,
 	hp_,
+	baseHp,
 	atk,
 	atk_,
+	baseAtk,
 	// Attack given by characters like yunjin
 	additionalAtk,
 	def,
 	def_,
+	baseDef,
 	// Energy recharge
 	er,
 	// Elemental Mastery
@@ -54,23 +56,10 @@ namespace Stats {
 
 	[[maybe_unused]] inline bool isPercentage(const Stat &stat) {
 		switch (stat) {
-			case Stat::hp:
-				return false;
 			case Stat::hp_:
-				return true;
-			case Stat::atk:
-			case Stat::additionalAtk:
-				return false;
 			case Stat::atk_:
-				return true;
-			case Stat::def:
-				return false;
 			case Stat::def_:
-				return true;
 			case Stat::er:
-				return true;
-			case Stat::em:
-				return false;
 			case Stat::cr:
 			case Stat::cd:
 			case Stat::hb:
@@ -84,6 +73,8 @@ namespace Stats {
 			case Stat::physicalDmg:
 			case Stat::allDmg:
 				return true;
+			default:
+				return false;
 		};
 	}
 
@@ -145,14 +136,20 @@ namespace Utils {
 				return "HP";
 			case Stat::hp_:
 				return "HP%";
+			case Stat::baseHp:
+				return "Base HP";
 			case Stat::atk:
 				return "ATK";
 			case Stat::atk_:
 				return "ATK%";
+			case Stat::baseAtk:
+				return "Base ATK";
 			case Stat::def:
 				return "DEF";
 			case Stat::def_:
 				return "DEF%";
+			case Stat::baseDef:
+				return "Base DEF";
 			case Stat::er:
 				return "Energy Recharge";
 			case Stat::em:

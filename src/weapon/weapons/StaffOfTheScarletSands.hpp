@@ -26,24 +26,24 @@ namespace Weapon::Datas {
 		.condsSetup = [](Weapon::Data::CondsSetup data) -> Conditional::WeaponList {
 			return {
 				Conditional::ValueList{
-					.key = "staffOfTheScarletSandsEHits",
+					.key = "eHits",
 					.prefix = "Elemental Skill hits",
 					.values{1, 2, 3},
 				}
 			};
 		},
 		.modsSetup = [](Weapon::Data::ModsSetup data) {
-			data.stats.character.sheet.atk.modifiers.emplace_back([&multiplier = data.multipliers.at(0)](const Stats::Sheet &stats) {
+			Stats::addModifier(data.stats.sheet.atk, [&multiplier = data.multipliers.at(0)](const Stats::Sheet &stats) {
 				return stats.character.sheet.em.getTotal(stats) * multiplier.at(stats.weapon.sheet.refinement);
 			});
 
-			data.stats.character.sheet.atk.modifiers.emplace_back([&multiplier = data.multipliers.at(1)](const Stats::Sheet &stats) {
-				auto &cond = std::get<Conditional::ValueList>(stats.weapon.conditionals.at("staffOfTheScarletSandsEHits"));
-				return stats.character.sheet.em.getTotal(stats) * (multiplier.at(stats.weapon.sheet.refinement) * cond.getValue().value_or(0));
+			Stats::addModifier(data.stats.sheet.atk, [&multiplier = data.multipliers.at(1)](const Stats::Sheet &stats) {
+				return stats.character.sheet.em.getTotal(stats) *
+					   (multiplier.at(stats.weapon.sheet.refinement) * Conditional::getFloat(stats.weapon.conditionals, "eHits"));
 			});
 		},
-		.nodeSetup = [](Weapon::Data::NodeSetup data) -> Node::List {
-			return Node::List{};
+		.nodeSetup = [](Weapon::Data::NodeSetup data) -> Node::WeaponList {
+			return Node::WeaponList{};
 		},
 	};
 }// namespace Weapon::Datas

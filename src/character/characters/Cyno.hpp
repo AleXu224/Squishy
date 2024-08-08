@@ -70,11 +70,6 @@ namespace Character::Datas {
 						.key = "burstActive",
 						.name = "Burst Active",
 					},
-					Conditional::ValueList{
-						.key = "susCounter",
-						.prefix = "Susge counter",
-						.values{1, 2, 3, 4},
-					}
 				},
 				.passive1{
 					Conditional::Boolean{
@@ -85,24 +80,23 @@ namespace Character::Datas {
 			};
 		},
 		.modsSetup = [](Character::Data::ModsSetup data) {
-			data.stats.character.sheet.em.modifiers.emplace_back([](const Stats::Sheet &stats) {
-				auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.burst.at("burstActive")).active;
-				return cond ? 100.f : 0.f;
+			Stats::addModifier(data.stats.sheet.em, [](const Stats::Sheet &stats) {
+				return Conditional::getBool(stats.character.conditionals.burst, "burstActive") ? 100.f : 0.f;
 			});
 		},
-		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::List {
-			auto a4BurstBonus = Stats::Skill{
+		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::CharacterList {
+			auto a4BurstBonus = Stats::SSV{
 				.additiveDMG{
 					.modifiers{
 						[](const Stats::Sheet &stats) {
-							auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.passive1.at("endseerStance")).active;
-							return cond ? 0.35f : 0.f;
+							if (stats.character.sheet.ascension < 1) return 0.f;
+							return stats.character.sheet.em.getTotal(stats) * 1.5f;
 						},
 					},
 				},
 			};
 
-			return Node::List{
+			return Node::CharacterList{
 				.normal{
 					Node::Atk{
 						.name{"1-Hit DMG"},
@@ -170,8 +164,7 @@ namespace Character::Datas {
 							.DMG{
 								.modifiers{
 									[](const Stats::Sheet &stats) {
-										auto cond = std::get<Conditional::Boolean>(stats.character.conditionals.passive1.at("endseerStance")).active;
-										return cond ? 0.35f : 0.f;
+										return Conditional::getBool(stats.character.conditionals.passive1, "endseerStance") ? 0.35f : 0.f;
 									},
 								},
 							},

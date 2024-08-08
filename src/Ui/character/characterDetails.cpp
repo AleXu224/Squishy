@@ -7,6 +7,8 @@
 #include "Ui/utils/masonry.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/trueFalse.hpp"
+#include "artifact/set.hpp"
+#include "character/data.hpp"
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
@@ -157,10 +159,32 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	}
 	conditionals.emplace_back(character.stats.weapon.conditionals);
 	conditionals.emplace_back(character.stats.artifact.conditionals);
-	const std::vector<std::string_view> names = {"Normal attack", "Charged attack", "Plunge attack", "Elemental skill", "Elemental burst", "Passive 1", "Passive 2", "Constellation 1", "Constellation 2", "Constellation 4", "Constellation 6", Weapon::list.at(character.weaponKey).name, "Artifact"};
+	std::vector<std::reference_wrapper<std::vector<Node::Types>>> nodes{};
+	for (auto &nodePtr: Node::CharacterList::getMembers()) {
+		nodes.emplace_back(std::invoke(nodePtr, character.stats.character.data.nodes));
+	}
+	nodes.emplace_back(character.stats.weapon.data.nodes);
+	if (character.stats.artifact.set.has_value()) {
+		nodes.emplace_back(character.stats.artifact.set->get().nodes);
+	}
+	const std::vector<std::string_view> names = {
+		"Normal attack",
+		"Charged attack",
+		"Plunge attack",
+		"Elemental skill",
+		"Elemental burst",
+		"Passive 1",
+		"Passive 2",
+		"Constellation 1",
+		"Constellation 2",
+		"Constellation 4",
+		"Constellation 6",
+		character.stats.weapon.data.name,
+		character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "",
+	};
 
-	for (const auto &[nodePtr, conditionalWrapper, name]: std::views::zip(Node::List::getMembers(), conditionals, names)) {
-		auto &nodes = std::invoke(nodePtr, character.nodes);
+	for (const auto &[nodeWrapper, conditionalWrapper, name]: std::views::zip(nodes, conditionals, names)) {
+		auto &nodes = nodeWrapper.get();
 		auto &conditionals = conditionalWrapper.get();
 		if (nodes.empty() && conditionals.empty()) continue;
 

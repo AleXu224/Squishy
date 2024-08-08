@@ -21,7 +21,7 @@ namespace Node {
 		std::string_view name = "## NODE_NAME ##";
 		std::optional<Misc::Element> attackElement = std::nullopt;
 		Misc::AttackSource atkSource;
-		Stats::Skill stats{};
+		Stats::SSV stats{};
 		std::function<float(Stats::Sheet &stats)> formula;
 
 		[[nodiscard]] Misc::Element getElement(const Stats::Sheet &stats) const {
@@ -36,7 +36,7 @@ namespace Node {
 			}
 		}
 
-		float getTotal(const Stats::Sheet &stats, const Stats::Skill &elementStats, const Stats::Skill &talentStats, Stats::CharacterValue Stats::Skill::*stat) const {
+		float getTotal(const Stats::Sheet &stats, const Stats::SSV &elementStats, const Stats::SSV &talentStats, Stats::SV Stats::SSV:: *stat) const {
 			return std::invoke(stat, stats.character.sheet.all).getTotal(stats) +
 				   std::invoke(stat, elementStats).getTotal(stats) +
 				   std::invoke(stat, talentStats).getTotal(stats) +
@@ -48,11 +48,11 @@ namespace Node {
 			const auto elementStats = stats.character.sheet.fromElement(element);
 			const auto talentStats = stats.character.sheet.fromAttackSource(atkSource);
 
-			const auto totalDMG = getTotal(stats, elementStats, talentStats, &Stats::Skill::DMG);
-			const auto totalAdditiveDMG = getTotal(stats, elementStats, talentStats, &Stats::Skill::additiveDMG);
-			const auto totalMultiplicativeDMG = getTotal(stats, elementStats, talentStats, &Stats::Skill::multiplicativeDMG);
-			const auto totalCritRate = getTotal(stats, elementStats, talentStats, &Stats::Skill::critRate);
-			const auto totalCritDMG = getTotal(stats, elementStats, talentStats, &Stats::Skill::critDMG);
+			const auto totalDMG = getTotal(stats, elementStats, talentStats, &Stats::SSV::DMG);
+			const auto totalAdditiveDMG = getTotal(stats, elementStats, talentStats, &Stats::SSV::additiveDMG);
+			const auto totalMultiplicativeDMG = getTotal(stats, elementStats, talentStats, &Stats::SSV::multiplicativeDMG);
+			const auto totalCritRate = getTotal(stats, elementStats, talentStats, &Stats::SSV::critRate);
+			const auto totalCritDMG = getTotal(stats, elementStats, talentStats, &Stats::SSV::critDMG);
 
 			return (
 				((1.0f + totalMultiplicativeDMG) * formula(stats) + totalAdditiveDMG) *

@@ -24,20 +24,18 @@ namespace Character {
 
 	struct Data {
 		struct CondsSetup {
-			Stats::Sheet &stats;
+			Stats::Character &stats;
 			const Multipliers &multipliers;
 		};
 
 		struct ModsSetup {
-			Stats::Sheet &stats;
+			Stats::Character &stats;
 			const Multipliers &multipliers;
 			const Conditional::CharacterMap &conditionals;
 		};
 
 		struct NodeSetup {
-			Stats::Sheet &stats;
 			const Multipliers &multipliers;
-			const Conditional::CharacterMap &conditionals;
 		};
 
 		const Key key;
@@ -46,9 +44,11 @@ namespace Character {
 		const Multipliers multipliers;
 		const std::function<Conditional::CharacterList(Character::Data::CondsSetup data)> condsSetup;
 		const std::function<void(Character::Data::ModsSetup data)> modsSetup;
-		const std::function<Node::List(Character::Data::NodeSetup data)> nodeSetup;
+		const std::function<Node::CharacterList(Character::Data::NodeSetup data)> nodeSetup;
 
-		void getConds(Conditional::CharacterMap &conditionals, Stats::Sheet &stats) const {
+		mutable Node::CharacterList nodes{};
+
+		void getConds(Conditional::CharacterMap &conditionals, Stats::Character &stats) const {
 			Conditional::mapConditionals(
 				conditionals,
 				condsSetup(CondsSetup{
@@ -57,22 +57,17 @@ namespace Character {
 				})
 			);
 		}
-		void getMods(Conditional::CharacterMap &conditionals, Stats::Sheet &stats) const {
+		void getMods(Conditional::CharacterMap &conditionals, Stats::Character &stats) const {
 			modsSetup(ModsSetup{
 				.stats = stats,
 				.multipliers = multipliers,
 				.conditionals = conditionals,
 			});
 		}
-		void getNodes(Conditional::CharacterMap &conditionals, Node::List &nodes, Stats::Sheet &stats) const {
-			Node::List::combineNodes(
-				nodes,
-				nodeSetup(NodeSetup{
-					.stats = stats,
-					.multipliers = multipliers,
-					.conditionals = conditionals,
-				})
-			);
+		[[nodiscard]] Node::CharacterList getNodes() const {
+			return nodeSetup(NodeSetup{
+				.multipliers = multipliers,
+			});
 		}
 	};
 }// namespace Character

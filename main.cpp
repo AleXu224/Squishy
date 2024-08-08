@@ -3,6 +3,7 @@
 #include "artifact/sets/GildedDreams.hpp"
 #include "character/characters.hpp"
 #include "character/characters/Cyno.hpp"
+#include "src/stats/helpers.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
 
@@ -17,6 +18,9 @@
 //#include "benchmark/benchmark.h"
 //benchmark::State& state
 int main() {
+	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
+	static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
+
 	Weapon::initWeapons();
 	Character::initCharacters();
 	Artifact::initArtifacts();
@@ -31,11 +35,12 @@ int main() {
 	character.stats.character.sheet.talents.burst = 9;
 	character.stats.character.sheet.talents.skill = 9;
 	character.stats.character.sheet.constellation = 1;
-	character.arts = {1, 2, 3, 4, 5};
+	character.stats.artifact.equipped = {1, 2, 3, 4, 5};
 
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
+			.key = Store::lastId,
 			.set = Artifact::Sets::gildedDreams.key,
 			.slot = Artifact::Slot::flower,
 			.mainStat = Stat::hp,
@@ -53,6 +58,7 @@ int main() {
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
+			.key = Store::lastId,
 			.set = Artifact::Sets::gildedDreams.key,
 			.slot = Artifact::Slot::plume,
 			.mainStat = Stat::atk,
@@ -70,6 +76,7 @@ int main() {
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
+			.key = Store::lastId,
 			.set = Artifact::Sets::gildedDreams.key,
 			.slot = Artifact::Slot::sands,
 			.mainStat = Stat::em,
@@ -87,6 +94,7 @@ int main() {
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
+			.key = Store::lastId,
 			.set = Artifact::Sets::gildedDreams.key,
 			.slot = Artifact::Slot::goblet,
 			.mainStat = Stat::electroDmg,
@@ -104,6 +112,7 @@ int main() {
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
+			.key = Store::lastId,
 			.set = Artifact::Sets::gildedDreams.key,
 			.slot = Artifact::Slot::circlet,
 			.mainStat = Stat::cd,
@@ -119,9 +128,7 @@ int main() {
 		},
 	});
 
-	// character.collectStats();
 	character.getArtifactStats();
-	character.getArtifactModifiers();
 
 	// auto attacknode = Character::Datas::cyno.nodeSetup().normal.at(3);
 	// if (attacknode.modifier) attacknode.modifier(Character::Datas::cyno, character.stats);

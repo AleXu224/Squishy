@@ -90,14 +90,14 @@ UI::WeaponCard::operator squi::Child() const {
 								.isTransparent = false,
 								.stat{
 									.stat = Stat::atk,
-									.value = weapon.stats.sheet.atk.getTotal(weapon.stats.sheet),
+									.value = weapon.stats.sheet.baseAtkInt.getTotal(weapon.stats),
 								},
 							});
 							w.addChild(StatDisplay{
 								.isTransparent = true,
 								.stat{
 									.stat = weapon.data.baseStats.substat.stat,
-									.value = weapon.stats.sheet.subStat.getTotal(weapon.stats.sheet),
+									.value = weapon.stats.sheet.subStat.getTotal(weapon.stats),
 								},
 							});
 						},

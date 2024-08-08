@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Rarity.hpp"
+#include "artifact/key.hpp"
 #include "character/key.hpp"
 #include "stats/stat.hpp"
 #include "utils/stringify.hpp"// IWYU pragma: keep
@@ -21,6 +22,7 @@ namespace Artifact {
 	};
 
 	struct Instance {
+		Key key;
 		SetKey set;
 		Slot slot;
 		Stat mainStat;

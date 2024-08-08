@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Talents.hpp"
-#include "misc/attackSource.hpp"
-#include "stat.hpp"
-#include "value.hpp"// IWYU pragma: keep
+#include "helpers.hpp"
+#include "stats/value.hpp"// IWYU pragma: keep
 
 
 namespace Stats {
-	struct CharacterSheet {
+	struct ArtifactSheet {
 		SV hp{};
 		SV hp_{};
 		SV baseHp{};
@@ -18,10 +16,10 @@ namespace Stats {
 		SV def{};
 		SV def_{};
 		SV baseDef{};
-		SV er{.value = 1.f};
+		SV er{};
 		SV em{};
-		SV cr{.value = 0.05f};
-		SV cd{.value = 0.5f};
+		SV cr{};
+		SV cd{};
 		SV hb{};
 
 		SSV pyro{};
@@ -40,13 +38,6 @@ namespace Stats {
 		SSV skill{};
 		SSV burst{};
 
-		Talents talents{};
-		unsigned short constellation{};
-		unsigned short level{1};
-		unsigned short ascension{0};
-
-		void init(Stats::Sheet &sheet);
-
 		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);
 		}
@@ -58,8 +49,5 @@ namespace Stats {
 		[[nodiscard]] auto fromAttackSource(this auto &&self, const Misc::AttackSource &attackSource) {
 			return Stats::fromAttackSource(self, attackSource);
 		}
-
-	private:
-		void linkWeaponAndArtifacts(Stats::Sheet &);
 	};
 }// namespace Stats

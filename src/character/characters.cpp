@@ -7,4 +7,8 @@ extern void Character::initCharacters() {
 	list = {
 		{Character::Datas::cyno.key, Character::Datas::cyno}
 	};
+
+	for (auto &character: list) {
+		character.second.nodes = character.second.getNodes();
+	}
 }
