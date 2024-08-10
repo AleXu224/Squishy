@@ -32,26 +32,38 @@ void Character::Instance::getArtifactStats() {
 		if (artId == 0) continue;
 		auto &artifact = Store::artifacts.at(artId);
 		occurences[artifact.set]++;
-		stats.artifact.sheet.fromStat(artifact.mainStat).modifiers.emplace_back([mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) {
-			return Stats::Values::mainStat.at(mainStat).at(level);
-		});
+		Stats::addModifier(
+			stats.artifact.sheet.fromStat(artifact.mainStat),
+			Formula::Custom(
+				"Artifact Mainstat", [mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) -> float {
+					return Stats::Values::mainStat.at(mainStat).at(level);
+				},
+				Stats::isPercentage(artifact.mainStat)
+			)
+		);
 		for (auto &subStat: artifact.subStats) {
-			stats.artifact.sheet.fromStat(subStat.stat).modifiers.emplace_back([subStat = subStat](const Stats::Sheet &) {
-				return subStat.value;
-			});
+			Stats::addModifier(
+				stats.artifact.sheet.fromStat(subStat.stat),
+				Formula::Custom(
+					"Artifact Substat", [subStat = subStat](const Stats::Sheet &) {
+						return subStat.value;
+					},
+					Stats::isPercentage(subStat.stat)
+				)
+			);
 		}
 	}
 	for (auto &occurence: occurences) {
 		if (occurence.second >= 2) {
 			// Cache the ArtifactData to avoid doing two accesses
 			const Artifact::Set &artifactData = Artifact::sets.at(occurence.first);
-			artifactData.getModsTwo(stats.artifact.conditionals, stats.artifact);
+			artifactData.getModsTwo(stats.artifact);
 			// The second check should not be be outside since a four set can only happen
 			// only if there is a two set
 			if (occurence.second >= 4) {
 				stats.artifact.set = Artifact::sets.at(occurence.first);
 				artifactData.getConds(stats.artifact.conditionals, stats.artifact);
-				artifactData.getModsFour(stats.artifact.conditionals, stats.artifact);
+				artifactData.getModsFour(stats.artifact);
 			}
 		}
 	}

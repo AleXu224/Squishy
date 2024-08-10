@@ -80,18 +80,23 @@ namespace Character::Datas {
 			};
 		},
 		.modsSetup = [](Character::Data::ModsSetup data) {
-			Stats::addModifier(data.stats.sheet.em, [](const Stats::Sheet &stats) {
-				return Conditional::getBool(stats.character.conditionals.burst, "burstActive") ? 100.f : 0.f;
-			});
+			Stats::addModifier(
+				data.stats.sheet.em,
+				Formula::Conditional(
+					Conditional::Location::burst,
+					"burstActive",
+					Formula::ConstantFlat(100.f)
+				)
+			);
 		},
 		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::CharacterList {
 			auto a4BurstBonus = Stats::SSV{
 				.additiveDMG{
 					.modifiers{
-						[](const Stats::Sheet &stats) {
-							if (stats.character.sheet.ascension < 1) return 0.f;
-							return stats.character.sheet.em.getTotal(stats) * 1.5f;
-						},
+						Formula::Requires(
+							Formula::Requirement::passive2,
+							Formula::Stat(Stat::em) * 1.5f
+						),
 					},
 				},
 			};
@@ -163,9 +168,14 @@ namespace Character::Datas {
 						.stats{
 							.DMG{
 								.modifiers{
-									[](const Stats::Sheet &stats) {
-										return Conditional::getBool(stats.character.conditionals.passive1, "endseerStance") ? 0.35f : 0.f;
-									},
+									Formula::Requires(
+										Formula::Requirement::passive1,
+										Formula::Conditional(
+											Conditional::Location::passive1,
+											"endseerStance",
+											Formula::Constant(0.35f)
+										)
+									),
 								},
 							},
 						},
@@ -217,10 +227,7 @@ namespace Character::Datas {
 						.stats{
 							.additiveDMG{
 								.modifiers{
-									[](const Stats::Sheet &stats) {
-										if (stats.character.sheet.ascension < 1) return 0.f;
-										return stats.character.sheet.em.getTotal(stats) * 2.5f;
-									},
+									Formula::Requires(Formula::Requirement::passive2, Formula::Stat(Stat::em) * 2.5f),
 								},
 							},
 						},

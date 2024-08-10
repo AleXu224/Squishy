@@ -2,7 +2,7 @@
 
 #include "artifact/sets/GildedDreams.hpp"
 
-extern void Artifact::initArtifacts() {
+void Artifact::initArtifacts() {
 	sets = {
 		{Artifact::Sets::gildedDreams.key, Artifact::Sets::gildedDreams},
 	};

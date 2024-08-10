@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stats/helpers.hpp"
-#include "value.hpp"
+#include "value.hpp"// IWYU pragma: keep
 #include "weaponBase.hpp"
 
 
@@ -12,8 +12,8 @@ namespace Stats {
 		uint8_t ascension{0};
 		unsigned short refinement{0};
 
-		Stats::Value<Stats::Weapon> baseAtkInt{};
-		Stats::Value<Stats::Weapon> subStat{};
+		[[nodiscard]] float getBaseAtk();
+		[[nodiscard]] float getSubstat();
 
 		SV hp{};
 		SV hp_{};

@@ -1,12 +1,15 @@
 #include "characterStatInspector.hpp"
 #include "Ui/utils/card.hpp"
+#include "Ui/utils/masonry.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "align.hpp"
 #include "box.hpp"
+#include "column.hpp"
 #include "gestureDetector.hpp"
 #include "scrollableFrame.hpp"
 #include "stack.hpp"
 #include "store.hpp"
+#include "text.hpp"
 
 using namespace squi;
 
@@ -24,58 +27,99 @@ UI::CharacterStatInspector::operator squi::Child() const {
 				},
 			},
 			Align{
-				.child = Card{
+				.child = Box{
 					.widget{
 						.height = Size::Shrink,
 						.sizeConstraints{
-							.maxWidth = 256.f,
+							.maxWidth = 1000.f,
 						},
 					},
+					.color{0x000000FF},
 					.child = ScrollableFrame{
-						.children = [&character = Store::characters.at(characterKey)]() {
-							Children ret{};
+						.children{Masonry{
+							.widget{
+								.height = Size::Shrink,
+							},
+							.spacing = 4.f,
+							.columnCount = Masonry::MinSize{256.f},
+							.children = [&character = Store::characters.at(characterKey)]() {
+								Children ret{};
 
-							auto statsCharacter = {&Stats::CharacterSheet::hp, &Stats::CharacterSheet::hp_, &Stats::CharacterSheet::atk, &Stats::CharacterSheet::atk_, &Stats::CharacterSheet::additionalAtk, &Stats::CharacterSheet::def, &Stats::CharacterSheet::def_, &Stats::CharacterSheet::er, &Stats::CharacterSheet::em, &Stats::CharacterSheet::cr, &Stats::CharacterSheet::cd, &Stats::CharacterSheet::hb};
-							auto statsArtifact = {&Stats::ArtifactSheet::hp, &Stats::ArtifactSheet::hp_, &Stats::ArtifactSheet::atk, &Stats::ArtifactSheet::atk_, &Stats::ArtifactSheet::additionalAtk, &Stats::ArtifactSheet::def, &Stats::ArtifactSheet::def_, &Stats::ArtifactSheet::er, &Stats::ArtifactSheet::em, &Stats::ArtifactSheet::cr, &Stats::ArtifactSheet::cd, &Stats::ArtifactSheet::hb};
-							auto statsWeapon = {&Stats::WeaponSheet::hp, &Stats::WeaponSheet::hp_, &Stats::WeaponSheet::atk, &Stats::WeaponSheet::atk_, &Stats::WeaponSheet::additionalAtk, &Stats::WeaponSheet::def, &Stats::WeaponSheet::def_, &Stats::WeaponSheet::er, &Stats::WeaponSheet::em, &Stats::WeaponSheet::cr, &Stats::WeaponSheet::cd, &Stats::WeaponSheet::hb};
-							auto stats2 = {Stat::hp, Stat::hp_, Stat::atk, Stat::atk_, Stat::additionalAtk, Stat::def, Stat::def_, Stat::er, Stat::em, Stat::cr, Stat::cd, Stat::hb};
-
-							for (auto [statPtrCharacter, statPtrArtifact, statPtrWeapon, statEn]: std::views::zip(statsCharacter, statsArtifact, statsWeapon, stats2)) {
-								auto statCharacter = std::invoke(statPtrCharacter, character.stats.character.sheet);
-								auto statArtifact = std::invoke(statPtrArtifact, character.stats.artifact.sheet);
-								auto statWeapon = std::invoke(statPtrWeapon, character.stats.weapon.sheet);
-
-								for (auto &modifier: statCharacter.modifiers) {
-									ret.emplace_back(StatDisplay{
-										.isTransparent = true,
-										.stat{
-											.stat = statEn,
-											.value = modifier(character.stats),
-										},
-									});
+								auto stats = {
+									Stat::hp,
+									Stat::hp_,
+									Stat::baseHp,
+									Stat::atk,
+									Stat::atk_,
+									Stat::baseAtk,
+									Stat::additionalAtk,
+									Stat::def,
+									Stat::def_,
+									Stat::baseDef,
+									Stat::er,
+									Stat::em,
+									Stat::cr,
+									Stat::cd,
+									Stat::hb,
+									Stat::pyroDmg,
+									Stat::hydroDmg,
+									Stat::cryoDmg,
+									Stat::electroDmg,
+									Stat::dendroDmg,
+									Stat::anemoDmg,
+									Stat::geoDmg,
+									Stat::physicalDmg,
+									Stat::allDmg,
 								};
-								for (auto &modifier: statWeapon.modifiers) {
-									ret.emplace_back(StatDisplay{
-										.isTransparent = false,
-										.stat{
-											.stat = statEn,
-											.value = modifier(character.stats),
-										},
-									});
-								};
-								for (auto &modifier: statArtifact.modifiers) {
-									ret.emplace_back(StatDisplay{
-										.isTransparent = false,
-										.stat{
-											.stat = statEn,
-											.value = modifier(character.stats),
-										},
-									});
-								};
-							}
 
-							return ret;
-						}(),
+								for (auto stat: stats) {
+									auto statCharacter = character.stats.character.sheet.fromStat(stat);
+									auto statArtifact = character.stats.artifact.sheet.fromStat(stat);
+									auto statWeapon = character.stats.weapon.sheet.fromStat(stat);
+									Children ret2{};
+
+									if (!statCharacter.modifiers.empty()) ret2.emplace_back(Text{.text = "CharacterStats", .fontSize = 16.f});
+									for (auto &modifier: statCharacter.modifiers) {
+										ret2.emplace_back(StatDisplay{
+											.isTransparent = true,
+											.stat{
+												.stat = stat,
+												.value = modifier.eval(character.stats),
+											},
+										});
+									};
+									if (!statWeapon.modifiers.empty()) ret2.emplace_back(Text{.text = "WeaponStats", .fontSize = 16.f});
+									for (auto &modifier: statWeapon.modifiers) {
+										ret2.emplace_back(StatDisplay{
+											.isTransparent = true,
+											.stat{
+												.stat = stat,
+												.value = modifier.eval(character.stats),
+											},
+										});
+									};
+									if (!statArtifact.modifiers.empty()) ret2.emplace_back(Text{.text = "ArtifactStats", .fontSize = 16.f});
+									for (auto &modifier: statArtifact.modifiers) {
+										ret2.emplace_back(StatDisplay{
+											.isTransparent = true,
+											.stat{
+												.stat = stat,
+												.value = modifier.eval(character.stats),
+											},
+										});
+									};
+
+									if (!ret2.empty()) {
+										ret.emplace_back(Card{
+											.widget{.height = Size::Shrink, .padding = 4.f},
+											.child = Column{.spacing = 4.f, .children = ret2},
+										});
+									}
+								}
+
+								return ret;
+							}(),
+						}},
 					},
 				},
 			},

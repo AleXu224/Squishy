@@ -2,6 +2,7 @@
 
 #include "artifact/instance.hpp"
 #include "conditional/conditional.hpp"
+#include "formula/formula.hpp"// IWYU pragma: export
 #include "functional"
 #include "node/node.hpp"
 
@@ -18,16 +19,15 @@ namespace Artifact {
 
 		struct ModsSetup {
 			Stats::Artifact &stats;
-			const Conditional::ArtifactMap &conditionals;
 		};
 
 		SetKey key{};
 		std::string_view name;
 
-		const std::function<Conditional::ArtifactList(Artifact::Set::CondsSetup data)> condsSetup;
-		const std::function<void(Artifact::Set::ModsSetup data)> twoPcModsSetup;
-		const std::function<void(Artifact::Set::ModsSetup data)> fourPcModsSetup;
-		const std::function<Node::ArtifactList()> nodeSetup;
+		std::function<Conditional::ArtifactList(Artifact::Set::CondsSetup data)> condsSetup;
+		std::function<void(Artifact::Set::ModsSetup data)> twoPcModsSetup;
+		std::function<void(Artifact::Set::ModsSetup data)> fourPcModsSetup;
+		std::function<Node::ArtifactList()> nodeSetup;
 
 		mutable Node::ArtifactList nodes{};
 
@@ -39,16 +39,14 @@ namespace Artifact {
 				})
 			);
 		}
-		void getModsTwo(Conditional::ArtifactMap &conditionals, Stats::Artifact &stats) const {
+		void getModsTwo(Stats::Artifact &stats) const {
 			twoPcModsSetup(ModsSetup{
 				.stats = stats,
-				.conditionals = conditionals,
 			});
 		}
-		void getModsFour(Conditional::ArtifactMap &conditionals, Stats::Artifact &stats) const {
+		void getModsFour(Stats::Artifact &stats) const {
 			fourPcModsSetup(ModsSetup{
 				.stats = stats,
-				.conditionals = conditionals,
 			});
 		}
 		[[nodiscard]] Node::ArtifactList getNodes() const {

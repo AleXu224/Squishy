@@ -33,14 +33,9 @@ namespace Weapon::Datas {
 			};
 		},
 		.modsSetup = [](Weapon::Data::ModsSetup data) {
-			Stats::addModifier(data.stats.sheet.atk, [&multiplier = data.multipliers.at(0)](const Stats::Sheet &stats) {
-				return stats.character.sheet.em.getTotal(stats) * multiplier.at(stats.weapon.sheet.refinement);
-			});
+			Stats::addModifier(data.stats.sheet.atk, Formula::RefinementMultiplier(0) * Formula::Stat(Stat::em));
 
-			Stats::addModifier(data.stats.sheet.atk, [&multiplier = data.multipliers.at(1)](const Stats::Sheet &stats) {
-				return stats.character.sheet.em.getTotal(stats) *
-					   (multiplier.at(stats.weapon.sheet.refinement) * Conditional::getFloat(stats.weapon.conditionals, "eHits"));
-			});
+			Stats::addModifier(data.stats.sheet.atk, Formula::RefinementMultiplier(1) * Formula::Stat(Stat::em) * Formula::ConditionalValue(Conditional::Location::weapon, "eHits"));
 		},
 		.nodeSetup = [](Weapon::Data::NodeSetup data) -> Node::WeaponList {
 			return Node::WeaponList{};

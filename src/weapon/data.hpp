@@ -6,6 +6,7 @@
 #include "stats/weaponBase.hpp"
 #include "weapon/key.hpp"
 
+
 namespace Weapon {
 	using Multipliers = std::vector<std::array<float, 5>>;
 	struct Data {
@@ -57,3 +58,5 @@ namespace Weapon {
 		}
 	};
 }// namespace Weapon
+
+#include "formula/formula.hpp"// IWYU pragma: export

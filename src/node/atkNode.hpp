@@ -36,12 +36,6 @@ namespace Node {
 			}
 		}
 
-		float getTotal(const Stats::Sheet &stats, const Stats::SSV &elementStats, const Stats::SSV &talentStats, Stats::SV Stats::SSV:: *stat) const {
-			return std::invoke(stat, stats.character.sheet.all).getTotal(stats) +
-				   std::invoke(stat, elementStats).getTotal(stats) +
-				   std::invoke(stat, talentStats).getTotal(stats) +
-				   std::invoke(stat, this->stats).getTotal(stats);
-		}
 
 		float calculate(Stats::Sheet &stats) const {
 			const auto element = getElement(stats);
@@ -61,6 +55,14 @@ namespace Node {
 				0.5f *       // Enemy def
 				(1.0f - 0.1f)// Enemy dmg res
 			);
+		}
+
+	private:
+		float getTotal(const Stats::Sheet &stats, const Stats::SSV &elementStats, const Stats::SSV &talentStats, Stats::SV Stats::SSV::*stat) const {
+			return std::invoke(stat, stats.character.sheet.all).getTotal(stats) +
+				   std::invoke(stat, elementStats).getTotal(stats) +
+				   std::invoke(stat, talentStats).getTotal(stats) +
+				   std::invoke(stat, this->stats).getTotal(stats);
 		}
 	};
 }// namespace Node

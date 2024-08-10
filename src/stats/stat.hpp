@@ -1,10 +1,10 @@
 #pragma once
 
 #include "array"
+#include "fmt/core.h"
 #include "misc/element.hpp"
 #include "unordered_map"
 #include "utils/stringify.hpp"// IWYU pragma: keep
-#include <format>
 #include <vector>
 
 
@@ -44,7 +44,7 @@ enum class Stat {
 };
 
 namespace Stats {
-	const inline std::vector<Stat> characterDisplayStats{
+	const inline std::vector characterDisplayStats{
 		Stat::hp,
 		Stat::atk,
 		Stat::def,
@@ -54,7 +54,7 @@ namespace Stats {
 		Stat::cd
 	};
 
-	[[maybe_unused]] inline bool isPercentage(const Stat &stat) {
+	[[maybe_unused]] constexpr bool isPercentage(const Stat &stat) {
 		switch (stat) {
 			case Stat::hp_:
 			case Stat::atk_:
@@ -78,7 +78,7 @@ namespace Stats {
 		};
 	}
 
-	[[maybe_unused]] inline Stat fromElement(const Misc::Element &element) {
+	[[maybe_unused]] constexpr Stat fromElement(const Misc::Element &element) {
 		switch (element) {
 			case Misc::Element::pyro:
 				return Stat::pyroDmg;
@@ -130,7 +130,7 @@ struct StatValue {
 
 namespace Utils {
 	template<>
-	inline std::string Stringify<>(const Stat &stat) {
+	constexpr std::string Stringify<>(const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
 				return "HP";
@@ -184,10 +184,10 @@ namespace Utils {
 	}
 
 	template<>
-	inline std::string Stringify<>(const StatValue &stat) {
+	constexpr std::string Stringify<>(const StatValue &stat) {
 		if (Stats::isPercentage(stat.stat)) {
-			return std::format("{:.1f}%", stat.value * 100.f);
+			return fmt::format("{:.1f}%", stat.value * 100.f);
 		}
-		return std::format("{:.0f}", stat.value);
+		return fmt::format("{:.0f}", stat.value);
 	}
 }// namespace Utils

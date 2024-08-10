@@ -25,8 +25,7 @@ target_include_directories(squishy PRIVATE src)
 add_dependencies(squishy Assets)
 
 if (MSVC)
-    # add_compile_options(/W4 /WX)
-    # add_compile_options(/fsanitize=address)
+    # target_compile_options(squishy PRIVATE /fsanitize=address)
     target_compile_options(squishy PRIVATE /std:c++latest)
     target_compile_definitions(squishy PRIVATE _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()
@@ -35,6 +34,8 @@ endif()
 
 find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(squishy PRIVATE benchmark::benchmark benchmark::benchmark_main)
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(squishy PRIVATE fmt::fmt)
 
 add_subdirectory(glt)
 include_directories(glt/include)

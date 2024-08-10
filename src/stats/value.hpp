@@ -1,6 +1,6 @@
 #pragma once
 
-#include "functional"
+#include "formula/node.hpp"
 #include "print"
 #include "stats/helpers.hpp"
 #include "stats/stat.hpp"
@@ -15,8 +15,8 @@ namespace Stats {
 #endif
 
 		V value = 0;
-		std::vector<std::function<V(const T &statSheet)>> modifiers = {};
-		std::vector<std::function<V(const T &statSheet)>> totalModifiers = {};
+		std::vector<Formula::Node> modifiers = {};
+		std::vector<Formula::Node> totalModifiers = {};
 
 		V get(const T &statSheet) const {
 #ifndef NDEBUG
@@ -29,7 +29,7 @@ namespace Stats {
 #endif
 
 			V ret = value;
-			for (const auto &modifier: modifiers) ret += modifier(statSheet);
+			for (const auto &modifier: modifiers) ret += modifier.eval(statSheet);
 
 #ifndef NDEBUG
 			isRunning = false;
@@ -40,8 +40,8 @@ namespace Stats {
 
 		V getTotal(const T &statSheet) const {
 			V ret = value;
-			for (const auto &modifier: modifiers) ret += modifier(statSheet);
-			for (const auto &modifier: totalModifiers) ret += modifier(statSheet);
+			for (const auto &modifier: modifiers) ret += modifier.eval(statSheet);
+			for (const auto &modifier: totalModifiers) ret += modifier.eval(statSheet);
 			return ret;
 		}
 
@@ -75,7 +75,7 @@ namespace Stats {
 		Value<T, V> critRate{};
 		Value<T, V> critDMG{};
 
-		static inline auto getMembers() {
+		static consteval auto getMembers() {
 			return std::array{
 				&SkillValue::DMG,
 				&SkillValue::additiveDMG,
@@ -84,9 +84,18 @@ namespace Stats {
 				&SkillValue::critDMG,
 			};
 		}
+
+		[[nodiscard]] static constexpr bool isPercetange(SV SSV::*member) {
+			if (member == &SSV::DMG) return true;
+			if (member == &SSV::additiveDMG) return false;
+			if (member == &SSV::multiplicativeDMG) return true;
+			if (member == &SSV::critRate) return true;
+			if (member == &SSV::critDMG) return true;
+			return false;
+		}
 	};
 
-	inline void addModifier(SV &stat, const std::function<float(const Stats::Sheet &)> modifier) {
+	inline void addModifier(SV &stat, const Formula::Node &modifier) {
 		stat.modifiers.emplace_back(modifier);
 	}
 }// namespace Stats

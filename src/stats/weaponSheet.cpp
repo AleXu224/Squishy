@@ -1,21 +1,32 @@
 #include "weaponSheet.hpp"
 
+#include "formula/formula.hpp"
 #include "stats/sheet.hpp"
 #include "stats/weapon.hpp"
 
 
-Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
-	baseAtkInt.modifiers.emplace_back([&base](const Stats::Weapon &stats) {
-		return base.getAtkAt(stats.sheet.level, stats.sheet.ascension);
-	});
-	subStat.modifiers.emplace_back([&base](const Stats::Weapon &stats) {
-		return base.getSubstatAt(stats.sheet.level);
-	});
+constexpr auto getWeaponAtk = [](const Stats::Weapon &stats) {
+	return stats.base.getAtkAt(stats.sheet.level, stats.sheet.ascension);
+};
+constexpr auto getWeaponSubstat = [](const Stats::Weapon &stats) {
+	return stats.base.getSubstatAt(stats.sheet.level);
+};
 
-	addModifier(baseAtk, [](const Stats::Sheet &stats) {
-		return stats.weapon.sheet.baseAtkInt.getTotal(stats.weapon);
-	});
-	addModifier(fromStat(base.substat.stat), [](const Stats::Sheet &stats) {
-		return stats.weapon.sheet.subStat.getTotal(stats.weapon);
-	});
+Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
+	addModifier(
+		baseAtk,
+		Formula::Custom("Weapon Base", [](const Stats::Sheet &stats) {
+			return getWeaponAtk(stats.weapon);
+		})
+	);
+
+	addModifier(
+		fromStat(base.substat.stat),
+		Formula::Custom(
+			"Weapon Base", [](const Stats::Sheet &stats) {
+				return getWeaponSubstat(stats.weapon);
+			},
+			Stats::isPercentage(base.substat.stat)
+		)
+	);
 }

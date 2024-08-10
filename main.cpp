@@ -3,6 +3,7 @@
 #include "artifact/sets/GildedDreams.hpp"
 #include "character/characters.hpp"
 #include "character/characters/Cyno.hpp"
+#include "src/formula/node.hpp"
 #include "src/stats/helpers.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
@@ -28,7 +29,7 @@ int main() {
 	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	weapon.stats.sheet.level = 90;
 	weapon.stats.sheet.ascension = 6;
-	weapon.stats.sheet.refinement = 1;
+	weapon.stats.sheet.refinement = 0;
 	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	character.stats.character.sheet.level = 90;
 	character.stats.character.sheet.ascension = 6;
@@ -137,6 +138,15 @@ int main() {
 	// std::println("Cr: {}", cr);
 	// float val = attacknode.getValue(Character::Datas::cyno, character.stats);
 	// std::println("{}", val);
+
+	// fmt::println("{}", Formula::Constant(1.f).print(character.stats));
+	// fmt::println("{}", Formula::ConditionalValue(Conditional::Location::burst, "burstActive").print(character.stats));
+	// fmt::println("{}", Formula::Conditional(Conditional::Location::burst, "burstActive", Formula::Constant(1.f)).print(character.stats));
+
+	// fmt::println("{}", Formula::_isSheetMemberPercentage(&Stats::WeaponSheet::baseAtk));
+	// constexpr auto stat = &Stats::WeaponSheet::baseAtk;
+	// Formula::Node nd = Formula::StatPtr(stat);
+	// fmt::println("{}", nd.print(character.stats));
 
 	using namespace squi;
 	Window window{};

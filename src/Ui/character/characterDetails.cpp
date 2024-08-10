@@ -16,10 +16,14 @@
 #include "align.hpp"
 #include "box.hpp"
 #include "column.hpp"
+#include "gestureDetector.hpp"
 #include "navigationView.hpp"
 #include "scrollableFrame.hpp"
 #include "stack.hpp"
 #include "text.hpp"
+#include "window.hpp"
+#include "wrapper.hpp"
+#include <numeric>
 
 
 using namespace squi;
@@ -51,6 +55,63 @@ struct CharacterDetailsSkillHeader {
 					.lineWrap = true,
 					.font = FontStore::defaultFontBold,
 				},
+			},
+		};
+	}
+};
+
+struct Tooltip {
+	// Args
+	std::string message{};
+	Child child{};
+
+	struct State {
+		VoidObservable destroyEvent{};
+	};
+
+	operator squi::Child() const {
+		return Wrapper{
+			.onInit = [](Widget &w) {
+				w.customState.add(State{});
+			},
+			.child = GestureDetector{
+				.onEnter = [message = message](GestureDetector::Event event) {
+					auto &state = event.widget.customState.get<State>();
+
+					state.destroyEvent.notify();
+
+					Window::of(&event.widget).addOverlay(Box{
+						.widget{
+							.width = Size::Shrink,
+							.height = Size::Shrink,
+							.padding = 8.f,
+							.onInit = [destroyEvent = state.destroyEvent](Widget &w) {
+								w.customState.add(destroyEvent.observe([&w]() {
+									w.deleteLater();
+								}));
+							},
+							.onUpdate = [follow = event.widget.weak_from_this()](Widget &w) {
+								if (follow.expired()) w.deleteLater();
+							},
+							.onArrange = [follow = event.widget.weak_from_this()](Widget &self, vec2 &pos) {
+								if (auto w = follow.lock()) {
+									pos = w->getPos().withYOffset(-self.getSize().y).withXOffset((w->getSize().x - self.getSize().x) / 2.f);
+									pos.x = std::max(pos.x, 0.f);
+									pos.x = std::min(pos.x, self.state.parent->getSize().x - self.getSize().x);
+									pos.y = std::max(pos.y, 0.f);
+									pos.y = std::min(pos.y, self.state.parent->getSize().y - self.getSize().y);
+								}
+							},
+						},
+						.color = 0x000000FF,
+						.borderRadius{4.f},
+						.child = Text{.text = message},
+					});
+				},
+				.onLeave = [](GestureDetector::Event event) {
+					event.widget.customState.get<State>().destroyEvent.notify();
+				},
+				.child = child,
 			},
 		};
 	}
@@ -140,16 +201,32 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		.title = "Stats",
 		.children = [&character]() {
 			Children ret{};
-			auto displayStats = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
+			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(character.stats.character.base.element)}};
 
 			Children ret2{};
 
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				ret2.emplace_back(UI::StatDisplay{
-					.isTransparent = transparent,
-					.stat{
-						.stat = stat,
-						.value = character.stats.character.sheet.fromStat(stat).getTotal(character.stats),
+				ret2.emplace_back(Tooltip{
+					.message = [&]() {
+						std::vector<std::string> a{};
+						auto &modifiers = character.stats.character.sheet.fromStat(stat).modifiers;
+						for (auto &modifier: modifiers) {
+							a.emplace_back(modifier.print(character.stats));
+						}
+						return std::accumulate(
+							a.begin(), a.end(),
+							std::string(),
+							[&](const std::string &val1, const std::string &val2) {
+								return val1 + (val1.empty() ? "" : " + ") + val2;
+							}
+						);
+					}(),
+					.child = UI::StatDisplay{
+						.isTransparent = transparent,
+						.stat{
+							.stat = stat,
+							.value = character.stats.character.sheet.fromStat(stat).getTotal(character.stats),
+						},
 					},
 				});
 			}

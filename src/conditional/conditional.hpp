@@ -21,6 +21,22 @@ namespace Conditional {
 		return std::get<Conditional::ValueList>(conditionals.at(key)).getValue().value_or(defaultValue);
 	}
 
+	enum class Location {
+		normal,
+		charged,
+		plunge,
+		skill,
+		burst,
+		passive1,
+		passive2,
+		constellation1,
+		constellation2,
+		constellation4,
+		constellation6,
+		weapon,
+		artifact,
+	};
+
 	struct CharacterList {
 		const std::vector<Types> normal{};
 		const std::vector<Types> charged{};

@@ -24,7 +24,7 @@ struct Talents {
 	uint8_t burst;
 
 	[[nodiscard]] uint8_t getLevel(const Talent &t) const {
-		switch(t) {
+		switch (t) {
 			case Talent::normal:
 			case Talent::charged:
 			case Talent::plunge:
@@ -41,4 +41,10 @@ struct Talents {
 				return normal;
 		}
 	}
+};
+
+enum class LevelableTalent {
+	normal,
+	skill,
+	burst,
 };

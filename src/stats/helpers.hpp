@@ -127,6 +127,39 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(SV T::*member) {
+		if (member == &T::hp_) return true;
+		if (member == &T::atk_) return true;
+		if (member == &T::def_) return true;
+		if (member == &T::er) return true;
+		if (member == &T::cr) return true;
+		if (member == &T::cd) return true;
+		if (member == &T::hb) return true;
+		return false;
+	}
+
+	template<SheetLike T>
+	[[nodiscard]] constexpr Stat getSheetMemberStat(SV T::*member) {
+		if (member == &T::hp) return Stat::hp;
+		if (member == &T::hp_) return Stat::hp_;
+		if (member == &T::baseHp) return Stat::baseHp;
+		if (member == &T::atk) return Stat::atk;
+		if (member == &T::atk_) return Stat::atk_;
+		if (member == &T::baseAtk) return Stat::baseAtk;
+		if (member == &T::additionalAtk) return Stat::additionalAtk;
+		if (member == &T::def) return Stat::def;
+		if (member == &T::def_) return Stat::def_;
+		if (member == &T::baseDef) return Stat::baseDef;
+		if (member == &T::er) return Stat::er;
+		if (member == &T::em) return Stat::em;
+		if (member == &T::cr) return Stat::cr;
+		if (member == &T::cd) return Stat::cd;
+		if (member == &T::hb) return Stat::hb;
+
+		std::unreachable();
+	}
+
+	template<SheetLike T>
 	[[nodiscard]] SSV &fromElement(T &sheet, const Misc::Element &element) {
 		switch (element) {
 			case Misc::Element::pyro:
@@ -190,3 +223,37 @@ namespace Stats {
 		};
 	}
 }// namespace Stats
+
+namespace Utils {
+	template<Stats::SheetLike T, class U>
+	constexpr std::string Stringify(Stats::SSV T::*skill, Stats::SV U::*stat) {
+		std::string_view prefix = [&]() {
+			if (skill == &T::pyro) return "Pyro ";
+			if (skill == &T::hydro) return "Hydro ";
+			if (skill == &T::cryo) return "Cryo ";
+			if (skill == &T::electro) return "Electro ";
+			if (skill == &T::dendro) return "Dendro ";
+			if (skill == &T::anemo) return "Anemo ";
+			if (skill == &T::geo) return "Geo ";
+			if (skill == &T::physical) return "Physical ";
+			if (skill == &T::all) return "All ";
+			if (skill == &T::normal) return "Normal Attack ";
+			if (skill == &T::charged) return "Charged Attack ";
+			if (skill == &T::plunge) return "Plunge Attack ";
+			if (skill == &T::skill) return "Elemental Skill ";
+			if (skill == &T::burst) return "Elemental Burst ";
+			std::unreachable();
+		}();
+
+		std::string_view suffix = [&]() {
+			if (stat == &U::DMG) return "DMG%";
+			if (stat == &U::additiveDMG) return "Additive DMG";
+			if (stat == &U::multiplicativeDMG) return "Multiplicative DMG";
+			if (stat == &U::critRate) return "Crit Rate";
+			if (stat == &U::critDMG) return "Crit DMG";
+			std::unreachable();
+		}();
+
+		return std::string(prefix) + std::string(suffix);
+	}
+}// namespace Utils

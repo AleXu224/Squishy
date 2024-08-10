@@ -80,7 +80,7 @@ struct Contents {
 					.widget{
 						.padding = Padding{4.f},
 						.onInit = [&character = character](Widget &w) {
-							auto statsToDisplay = {Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
+							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 
 							for (const auto &[stat, transparent]: std::views::zip(
 									 std::views::join(statsToDisplay),
