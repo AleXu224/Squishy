@@ -78,6 +78,7 @@ UI::ValueListConditional::operator squi::Child() const {
 			.children{
 				Container{
 					.child = Align{
+						.xAlign = 0.f,
 						.child = Text{
 							.widget{
 								.onInit = [readyEvent, valueChangedEvent, &conditional = conditional](Widget &w) {

@@ -62,7 +62,7 @@ struct CharacterDetailsSkillHeader {
 
 struct Tooltip {
 	// Args
-	float maxWidth = 400.f;
+	float maxWidth = 600.f;
 	std::string message{};
 	Child child{};
 
@@ -83,6 +83,7 @@ struct Tooltip {
 
 					Window::of(&event.widget).addOverlay(Box{
 						.widget{
+							.width = Size::Wrap,
 							.height = Size::Shrink,
 							.sizeConstraints{
 								.maxWidth = maxWidth,

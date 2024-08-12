@@ -27,6 +27,11 @@ UI::StatDisplay::operator squi::Child() const {
 					Align{
 						.xAlign = 1.f,
 						.child = Text{
+							.widget{
+								.onDebugLayout = [](){
+									(void)1;
+								},
+							},
 							.text = Utils::Stringify(stat),
 						},
 					},

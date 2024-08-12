@@ -84,14 +84,17 @@ UI::ToggleConditional::operator squi::Child() const {
 		},
 		.child = Row{
 			.alignment = squi::Row::Alignment::center,
-            .spacing = 8.f,
+			.spacing = 8.f,
 			.children{
 				ToggleBox{
 					.switchEvent = switchEvent,
 					.readyEvent = readyEvent,
 				},
-				Text{
-					.text = conditional.name,
+				Align{
+					.xAlign = 0.f,
+					.child = Text{
+						.text = conditional.name,
+					},
 				},
 			},
 		},
