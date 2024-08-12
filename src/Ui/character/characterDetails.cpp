@@ -62,6 +62,7 @@ struct CharacterDetailsSkillHeader {
 
 struct Tooltip {
 	// Args
+	float maxWidth = 400.f;
 	std::string message{};
 	Child child{};
 
@@ -75,15 +76,17 @@ struct Tooltip {
 				w.customState.add(State{});
 			},
 			.child = GestureDetector{
-				.onEnter = [message = message](GestureDetector::Event event) {
+				.onEnter = [message = message, maxWidth = maxWidth](GestureDetector::Event event) {
 					auto &state = event.widget.customState.get<State>();
 
 					state.destroyEvent.notify();
 
 					Window::of(&event.widget).addOverlay(Box{
 						.widget{
-							.width = Size::Shrink,
 							.height = Size::Shrink,
+							.sizeConstraints{
+								.maxWidth = maxWidth,
+							},
 							.padding = 8.f,
 							.onInit = [destroyEvent = state.destroyEvent](Widget &w) {
 								w.customState.add(destroyEvent.observe([&w]() {
@@ -105,7 +108,10 @@ struct Tooltip {
 						},
 						.color = 0x000000FF,
 						.borderRadius{4.f},
-						.child = Text{.text = message},
+						.child = Text{
+							.text = message,
+							.lineWrap = true,
+						},
 					});
 				},
 				.onLeave = [](GestureDetector::Event event) {
@@ -283,17 +289,15 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 				if (!nodes.empty()) {
 					Children ret2{};
 					for (auto [node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
-						std::visit(
-							[&](auto &&skill) {
-								ret2.emplace_back(SkillEntry{
-									.isTransparent = transparent,
-									.name = skill.name,
-									.value = skill.calculate(character.stats),
-									.color = Utils::elementToColor(skill.getElement(character.stats)),
-								});
+						ret2.emplace_back(Tooltip{
+							.message = node.formula.print(character.stats),
+							.child = SkillEntry{
+								.isTransparent = transparent,
+								.name = node.name,
+								.value = node.formula.eval(character.stats),
+								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, character.stats)),
 							},
-							node
-						);
+						});
 					}
 					ret.emplace_back(Column{
 						.widget{

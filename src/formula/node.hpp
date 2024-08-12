@@ -16,10 +16,12 @@ namespace Formula {
 
 		template<IntermediaryLike T>
 		Node(const T &t)
-			: print([printFn = t.print](const Stats::Sheet &stats) {
-				  return printFn(stats, Step::none);
+			: print([t](const Stats::Sheet &stats) {
+				  return t.print(stats, Step::none);
 			  }),
-			  eval(t.eval) {
+			  eval([t](const Stats::Sheet &stats) {
+				  return t.eval(stats);
+			  }) {
 		}
 	};
 }// namespace Formula

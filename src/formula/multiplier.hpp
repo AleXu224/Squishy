@@ -4,7 +4,7 @@
 #include "character/data.hpp"
 #include "intermediary.hpp"
 #include "stats/sheet.hpp"
-
+#include "stats/stat.hpp"
 
 namespace Formula {
 	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, size_t index, const Stats::Sheet &stats) {
@@ -16,17 +16,24 @@ namespace Formula {
 			case LevelableTalent::burst:
 				return stats.character.data.multipliers.burst.at(index).at(stats.character.sheet.talents.burst);
 		}
+		std::unreachable();
 	}
 
-	[[nodiscard]] consteval auto SkillMultiplier(LevelableTalent talent, size_t index) {
-		return Intermediary{
-			.print = [talent, index](const Stats::Sheet &stats, Step) -> std::string {
-				auto &multiplier = _getMultiplier(talent, index, stats);
-				return fmt::format("{:.2f}%", multiplier * 100.f);
-			},
-			.eval = [talent, index](const Stats::Sheet &stats) -> float {
-				return _getMultiplier(talent, index, stats);
-			},
-		};
+	struct MultiplierValue {
+		LevelableTalent talent;
+		size_t index;
+
+		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+			auto &multiplier = _getMultiplier(talent, index, stats);
+			return fmt::format("{:.2f}%", multiplier * 100.f);
+		}
+
+		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+			return _getMultiplier(talent, index, stats);
+		}
+	};
+
+	[[nodiscard]] consteval auto Multiplier(::Stat stat, LevelableTalent talent, size_t index) {
+		return Formula::Stat(stat) * MultiplierValue(talent, index);
 	}
 }// namespace Formula

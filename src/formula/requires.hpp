@@ -59,20 +59,22 @@ namespace Formula {
 		}
 	}
 
-	template<IntermediaryLike T>
-	[[nodiscard]] consteval auto Requires(Requirement requirement, T ret) {
-		return Intermediary{
-			.print = [requirement, ret](const Stats::Sheet &stats, Step) -> std::string {
-				auto cond = _getRequirement(requirement, stats);
-				return fmt::format("{}", cond ? fmt::format("{} : ({})", _getRequirementName(requirement), ret.print(stats, Step::none)) : "");
-			},
-			.eval = [requirement, ret](const Stats::Sheet &stats) -> float {
-				auto cond = _getRequirement(requirement, stats);
-				if (cond)
-					return ret.eval(stats);
-				else
-					return 0.f;
-			},
-		};
-	}
+	template<class T>
+	struct Requires{
+		Requirement requirement;
+		T ret;
+
+		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+			auto cond = _getRequirement(requirement, stats);
+			return fmt::format("{}", cond ? fmt::format("{} : ({})", _getRequirementName(requirement), ret.print(stats, Step::none)) : "");
+		}
+
+		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+			auto cond = _getRequirement(requirement, stats);
+			if (cond)
+				return ret.eval(stats);
+			else
+				return 0.f;
+		}
+	};
 }// namespace Formula

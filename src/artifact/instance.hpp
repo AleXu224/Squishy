@@ -4,6 +4,7 @@
 #include "artifact/key.hpp"
 #include "character/key.hpp"
 #include "stats/stat.hpp"
+#include "utility"
 #include "utils/stringify.hpp"// IWYU pragma: keep
 
 
@@ -48,6 +49,7 @@ namespace Utils {
 			case Artifact::Slot::circlet:
 				return "Circlet";
 		}
+		std::unreachable();
 	}
 }// namespace Utils
 

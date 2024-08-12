@@ -47,21 +47,6 @@ void Stats::CharacterSheet::init(Stats::Sheet &stats) {
 	linkWeaponAndArtifacts(stats);
 }
 
-void addModifierD(Stats::Sheet &stats, auto &cPtr, const auto &mod) {
-	auto &cStat = std::invoke(cPtr, stats.character.sheet);
-	Stats::addModifier(cStat, mod);
-}
-
-template<class T, class U, class V, size_t... I>
-[[nodiscard]] consteval auto _combineArrays(T r1, U r2, V r3, std::index_sequence<I...>) {
-	return std::array{std::tuple{r1[I], r2[I], r3[I]}...};
-};
-
-template<class T, class U, class V>
-[[nodiscard]] consteval auto combineArrays(T r1, U r2, V r3) {
-	return _combineArrays<T, U, V>(r1, r2, r3, std::make_index_sequence<r1.size()>());
-};
-
 template<class T, size_t... Is>
 consteval auto _iterate(const T &data, std::index_sequence<Is...>) {
 	return std::tuple{
@@ -128,22 +113,23 @@ consteval auto iterate2(const T &data) {
 	return iterate2<data.size()>(data);
 }
 
+constexpr auto sheetValueModifiers = getSheetValuesModifiers();
+constexpr auto sheetElementModifiers = getSheetElementsModifiers();
+constexpr auto sheetSkillModifiers = getSheetSkillsModifiers();
+
 void Stats::CharacterSheet::linkWeaponAndArtifacts(Stats::Sheet &stats) {
-	constexpr auto sheetValueModifiers = getSheetValuesModifiers();
 	squi::utils::iterateTuple(sheetValueModifiers, [&](const auto &lbd) {
 		const auto &[cPtr, mod] = lbd;
 
 		addModifier(std::invoke(cPtr, stats.character.sheet), mod);
 	});
 
-	constexpr auto sheetElementModifiers = getSheetElementsModifiers();
 	squi::utils::iterateTuple(sheetElementModifiers, [&](const auto &lbd) {
 		const auto &[cPtr, ssvPtr, mod] = lbd;
 
 		addModifier(std::invoke(ssvPtr, std::invoke(cPtr, stats.character.sheet)), mod);
 	});
 
-	constexpr auto sheetSkillModifiers = getSheetSkillsModifiers();
 	squi::utils::iterateTuple(sheetSkillModifiers, [&](const auto &lbd) {
 		const auto &[cPtr, ssvPtr, mod] = lbd;
 

@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "misc/element.hpp"
 #include "unordered_map"
+#include "utility"
 #include "utils/stringify.hpp"// IWYU pragma: keep
 #include <vector>
 
@@ -97,6 +98,7 @@ namespace Stats {
 			case Misc::Element::physical:
 				return Stat::physicalDmg;
 		}
+		std::unreachable();
 	}
 
 	namespace Values {
@@ -181,6 +183,7 @@ namespace Utils {
 			case Stat::allDmg:
 				return "All DMG Bonus";
 		}
+		std::unreachable();
 	}
 
 	template<>

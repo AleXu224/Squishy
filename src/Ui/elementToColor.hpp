@@ -1,7 +1,8 @@
 #pragma once
 
-#include "misc/element.hpp"
 #include "color.hpp"
+#include "misc/element.hpp"
+#include "utility"
 
 
 namespace Utils {
@@ -24,5 +25,6 @@ namespace Utils {
 			case Misc::Element::physical:
 				return 0xffffffff;
 		}
+		std::unreachable();
 	}
 }// namespace Utils

@@ -9,15 +9,9 @@ namespace Stats {
 }
 
 namespace Formula {
-	template<class T, class U>
-	struct Intermediary {
-		T print;
-		U eval;
-	};
-
 	template<class T>
 	concept IntermediaryLike = requires(T t) {
-		{ std::decay_t<T>::print(std::declval<const Stats::Sheet &>(), std::declval<Step>()) } -> std::same_as<std::string>;
-		{ std::decay_t<T>::eval(std::declval<const Stats::Sheet &>()) } -> std::same_as<float>;
+		{ t.print(std::declval<const Stats::Sheet &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Stats::Sheet &>()) } -> std::same_as<float>;
 	};
 }// namespace Formula

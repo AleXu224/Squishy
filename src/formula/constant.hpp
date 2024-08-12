@@ -5,25 +5,26 @@
 
 
 namespace Formula {
-	[[nodiscard]] consteval auto Constant(float value) {
-		return Intermediary{
-			.print = [value](const Stats::Sheet &, Step) -> std::string {
-				return fmt::format("{:.2f}%", value * 100.f);
-			},
-			.eval = [value](const Stats::Sheet &) -> float {
-				return value;
-			},
-		};
-	}
+	struct Constant {
+		float value;
 
-	[[nodiscard]] consteval auto ConstantFlat(float value) {
-		return Intermediary{
-			.print = [value](const Stats::Sheet &, Step) -> std::string {
-				return fmt::format("{:.2f}", value);
-			},
-			.eval = [value](const Stats::Sheet &) -> float {
-				return value;
-			},
-		};
-	}
+		[[nodiscard]] inline std::string print(const Stats::Sheet &, Step) const {
+			return fmt::format("{:.2f}%", value * 100.f);
+		}
+
+		[[nodiscard]] inline float eval(const Stats::Sheet &) const {
+			return value;
+		}
+	};
+	struct ConstantFlat {
+		float value;
+
+		[[nodiscard]] inline std::string print(const Stats::Sheet &, Step) const {
+			return fmt::format("{:.2f}", value);
+		}
+
+		[[nodiscard]] inline float eval(const Stats::Sheet &) const {
+			return value;
+		}
+	};
 }// namespace Formula

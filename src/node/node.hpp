@@ -6,7 +6,17 @@
 
 
 namespace Node {
-	using Types = std::variant<Node::Atk>;
+	struct Instance {
+		std::string_view name;
+		Utils::JankyOptional<Misc::Element> element;
+		Misc::AttackSource source;
+		Formula::Node formula;
+
+		template<class T>
+		Instance(const T &t) : name(t.name), element(t.element), source(t.source), formula(t.formula) {}
+	};
+
+	using Types = Instance;
 
 	struct CharacterList {
 		std::vector<Node::Types> normal;
@@ -46,7 +56,7 @@ namespace Node {
 			}
 		}
 	};
-	
+
 	using WeaponList = std::vector<Node::Types>;
 
 	using ArtifactList = std::vector<Node::Types>;

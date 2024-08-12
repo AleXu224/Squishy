@@ -11,26 +11,17 @@ namespace Formula {
 	};
 
 	template<EvalFuncLike T>
-	[[nodiscard]] constexpr auto Custom(T evalFunc, bool isPercentage = false) {
-		return Intermediary{
-			.print = [evalFunc, isPercentage](const Stats::Sheet &stats, Step) -> std::string {
-				return fmt::format("{:2f}{}", evalFunc(stats) * (isPercentage ? 100.f : 1.f), isPercentage ? "%" : "");
-			},
-			.eval = [evalFunc](const Stats::Sheet &stats) -> float {
-				return evalFunc(stats);
-			},
-		};
-	}
+	struct Custom {
+		std::string_view prefix{};
+		T func;
+		bool isPercentage = false;
 
-	template<EvalFuncLike T>
-	[[nodiscard]] constexpr auto Custom(std::string_view prefix, T evalFunc, bool isPercentage = false) {
-		return Intermediary{
-			.print = [prefix, evalFunc, isPercentage](const Stats::Sheet &stats, Step) -> std::string {
-				return fmt::format("{} {:.2f}{}", prefix, evalFunc(stats) * (isPercentage ? 100.f : 1.f), isPercentage ? "%" : "");
-			},
-			.eval = [evalFunc](const Stats::Sheet &stats) -> float {
-				return evalFunc(stats);
-			},
-		};
-	}
+		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+			return fmt::format("{}{}{:2f}{}", prefix, prefix.empty() ? "" : " ", func(stats) * (isPercentage ? 100.f : 1.f), isPercentage ? "%" : "");
+		}
+
+		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+			return func(stats);
+		}
+	};
 }// namespace Formula

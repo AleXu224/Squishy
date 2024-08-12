@@ -4,6 +4,7 @@
 #include "misc/attackSource.hpp"
 #include "stats/stat.hpp"
 #include "type_traits"
+#include "utility"
 
 
 namespace Stats {
@@ -103,6 +104,7 @@ namespace Stats {
 			case Stat::allDmg:
 				return sheet.all.DMG;
 		}
+		std::unreachable();
 	}
 
 	template<SheetLike T>
@@ -160,6 +162,29 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
+	[[nodiscard]] constexpr auto getSheetMemberByElement(Misc::Element element) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return &T::pyro;
+			case Misc::Element::hydro:
+				return &T::hydro;
+			case Misc::Element::cryo:
+				return &T::cryo;
+			case Misc::Element::electro:
+				return &T::electro;
+			case Misc::Element::dendro:
+				return &T::dendro;
+			case Misc::Element::anemo:
+				return &T::anemo;
+			case Misc::Element::geo:
+				return &T::geo;
+			case Misc::Element::physical:
+				return &T::physical;
+		}
+		std::unreachable();
+	}
+
+	template<SheetLike T>
 	[[nodiscard]] SSV &fromElement(T &sheet, const Misc::Element &element) {
 		switch (element) {
 			case Misc::Element::pyro:
@@ -194,6 +219,22 @@ namespace Stats {
 			&T::physical,
 			&T::all,
 		};
+	}
+
+	template<SheetLike T>
+	[[nodiscard]] constexpr auto getSheetMemberByAttackSource(Misc::AttackSource attackSource) {
+		switch (attackSource) {
+			case Misc::AttackSource::normal:
+				return &T::normal;
+			case Misc::AttackSource::charged:
+				return &T::charged;
+			case Misc::AttackSource::plunge:
+				return &T::plunge;
+			case Misc::AttackSource::skill:
+				return &T::skill;
+			case Misc::AttackSource::burst:
+				return &T::burst;
+		}
 	}
 
 	template<SheetLike T>

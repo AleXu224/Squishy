@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Curves.hpp"
-#include "misc/element.hpp"
 #include "array"
+#include "misc/element.hpp"
 #include "stat.hpp"
 
 
@@ -29,19 +29,19 @@ namespace Stats {
 		const std::array<float, 7> defUpgrade;
 		const std::array<float, 7> ascensionStatUpgrade;
 
-		[[nodiscard]] float getHpAt(unsigned short level, unsigned short ascension) const {
+		[[nodiscard]] constexpr float getHpAt(unsigned short level, unsigned short ascension) const {
 			return baseHp * CharacterCurves.at(hpCurve).at(level - 1) + hpUpgrade.at(ascension);
 		}
 
-		[[nodiscard]] float getAtkAt(unsigned short level, unsigned short ascension) const {
+		[[nodiscard]] constexpr float getAtkAt(unsigned short level, unsigned short ascension) const {
 			return baseAtk * CharacterCurves.at(atkCurve).at(level - 1) + atkUpgrade.at(ascension);
 		}
 
-		[[nodiscard]] float getDefAt(unsigned short level, unsigned short ascension) const {
+		[[nodiscard]] constexpr float getDefAt(unsigned short level, unsigned short ascension) const {
 			return baseDef * CharacterCurves.at(defCurve).at(level - 1) + defUpgrade.at(ascension);
 		}
 
-		[[nodiscard]] float getAscensionStatAt(unsigned short ascension) const {
+		[[nodiscard]] constexpr float getAscensionStatAt(unsigned short ascension) const {
 			return ascensionStatUpgrade.at(ascension);
 		}
 	};

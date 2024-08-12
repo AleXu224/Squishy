@@ -1,7 +1,6 @@
 #pragma once
 
 #include "conditional/conditional.hpp"
-#include "formula/formula.hpp"// IWYU pragma: export
 #include "key.hpp"
 #include "node/node.hpp"
 #include "stats/characterBase.hpp"
@@ -72,3 +71,5 @@ namespace Character {
 		}
 	};
 }// namespace Character
+
+#include "formula/formula.hpp"// IWYU pragma: export

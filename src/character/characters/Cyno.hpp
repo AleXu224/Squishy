@@ -90,149 +90,140 @@ namespace Character::Datas {
 			);
 		},
 		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::CharacterList {
-			auto a4BurstBonus = Stats::SSV{
-				.additiveDMG{
-					.modifiers{
-						Formula::Requires(
-							Formula::Requirement::passive2,
-							Formula::Stat(Stat::em) * 1.5f
-						),
-					},
-				},
-			};
+			constexpr auto a4BurstBonus = Formula::Modifiers(
+				Formula::Modifier(
+					Formula::ModifierLocation::additiveDMG,
+					Formula::Requires(
+						Formula::Requirement::passive2,
+						Formula::Stat(Stat::em) * 1.5f
+					)
+				)
+			);
 
 			return Node::CharacterList{
 				.normal{
-					Node::Atk{
-						.name{"1-Hit DMG"},
-						.atkSource = Misc::AttackSource::normal,
-						.formula = Node::makeFormula(Stat::atk, Talent::normal, data.multipliers.normal[0]),
-					},
-					Node::Atk{
-						.name{"2-Hit DMG"},
-						.atkSource = Misc::AttackSource::normal,
-						.formula = Node::makeFormula(Stat::atk, Talent::normal, data.multipliers.normal[1]),
-					},
-					Node::Atk{
-						.name{"3-Hit DMG (2)"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::normal,
-						.formula = Node::makeFormula(Stat::atk, Talent::normal, data.multipliers.normal[2]),
-					},
-					Node::Atk{
-						.name{"4-Hit DMG"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::normal,
-						.formula = Node::makeFormula(Stat::atk, Talent::normal, data.multipliers.normal[4]),
-					},
+					Node::Atk(
+						"1-Hit DMG",
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 0)
+					),
+					Node::Atk(
+						"2-Hit DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 1)
+					),
+					Node::Atk(
+						"3-Hit DMG (2)",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 2)
+					),
+					Node::Atk(
+						"4-Hit DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 4)
+					),
 				},
 				.charged{
-					Node::Atk{
-						.name{"Charged Attack DMG"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::charged,
-						.formula = Node::makeFormula(Stat::atk, Talent::charged, data.multipliers.normal[5]),
-					},
+					Node::Atk(
+						"Charged Attack DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 5)
+					),
 				},
 				.plunge{
-					Node::Atk{
-						.name{"Plunge DMG"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::plunge,
-						.formula = Node::makeFormula(Stat::atk, Talent::plunge, data.multipliers.normal[7]),
-					},
-					Node::Atk{
-						.name{"Low Plunge DMG"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::plunge,
-						.formula = Node::makeFormula(Stat::atk, Talent::plunge, data.multipliers.normal[8]),
-					},
-					Node::Atk{
-						.name{"High Plunge DMG"},
-						.attackElement = Misc::Element::physical,
-						.atkSource = Misc::AttackSource::plunge,
-						.formula = Node::makeFormula(Stat::atk, Talent::plunge, data.multipliers.normal[9]),
-					},
+					Node::Atk(
+						"Plunge DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 7)
+					),
+					Node::Atk(
+						"Low Plunge DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 8)
+					),
+					Node::Atk(
+						"High Plunge DMG",
+						{},
+						Formula::Multiplier(Stat::atk, LevelableTalent::normal, 9)
+					),
 				},
 				.skill{
-					Node::Atk{
-						.name{"Skill DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::skill,
-						.formula = Node::makeFormula(Stat::atk, Talent::skill, data.multipliers.skill[0]),
-					},
-					Node::Atk{
-						.name{"Mortuary Rite DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::skill,
-						.stats{
-							.DMG{
-								.modifiers{
-									Formula::Requires(
-										Formula::Requirement::passive1,
-										Formula::Conditional(
-											Conditional::Location::passive1,
-											"endseerStance",
-											Formula::Constant(0.35f)
-										)
-									),
-								},
-							},
-						},
-						.formula = Node::makeFormula(Stat::atk, Talent::skill, data.multipliers.skill[1]),
-					},
+					Node::Atk(
+						"Skill DMG",
+						Misc::AttackSource::skill,
+						Formula::Multiplier(Stat::atk, LevelableTalent::skill, 0)
+					),
+					Node::Atk(
+						"Mortuary Rite DMG",
+						Misc::AttackSource::skill,
+						Formula::Multiplier(Stat::atk, LevelableTalent::skill, 1),
+						Formula::Modifiers(
+							Formula::Modifier(
+								Formula::ModifierLocation::DMG,
+								Formula::Requires(
+									Formula::Requirement::passive1,
+									Formula::Conditional(
+										Conditional::Location::passive1,
+										"endseerStance",
+										Formula::Constant(0.35f)
+									)
+								)
+							)
+						)
+					),
 				},
 				.burst{
-					Node::Atk{
-						.name{"1-Hit DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::normal,
-						.stats{a4BurstBonus},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[0]),
-					},
-					Node::Atk{
-						.name{"2-Hit DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::normal,
-						.stats{a4BurstBonus},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[1]),
-					},
-					Node::Atk{
-						.name{"3-Hit DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::normal,
-						.stats{a4BurstBonus},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[2]),
-					},
-					Node::Atk{
-						.name{"4-Hit DMG (2)"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::normal,
-						.stats{a4BurstBonus},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[3]),
-					},
-					Node::Atk{
-						.name{"5-Hit DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::normal,
-						.stats{a4BurstBonus},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.burst[5]),
-					},
+					Node::Atk(
+						"1-Hit DMG",
+						Misc::Element::electro,
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::burst, 0),
+						a4BurstBonus
+					),
+					Node::Atk(
+						"2-Hit DMG",
+						Misc::Element::electro,
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::burst, 1),
+						a4BurstBonus
+					),
+					Node::Atk(
+						"3-Hit DMG",
+						Misc::Element::electro,
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::burst, 2),
+						a4BurstBonus
+					),
+					Node::Atk(
+						"4-Hit DMG (2)",
+						Misc::Element::electro,
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::burst, 3),
+						a4BurstBonus
+					),
+					Node::Atk(
+						"5-Hit DMG",
+						Misc::Element::electro,
+						Misc::AttackSource::normal,
+						Formula::Multiplier(Stat::atk, LevelableTalent::burst, 5),
+						a4BurstBonus
+					),
 				},
 				.passive1{
-					Node::Atk{
-						.name{"Duststalker bolt DMG"},
-						.attackElement = Misc::Element::electro,
-						.atkSource = Misc::AttackSource::skill,
-						.stats{
-							.additiveDMG{
-								.modifiers{
-									Formula::Requires(Formula::Requirement::passive2, Formula::Stat(Stat::em) * 2.5f),
-								},
-							},
-						},
-						.formula = Node::makeFormula(Stat::atk, Talent::burst, data.multipliers.passive1[0]),
-					},
+					Node::Atk(
+						"Duststalker bolt DMG",
+						Misc::AttackSource::skill,
+						Formula::Stat(Stat::atk) * 1.f,
+						Formula::Modifiers(
+							Formula::Modifier(
+								Formula::ModifierLocation::additiveDMG,
+								Formula::Requires(
+									Formula::Requirement::passive2,
+									Formula::Stat(Stat::em) * 2.5f
+								)
+							)
+						)
+					),
 				},
 			};
 		},
