@@ -90,11 +90,9 @@ UI::ToggleConditional::operator squi::Child() const {
 					.switchEvent = switchEvent,
 					.readyEvent = readyEvent,
 				},
-				Align{
-					.xAlign = 0.f,
-					.child = Text{
-						.text = conditional.name,
-					},
+				Text{
+					.text = conditional.name,
+					.lineWrap = true,
 				},
 			},
 		},
