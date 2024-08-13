@@ -1,13 +1,15 @@
 #pragma once
 
 #include "string_view"
+#include "utils/hashedString.hpp"
+#include <cstdint>
 #include <optional>
 #include <vector>
-#include <cstdint>
+
 
 namespace Conditional {
 	struct ValueList {
-		std::string_view key;
+		Utils::HashedString key;
 		std::string_view prefix;
 		std::optional<size_t> currentIndex = std::nullopt;
 		const std::vector<uint32_t> values;

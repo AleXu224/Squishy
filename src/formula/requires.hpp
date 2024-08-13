@@ -36,6 +36,7 @@ namespace Formula {
 			case Requirement::constellation6:
 				return stats.character.sheet.constellation >= 6;
 		}
+		std::unreachable();
 	}
 
 	[[nodiscard]] inline bool _getRequirementName(Requirement req) {
@@ -57,10 +58,11 @@ namespace Formula {
 			case Requirement::constellation6:
 				return "Constellation 6";
 		}
+		std::unreachable();
 	}
 
 	template<class T>
-	struct Requires{
+	struct Requires {
 		Requirement requirement;
 		T ret;
 

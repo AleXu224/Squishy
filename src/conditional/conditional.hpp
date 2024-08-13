@@ -6,19 +6,20 @@
 #include "variant"
 #include <functional>
 #include <unordered_map>
+#include "utils/hashedString.hpp"
 
 
 namespace Conditional {
 	using Types = std::variant<Boolean, ValueList>;
 
-	using TypesMap = std::unordered_map<std::string_view, Types>;
+	using TypesMap = std::unordered_map<size_t, Types>;
 
-	inline bool getBool(const TypesMap &conditionals, std::string_view key) {
-		return std::get<Conditional::Boolean>(conditionals.at(key)).active;
+	inline bool getBool(const TypesMap &conditionals, const Utils::HashedString &key) {
+		return std::get<Conditional::Boolean>(conditionals.at(key.hash)).active;
 	}
 
-	inline float getFloat(const TypesMap &conditionals, std::string_view key, float defaultValue = 0.f) {
-		return std::get<Conditional::ValueList>(conditionals.at(key)).getValue().value_or(defaultValue);
+	inline float getFloat(const TypesMap &conditionals, const Utils::HashedString &key, float defaultValue = 0.f) {
+		return std::get<Conditional::ValueList>(conditionals.at(key.hash)).getValue().value_or(defaultValue);
 	}
 
 	enum class Location {

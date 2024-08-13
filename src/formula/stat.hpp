@@ -27,7 +27,7 @@ namespace Formula {
 
 	template<Stats::SheetLike T>
 	struct StatPtr {
-		Stats::SV T::*stat;
+		Stats::SV T:: *stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<T, Stats::CharacterSheet>) return "";
@@ -37,40 +37,37 @@ namespace Formula {
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
 			bool isPercentage = Stats::isSheetMemberPercentage(stat);
-			const auto &sheet = [&]() {
+			const auto sheet = [&]() {
 				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return stats.character;
+					return &stats.character;
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return stats.weapon;
+					return &stats.weapon;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return stats.artifact;
+					return &stats.artifact;
 			}();
 			return fmt::format(
 				"{}{} {:.2f}{}",
 				prefix,
 				Utils::Stringify(Stats::getSheetMemberStat(stat)),
-				std::invoke(stat, sheet.sheet).getTotal(stats) * (isPercentage ? 100.f : 1.f),
+				std::invoke(stat, sheet->sheet).getTotal(stats) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
-			const auto &sheet = [&]() {
-				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return stats.character;
-				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return stats.weapon;
-				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return stats.artifact;
-			}();
-			return std::invoke(stat, sheet.sheet).getTotal(stats);
+			if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
+				return std::invoke(stat, stats.character.sheet).getTotal(stats);
+			else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
+				return std::invoke(stat, stats.weapon.sheet).getTotal(stats);
+			else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
+				return std::invoke(stat, stats.artifact.sheet).getTotal(stats);
 		}
 	};
 
 	template<Stats::SheetLike T>
 	struct SkillPtr {
-		Stats::SSV T::*skill;
-		Stats::SV Stats::SSV::*stat;
+		Stats::SSV T:: *skill;
+		Stats::SV Stats::SSV:: *stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<T, Stats::CharacterSheet>) return "";
@@ -80,33 +77,33 @@ namespace Formula {
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
 			bool isPercentage = Stats::SSV::isPercetange(stat);
-			const auto &sheet = [&]() {
+			// FIXME: do the same optimization as below with if constexpr
+			// otherwise this will do a copy instead !!!!
+			const auto sheet = [&]() {
 				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return stats.character;
+					return &stats.character;
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return stats.weapon;
+					return &stats.weapon;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return stats.artifact;
+					return &stats.artifact;
 			}();
 			return fmt::format(
 				"{}{} {:.2f}{}",
 				prefix,
 				Utils::Stringify(skill, stat),
-				std::invoke(stat, std::invoke(skill, sheet.sheet)).getTotal(stats) * (isPercentage ? 100.f : 1.f),
+				std::invoke(stat, std::invoke(skill, sheet->sheet)).getTotal(stats) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
-			const auto &sheet = [&]() {
-				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return stats.character;
-				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return stats.weapon;
-				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return stats.artifact;
-			}();
-			return std::invoke(stat, std::invoke(skill, sheet.sheet)).getTotal(stats);
+			if constexpr (std::is_same_v<T, Stats::CharacterSheet>) {
+				return std::invoke(stat, std::invoke(skill, stats.character.sheet)).getTotal(stats);
+			} else if constexpr (std::is_same_v<T, Stats::WeaponSheet>) {
+				return std::invoke(stat, std::invoke(skill, stats.weapon.sheet)).getTotal(stats);
+			} else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>) {
+				return std::invoke(stat, std::invoke(skill, stats.artifact.sheet)).getTotal(stats);
+			}
 		}
 	};
 
@@ -126,7 +123,7 @@ namespace Formula {
 	struct ElementStat {
 		Misc::AttackSource attackSource;
 		Utils::JankyOptional<Misc::Element> element;
-		Stats::SV Stats::SSV::*stat;
+		Stats::SV Stats::SSV:: *stat;
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
 			bool isPercentage = Stats::SSV::isPercetange(stat);

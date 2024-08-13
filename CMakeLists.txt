@@ -17,27 +17,33 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" ${PROJ
 
 file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 
-# add_executable(squishy main.cpp src/Character.hpp src/stat.hpp src/Stats.hpp src/BaseStats.hpp src/Curves.hpp src/Talents.hpp src/StatSheet.hpp src/Weapon.hpp src/WeaponBaseStats.hpp src/WeaponStats.hpp src/Weapons.hpp src/WeaponData.hpp src/Weapons/StaffOfTheScarletSands/StaffOfTheScarletSands.hpp src/CharacterData.hpp src/Characters.hpp src/Characters/Cyno/Cyno.hpp src/Node.hpp src/Element.hpp src/Ui/Library/sqUI.hpp src/Ui/Character/NodeShowcase.hpp src/Ui/Character/SkillShowcase.hpp src/Ui/General/Card.hpp src/Ui/Character/StatShowcase.hpp src/Ui/General/Masonry.hpp src/Ui/General/ElementToColor.hpp src/Ui/Character/CharacterPage.hpp src/Data.hpp src/Artifact.hpp src/ArtifactData.hpp src/Artifacts.hpp src/Artifacts/GildedDreams/GildedDreams.hpp src/Conditional.hpp src/ArtifactIncludes.hpp src/WeaponIncludes.hpp src/CharacterIncludes.hpp src/Ui/Artifact/ArtifactPage.hpp src/Ui/Artifact/ArtifactCard.hpp src/Ui/General/NameValueEntry.hpp src/Ui/General/Grid.hpp src/Rarity.hpp src/Ui/General/RarityToColor.hpp src/Ui/Artifact/ArtifactEdit.hpp)
-add_executable(squishy main.cpp ${all_files})
-target_compile_features(squishy PUBLIC cxx_std_23)
-set_target_properties(squishy PROPERTIES CXX_EXTENSIONS OFF)
-target_include_directories(squishy PRIVATE src)
-add_dependencies(squishy Assets)
+add_library(squishy_lib ${all_files})
+target_compile_features(squishy_lib PUBLIC cxx_std_23)
+set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
+target_include_directories(squishy_lib PUBLIC src)
+add_dependencies(squishy_lib Assets)
 
 if (MSVC)
-    # target_compile_options(squishy PRIVATE /fsanitize=address)
-    target_compile_options(squishy PRIVATE /std:c++latest)
-    target_compile_definitions(squishy PRIVATE _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
+    # target_compile_options(squishy PUBLIC /fsanitize=address)
+    target_compile_options(squishy_lib PUBLIC /std:c++latest)
+    target_compile_definitions(squishy_lib PUBLIC _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()
-    target_compile_options(squishy PRIVATE -Wall -Wextra -Wno-unused-parameter -Werror -ferror-limit=0)
+    target_compile_options(squishy_lib PUBLIC -Wall -Wextra -Wno-unused-parameter -Werror -ferror-limit=0)
 endif()
 
-find_package(benchmark CONFIG REQUIRED)
-target_link_libraries(squishy PRIVATE benchmark::benchmark benchmark::benchmark_main)
 find_package(fmt CONFIG REQUIRED)
-target_link_libraries(squishy PRIVATE fmt::fmt)
+target_link_libraries(squishy_lib PUBLIC fmt::fmt)
 
 add_subdirectory(glt)
 include_directories(glt/include)
+target_link_libraries(squishy_lib PUBLIC glt)
 
-target_link_libraries(squishy PRIVATE glt)
+add_executable(squishy main.cpp)
+target_link_libraries(squishy PRIVATE squishy_lib)
+
+add_executable(squishyBench benchmark.cpp)
+target_link_libraries(squishyBench PRIVATE squishy_lib)
+
+target_link_libraries(squishyBench PRIVATE glt)
+find_package(benchmark CONFIG REQUIRED)
+target_link_libraries(squishyBench PRIVATE benchmark::benchmark benchmark::benchmark_main)

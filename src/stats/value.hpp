@@ -18,7 +18,7 @@ namespace Stats {
 		std::vector<Formula::Node> modifiers = {};
 		std::vector<Formula::Node> totalModifiers = {};
 
-		V get(const T &statSheet) const {
+		[[nodiscard]] inline V get(const T &statSheet) const {
 #ifndef NDEBUG
 			if (isRunning) {
 				std::println("WARNING: recursion while computing stat, returning 0.");
@@ -38,7 +38,7 @@ namespace Stats {
 			return ret;
 		}
 
-		V getTotal(const T &statSheet) const {
+		[[nodiscard]] inline V getTotal(const T &statSheet) const {
 			V ret = value;
 			for (const auto &modifier: modifiers) ret += modifier.eval(statSheet);
 			for (const auto &modifier: totalModifiers) ret += modifier.eval(statSheet);

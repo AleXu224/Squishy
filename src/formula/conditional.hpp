@@ -7,7 +7,7 @@
 
 
 namespace Formula {
-	[[nodiscard]] inline const std::unordered_map<std::string_view, Conditional::Types> &_getConditionalLocation(Conditional::Location location, const Stats::Sheet &stats) {
+	[[nodiscard]] inline const Conditional::TypesMap &_getConditionalLocation(Conditional::Location location, const Stats::Sheet &stats) {
 		switch (location) {
 			case Conditional::Location::normal:
 				return stats.character.conditionals.normal;
@@ -42,12 +42,12 @@ namespace Formula {
 	template<class T>
 	struct Conditional {
 		::Conditional::Location location;
-		std::string_view name;
+		Utils::HashedString name;
 		T val;
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
 			auto cond = ::Conditional::getBool(_getConditionalLocation(location, stats), name);
-			return fmt::format("{}", cond ? fmt::format("{} {}", name, val.print(stats, Step::none)) : "");
+			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(stats, Step::none)) : "");
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
@@ -60,12 +60,12 @@ namespace Formula {
 	};
 	struct ConditionalValue {
 		::Conditional::Location location;
-		std::string_view name;
+		Utils::HashedString name;
 		float defaultValue = 0.f;
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
 			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, stats), name, defaultValue);
-			return fmt::format("{} {}", name, cond);
+			return fmt::format("{} {}", name.str, cond);
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {

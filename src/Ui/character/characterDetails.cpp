@@ -6,6 +6,7 @@
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "Ui/utils/statDisplay.hpp"
+#include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
@@ -16,12 +17,10 @@
 #include "align.hpp"
 #include "box.hpp"
 #include "column.hpp"
-#include "gestureDetector.hpp"
 #include "navigationView.hpp"
 #include "scrollableFrame.hpp"
 #include "stack.hpp"
 #include "text.hpp"
-#include "window.hpp"
 #include "wrapper.hpp"
 #include <numeric>
 
@@ -55,70 +54,6 @@ struct CharacterDetailsSkillHeader {
 					.lineWrap = true,
 					.font = FontStore::defaultFontBold,
 				},
-			},
-		};
-	}
-};
-
-struct Tooltip {
-	// Args
-	float maxWidth = 600.f;
-	std::string message{};
-	Child child{};
-
-	struct State {
-		VoidObservable destroyEvent{};
-	};
-
-	operator squi::Child() const {
-		return Wrapper{
-			.onInit = [](Widget &w) {
-				w.customState.add(State{});
-			},
-			.child = GestureDetector{
-				.onEnter = [message = message, maxWidth = maxWidth](GestureDetector::Event event) {
-					auto &state = event.widget.customState.get<State>();
-
-					state.destroyEvent.notify();
-
-					Window::of(&event.widget).addOverlay(Box{
-						.widget{
-							.width = Size::Wrap,
-							.height = Size::Shrink,
-							.sizeConstraints{
-								.maxWidth = maxWidth,
-							},
-							.padding = 8.f,
-							.onInit = [destroyEvent = state.destroyEvent](Widget &w) {
-								w.customState.add(destroyEvent.observe([&w]() {
-									w.deleteLater();
-								}));
-							},
-							.onUpdate = [follow = event.widget.weak_from_this()](Widget &w) {
-								if (follow.expired()) w.deleteLater();
-							},
-							.onArrange = [follow = event.widget.weak_from_this()](Widget &self, vec2 &pos) {
-								if (auto w = follow.lock()) {
-									pos = w->getPos().withYOffset(-self.getSize().y).withXOffset((w->getSize().x - self.getSize().x) / 2.f);
-									pos.x = std::max(pos.x, 0.f);
-									pos.x = std::min(pos.x, self.state.parent->getSize().x - self.getSize().x);
-									pos.y = std::max(pos.y, 0.f);
-									pos.y = std::min(pos.y, self.state.parent->getSize().y - self.getSize().y);
-								}
-							},
-						},
-						.color = 0x000000FF,
-						.borderRadius{4.f},
-						.child = Text{
-							.text = message,
-							.lineWrap = true,
-						},
-					});
-				},
-				.onLeave = [](GestureDetector::Event event) {
-					event.widget.customState.get<State>().destroyEvent.notify();
-				},
-				.child = child,
 			},
 		};
 	}
@@ -213,7 +148,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 			Children ret2{};
 
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				ret2.emplace_back(Tooltip{
+				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
 						std::vector<std::string> a{};
 						auto &modifiers = character.stats.character.sheet.fromStat(stat).modifiers;
@@ -247,7 +182,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		}(),
 	});
 
-	std::vector<std::reference_wrapper<std::unordered_map<std::string_view, Conditional::Types>>> conditionals{};
+	std::vector<std::reference_wrapper<std::unordered_map<size_t, Conditional::Types>>> conditionals{};
 	for (auto &condPtr: Conditional::CharacterMap::getMembers()) {
 		conditionals.emplace_back(std::invoke(condPtr, character.stats.character.conditionals));
 	}
@@ -290,7 +225,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 				if (!nodes.empty()) {
 					Children ret2{};
 					for (auto [node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
-						ret2.emplace_back(Tooltip{
+						ret2.emplace_back(UI::Tooltip{
 							.message = node.formula.print(character.stats),
 							.child = SkillEntry{
 								.isTransparent = transparent,
