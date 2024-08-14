@@ -73,9 +73,9 @@ UI::CharacterStatInspector::operator squi::Child() const {
 								};
 
 								for (auto stat: stats) {
-									auto statCharacter = character.stats.character.sheet.fromStat(stat);
-									auto statArtifact = character.stats.artifact.sheet.fromStat(stat);
-									auto statWeapon = character.stats.weapon.sheet.fromStat(stat);
+									auto &statCharacter = character.stats.character.sheet.fromStat(stat);
+									auto &statArtifact = character.stats.artifact.sheet.fromStat(stat);
+									auto &statWeapon = character.stats.weapon.sheet.fromStat(stat);
 									Children ret2{};
 
 									if (!statCharacter.modifiers.empty()) ret2.emplace_back(Text{.text = "CharacterStats", .fontSize = 16.f});

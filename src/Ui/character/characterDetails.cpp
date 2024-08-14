@@ -70,6 +70,7 @@ struct DetailsSkill {
 
 						std::vector<std::string> a{};
 						for (auto &modifier: modifiers | std::views::take(maxModifierIndex)) {
+							if (!modifier.hasValue) continue;
 							a.emplace_back(modifier.print(character.stats));
 						}
 						auto message = std::accumulate(
@@ -82,6 +83,7 @@ struct DetailsSkill {
 
 						float totalValue = 0.f;
 						for (auto &modifier: modifiers | std::views::take(maxModifierIndex)) {
+							if (!modifier.hasValue) continue;
 							totalValue += modifier.eval(character.stats);
 						}
 

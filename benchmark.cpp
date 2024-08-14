@@ -127,7 +127,7 @@ static void formulaCalc(benchmark::State &state) {
     auto &node = character.stats.character.data.nodes.burst.at(0);
 
     for (auto _ : state) {
-        node.formula.eval(character.stats);
+        (void) node.formula.eval(character.stats);
     }
 }
 BENCHMARK(formulaCalc);

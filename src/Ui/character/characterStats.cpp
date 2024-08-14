@@ -27,6 +27,7 @@ UI::CharacterStats::operator squi::Child() const {
 						std::vector<std::string> a{};
 						auto &modifiers = character.stats.character.sheet.fromStat(stat).modifiers;
 						for (auto &modifier: modifiers) {
+							if (!modifier.hasValue) continue;
 							a.emplace_back(modifier.print(character.stats));
 						}
 						return std::accumulate(
