@@ -5,7 +5,7 @@
 #include "widget.hpp"
 
 namespace UI {
-	struct CharacterDetails {
+	struct CharacterStats {
 		// Args
 		squi::Widget::Args widget{};
 		Character::Key characterKey;

@@ -1,8 +1,14 @@
 #pragma once
 
 #include "array"
-#include "atkNode.hpp"
-#include "variant"
+#include "formula/node.hpp"
+#include "misc/attackSource.hpp"
+#include "misc/element.hpp"
+#include "string_view"
+#include "utils/optional.hpp"
+#include "vector"
+
+#include "atkNode.hpp"// IWYU pragma: export
 
 
 namespace Node {
@@ -48,13 +54,13 @@ namespace Node {
 		}
 
 
-		static inline void combineNodes(Node::CharacterList &to, const Node::CharacterList &from) {
-			for (auto listPtr: CharacterList::getMembers()) {
-				for (auto &node: std::invoke(listPtr, from)) {
-					std::invoke(listPtr, to).emplace_back(std::move(node));
-				}
-			}
-		}
+		// static inline void combineNodes(Node::CharacterList &to, const Node::CharacterList &from) {
+		// 	for (auto listPtr: CharacterList::getMembers()) {
+		// 		for (auto &node: std::invoke(listPtr, from)) {
+		// 			std::invoke(listPtr, to).emplace_back(std::move(node));
+		// 		}
+		// 	}
+		// }
 	};
 
 	using WeaponList = std::vector<Node::Types>;

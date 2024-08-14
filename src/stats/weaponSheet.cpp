@@ -13,20 +13,15 @@ constexpr auto getWeaponSubstat = [](const Stats::Weapon &stats) {
 };
 
 Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
-	addModifier(
-		baseAtk,
-		Formula::Custom("Weapon Base", [](const Stats::Sheet &stats) {
-			return getWeaponAtk(stats.weapon);
-		})
-	);
+	baseAtk.modifiers.at(2) = Formula::Custom("Weapon Base", [](const Stats::Sheet &stats) {
+		return getWeaponAtk(stats.weapon);
+	});
 
-	addModifier(
-		fromStat(base.substat.stat),
-		Formula::Custom(
-			"Weapon Base", [](const Stats::Sheet &stats) {
-				return getWeaponSubstat(stats.weapon);
-			},
-			Stats::isPercentage(base.substat.stat)
-		)
+	fromStat(base.substat.stat).modifiers.at(2) = Formula::Custom(
+		"Weapon Base",
+		[](const Stats::Sheet &stats) {
+			return getWeaponSubstat(stats.weapon);
+		},
+		Stats::isPercentage(base.substat.stat)
 	);
 }

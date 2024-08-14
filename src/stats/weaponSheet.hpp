@@ -6,8 +6,11 @@
 
 
 namespace Stats {
+	struct Sheet;
 	struct Weapon;
 	struct WeaponSheet {
+		using _Value = Value<Sheet, 3>;
+		using _SkillValue = SkillValue<_Value>;
 		unsigned short level{1};
 		uint8_t ascension{0};
 		unsigned short refinement{0};
@@ -15,37 +18,37 @@ namespace Stats {
 		[[nodiscard]] float getBaseAtk();
 		[[nodiscard]] float getSubstat();
 
-		SV hp{};
-		SV hp_{};
-		SV baseHp{};
-		SV atk{};
-		SV atk_{};
-		SV baseAtk{};
-		SV additionalAtk{};
-		SV def{};
-		SV def_{};
-		SV baseDef{};
-		SV er{};
-		SV em{};
-		SV cr{};
-		SV cd{};
-		SV hb{};
+		_Value hp{};
+		_Value hp_{};
+		_Value baseHp{};
+		_Value atk{};
+		_Value atk_{};
+		_Value baseAtk{};
+		_Value additionalAtk{};
+		_Value def{};
+		_Value def_{};
+		_Value baseDef{};
+		_Value er{};
+		_Value em{};
+		_Value cr{};
+		_Value cd{};
+		_Value hb{};
 
-		SSV pyro{};
-		SSV hydro{};
-		SSV cryo{};
-		SSV electro{};
-		SSV dendro{};
-		SSV anemo{};
-		SSV geo{};
-		SSV physical{};
-		SSV all{};
+		_SkillValue pyro{};
+		_SkillValue hydro{};
+		_SkillValue cryo{};
+		_SkillValue electro{};
+		_SkillValue dendro{};
+		_SkillValue anemo{};
+		_SkillValue geo{};
+		_SkillValue physical{};
+		_SkillValue all{};
 
-		SSV normal{};
-		SSV charged{};
-		SSV plunge{};
-		SSV skill{};
-		SSV burst{};
+		_SkillValue normal{};
+		_SkillValue charged{};
+		_SkillValue plunge{};
+		_SkillValue skill{};
+		_SkillValue burst{};
 
 		explicit WeaponSheet(const WeaponBase &base);
 

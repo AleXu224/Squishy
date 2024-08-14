@@ -90,6 +90,20 @@ namespace Character::Datas {
 			);
 		},
 		.nodeSetup = [](Character::Data::NodeSetup data) -> Node::CharacterList {
+			constexpr auto a1SkillBonus = Formula::Modifiers(
+				Formula::Modifier(
+					Formula::ModifierLocation::DMG,
+					Formula::Requires(
+						Formula::Requirement::passive1,
+						Formula::Conditional(
+							Conditional::Location::passive1,
+							"endseerStance",
+							Formula::Constant(0.35f)
+						)
+					)
+				)
+			);
+
 			constexpr auto a4BurstBonus = Formula::Modifiers(
 				Formula::Modifier(
 					Formula::ModifierLocation::additiveDMG,
@@ -151,25 +165,14 @@ namespace Character::Datas {
 					Node::Atk(
 						"Skill DMG",
 						Misc::AttackSource::skill,
-						Formula::Multiplier(Stat::atk, LevelableTalent::skill, 0)
+						Formula::Multiplier(Stat::atk, LevelableTalent::skill, 0),
+						a1SkillBonus
 					),
 					Node::Atk(
 						"Mortuary Rite DMG",
 						Misc::AttackSource::skill,
 						Formula::Multiplier(Stat::atk, LevelableTalent::skill, 1),
-						Formula::Modifiers(
-							Formula::Modifier(
-								Formula::ModifierLocation::DMG,
-								Formula::Requires(
-									Formula::Requirement::passive1,
-									Formula::Conditional(
-										Conditional::Location::passive1,
-										"endseerStance",
-										Formula::Constant(0.35f)
-									)
-								)
-							)
-						)
+						a1SkillBonus
 					),
 				},
 				.burst{

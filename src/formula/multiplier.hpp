@@ -5,6 +5,8 @@
 #include "intermediary.hpp"
 #include "stats/sheet.hpp"
 #include "stats/stat.hpp"
+#include "formula/stat.hpp"
+#include "operators.hpp"
 
 namespace Formula {
 	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, size_t index, const Stats::Sheet &stats) {

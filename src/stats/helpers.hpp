@@ -1,6 +1,5 @@
 #pragma once
 
-#include "concepts"
 #include "misc/attackSource.hpp"
 #include "stats/stat.hpp"
 #include "type_traits"
@@ -10,50 +9,48 @@
 namespace Stats {
 	struct Sheet;
 
-	template<class T, class V = float>
+	template<class T, size_t Size, class V = float>
 	struct Value;
 
-	template<class T, class V = float>
+	template<class T>
 	struct SkillValue;
-
-	using SV = Stats::Value<Stats::Sheet>;
-	using SSV = Stats::SkillValue<Stats::Sheet>;
 	template<class T>
 	concept SheetLike = requires(T a) {
-		{ std::decay_t<T>::hp } -> std::same_as<SV &>;
-		{ std::decay_t<T>::hp_ } -> std::same_as<SV &>;
-		{ std::decay_t<T>::baseHp } -> std::same_as<SV &>;
-		{ std::decay_t<T>::atk } -> std::same_as<SV &>;
-		{ std::decay_t<T>::atk_ } -> std::same_as<SV &>;
-		{ std::decay_t<T>::baseAtk } -> std::same_as<SV &>;
-		{ std::decay_t<T>::additionalAtk } -> std::same_as<SV &>;
-		{ std::decay_t<T>::def } -> std::same_as<SV &>;
-		{ std::decay_t<T>::def_ } -> std::same_as<SV &>;
-		{ std::decay_t<T>::baseDef } -> std::same_as<SV &>;
-		{ std::decay_t<T>::er } -> std::same_as<SV &>;
-		{ std::decay_t<T>::em } -> std::same_as<SV &>;
-		{ std::decay_t<T>::cr } -> std::same_as<SV &>;
-		{ std::decay_t<T>::cd } -> std::same_as<SV &>;
-		{ std::decay_t<T>::hb } -> std::same_as<SV &>;
+		typename std::remove_cvref_t<T>::_Value;
+		{ std::remove_cvref_t<T>::hp };
+		{ std::remove_cvref_t<T>::hp_ };
+		{ std::remove_cvref_t<T>::baseHp };
+		{ std::remove_cvref_t<T>::atk };
+		{ std::remove_cvref_t<T>::atk_ };
+		{ std::remove_cvref_t<T>::baseAtk };
+		{ std::remove_cvref_t<T>::additionalAtk };
+		{ std::remove_cvref_t<T>::def };
+		{ std::remove_cvref_t<T>::def_ };
+		{ std::remove_cvref_t<T>::baseDef };
+		{ std::remove_cvref_t<T>::er };
+		{ std::remove_cvref_t<T>::em };
+		{ std::remove_cvref_t<T>::cr };
+		{ std::remove_cvref_t<T>::cd };
+		{ std::remove_cvref_t<T>::hb };
 
-		{ std::decay_t<T>::pyro } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::hydro } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::cryo } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::electro } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::dendro } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::anemo } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::geo } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::physical } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::all } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::normal } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::charged } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::plunge } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::skill } -> std::same_as<SSV &>;
-		{ std::decay_t<T>::burst } -> std::same_as<SSV &>;
+		{ std::remove_cvref_t<T>::pyro };
+		{ std::remove_cvref_t<T>::hydro };
+		{ std::remove_cvref_t<T>::cryo };
+		{ std::remove_cvref_t<T>::electro };
+		{ std::remove_cvref_t<T>::dendro };
+		{ std::remove_cvref_t<T>::anemo };
+		{ std::remove_cvref_t<T>::geo };
+		{ std::remove_cvref_t<T>::physical };
+		{ std::remove_cvref_t<T>::all };
+		{ std::remove_cvref_t<T>::normal };
+		{ std::remove_cvref_t<T>::charged };
+		{ std::remove_cvref_t<T>::plunge };
+		{ std::remove_cvref_t<T>::skill };
+		{ std::remove_cvref_t<T>::burst };
 	};
 
 	template<SheetLike T>
-	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const SV &, SV &> fromStat(T &sheet, const Stat &stat) {
+	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const typename T::_Value &, typename T::_Value &> fromStat(T &sheet, const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
 				return sheet.hp;
@@ -129,7 +126,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] constexpr bool isSheetMemberPercentage(SV T::*member) {
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T:: *member) {
 		if (member == &T::hp_) return true;
 		if (member == &T::atk_) return true;
 		if (member == &T::def_) return true;
@@ -141,7 +138,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] constexpr Stat getSheetMemberStat(SV T::*member) {
+	[[nodiscard]] constexpr Stat getSheetMemberStat(typename T::_Value T:: *member) {
 		if (member == &T::hp) return Stat::hp;
 		if (member == &T::hp_) return Stat::hp_;
 		if (member == &T::baseHp) return Stat::baseHp;
@@ -185,7 +182,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] SSV &fromElement(T &sheet, const Misc::Element &element) {
+	[[nodiscard]] SkillValue<typename T::_Value> &fromElement(T &sheet, const Misc::Element &element) {
 		switch (element) {
 			case Misc::Element::pyro:
 				return sheet.pyro;
@@ -238,7 +235,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] SSV &fromAttackSource(T &sheet, const Misc::AttackSource &attackSource) {
+	[[nodiscard]] SkillValue<typename T::_Value> &fromAttackSource(T &sheet, const Misc::AttackSource &attackSource) {
 		switch (attackSource) {
 			case Misc::AttackSource::normal:
 				return sheet.normal;
@@ -267,7 +264,7 @@ namespace Stats {
 
 namespace Utils {
 	template<Stats::SheetLike T, class U>
-	constexpr std::string Stringify(Stats::SSV T::*skill, Stats::SV U::*stat) {
+	constexpr std::string Stringify(Stats::SkillValue<typename T::_Value> T:: *skill, typename T::_Value U:: *stat) {
 		std::string_view prefix = [&]() {
 			if (skill == &T::pyro) return "Pyro ";
 			if (skill == &T::hydro) return "Hydro ";

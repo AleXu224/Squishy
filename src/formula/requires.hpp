@@ -39,7 +39,7 @@ namespace Formula {
 		std::unreachable();
 	}
 
-	[[nodiscard]] inline bool _getRequirementName(Requirement req) {
+	[[nodiscard]] inline std::string_view _getRequirementName(Requirement req) {
 		switch (req) {
 			case Requirement::passive1:
 				return "Passive 1";

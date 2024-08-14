@@ -7,38 +7,41 @@
 
 
 namespace Stats {
+	struct Sheet;
 	struct CharacterSheet {
-		SV hp{};
-		SV hp_{};
-		SV baseHp{};
-		SV atk{};
-		SV atk_{};
-		SV baseAtk{};
-		SV additionalAtk{};
-		SV def{};
-		SV def_{};
-		SV baseDef{};
-		SV er{.value = 1.f};
-		SV em{};
-		SV cr{.value = 0.05f};
-		SV cd{.value = 0.5f};
-		SV hb{};
+		using _Value = Value<Sheet, 4>;
+		using _SkillValue = SkillValue<_Value>;
+		_Value hp{};
+		_Value hp_{};
+		_Value baseHp{};
+		_Value atk{};
+		_Value atk_{};
+		_Value baseAtk{};
+		_Value additionalAtk{};
+		_Value def{};
+		_Value def_{};
+		_Value baseDef{};
+		_Value er{.constant = 1.f};
+		_Value em{};
+		_Value cr{.constant = 0.05f};
+		_Value cd{.constant = 0.5f};
+		_Value hb{};
 
-		SSV pyro{};
-		SSV hydro{};
-		SSV cryo{};
-		SSV electro{};
-		SSV dendro{};
-		SSV anemo{};
-		SSV geo{};
-		SSV physical{};
-		SSV all{};
+		_SkillValue pyro{};
+		_SkillValue hydro{};
+		_SkillValue cryo{};
+		_SkillValue electro{};
+		_SkillValue dendro{};
+		_SkillValue anemo{};
+		_SkillValue geo{};
+		_SkillValue physical{};
+		_SkillValue all{};
 
-		SSV normal{};
-		SSV charged{};
-		SSV plunge{};
-		SSV skill{};
-		SSV burst{};
+		_SkillValue normal{};
+		_SkillValue charged{};
+		_SkillValue plunge{};
+		_SkillValue skill{};
+		_SkillValue burst{};
 
 		Talents talents{};
 		unsigned short constellation{};

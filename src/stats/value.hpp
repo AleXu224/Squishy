@@ -2,21 +2,20 @@
 
 #include "formula/node.hpp"
 #include "print"
+#include "span"
 #include "stats/helpers.hpp"
-#include "stats/stat.hpp"
-#include "vector"
 
 
 namespace Stats {
-	template<class T, class V>
+	template<class T, size_t Count, class V>
 	struct Value {
+		static_assert(Count >= 2, "There must be enough space for two modifiers");
 #ifndef NDEBUG
 		mutable bool isRunning = false;
 #endif
 
-		V value = 0;
-		std::vector<Formula::Node> modifiers = {};
-		std::vector<Formula::Node> totalModifiers = {};
+		float constant = 0.f;
+		std::array<Formula::Node, Count> modifiers{};
 
 		[[nodiscard]] inline V get(const T &statSheet) const {
 #ifndef NDEBUG
@@ -28,8 +27,8 @@ namespace Stats {
 			isRunning = true;
 #endif
 
-			V ret = value;
-			for (const auto &modifier: modifiers) ret += modifier.eval(statSheet);
+			V ret = constant;
+			for (const auto &modifier: std::span<Formula::Node, Count - 1>(modifiers.begin(), Count - 1)) ret += modifier.eval(statSheet);
 
 #ifndef NDEBUG
 			isRunning = false;
@@ -39,41 +38,24 @@ namespace Stats {
 		}
 
 		[[nodiscard]] inline V getTotal(const T &statSheet) const {
-			V ret = value;
-			for (const auto &modifier: modifiers) ret += modifier.eval(statSheet);
-			for (const auto &modifier: totalModifiers) ret += modifier.eval(statSheet);
+			V ret = constant;
+			for (const auto &modifier: modifiers) {
+				if (!modifier.hasValue) continue;
+				ret += modifier.eval(statSheet);
+			}
 			return ret;
-		}
-
-
-		static consteval auto Multiplier(const Stat &stat, V value)
-			requires(SheetLike<T>)
-		{
-			return [stat, value](const T &statSheet) -> V {
-				return statSheet.sheet.fromStat(stat).getTotal(statSheet) * value;
-			};
-		}
-
-		static consteval auto Multiplier(const Stat &stat, V value) {
-			return [stat, value](const T &statSheet) -> V {
-				return statSheet.character.sheet.fromStat(stat).getTotal(statSheet) * value;
-			};
-		}
-
-		static consteval auto Constant(V value) {
-			return [value](const T &) {
-				return value;
-			};
 		}
 	};
 
-	template<class T, class V>
+	template<class T>
 	struct SkillValue {
-		Value<T, V> DMG{};
-		Value<T, V> additiveDMG{};
-		Value<T, V> multiplicativeDMG{};
-		Value<T, V> critRate{};
-		Value<T, V> critDMG{};
+		using _Value = T;
+
+		_Value DMG{};
+		_Value additiveDMG{};
+		_Value multiplicativeDMG{};
+		_Value critRate{};
+		_Value critDMG{};
 
 		static consteval auto getMembers() {
 			return std::array{
@@ -85,17 +67,32 @@ namespace Stats {
 			};
 		}
 
-		[[nodiscard]] static constexpr bool isPercetange(SV SSV::*member) {
-			if (member == &SSV::DMG) return true;
-			if (member == &SSV::additiveDMG) return false;
-			if (member == &SSV::multiplicativeDMG) return true;
-			if (member == &SSV::critRate) return true;
-			if (member == &SSV::critDMG) return true;
+		[[nodiscard]] static constexpr bool isPercetange(_Value SkillValue:: *member) {
+			if (member == &SkillValue::DMG) return true;
+			if (member == &SkillValue::additiveDMG) return false;
+			if (member == &SkillValue::multiplicativeDMG) return true;
+			if (member == &SkillValue::critRate) return true;
+			if (member == &SkillValue::critDMG) return true;
 			return false;
 		}
 	};
 
-	inline void addModifier(SV &stat, const Formula::Node &modifier) {
-		stat.modifiers.emplace_back(modifier);
+	template<class T, size_t Count, class V>
+	inline void addModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
+		stat.modifiers[0] = std::move(modifier);
+	}
+
+	template<class T, size_t Count, class V>
+	inline void addTotalModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
+		stat.modifiers[1] = std::move(modifier);
+	}
+
+	template<class T, size_t Count, class V>
+	inline void addModifierArtifact(Value<T, Count, V> &stat, Formula::Node &&modifier) {
+		if (!stat.modifiers[0].hasValue) {
+			stat.modifiers[0] = std::move(modifier);
+		} else {
+			stat.modifiers[2] = std::move(modifier);
+		}
 	}
 }// namespace Stats

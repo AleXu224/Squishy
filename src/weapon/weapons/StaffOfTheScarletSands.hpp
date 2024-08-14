@@ -33,9 +33,11 @@ namespace Weapon::Datas {
 			};
 		},
 		.modsSetup = [](Weapon::Data::ModsSetup data) {
-			Stats::addModifier(data.stats.sheet.atk, Formula::WeaponMultiplier(0) * Formula::Stat(Stat::em));
-
-			Stats::addModifier(data.stats.sheet.atk, Formula::WeaponMultiplier(1) * Formula::Stat(Stat::em) * Formula::ConditionalValue(Conditional::Location::weapon, "eHits"));
+			Stats::addModifier(
+				data.stats.sheet.atk,
+				Formula::WeaponMultiplier(0) * Formula::Stat(Stat::em) +
+					Formula::WeaponMultiplier(1) * Formula::Stat(Stat::em) * Formula::ConditionalValue(Conditional::Location::weapon, "eHits")
+			);
 		},
 		.nodeSetup = [](Weapon::Data::NodeSetup data) -> Node::WeaponList {
 			return Node::WeaponList{};

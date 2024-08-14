@@ -27,29 +27,23 @@ void Character::Instance::getArtifactStats() {
 	// FIXME: also clear sheet
 	stats.artifact.set = std::nullopt;
 
-	for (auto &artPtr: Stats::Artifact::Slotted::getMembers()) {
+	for (auto [artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(3, 8))) {
 		auto artId = std::invoke(artPtr, stats.artifact.equipped);
 		if (artId == 0) continue;
 		auto &artifact = Store::artifacts.at(artId);
 		occurences[artifact.set]++;
-		Stats::addModifier(
-			stats.artifact.sheet.fromStat(artifact.mainStat),
-			Formula::Custom(
-				"Artifact Mainstat", [mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) -> float {
-					return Stats::Values::mainStat.at(mainStat).at(level);
-				},
-				Stats::isPercentage(artifact.mainStat)
-			)
+		stats.artifact.sheet.fromStat(artifact.mainStat).modifiers.at(index) = Formula::Custom(
+			"Artifact Mainstat", [mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) -> float {
+				return Stats::Values::mainStat.at(mainStat).at(level);
+			},
+			Stats::isPercentage(artifact.mainStat)
 		);
 		for (auto &subStat: artifact.subStats) {
-			Stats::addModifier(
-				stats.artifact.sheet.fromStat(subStat.stat),
-				Formula::Custom(
-					"Artifact Substat", [subStat = subStat](const Stats::Sheet &) {
-						return subStat.value;
-					},
-					Stats::isPercentage(subStat.stat)
-				)
+			stats.artifact.sheet.fromStat(subStat.stat).modifiers.at(index) = Formula::Custom(
+				"Artifact Substat", [subStat = subStat](const Stats::Sheet &) {
+					return subStat.value;
+				},
+				Stats::isPercentage(subStat.stat)
 			);
 		}
 	}

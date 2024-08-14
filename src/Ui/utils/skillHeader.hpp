@@ -1,14 +1,12 @@
 #pragma once
 
-#include "character/key.hpp"
-
 #include "widget.hpp"
 
 namespace UI {
-	struct CharacterDetails {
+	struct SkillHeader {
 		// Args
 		squi::Widget::Args widget{};
-		Character::Key characterKey;
+		std::string_view name;
 
 		struct Storage {
 			// Data

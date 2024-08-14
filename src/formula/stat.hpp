@@ -27,7 +27,7 @@ namespace Formula {
 
 	template<Stats::SheetLike T>
 	struct StatPtr {
-		Stats::SV T:: *stat;
+		T::_Value T:: *stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<T, Stats::CharacterSheet>) return "";
@@ -66,8 +66,8 @@ namespace Formula {
 
 	template<Stats::SheetLike T>
 	struct SkillPtr {
-		Stats::SSV T:: *skill;
-		Stats::SV Stats::SSV:: *stat;
+		T::_SkillValue T:: *skill;
+		T::_Value T::_SkillValue:: *stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<T, Stats::CharacterSheet>) return "";
@@ -76,7 +76,7 @@ namespace Formula {
 		}();
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
-			bool isPercentage = Stats::SSV::isPercetange(stat);
+			bool isPercentage = T::_SkillValue::isPercetange(stat);
 			// FIXME: do the same optimization as below with if constexpr
 			// otherwise this will do a copy instead !!!!
 			const auto sheet = [&]() {
@@ -90,7 +90,7 @@ namespace Formula {
 			return fmt::format(
 				"{}{} {:.2f}{}",
 				prefix,
-				Utils::Stringify(skill, stat),
+				Utils::Stringify<T>(skill, stat),
 				std::invoke(stat, std::invoke(skill, sheet->sheet)).getTotal(stats) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);
@@ -120,20 +120,21 @@ namespace Formula {
 		std::unreachable();
 	}
 
+	template<class T>
 	struct ElementStat {
 		Misc::AttackSource attackSource;
 		Utils::JankyOptional<Misc::Element> element;
-		Stats::SV Stats::SSV:: *stat;
+		T::_Value T::_SkillValue:: *stat;
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
-			bool isPercentage = Stats::SSV::isPercetange(stat);
+			bool isPercentage = T::_SkillValue::isPercetange(stat);
 
 			auto el = _getElement(attackSource, element, stats);
 
 			auto skill = Stats::getSheetMemberByElement<Stats::CharacterSheet>(el);
 			return fmt::format(
 				"{} {:.2f}{}",
-				Utils::Stringify(skill, stat),
+				Utils::Stringify<T>(skill, stat),
 				std::invoke(stat, std::invoke(skill, stats.character.sheet)).getTotal(stats) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);

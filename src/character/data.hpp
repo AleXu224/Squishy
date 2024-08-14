@@ -5,6 +5,7 @@
 #include "node/node.hpp"
 #include "stats/characterBase.hpp"
 #include "string_view"
+#include "stats/character.hpp"
 
 
 namespace Character {

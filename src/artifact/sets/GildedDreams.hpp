@@ -22,11 +22,11 @@ namespace Artifact::Sets {
 			};
 		},
 		.twoPcModsSetup = [](Artifact::Set::ModsSetup data) {
-			Stats::addModifier(data.stats.sheet.em, Formula::Constant(80.f));
+			Stats::addModifierArtifact(data.stats.sheet.em, Formula::ConstantFlat(80.f));
 		},
 		.fourPcModsSetup = [](Artifact::Set::ModsSetup data) {
-			Stats::addModifier(data.stats.sheet.atk_, 0.14f * Formula::ConditionalValue(Conditional::Location::artifact, "gildedSameElement"));
-			Stats::addModifier(data.stats.sheet.em, 50.f * Formula::ConditionalValue(Conditional::Location::artifact, "gildedOtherElement"));
+			Stats::addModifierArtifact(data.stats.sheet.atk_, 0.14f * Formula::ConditionalValue(Conditional::Location::artifact, "gildedSameElement"));
+			Stats::addModifierArtifact(data.stats.sheet.em, Formula::ConstantFlat(50.f) * Formula::ConditionalValue(Conditional::Location::artifact, "gildedOtherElement"));
 		},
 		.nodeSetup = []() -> Node::ArtifactList {
 			return {};

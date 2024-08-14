@@ -1,7 +1,7 @@
 #include "homePage.hpp"
 
 #include "Ui/artifact/artifactPage.hpp"
-#include "Ui/character/characterPage.hpp"
+#include "Ui/character/characterList.hpp"
 #include "Ui/utils/topnav.hpp"
 #include "Ui/weapon/weaponPage.hpp"
 
@@ -20,7 +20,7 @@ UI::homePage::operator squi::Child() const {
 			},
 			TopNav::Page{
 				.name{"Characters"},
-				.content = CharacterPage{},
+				.content = CharacterList{},
 			},
 			TopNav::Page{
 				.name{"Weapons"},
