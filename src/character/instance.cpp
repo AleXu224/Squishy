@@ -32,19 +32,9 @@ void Character::Instance::getArtifactStats() {
 		if (artId == 0) continue;
 		auto &artifact = Store::artifacts.at(artId);
 		occurences[artifact.set]++;
-		stats.artifact.sheet.fromStat(artifact.mainStat).modifiers.at(index) = Formula::Custom(
-			"Artifact Mainstat", [mainStat = artifact.mainStat, level = artifact.level](const Stats::Sheet &) -> float {
-				return Stats::Values::mainStat.at(mainStat).at(level);
-			},
-			Stats::isPercentage(artifact.mainStat)
-		);
+		stats.artifact.sheet.fromStat(artifact.mainStat).modifiers.at(index) = Formula::ArtifactMainStat(artifact.mainStat, artifact.level);
 		for (auto &subStat: artifact.subStats) {
-			stats.artifact.sheet.fromStat(subStat.stat).modifiers.at(index) = Formula::Custom(
-				"Artifact Substat", [subStat = subStat](const Stats::Sheet &) {
-					return subStat.value;
-				},
-				Stats::isPercentage(subStat.stat)
-			);
+			stats.artifact.sheet.fromStat(subStat.stat).modifiers.at(index) = Formula::ArtifactSubStat(subStat);
 		}
 	}
 	for (auto &occurence: occurences) {

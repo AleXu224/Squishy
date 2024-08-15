@@ -44,9 +44,9 @@ namespace Stats {
 		_SkillValue burst{};
 
 		Talents talents{};
-		unsigned short constellation{};
-		unsigned short level{1};
-		unsigned short ascension{0};
+		uint8_t constellation{};
+		uint8_t level{1};
+		uint8_t ascension{0};
 
 		void init(Stats::Sheet &sheet);
 
