@@ -40,7 +40,7 @@ namespace Stats {
 		[[nodiscard]] inline V getTotal(const T &statSheet) const {
 			V ret = constant;
 			for (const auto &modifier: modifiers) {
-				if (!modifier.hasValue) continue;
+				if (!modifier.hasValue()) continue;
 				ret += modifier.eval(statSheet);
 			}
 			return ret;
@@ -89,7 +89,7 @@ namespace Stats {
 
 	template<class T, size_t Count, class V>
 	inline void addModifierArtifact(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		if (!stat.modifiers[0].hasValue) {
+		if (!stat.modifiers[0].hasValue()) {
 			stat.modifiers[0] = std::move(modifier);
 		} else {
 			stat.modifiers[2] = std::move(modifier);

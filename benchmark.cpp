@@ -7,18 +7,12 @@
 #include "src/stats/helpers.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
+#include <random>
 
 #include "benchmark/benchmark.h"
 
-
-static void formulaCalc(benchmark::State &state) {
-	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
-	static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
-
-	Weapon::initWeapons();
-	Character::initCharacters();
-	Artifact::initArtifacts();
-
+#pragma optimize("", off)
+[[nodiscard]] Character::Instance &getCharacter() {
 	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	weapon.stats.sheet.level = 90;
 	weapon.stats.sheet.ascension = 6;
@@ -124,11 +118,33 @@ static void formulaCalc(benchmark::State &state) {
 
 	character.getArtifactStats();
 
-    auto &node = character.stats.character.data.nodes.burst.at(0);
+	return character;
+}
 
-    for (auto _ : state) {
-        (void) node.formula.eval(character.stats);
-    }
+[[nodiscard]] Node::Instance &getNode(Character::Instance &character) {
+	return character.stats.character.data.nodes.burst.at(0);
+}
+#pragma optimize("", on)
+
+static void formulaCalc(benchmark::State &state) {
+	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
+	static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
+
+	Weapon::initWeapons();
+	Character::initCharacters();
+	Artifact::initArtifacts();
+
+	auto &character = getCharacter();
+
+	auto &node = getNode(character);
+
+	std::random_device rd{};
+	std::mt19937 mt(rd());
+	std::uniform_int_distribution<unsigned short> levelGen(1, 90);
+
+	for (auto _: state) {
+		benchmark::DoNotOptimize(node.formula.eval(character.stats));
+	}
 }
 BENCHMARK(formulaCalc);
 
