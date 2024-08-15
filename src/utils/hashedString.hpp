@@ -1,17 +1,18 @@
 #pragma once
 
 #include "string_view"
+#include "cstdint"
 
 
 namespace Utils {
 	struct HashedString {
 		std::string_view str;
-		size_t hash;
+		uint32_t hash;
 
 		consteval HashedString(std::string_view string) : str(string), hash(fnv1a_32(string.data(), string.size())) {}
 		constexpr HashedString(const char *string) : str(string), hash(fnv1a_32(str.data(), str.size())) {}
 
-		constexpr operator size_t() const {
+		constexpr operator uint32_t() const {
 			return hash;
 		}
 

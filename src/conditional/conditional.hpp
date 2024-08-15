@@ -12,7 +12,7 @@
 namespace Conditional {
 	using Types = std::variant<Boolean, ValueList>;
 
-	using TypesMap = std::unordered_map<size_t, Types>;
+	using TypesMap = std::unordered_map<uint32_t, Types>;
 
 	inline bool getBool(const TypesMap &conditionals, const Utils::HashedString &key) {
 		return std::get<Conditional::Boolean>(conditionals.at(key.hash)).active;

@@ -29,7 +29,7 @@ struct DetailsSkill {
 	std::vector<Node::Types> &nodes;
 	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxModifierIndex = 0;
-	std::unordered_map<size_t, Conditional::Types> &conditionals;
+	std::unordered_map<uint32_t, Conditional::Types> &conditionals;
 
 	operator squi::Child() const {
 		auto &character = Store::characters.at(characterKey);
@@ -158,7 +158,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 
 	w.addChild(UI::CharacterStats{.characterKey = characterKey});
 
-	std::vector<std::reference_wrapper<std::unordered_map<size_t, Conditional::Types>>> conditionals{};
+	std::vector<std::reference_wrapper<std::unordered_map<uint32_t, Conditional::Types>>> conditionals{};
 	for (auto &condPtr: Conditional::CharacterMap::getMembers()) {
 		conditionals.emplace_back(std::invoke(condPtr, character.stats.character.conditionals));
 	}
