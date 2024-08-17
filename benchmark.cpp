@@ -11,7 +11,6 @@
 
 #include "benchmark/benchmark.h"
 
-#pragma optimize("", off)
 [[nodiscard]] Character::Instance &getCharacter() {
 	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	weapon.stats.sheet.level = 90;
@@ -124,7 +123,6 @@
 [[nodiscard]] Node::Instance &getNode(Character::Instance &character) {
 	return character.stats.character.data.nodes.burst.at(0);
 }
-#pragma optimize("", on)
 
 static void formulaCalc(benchmark::State &state) {
 	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
