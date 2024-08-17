@@ -4,7 +4,7 @@
 #include "print"
 #include "span"
 #include "stats/helpers.hpp"
-
+#include "cassert"
 
 namespace Stats {
 	template<class T, size_t Count, class V>
@@ -79,18 +79,20 @@ namespace Stats {
 
 	template<class T, size_t Count, class V>
 	inline void addModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		stat.modifiers[0] = std::move(modifier);
+		assert(!stat.modifiers.at(1).hasValue());
+		stat.modifiers.at(1) = std::move(modifier);
 	}
 
 	template<class T, size_t Count, class V>
 	inline void addTotalModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		stat.modifiers[1] = std::move(modifier);
+		assert(!stat.modifiers.at(0).hasValue());
+		stat.modifiers.at(0) = std::move(modifier);
 	}
 
 	template<class T, size_t Count, class V>
 	inline void addModifierArtifact(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		if (!stat.modifiers[0].hasValue()) {
-			stat.modifiers[0] = std::move(modifier);
+		if (!stat.modifiers[1].hasValue()) {
+			stat.modifiers[1] = std::move(modifier);
 		} else {
 			stat.modifiers[2] = std::move(modifier);
 		}
