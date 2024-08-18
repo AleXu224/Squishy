@@ -5,20 +5,24 @@
 #include "weapon/data.hpp"
 
 namespace Formula {
-	[[nodiscard]] inline const auto &_getRefinementMultiplier(size_t index, const Stats::Sheet &stats) {
-		return stats.weapon.data.multipliers.at(index).at(stats.weapon.sheet.refinement);
+	[[nodiscard]] inline const auto &_getRefinementMultiplier(const std::array<float, 5> &values, const Stats::Sheet &stats) {
+		return values.at(stats.weapon.sheet.refinement);
 	}
 
-	struct WeaponMultiplier{
-		size_t index;
+	struct WeaponMultiplierValue {
+		std::array<float, 5> values;
 
 		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
-			auto &multiplier = _getRefinementMultiplier(index, stats);
+			auto &multiplier = _getRefinementMultiplier(values, stats);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
-			return _getRefinementMultiplier(index, stats);
+			return _getRefinementMultiplier(values, stats);
 		}
 	};
+
+	[[nodiscard]] consteval auto WeaponMultiplier(::Stat stat, const std::array<float, 5> &values) {
+		return Formula::Stat(stat) * WeaponMultiplierValue(values);
+	}
 }// namespace Formula

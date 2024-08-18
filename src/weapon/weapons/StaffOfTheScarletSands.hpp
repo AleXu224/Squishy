@@ -19,10 +19,6 @@ namespace Weapon::Datas {
 				0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7
 			}
 		},
-		.multipliers{
-			{0.52, 0.65, 0.78, 0.91, 1.04},
-			{0.28, 0.35, 0.42, 0.49, 0.56},
-		},
 		.condsSetup = [](Weapon::Data::CondsSetup data) -> Conditional::WeaponList {
 			return {
 				Conditional::ValueList{
@@ -35,8 +31,10 @@ namespace Weapon::Datas {
 		.modsSetup = [](Weapon::Data::ModsSetup data) {
 			Stats::addModifier(
 				data.stats.sheet.atk,
-				Formula::WeaponMultiplier(0) * Formula::Stat(Stat::em) +
-					Formula::WeaponMultiplier(1) * Formula::Stat(Stat::em) * Formula::ConditionalValue(Conditional::Location::weapon, "eHits")
+				(
+					Formula::WeaponMultiplier(Stat::em, {0.52, 0.65, 0.78, 0.91, 1.04}) +
+					Formula::WeaponMultiplier(Stat::em, {0.28, 0.35, 0.42, 0.49, 0.56}) * Formula::ConditionalValue(Conditional::Location::weapon, "eHits")
+				)
 			);
 		},
 		.nodeSetup = [](Weapon::Data::NodeSetup data) -> Node::WeaponList {
