@@ -2,7 +2,7 @@
 
 #include "fmt/core.h"
 #include "intermediary.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 
 
 namespace Formula {
@@ -17,7 +17,7 @@ namespace Formula {
 		constellation6,
 	};
 
-	[[nodiscard]] inline bool _getRequirement(Requirement req, const Stats::Sheet &stats) {
+	[[nodiscard]] inline bool _getRequirement(Requirement req, const Stats::Loadout &stats) {
 		switch (req) {
 			case Requirement::passive1:
 				return stats.character.sheet.ascension >= 1;
@@ -66,12 +66,12 @@ namespace Formula {
 		Requirement requirement;
 		T ret;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
 			auto cond = _getRequirement(requirement, stats);
 			return fmt::format("{}", cond ? fmt::format("{} : ({})", _getRequirementName(requirement), ret.print(stats, Step::none)) : "");
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			auto cond = _getRequirement(requirement, stats);
 			if (cond)
 				return ret.eval(stats);

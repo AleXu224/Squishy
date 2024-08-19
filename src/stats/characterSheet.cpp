@@ -1,32 +1,33 @@
 #include "characterSheet.hpp"
 
+#include "characterSheetUtils.hpp"
 #include "formula/formula.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 #include "utils.hpp"
 
 
-void Stats::CharacterSheet::init(Stats::Sheet &stats) {
+void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	// HP
-	baseHp.modifiers.at(3) = Formula::Custom("Character Base", [](const Stats::Sheet &stats) {
+	this->stats.preMods.baseHp.modifiers.at(2) = Formula::Custom("Character Base", [](const Stats::Loadout &stats) {
 		return stats.character.base.getHpAt(stats.character.sheet.level, stats.character.sheet.ascension);
 	});
-	hp.modifiers.at(3) = (Formula::Stat(Stat::hp_) + 1.f) * Formula::Stat(Stat::baseHp);
+	this->stats.preMods.hp.modifiers.at(2) = (Formula::Stat(Stat::hp_) + 1.f) * Formula::Stat(Stat::baseHp);
 
 	// ATK
-	baseAtk.modifiers.at(3) = Formula::Custom("Character Base", [](const Stats::Sheet &stats) {
+	this->stats.preMods.baseAtk.modifiers.at(2) = Formula::Custom("Character Base", [](const Stats::Loadout &stats) {
 		return stats.character.base.getAtkAt(stats.character.sheet.level, stats.character.sheet.ascension);
 	});
-	atk.modifiers.at(3) = (Formula::Stat(Stat::atk_) + 1.f) * Formula::Stat(Stat::baseAtk);
+	this->stats.preMods.atk.modifiers.at(2) = (Formula::Stat(Stat::atk_) + 1.f) * Formula::Stat(Stat::baseAtk);
 
 	// DEF
-	baseDef.modifiers.at(3) = Formula::Custom("Character Base", [](const Stats::Sheet &stats) {
+	this->stats.preMods.baseDef.modifiers.at(2) = Formula::Custom("Character Base", [](const Stats::Loadout &stats) {
 		return stats.character.base.getDefAt(stats.character.sheet.level, stats.character.sheet.ascension);
 	});
-	def.modifiers.at(3) = (Formula::Stat(Stat::def_) + 1.f) * Formula::Stat(Stat::baseDef);
+	this->stats.preMods.def.modifiers.at(2) = (Formula::Stat(Stat::def_) + 1.f) * Formula::Stat(Stat::baseDef);
 
 	// Ascension stat
-	stats.character.sheet.fromStat(stats.character.base.ascensionStat).modifiers.at(3) = Formula::Custom(
-		"Character Base", [](const Stats::Sheet &stats) {
+	this->stats.preMods.fromStat(stats.character.base.ascensionStat).modifiers.at(2) = Formula::Custom(
+		"Character Base", [](const Stats::Loadout &stats) {
 			return stats.character.base.getAscensionStatAt(stats.character.sheet.ascension);
 		},
 		Stats::isPercentage(stats.character.base.ascensionStat)
@@ -34,106 +35,67 @@ void Stats::CharacterSheet::init(Stats::Sheet &stats) {
 	linkWeaponAndArtifacts(stats);
 }
 
-template<class T, size_t... Is>
-consteval auto _iterate(const T &data, std::index_sequence<Is...>) {
-	return std::tuple{
-		[&]() consteval {
-			auto wPtr = std::get<1>(data[Is]);
-			auto aPtr = std::get<2>(data[Is]);
-			return std::tuple{std::get<0>(data[Is]), Formula::StatPtr(wPtr) + Formula::StatPtr(aPtr)};
-		}()...,
-	};
-}
+void Stats::CharacterSheet::linkWeaponAndArtifacts(Stats::Loadout &stats) {
+	squi::utils::iterateTuple(CharacterSheetUtils::sheetValueModifiers, [&](const auto &lbd) {
+		const auto &[pre, post] = lbd;
 
-template<size_t Size, class T>
-consteval auto iterate(const T &data) {
-	return _iterate(data, std::make_index_sequence<Size>());
-}
-
-[[nodiscard]] consteval auto getSheetValuesModifiers() {
-	constexpr auto data = std::views::zip(
-		Stats::getSheetValuesMembers<Stats::CharacterSheet>(),
-		Stats::getSheetValuesMembers<Stats::WeaponSheet>(),
-		Stats::getSheetValuesMembers<Stats::ArtifactSheet>()
-	);
-	return iterate<data.size()>(data);
-}
-
-template<class T, size_t... Is>
-consteval auto _iterate2(const T &data, std::index_sequence<Is...>) {
-	return std::tuple{
-		[&]() consteval {
-			auto [character, weapon, artifact] = data[Is];
-			return std::tuple{
-				std::get<0>(character),
-				std::get<1>(character),
-				Formula::SkillPtr<Stats::WeaponSheet>(std::get<1>(weapon), std::get<0>(weapon)) +
-					Formula::SkillPtr<Stats::ArtifactSheet>(std::get<1>(artifact), std::get<0>(artifact)),
-			};
-		}()...,
-	};
-}
-
-template<size_t Size, class T>
-consteval auto iterate2(const T &data) {
-	return _iterate2(data, std::make_index_sequence<Size>());
-}
-
-[[nodiscard]] consteval auto getSheetElementsModifiers() {
-	constexpr auto data = std::views::zip(
-		std::views::cartesian_product(
-			Stats::CharacterSheet::_SkillValue::getMembers(),
-			Stats::getSheetElementsMembers<Stats::CharacterSheet>()
-		),
-		std::views::cartesian_product(
-			Stats::WeaponSheet::_SkillValue::getMembers(),
-			Stats::getSheetElementsMembers<Stats::WeaponSheet>()
-		),
-		std::views::cartesian_product(
-			Stats::ArtifactSheet::_SkillValue::getMembers(),
-			Stats::getSheetElementsMembers<Stats::ArtifactSheet>()
-		)
-	);
-	return iterate2<data.size()>(data);
-}
-[[nodiscard]] consteval auto getSheetSkillsModifiers() {
-	constexpr auto data = std::views::zip(
-		std::views::cartesian_product(
-			Stats::CharacterSheet::_SkillValue::getMembers(),
-			Stats::getSheetAttackSourceMembers<Stats::CharacterSheet>()
-		),
-		std::views::cartesian_product(
-			Stats::WeaponSheet::_SkillValue::getMembers(),
-			Stats::getSheetAttackSourceMembers<Stats::WeaponSheet>()
-		),
-		std::views::cartesian_product(
-			Stats::ArtifactSheet::_SkillValue::getMembers(),
-			Stats::getSheetAttackSourceMembers<Stats::ArtifactSheet>()
-		)
-	);
-	return iterate2<data.size()>(data);
-}
-
-constexpr auto sheetValueModifiers = getSheetValuesModifiers();
-constexpr auto sheetElementModifiers = getSheetElementsModifiers();
-constexpr auto sheetSkillModifiers = getSheetSkillsModifiers();
-
-void Stats::CharacterSheet::linkWeaponAndArtifacts(Stats::Sheet &stats) {
-	squi::utils::iterateTuple(sheetValueModifiers, [&](const auto &lbd) {
-		const auto &[cPtr, mod] = lbd;
-
-		std::invoke(cPtr, stats.character.sheet).modifiers[2] = mod;
+		const auto &[preStat, preMod] = pre;
+		std::invoke(preStat, stats.character.sheet.stats.preMods).modifiers.at(1) = preMod;
+		const auto &[postStat, postMod] = post;
+		std::invoke(postStat, stats.character.sheet.stats.postMods).modifiers.at(1) = postMod;
 	});
 
-	squi::utils::iterateTuple(sheetElementModifiers, [&](const auto &lbd) {
-		const auto &[ssvPtr, cPtr, mod] = lbd;
+	squi::utils::iterateTuple(CharacterSheetUtils::sheetElementModifiers, [&](const auto &lbd) {
+		const auto &[pre, post] = lbd;
 
-		std::invoke(ssvPtr, std::invoke(cPtr, stats.character.sheet)).modifiers[2] = mod;
+		const auto &[preCharacter, preMod] = pre;
+		const auto &[preSkill, preStat] = preCharacter;
+		std::invoke(preStat, std::invoke(preSkill, stats.character.sheet.stats.preMods)).modifiers.at(1) = preMod;
+		const auto &[postCharacter, postMod] = post;
+		const auto &[postSkill, postStat] = postCharacter;
+		std::invoke(postStat, std::invoke(postSkill, stats.character.sheet.stats.postMods)).modifiers.at(1) = postMod;
 	});
 
-	squi::utils::iterateTuple(sheetSkillModifiers, [&](const auto &lbd) {
-		const auto &[ssvPtr, cPtr, mod] = lbd;
+	squi::utils::iterateTuple(CharacterSheetUtils::sheetAttacksModifiers, [&](const auto &lbd) {
+		const auto &[pre, post] = lbd;
 
-		std::invoke(ssvPtr, std::invoke(cPtr, stats.character.sheet)).modifiers[2] = mod;
+		const auto &[preCharacter, preMod] = pre;
+		const auto &[preSkill, preStat] = preCharacter;
+		std::invoke(preStat, std::invoke(preSkill, stats.character.sheet.stats.preMods)).modifiers.at(1) = preMod;
+		const auto &[postCharacter, postMod] = post;
+		const auto &[postSkill, postStat] = postCharacter;
+		std::invoke(postStat, std::invoke(postSkill, stats.character.sheet.stats.postMods)).modifiers.at(1) = postMod;
 	});
+
+	for (auto [preMember, postMember]: std::views::zip(Stats::getSheetValuesMembers<CharacterSheetUtils::_Pre<CharacterSheet>>(), Stats::getSheetValuesMembers<CharacterSheetUtils::_Post<CharacterSheet>>())) {
+		std::invoke(postMember, this->stats.postMods).modifiers.at(2) = Formula::StatPtr<CharacterSheetUtils::_Pre<CharacterSheet>, CharacterSheet>(preMember, CharacterSheetUtils::_PreS<CharacterSheet>());
+	}
+	for (auto [preMember, postMember]: std::views::zip(
+			 std::views::cartesian_product(
+				 Stats::getSheetElementsMembers<CharacterSheetUtils::_Pre<CharacterSheet>>(),
+				 CharacterSheetUtils::_Pre<CharacterSheet>::_SkillValue::getMembers()
+			 ),
+			 std::views::cartesian_product(
+				 Stats::getSheetElementsMembers<CharacterSheetUtils::_Post<CharacterSheet>>(),
+				 CharacterSheetUtils::_Post<CharacterSheet>::_SkillValue::getMembers()
+			 )
+		 )) {
+			auto &[preSkill, preStat] = preMember;
+			auto &[postSkill, postStat] = postMember;
+		std::invoke(postStat, std::invoke(postSkill, this->stats.postMods)).modifiers.at(2) = Formula::SkillPtr<CharacterSheetUtils::_Pre<CharacterSheet>, CharacterSheet>(preSkill, preStat, CharacterSheetUtils::_PreS<CharacterSheet>());
+	}
+	for (auto [preMember, postMember]: std::views::zip(
+			 std::views::cartesian_product(
+				 Stats::getSheetAttackSourceMembers<CharacterSheetUtils::_Pre<CharacterSheet>>(),
+				 CharacterSheetUtils::_Pre<CharacterSheet>::_SkillValue::getMembers()
+			 ),
+			 std::views::cartesian_product(
+				 Stats::getSheetAttackSourceMembers<CharacterSheetUtils::_Post<CharacterSheet>>(),
+				 CharacterSheetUtils::_Post<CharacterSheet>::_SkillValue::getMembers()
+			 )
+		 )) {
+			auto &[preSkill, preStat] = preMember;
+			auto &[postSkill, postStat] = postMember;
+		std::invoke(postStat, std::invoke(postSkill, this->stats.postMods)).modifiers.at(2) = Formula::SkillPtr<CharacterSheetUtils::_Pre<CharacterSheet>, CharacterSheet>(preSkill, preStat, CharacterSheetUtils::_PreS<CharacterSheet>());
+	}
 }

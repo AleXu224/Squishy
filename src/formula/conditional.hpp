@@ -3,11 +3,11 @@
 #include "conditional/conditional.hpp"
 #include "fmt/core.h"
 #include "intermediary.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 
 
 namespace Formula {
-	[[nodiscard]] inline const Conditional::TypesMap &_getConditionalLocation(Conditional::Location location, const Stats::Sheet &stats) {
+	[[nodiscard]] inline const Conditional::TypesMap &_getConditionalLocation(Conditional::Location location, const Stats::Loadout &stats) {
 		switch (location) {
 			case Conditional::Location::normal:
 				return stats.character.conditionals.normal;
@@ -45,12 +45,12 @@ namespace Formula {
 		Utils::HashedString name;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
 			auto cond = ::Conditional::getBool(_getConditionalLocation(location, stats), name);
 			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(stats, Step::none)) : "");
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			auto cond = ::Conditional::getBool(_getConditionalLocation(location, stats), name);
 			if (cond)
 				return val.eval(stats);
@@ -63,12 +63,12 @@ namespace Formula {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
 			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, stats), name, defaultValue);
 			return fmt::format("{} {}", name.str, cond);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, stats), name, defaultValue);
 			return cond;
 		}

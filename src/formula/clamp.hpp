@@ -13,13 +13,13 @@ namespace Formula {
 		float max;
 		bool isPercentage = true;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
 			auto val = val1.eval(stats);
 			if (val >= min && val <= max) return val1.print(stats, Step::none);
 			return fmt::format("clamp({}, {}, {})", val1.print(stats, Step::none), min, max);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			return std::clamp(val1.eval(stats), min, max);
 		}
 	};

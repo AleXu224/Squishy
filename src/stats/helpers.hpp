@@ -1,14 +1,13 @@
 #pragma once
 
 #include "misc/attackSource.hpp"
+#include "ranges"
 #include "stats/stat.hpp"
 #include "type_traits"
 #include "utility"
 
 
 namespace Stats {
-	struct Sheet;
-
 	template<class T, size_t Size, class V = float>
 	struct Value;
 
@@ -260,11 +259,73 @@ namespace Stats {
 			&T::burst,
 		};
 	}
+
+	template<SheetLike T>
+	[[nodiscard]] inline auto allSheetValuesView(T &&sheet) {
+		using TT = std::remove_cvref_t<T>;
+
+		return std::views::transform(
+			Stats::getSheetValuesMembers<TT>(),
+			[&sheet](auto &&val) {
+				return std::ref(std::invoke(val, sheet));
+			}
+		);
+	}
+	template<SheetLike T>
+	[[nodiscard]] inline auto allSheetAttackSourceView(T &&sheet) {
+		using TT = std::remove_cvref_t<T>;
+
+		return std::views::transform(
+			std::views::cartesian_product(
+				Stats::getSheetAttackSourceMembers<TT>(),
+				TT::_SkillValue::getMembers()
+			),
+			[&sheet](auto &&val) {
+				return std::ref(std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet)));
+			}
+		);
+	}
+	template<SheetLike T>
+	[[nodiscard]] inline auto allSheetElementsView(T &&sheet) {
+		using TT = std::remove_cvref_t<T>;
+
+		return std::views::transform(
+			std::views::cartesian_product(
+				Stats::getSheetElementsMembers<TT>(),
+				TT::_SkillValue::getMembers()
+			),
+			[&sheet](auto &&val) {
+				return std::ref(std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet)));
+			}
+		);
+	}
+
+	template<SheetLike T, SheetLike U>
+	inline void setupModifiers(T && newMods, U && stats, size_t index) {
+		for (auto [stat, statCharacter]: std::views::zip(
+				 Stats::allSheetValuesView(newMods),
+				 Stats::allSheetValuesView(stats)
+			 )) {
+			statCharacter.get().modifiers.at(index) = stat.get();
+		}
+		for (auto [stat, statCharacter]: std::views::zip(
+				 Stats::allSheetAttackSourceView(newMods),
+				 Stats::allSheetAttackSourceView(stats)
+			 )) {
+			statCharacter.get().modifiers.at(index) = stat.get();
+		}
+		for (auto [stat, statCharacter]: std::views::zip(
+				 Stats::allSheetElementsView(newMods),
+				 Stats::allSheetElementsView(stats)
+			 )) {
+			statCharacter.get().modifiers.at(index) = stat.get();
+		}
+	}
 }// namespace Stats
 
 namespace Utils {
 	template<Stats::SheetLike T, class U>
-	constexpr std::string Stringify(Stats::SkillValue<typename T::_Value> T:: *skill, typename T::_Value U:: *stat) {
+	constexpr std::string Stringify(typename T::_SkillValue T:: *skill, typename T::_Value U:: *stat) {
 		std::string_view prefix = [&]() {
 			if (skill == &T::pyro) return "Pyro ";
 			if (skill == &T::hydro) return "Hydro ";

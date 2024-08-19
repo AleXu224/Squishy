@@ -8,49 +8,30 @@
 #include "string_view"
 
 
-
 namespace Character {
 	struct Instance;
 
 	struct Data {
-		struct CondsSetup {
-			Stats::Character &stats;
-		};
-
-		struct ModsSetup {
-			Stats::Character &stats;
-			const Conditional::CharacterMap &conditionals;
-		};
-
-		struct NodeSetup {
+		struct Setup {
+			Stats::ModsSheet mods{};
+			Node::CharacterList nodes{};
 		};
 
 		const Key key;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
-		const std::function<Conditional::CharacterList(Character::Data::CondsSetup data)> condsSetup;
-		const std::function<void(Character::Data::ModsSetup data)> modsSetup;
-		const std::function<Node::CharacterList(Character::Data::NodeSetup data)> nodeSetup;
+		const Conditional::CharacterList conds{};
+		const std::function<Setup(void)> setup;
 
-		mutable Node::CharacterList nodes{};
+		const Setup data = [](const std::function<Setup(void)> &setup) {
+			return setup();
+		}(setup);
 
 		void getConds(Conditional::CharacterMap &conditionals, Stats::Character &stats) const {
 			Conditional::mapConditionals(
 				conditionals,
-				condsSetup(CondsSetup{
-					.stats = stats,
-				})
+				conds
 			);
-		}
-		void getMods(Conditional::CharacterMap &conditionals, Stats::Character &stats) const {
-			modsSetup(ModsSetup{
-				.stats = stats,
-				.conditionals = conditionals,
-			});
-		}
-		[[nodiscard]] Node::CharacterList getNodes() const {
-			return nodeSetup(NodeSetup{
-			});
 		}
 	};
 }// namespace Character

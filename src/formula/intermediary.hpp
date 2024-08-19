@@ -5,13 +5,13 @@
 #include <string>
 
 namespace Stats {
-	struct Sheet;
+	struct Loadout;
 }
 
 namespace Formula {
 	template<class T>
 	concept IntermediaryLike = requires(T t) {
-		{ t.print(std::declval<const Stats::Sheet &>(), std::declval<Step>()) } -> std::same_as<std::string>;
-		{ t.eval(std::declval<const Stats::Sheet &>()) } -> std::same_as<float>;
+		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Stats::Loadout &>()) } -> std::same_as<float>;
 	};
 }// namespace Formula

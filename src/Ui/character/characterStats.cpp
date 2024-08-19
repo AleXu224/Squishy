@@ -25,7 +25,7 @@ UI::CharacterStats::operator squi::Child() const {
 				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
 						std::vector<std::string> a{};
-						auto &modifiers = character.stats.character.sheet.fromStat(stat).modifiers;
+						auto &modifiers = character.stats.character.sheet.stats.postMods.fromStat(stat).modifiers;
 						for (auto &modifier: modifiers) {
 							if (!modifier.hasValue()) continue;
 							a.emplace_back(modifier.print(character.stats));
@@ -42,7 +42,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.stats.character.sheet.fromStat(stat).getTotal(character.stats),
+							.value = character.stats.character.sheet.stats.postMods.fromStat(stat).get(character.stats),
 						},
 					},
 				});

@@ -9,44 +9,26 @@
 
 namespace Weapon {
 	struct Data {
-		struct CondsSetup {
-			Stats::Weapon &stats;
-		};
-
-		struct ModsSetup {
-			Stats::Weapon &stats;
-			const Conditional::WeaponMap &conditionals;
-		};
-
-		struct NodeSetup {
+		struct Setup {
+			Stats::ModsSheet mods{};
+			Node::WeaponList nodes{};
 		};
 
 		const Key key;
 		const std::string name;
 		const Stats::WeaponBase baseStats;
-		const std::function<Conditional::WeaponList(Weapon::Data::CondsSetup data)> condsSetup;
-		const std::function<void(Weapon::Data::ModsSetup data)> modsSetup;
-		const std::function<Node::WeaponList(Weapon::Data::NodeSetup data)> nodeSetup;
+		const Conditional::WeaponList conds{};
+		const std::function<Setup(void)> setup;
 
-		mutable Node::WeaponList nodes{};
+		const Setup data = [](const std::function<Setup(void)> &setup) {
+			return setup();
+		}(setup);
 
 		void getConds(Conditional::WeaponMap &conditionals, Stats::Weapon &stats) const {
 			Conditional::mapConditionals(
 				conditionals,
-				condsSetup(CondsSetup{
-					.stats = stats,
-				})
+				conds
 			);
-		}
-		void getMods(Conditional::WeaponMap &conditionals, Stats::Weapon &stats) const {
-			modsSetup(ModsSetup{
-				.stats = stats,
-				.conditionals = conditionals,
-			});
-		}
-		[[nodiscard]] Node::WeaponList getNodes() const {
-			return nodeSetup(NodeSetup{
-			});
 		}
 	};
 }// namespace Weapon

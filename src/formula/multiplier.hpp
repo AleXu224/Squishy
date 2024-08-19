@@ -5,12 +5,12 @@
 #include "formula/stat.hpp"
 #include "intermediary.hpp"
 #include "operators.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 #include "stats/stat.hpp"
 
 
 namespace Formula {
-	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Stats::Sheet &stats) {
+	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Stats::Loadout &stats) {
 		switch (talent) {
 			case LevelableTalent::normal:
 				return values.at(stats.character.sheet.talents.normal);
@@ -26,12 +26,12 @@ namespace Formula {
 		LevelableTalent talent;
 		std::array<float, 15> values;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
 			auto &multiplier = _getMultiplier(talent, values, stats);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			return _getMultiplier(talent, values, stats);
 		}
 	};

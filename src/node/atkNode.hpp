@@ -11,11 +11,8 @@
 
 
 namespace Node {
-	[[nodiscard]] inline auto makeFormula(const Stat &scalingStat, const Talent &talent, const std::array<float, 15> &multipiers) {
-		return [multipiers, scalingStat, talent](Stats::Sheet &stats) {
-			return stats.character.sheet.fromStat(scalingStat).getTotal(stats) * multipiers.at(stats.character.sheet.talents.getLevel(talent));
-		};
-	}
+	using _Sheet = decltype(decltype(Stats::CharacterSheet::stats)::postMods);
+	using _Stats = decltype(Stats::CharacterSheet::stats);
 
 	template<class T>
 	struct _NodeRet {
@@ -29,13 +26,13 @@ namespace Node {
 	[[nodiscard]] consteval auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
 		Misc::AttackSource atkSource,
-		Stats::SkillValue<Stats::CharacterSheet::_Value> Stats::CharacterSheet:: *skill,
-		Stats::CharacterSheet::_Value Stats::SkillValue<Stats::CharacterSheet::_Value>:: *stat,
+		_Sheet::_SkillValue _Sheet:: *skill,
+		_Sheet::_Value _Sheet::_SkillValue:: *stat,
 		T formula
 	) {
-		auto allStats = Formula::SkillPtr(&Stats::CharacterSheet::all, stat);
-		auto elementStats = Formula::ElementStat<Stats::CharacterSheet>(atkSource, attackElement, stat);
-		auto skillStats = Formula::SkillPtr(skill, stat);
+		auto allStats = Formula::SkillPtr<_Sheet, Stats::CharacterSheet>(&_Sheet::all, stat, &_Stats::postMods);
+		auto elementStats = Formula::ElementStat<_Sheet>(atkSource, attackElement, stat);
+		auto skillStats = Formula::SkillPtr<_Sheet, Stats::CharacterSheet>(skill, stat, &_Stats::postMods);
 
 		return allStats +
 			   elementStats +
@@ -45,13 +42,13 @@ namespace Node {
 
 	template<Formula::IntermediaryLike Frm, class Tpl>
 	[[nodiscard]] consteval auto _getFormula(std::string_view name, Utils::JankyOptional<Misc::Element> element, Misc::AttackSource source, Frm formula, Tpl stats) {
-		auto skill = Stats::getSheetMemberByAttackSource<Stats::CharacterSheet>(source);
+		auto skill = Stats::getSheetMemberByAttackSource<_Sheet>(source);
 
-		auto totalDMG = _getTotal(element, source, skill, &Stats::CharacterSheet::_SkillValue::DMG, std::get<0>(stats));
-		auto totalAdditiveDMG = _getTotal(element, source, skill, &Stats::CharacterSheet::_SkillValue::additiveDMG, std::get<1>(stats));
-		auto totalMultiplicativeDMG = _getTotal(element, source, skill, &Stats::CharacterSheet::_SkillValue::multiplicativeDMG, std::get<2>(stats));
-		auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &Stats::CharacterSheet::_SkillValue::critRate, std::get<3>(stats)) + Formula::Stat(Stat::cr), 0.f, 1.f);
-		auto totalCritDMG = _getTotal(element, source, skill, &Stats::CharacterSheet::_SkillValue::critDMG, std::get<4>(stats)) + Formula::Stat(Stat::cd);
+		auto totalDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::DMG, std::get<0>(stats));
+		auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, std::get<1>(stats));
+		auto totalMultiplicativeDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::multiplicativeDMG, std::get<2>(stats));
+		auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &_Sheet::_SkillValue::critRate, std::get<3>(stats)) + Formula::Stat(Stat::cr), 0.f, 1.f);
+		auto totalCritDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::critDMG, std::get<4>(stats)) + Formula::Stat(Stat::cd);
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);

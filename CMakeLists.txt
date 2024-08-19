@@ -24,7 +24,7 @@ target_include_directories(squishy_lib PUBLIC src)
 add_dependencies(squishy_lib Assets)
 
 if (MSVC)
-    # target_compile_options(squishy PUBLIC /fsanitize=address)
+    # target_compile_options(squishy_lib PUBLIC /fsanitize=address)
     target_compile_options(squishy_lib PUBLIC /std:c++latest)
     target_compile_definitions(squishy_lib PUBLIC _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()

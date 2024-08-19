@@ -1,7 +1,7 @@
 #include "weaponSheet.hpp"
 
 #include "formula/formula.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 #include "stats/weapon.hpp"
 
 
@@ -13,13 +13,13 @@ constexpr auto getWeaponSubstat = [](const Stats::Weapon &stats) {
 };
 
 Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
-	baseAtk.modifiers.at(2) = Formula::Custom("Weapon Base", [](const Stats::Sheet &stats) {
+	this->stats.preMods.baseAtk.modifiers.at(1) = Formula::Custom("Weapon Base", [](const Stats::Loadout &stats) {
 		return getWeaponAtk(stats.weapon);
 	});
 
-	fromStat(base.substat.stat).modifiers.at(2) = Formula::Custom(
+	this->stats.preMods.fromStat(base.substat.stat).modifiers.at(1) = Formula::Custom(
 		"Weapon Base",
-		[](const Stats::Sheet &stats) {
+		[](const Stats::Loadout &stats) {
 			return getWeaponSubstat(stats.weapon);
 		},
 		Stats::isPercentage(base.substat.stat)

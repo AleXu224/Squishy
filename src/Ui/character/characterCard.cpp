@@ -86,7 +86,7 @@ struct Contents {
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								auto val = character.stats.character.sheet.fromStat(stat).getTotal(character.stats);
+								auto val = character.stats.character.sheet.stats.postMods.fromStat(stat).get(character.stats);
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},

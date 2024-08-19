@@ -10,7 +10,7 @@ namespace Formula {
 		T val1;
 		U val2;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step prevStep) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step prevStep) const {
 			auto r1 = val1.eval(stats);
 			auto r2 = val2.eval(stats);
 
@@ -20,7 +20,7 @@ namespace Formula {
 			return fmt::format("{} * {}", val1.print(stats, Step::multiplication), val2.print(stats, Step::multiplication));
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			return val1.eval(stats) * val2.eval(stats);
 		}
 	};

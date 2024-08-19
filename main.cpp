@@ -3,8 +3,6 @@
 #include "artifact/sets/GildedDreams.hpp"
 #include "character/characters.hpp"
 #include "character/characters/Cyno.hpp"
-#include "src/formula/node.hpp"
-#include "src/stats/helpers.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
 
@@ -19,8 +17,21 @@
 //#include "benchmark/benchmark.h"
 //benchmark::State& state
 int main() {
-	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
-	static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
+	// using T = Stats::Sheet::_Stat;
+	// T sheet{};
+	// auto a = std::views::transform(
+	// 	std::views::cartesian_product(
+	// 		Stats::getSheetAttackSourceMembers<T>(),
+	// 		T::_SkillValue::getMembers()
+	// 	),
+	// 	[&](const auto &val) {
+	// 		return std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet));
+	// 	}
+	// );
+
+
+	// static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
+	// static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
 
 	Weapon::initWeapons();
 	Character::initCharacters();

@@ -6,8 +6,4 @@ void Artifact::initArtifacts() {
 	sets = {
 		{Artifact::Sets::gildedDreams.key, Artifact::Sets::gildedDreams},
 	};
-
-	for (auto &set: sets) {
-		set.second.nodes = set.second.getNodes();
-	}
 }

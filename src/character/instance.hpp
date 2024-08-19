@@ -3,7 +3,7 @@
 #include "observer.hpp"
 
 #include "character/key.hpp"
-#include "stats/sheet.hpp"
+#include "stats/loadout.hpp"
 #include "weapon/key.hpp"
 
 
@@ -11,7 +11,7 @@ namespace Character {
 	struct Instance {
 		const Key key;
 		Weapon::Key weaponKey;
-		Stats::Sheet stats;
+		Stats::Loadout stats;
 		squi::VoidObservable updateEvent{};
 
 		// The array of artifacts in the order of flower, plume, sands, goblet, circlet

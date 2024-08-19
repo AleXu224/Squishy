@@ -1,15 +1,14 @@
 #pragma once
 
+#include "cassert"
 #include "formula/node.hpp"
 #include "print"
-#include "span"
 #include "stats/helpers.hpp"
-#include "cassert"
+
 
 namespace Stats {
 	template<class T, size_t Count, class V>
 	struct Value {
-		static_assert(Count >= 2, "There must be enough space for two modifiers");
 #ifndef NDEBUG
 		mutable bool isRunning = false;
 #endif
@@ -28,21 +27,15 @@ namespace Stats {
 #endif
 
 			V ret = constant;
-			for (const auto &modifier: std::span<Formula::Node, Count - 1>(modifiers.begin(), Count - 1)) ret += modifier.eval(statSheet);
+			for (const auto &modifier: modifiers) {
+				if (!modifier.hasValue()) continue;
+				ret += modifier.eval(statSheet);
+			}
 
 #ifndef NDEBUG
 			isRunning = false;
 #endif
 
-			return ret;
-		}
-
-		[[nodiscard]] inline V getTotal(const T &statSheet) const {
-			V ret = constant;
-			for (const auto &modifier: modifiers) {
-				if (!modifier.hasValue()) continue;
-				ret += modifier.eval(statSheet);
-			}
 			return ret;
 		}
 	};

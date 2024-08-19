@@ -5,15 +5,11 @@
 #include "intermediary.hpp"
 #include "memory"
 
-namespace Stats {
-	struct Sheet;
-}
-
 namespace Formula {
 	struct Node {
 		struct interface {
-			constexpr virtual std::string print(const Stats::Sheet &) const = 0;
-			constexpr virtual float eval(const Stats::Sheet &) const = 0;
+			constexpr virtual std::string print(const Stats::Loadout &) const = 0;
+			constexpr virtual float eval(const Stats::Loadout &) const = 0;
 			constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			constexpr virtual ~interface() = default;
 		};
@@ -22,10 +18,10 @@ namespace Formula {
 		struct implementation final : interface {
 			constexpr explicit(true) implementation(Fn fn) : fn{fn} {}
 
-			constexpr std::string print(const Stats::Sheet &stats) const override {
+			constexpr std::string print(const Stats::Loadout &stats) const override {
 				return fn.print(stats, Step::none);
 			}
-			constexpr float eval(const Stats::Sheet &stats) const override {
+			constexpr float eval(const Stats::Loadout &stats) const override {
 				return fn.eval(stats);
 			}
 			constexpr std::unique_ptr<interface> clone() const override {
@@ -46,17 +42,23 @@ namespace Formula {
 				fn = other.fn->clone();
 			}
 		}
+		constexpr Node &operator=(const Node &other) {
+			if (other.fn) {
+				fn = other.fn->clone();
+			}
+			return *this;
+		}
 		constexpr Node &operator=(Node &&other) {
-			if (this != &other) {
+			if (this != &other && other.fn) {
 				fn = std::move(other.fn);
 			}
 			return *this;
 		}
 
-		[[nodiscard]] constexpr std::string print(const Stats::Sheet &stats) const {
+		[[nodiscard]] constexpr std::string print(const Stats::Loadout &stats) const {
 			return fn->print(stats);
 		}
-		[[nodiscard]] constexpr float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] constexpr float eval(const Stats::Loadout &stats) const {
 			return fn->eval(stats);
 		}
 

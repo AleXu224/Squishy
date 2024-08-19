@@ -21,14 +21,17 @@
 
 using namespace squi;
 
-template<class T = Stats::CharacterSheet>
+using _Sheet = decltype(Stats::CharacterSheet::stats);
+
+template<class T = _Sheet>
 struct DetailsSkill {
 	// Args
 	std::string_view name;
 	Character::Key characterKey;
-	std::vector<Node::Types> &nodes;
+	const std::vector<Node::Types> &nodes;
 	std::optional<std::reference_wrapper<T>> sheet{};
-	size_t maxModifierIndex = 0;
+	size_t maxPreModifierIndex = 0;
+	size_t maxPostModifierIndex = 0;
 	std::unordered_map<uint32_t, Conditional::Types> &conditionals;
 
 	operator squi::Child() const {
@@ -64,12 +67,21 @@ struct DetailsSkill {
 					Children ret3{};
 
 					bool transparent = true;
-					for (auto ptr: Stats::getSheetValuesMembers<T>()) {
-						auto &stat = std::invoke(ptr, sheet.value().get());
-						auto &modifiers = stat.modifiers;
+					for (auto [prePtr, postPtr]: std::views::zip(
+							 Stats::getSheetValuesMembers<decltype(T::preMods)>(),
+							 Stats::getSheetValuesMembers<decltype(T::postMods)>()
+						 )) {
+						auto &statPre = std::invoke(prePtr, sheet.value().get().preMods);
+						auto &statPost = std::invoke(postPtr, sheet.value().get().postMods);
+						auto &modifiersPre = statPre.modifiers;
+						auto &modifiersPost = statPost.modifiers;
 
 						std::vector<std::string> a{};
-						for (auto &modifier: modifiers | std::views::take(maxModifierIndex)) {
+						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							a.emplace_back(modifier.print(character.stats));
+						}
+						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
 							a.emplace_back(modifier.print(character.stats));
 						}
@@ -82,7 +94,11 @@ struct DetailsSkill {
 						);
 
 						float totalValue = 0.f;
-						for (auto &modifier: modifiers | std::views::take(maxModifierIndex)) {
+						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							totalValue += modifier.eval(character.stats);
+						}
+						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
 							totalValue += modifier.eval(character.stats);
 						}
@@ -92,10 +108,10 @@ struct DetailsSkill {
 							.message = message,
 							.child = UI::SkillEntry{
 								.isTransparent = transparent = !transparent,
-								.name = Utils::Stringify(Stats::getSheetMemberStat(ptr)),
+								.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
 								.value = totalValue,
 								.color = Color(0xFFFFFFFF),
-								.isPercentage = Stats::isSheetMemberPercentage(ptr),
+								.isPercentage = Stats::isSheetMemberPercentage(prePtr),
 							},
 						});
 					}
@@ -162,9 +178,9 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	for (auto &condPtr: Conditional::CharacterMap::getMembers()) {
 		conditionals.emplace_back(std::invoke(condPtr, character.stats.character.conditionals));
 	}
-	std::vector<std::reference_wrapper<std::vector<Node::Types>>> nodes{};
+	std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 	for (auto &nodePtr: Node::CharacterList::getMembers()) {
-		nodes.emplace_back(std::invoke(nodePtr, character.stats.character.data.nodes));
+		nodes.emplace_back(std::invoke(nodePtr, character.stats.character.data.data.nodes));
 	}
 	const std::vector<std::string_view> names = {
 		"Normal attack",
@@ -193,22 +209,24 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		});
 	}
 
-	w.addChild(DetailsSkill<Stats::WeaponSheet>{
+	w.addChild(DetailsSkill<decltype(Stats::WeaponSheet::stats)>{
 		.name = character.stats.weapon.data.name,
 		.characterKey = characterKey,
-		.nodes = character.stats.weapon.data.nodes,
-		.sheet = std::ref(character.stats.weapon.sheet),
-		.maxModifierIndex = 3,
+		.nodes = character.stats.weapon.data.data.nodes,
+		.sheet = std::ref(character.stats.weapon.sheet.stats),
+		.maxPreModifierIndex = 2,
+		.maxPostModifierIndex = 1,
 		.conditionals = character.stats.weapon.conditionals,
 	});
 
 	std::vector<Node::Types> artiNodesPlaceholder{};
-	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
+	w.addChild(DetailsSkill<decltype(Stats::ArtifactSheet::stats)>{
 		.name = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,
-		.nodes = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().nodes : artiNodesPlaceholder,
-		.sheet = std::ref(character.stats.artifact.sheet),
-		.maxModifierIndex = 3,
+		.nodes = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().data.nodes : artiNodesPlaceholder,
+		.sheet = std::ref(character.stats.artifact.sheet.stats),
+		.maxPreModifierIndex = 2,
+		.maxPostModifierIndex = 2,
 		.conditionals = character.stats.artifact.conditionals,
 	});
 }

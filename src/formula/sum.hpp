@@ -10,7 +10,7 @@ namespace Formula {
 		T val1;
 		U val2;
 
-		[[nodiscard]] inline std::string print(const Stats::Sheet &stats, Step prevStep) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step prevStep) const {
 			auto p1 = val1.print(stats, Step::addition);
 			auto p2 = val2.print(stats, Step::addition);
 
@@ -24,7 +24,7 @@ namespace Formula {
 			}
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Sheet &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
 			return val1.eval(stats) + val2.eval(stats);
 		}
 	};

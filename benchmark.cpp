@@ -4,7 +4,6 @@
 #include "character/characters.hpp"
 #include "character/characters/Cyno.hpp"
 #include "src/formula/node.hpp"
-#include "src/stats/helpers.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
 #include <random>
@@ -120,13 +119,13 @@
 	return character;
 }
 
-[[nodiscard]] Node::Instance &getNode(Character::Instance &character) {
-	return character.stats.character.data.nodes.burst.at(0);
+[[nodiscard]] const Node::Instance &getNode(Character::Instance &character) {
+	return character.stats.character.data.data.nodes.burst.at(0);
 }
 
 static void formulaCalc(benchmark::State &state) {
-	static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
-	static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
+	// static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
+	// static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
 
 	Weapon::initWeapons();
 	Character::initCharacters();
