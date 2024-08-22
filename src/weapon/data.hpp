@@ -24,7 +24,7 @@ namespace Weapon {
 			return setup();
 		}(setup);
 
-		void getConds(Conditional::WeaponMap &conditionals, Stats::Weapon &stats) const {
+		void getConds(Conditional::WeaponMap &conditionals) const {
 			Conditional::mapConditionals(
 				conditionals,
 				conds

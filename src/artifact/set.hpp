@@ -29,7 +29,7 @@ namespace Artifact {
 			return setup();
 		}(setup);
 
-		void getConds(Conditional::ArtifactMap &conditionals, Stats::Artifact &stats) const {
+		void getConds(Conditional::ArtifactMap &conditionals) const {
 			Conditional::mapConditionals(
 				conditionals,
 				conds

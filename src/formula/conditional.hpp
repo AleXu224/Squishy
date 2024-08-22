@@ -41,34 +41,34 @@ namespace Formula {
 
 	template<class T>
 	struct Conditional {
-		::Conditional::Location location;
+		::Conditional::Location location{};
 		Utils::HashedString name;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
 			auto cond = ::Conditional::getBool(_getConditionalLocation(location, stats), name);
-			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(stats, Step::none)) : "");
+			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(stats, team, Step::none)) : "");
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
 			auto cond = ::Conditional::getBool(_getConditionalLocation(location, stats), name);
 			if (cond)
-				return val.eval(stats);
-			else
-				return 0.f;
+				return val.eval(stats, team);
+
+			return 0.f;
 		}
 	};
 	struct ConditionalValue {
-		::Conditional::Location location;
+		::Conditional::Location location{};
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &, Step) const {
 			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, stats), name, defaultValue);
 			return fmt::format("{} {}", name.str, cond);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &) const {
 			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, stats), name, defaultValue);
 			return cond;
 		}

@@ -1,15 +1,17 @@
 #pragma once
 
+#include "fmt/core.h"
 #include "intermediary.hpp"
+
 
 namespace Formula {
 	template<IntermediaryLike T>
-	struct ZeroFilter {
+	struct Prefix {
+		std::string_view prefix;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step prevStep) const {
-			if (val.eval(stats, team) == 0.f) return "";
-			return val.print(stats, team, prevStep);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
+			return fmt::format("{} {}", prefix, val.eval(stats, team));
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {

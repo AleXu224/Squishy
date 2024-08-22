@@ -10,22 +10,21 @@ namespace Formula {
 		T val1;
 		U val2;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step prevStep) const {
-			auto p1 = val1.print(stats, Step::addition);
-			auto p2 = val2.print(stats, Step::addition);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step prevStep) const {
+			auto p1 = val1.print(stats, team, Step::addition);
+			auto p2 = val2.print(stats, team, Step::addition);
 
-			if (val1.eval(stats) == 0.f) return p2;
-			if (val2.eval(stats) == 0.f) return p1;
+			if (val1.eval(stats, team) == 0.f) return p2;
+			if (val2.eval(stats, team) == 0.f) return p1;
 
 			if (prevStep == Step::multiplication) {
 				return fmt::format("({} + {})", p1, p2);
-			} else {
-				return fmt::format("{} + {}", p1, p2);
 			}
+			return fmt::format("{} + {}", p1, p2);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
-			return val1.eval(stats) + val2.eval(stats);
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
+			return val1.eval(stats, team) + val2.eval(stats, team);
 		}
 	};
 }// namespace Formula

@@ -18,15 +18,10 @@ using namespace squi;
 
 struct CharacterCardBanner {
 	// Args
-	Character::Instance &character;
-
-	struct Storage {
-		// Data
-	};
+	Character::Key characterKey;
 
 	operator squi::Child() const {
-		auto storage = std::make_shared<Storage>();
-
+		auto &character = Store::characters.at(characterKey);
 		return Stack{
 			.widget{
 				.height = 64.f,
@@ -68,25 +63,26 @@ struct CharacterCardBanner {
 
 struct Contents {
 	// Args
-	Character::Instance &character;
+	Character::Key characterKey;
 
 	operator squi::Child() const {
 		return Column{
 			.children{
 				CharacterCardBanner{
-					.character = character,
+					.characterKey = characterKey,
 				},
 				Column{
 					.widget{
 						.padding = Padding{4.f},
-						.onInit = [&character = character](Widget &w) {
+						.onInit = [characterKey = characterKey](Widget &w) {
+							auto &character = Store::characters.at(characterKey);
 							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
 
 							for (const auto &[stat, transparent]: std::views::zip(
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								auto val = character.stats.character.sheet.stats.postMods.fromStat(stat).get(character.stats);
+								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, Store::teams.at(0));
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},
@@ -108,12 +104,12 @@ UI::CharacterCard::operator squi::Child() const {
 			.padding = Padding{1.f},
 			.onInit = [characterKey = characterKey](Widget &w) {
 				w.customState.add(Store::characters.at(characterKey).updateEvent.observe([characterKey, &w]() {
-					w.setChildren({Contents{.character = Store::characters.at(characterKey)}});
+					w.setChildren({Contents{.characterKey = characterKey}});
 				}));
 			},
 		},
 		.child = Contents{
-			.character = Store::characters.at(characterKey),
+			.characterKey = characterKey,
 		},
 	};
 }

@@ -12,12 +12,12 @@ namespace Formula {
 	struct WeaponMultiplierValue {
 		std::array<float, 5> values;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
-			auto &multiplier = _getRefinementMultiplier(values, stats);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &, Step) const {
+			const auto &multiplier = _getRefinementMultiplier(values, stats);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &) const {
 			return _getRefinementMultiplier(values, stats);
 		}
 	};

@@ -7,7 +7,7 @@
 
 
 namespace Stats {
-	template<class T, size_t Count, class V>
+	template<class P1, class P2, size_t Count>
 	struct Value {
 #ifndef NDEBUG
 		mutable bool isRunning = false;
@@ -16,7 +16,7 @@ namespace Stats {
 		float constant = 0.f;
 		std::array<Formula::Node, Count> modifiers{};
 
-		[[nodiscard]] inline V get(const T &statSheet) const {
+		[[nodiscard]] inline float get(const P1 &statSheet, const P2 &team) const {
 #ifndef NDEBUG
 			if (isRunning) {
 				std::println("WARNING: recursion while computing stat, returning 0.");
@@ -26,10 +26,10 @@ namespace Stats {
 			isRunning = true;
 #endif
 
-			V ret = constant;
+			float ret = constant;
 			for (const auto &modifier: modifiers) {
 				if (!modifier.hasValue()) continue;
-				ret += modifier.eval(statSheet);
+				ret += modifier.eval(statSheet, team);
 			}
 
 #ifndef NDEBUG
@@ -69,25 +69,4 @@ namespace Stats {
 			return false;
 		}
 	};
-
-	template<class T, size_t Count, class V>
-	inline void addModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		assert(!stat.modifiers.at(1).hasValue());
-		stat.modifiers.at(1) = std::move(modifier);
-	}
-
-	template<class T, size_t Count, class V>
-	inline void addTotalModifier(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		assert(!stat.modifiers.at(0).hasValue());
-		stat.modifiers.at(0) = std::move(modifier);
-	}
-
-	template<class T, size_t Count, class V>
-	inline void addModifierArtifact(Value<T, Count, V> &stat, Formula::Node &&modifier) {
-		if (!stat.modifiers[1].hasValue()) {
-			stat.modifiers[1] = std::move(modifier);
-		} else {
-			stat.modifiers[2] = std::move(modifier);
-		}
-	}
 }// namespace Stats

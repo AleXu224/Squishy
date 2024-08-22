@@ -5,20 +5,19 @@
 #include "formula/stat.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
-#include "stats/character.hpp"
 #include "stats/sheet.hpp"
 #include "string_view"
 
 
 namespace Node {
-	using _Sheet = decltype(decltype(Stats::CharacterSheet::stats)::postMods);
-	using _Stats = decltype(Stats::CharacterSheet::stats);
+	using _Sheet = decltype(Stats::CharacterSheet::postMods);
+	using _Stats = Stats::CharacterSheet;
 
 	template<class T>
 	struct _NodeRet {
 		std::string_view name;
 		Utils::JankyOptional<Misc::Element> element;
-		Misc::AttackSource source;
+		Misc::AttackSource source = Misc::AttackSource::normal;
 		T formula;
 	};
 
@@ -30,9 +29,9 @@ namespace Node {
 		_Sheet::_Value _Sheet::_SkillValue:: *stat,
 		T formula
 	) {
-		auto allStats = Formula::SkillPtr<_Sheet, Stats::CharacterSheet>(&_Sheet::all, stat, &_Stats::postMods);
-		auto elementStats = Formula::ElementStat<_Sheet>(atkSource, attackElement, stat);
-		auto skillStats = Formula::SkillPtr<_Sheet, Stats::CharacterSheet>(skill, stat, &_Stats::postMods);
+		auto allStats = Formula::SkillPtr(&_Stats::postMods, &_Sheet::all, stat);
+		auto elementStats = Formula::ElementStat(atkSource, attackElement, stat);
+		auto skillStats = Formula::SkillPtr(&_Stats::postMods, skill, stat);
 
 		return allStats +
 			   elementStats +

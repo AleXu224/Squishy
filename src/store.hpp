@@ -2,6 +2,7 @@
 
 #include "artifact/instance.hpp"
 #include "character/instance.hpp"
+#include "stats/team.hpp"
 #include "unordered_map"
 #include "weapon/instance.hpp"
 
@@ -17,6 +18,7 @@
 
 namespace Store {
 	inline std::unordered_map<Character::Key, Character::Instance> characters{};
+	inline std::unordered_map<uint32_t, Stats::Team> teams{};
 	inline std::unordered_map<Weapon::Key, Weapon::Instance> weapons{};
 	inline std::unordered_map<uint32_t, Artifact::Instance> artifacts{};
 

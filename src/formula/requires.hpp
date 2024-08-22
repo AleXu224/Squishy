@@ -66,17 +66,17 @@ namespace Formula {
 		Requirement requirement;
 		T ret;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
 			auto cond = _getRequirement(requirement, stats);
-			return fmt::format("{}", cond ? fmt::format("{} : ({})", _getRequirementName(requirement), ret.print(stats, Step::none)) : "");
+			return fmt::format("{}", cond ? fmt::format("{} : ({})", _getRequirementName(requirement), ret.print(stats, team, Step::none)) : "");
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
 			auto cond = _getRequirement(requirement, stats);
 			if (cond)
-				return ret.eval(stats);
-			else
-				return 0.f;
+				return ret.eval(stats, team);
+
+			return 0.f;
 		}
 	};
 }// namespace Formula

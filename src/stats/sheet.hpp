@@ -2,8 +2,7 @@
 
 #include "array"
 #include "formula/node.hpp"
-#include "value.hpp"
-
+#include "stats/helpers.hpp"
 
 namespace Stats {
 	template<class T>
@@ -85,17 +84,7 @@ namespace Stats {
 
 		_Sheet preMod{};
 		_Sheet postMod{};
-		struct _Team {
-			_Sheet preMod{};
-			_Sheet postMod{};
-		} team{};
-	};
-
-	template<size_t PreMods, size_t PostMods, size_t TeamPreMods, size_t TeamPostMods>
-	struct StatSheet {
-		Stats::Sheet<Stats::Value<Loadout, PreMods, float>> preMods{};
-		Stats::Sheet<Stats::Value<Loadout, PostMods, float>> postMods{};
-		Stats::Sheet<Stats::Value<Loadout, TeamPreMods, float>> teamPreMods{};
-		Stats::Sheet<Stats::Value<Loadout, TeamPostMods, float>> teamPostMods{};
+		_Sheet teamPreMod{};
+		_Sheet teamPostMod{};
 	};
 }// namespace Stats

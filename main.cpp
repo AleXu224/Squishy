@@ -140,6 +140,9 @@ int main() {
 		},
 	});
 
+	auto team = Store::teams.insert({0, Stats::Team{}});
+	team.first->second.characters.at(0) = character;
+
 	character.getArtifactStats();
 
 	// auto attacknode = Character::Datas::cyno.nodeSetup().normal.at(3);

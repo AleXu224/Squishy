@@ -26,12 +26,12 @@ namespace Formula {
 		LevelableTalent talent;
 		std::array<float, 15> values;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, Step) const {
-			auto &multiplier = _getMultiplier(talent, values, stats);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &, Step) const {
+			const auto &multiplier = _getMultiplier(talent, values, stats);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &) const {
 			return _getMultiplier(talent, values, stats);
 		}
 	};

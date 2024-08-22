@@ -27,7 +27,7 @@ namespace Character {
 			return setup();
 		}(setup);
 
-		void getConds(Conditional::CharacterMap &conditionals, Stats::Character &stats) const {
+		void getConds(Conditional::CharacterMap &conditionals) const {
 			Conditional::mapConditionals(
 				conditionals,
 				conds

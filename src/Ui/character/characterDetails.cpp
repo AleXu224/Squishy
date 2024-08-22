@@ -21,13 +21,11 @@
 
 using namespace squi;
 
-using _Sheet = decltype(Stats::CharacterSheet::stats);
-
-template<class T = _Sheet>
+template<class T = Stats::CharacterSheet>
 struct DetailsSkill {
 	// Args
 	std::string_view name;
-	Character::Key characterKey;
+	Character::Key characterKey{};
 	const std::vector<Node::Types> &nodes;
 	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxPreModifierIndex = 0;
@@ -41,16 +39,17 @@ struct DetailsSkill {
 			.title = name,
 			.children = [&]() -> Children {
 				Children ret{};
+				auto &team = Store::teams.at(0);
 
 				if (!nodes.empty()) {
 					Children ret2{};
-					for (auto [node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
+					for (const auto &[node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
 						ret2.emplace_back(UI::Tooltip{
-							.message = node.formula.print(character.stats),
+							.message = node.formula.print(character.stats, team),
 							.child = UI::SkillEntry{
 								.isTransparent = transparent,
 								.name = node.name,
-								.value = node.formula.eval(character.stats),
+								.value = node.formula.eval(character.stats, team),
 								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, character.stats)),
 							},
 						});
@@ -67,40 +66,64 @@ struct DetailsSkill {
 					Children ret3{};
 
 					bool transparent = true;
-					for (auto [prePtr, postPtr]: std::views::zip(
+					for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
 							 Stats::getSheetValuesMembers<decltype(T::preMods)>(),
-							 Stats::getSheetValuesMembers<decltype(T::postMods)>()
+							 Stats::getSheetValuesMembers<decltype(T::postMods)>(),
+							 Stats::getSheetValuesMembers<decltype(T::teamPreMods)>(),
+							 Stats::getSheetValuesMembers<decltype(T::teamPostMods)>()
 						 )) {
 						auto &statPre = std::invoke(prePtr, sheet.value().get().preMods);
 						auto &statPost = std::invoke(postPtr, sheet.value().get().postMods);
+						auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMods);
+						auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMods);
 						auto &modifiersPre = statPre.modifiers;
 						auto &modifiersPost = statPost.modifiers;
+						auto &modifiersTeamPre = statTeamPre.modifiers;
+						auto &modifiersTeamPost = statTeamPost.modifiers;
+
+						auto &team = Store::teams.at(0);
 
 						std::vector<std::string> a{};
 						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats));
+							a.emplace_back(modifier.print(character.stats, team));
 						}
 						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats));
+							a.emplace_back(modifier.print(character.stats, team));
+						}
+						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							a.emplace_back(modifier.print(character.stats, team));
+						}
+						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							a.emplace_back(modifier.print(character.stats, team));
 						}
 						auto message = std::accumulate(
 							a.begin(), a.end(),
 							std::string(),
 							[&](const std::string &val1, const std::string &val2) {
-								return val1 + ((val1.empty() || val2.empty()) ? "" : " + ") + val2;
+								return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
 							}
 						);
 
 						float totalValue = 0.f;
 						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats);
+							totalValue += modifier.eval(character.stats, team);
 						}
 						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats);
+							totalValue += modifier.eval(character.stats, team);
+						}
+						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							totalValue += modifier.eval(character.stats, team);
+						}
+						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
+							if (!modifier.hasValue()) continue;
+							totalValue += modifier.eval(character.stats, team);
 						}
 
 						if (totalValue == 0.f) continue;
@@ -197,7 +220,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	};
 
 	for (const auto &[nodeWrapper, conditionalWrapper, name]: std::views::zip(nodes, conditionals, names)) {
-		auto &nodes = nodeWrapper.get();
+		const auto &nodes = nodeWrapper.get();
 		auto &conditionals = conditionalWrapper.get();
 		if (nodes.empty() && conditionals.empty()) continue;
 
@@ -209,22 +232,22 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		});
 	}
 
-	w.addChild(DetailsSkill<decltype(Stats::WeaponSheet::stats)>{
+	w.addChild(DetailsSkill<Stats::WeaponSheet>{
 		.name = character.stats.weapon.data.name,
 		.characterKey = characterKey,
 		.nodes = character.stats.weapon.data.data.nodes,
-		.sheet = std::ref(character.stats.weapon.sheet.stats),
+		.sheet = std::ref(character.stats.weapon.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 1,
 		.conditionals = character.stats.weapon.conditionals,
 	});
 
 	std::vector<Node::Types> artiNodesPlaceholder{};
-	w.addChild(DetailsSkill<decltype(Stats::ArtifactSheet::stats)>{
+	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
 		.name = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,
 		.nodes = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().data.nodes : artiNodesPlaceholder,
-		.sheet = std::ref(character.stats.artifact.sheet.stats),
+		.sheet = std::ref(character.stats.artifact.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 2,
 		.conditionals = character.stats.artifact.conditionals,

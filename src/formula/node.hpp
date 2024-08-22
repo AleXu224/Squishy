@@ -8,9 +8,9 @@
 namespace Formula {
 	struct Node {
 		struct interface {
-			constexpr virtual std::string print(const Stats::Loadout &) const = 0;
-			constexpr virtual float eval(const Stats::Loadout &) const = 0;
-			constexpr virtual std::unique_ptr<interface> clone() const = 0;
+			[[nodiscard]] constexpr virtual std::string print(const Stats::Loadout &, const Stats::Team &) const = 0;
+			[[nodiscard]] constexpr virtual float eval(const Stats::Loadout &, const Stats::Team &) const = 0;
+			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			constexpr virtual ~interface() = default;
 		};
 
@@ -18,13 +18,13 @@ namespace Formula {
 		struct implementation final : interface {
 			constexpr explicit(true) implementation(Fn fn) : fn{fn} {}
 
-			constexpr std::string print(const Stats::Loadout &stats) const override {
-				return fn.print(stats, Step::none);
+			[[nodiscard]] constexpr std::string print(const Stats::Loadout &stats, const Stats::Team &team) const override {
+				return fn.print(stats, team, Step::none);
 			}
-			constexpr float eval(const Stats::Loadout &stats) const override {
-				return fn.eval(stats);
+			[[nodiscard]] constexpr float eval(const Stats::Loadout &stats, const Stats::Team &team) const override {
+				return fn.eval(stats, team);
 			}
-			constexpr std::unique_ptr<interface> clone() const override {
+			[[nodiscard]] constexpr std::unique_ptr<interface> clone() const override {
 				return std::make_unique<implementation<Fn>>(fn);
 			}
 
@@ -43,26 +43,26 @@ namespace Formula {
 			}
 		}
 		constexpr Node &operator=(const Node &other) {
-			if (other.fn) {
+			if (this != &other && other.fn) {
 				fn = other.fn->clone();
 			}
 			return *this;
 		}
-		constexpr Node &operator=(Node &&other) {
+		constexpr Node &operator=(Node &&other) noexcept {
 			if (this != &other && other.fn) {
 				fn = std::move(other.fn);
 			}
 			return *this;
 		}
 
-		[[nodiscard]] constexpr std::string print(const Stats::Loadout &stats) const {
-			return fn->print(stats);
+		[[nodiscard]] constexpr std::string print(const Stats::Loadout &stats, const Stats::Team &team) const {
+			return fn->print(stats, team);
 		}
-		[[nodiscard]] constexpr float eval(const Stats::Loadout &stats) const {
-			return fn->eval(stats);
+		[[nodiscard]] constexpr float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
+			return fn->eval(stats, team);
 		}
 
-		Node() {}
+		Node() = default;
 
 		[[nodiscard]] constexpr bool hasValue() const {
 			return fn != nullptr;

@@ -7,6 +7,7 @@
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
 #include <random>
+#include "stats/team.hpp"
 
 #include "benchmark/benchmark.h"
 
@@ -133,14 +134,20 @@ static void formulaCalc(benchmark::State &state) {
 
 	auto &character = getCharacter();
 
-	auto &node = getNode(character);
+	const auto &node = getNode(character);
 
 	std::random_device rd{};
 	std::mt19937 mt(rd());
 	std::uniform_int_distribution<unsigned short> levelGen(1, 90);
 
+	Stats::Team team{};
+	team.characters.at(0) = character;
+	// team.characters.at(1) = character;
+	// team.characters.at(2) = character;
+	// team.characters.at(3) = character;
+
 	for (auto _: state) {
-		benchmark::DoNotOptimize(node.formula.eval(character.stats));
+		benchmark::DoNotOptimize(node.formula.eval(character.stats, team));
 	}
 }
 BENCHMARK(formulaCalc);

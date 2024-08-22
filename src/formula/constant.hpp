@@ -8,22 +8,22 @@ namespace Formula {
 	struct Constant {
 		float value;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &, const Stats::Team &, Step) const {
 			return fmt::format("{:.2f}%", value * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &, const Stats::Team &) const {
 			return value;
 		}
 	};
 	struct ConstantFlat {
 		float value;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &, Step) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &, const Stats::Team &, Step) const {
 			return fmt::format("{:.2f}", value);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &, const Stats::Team &) const {
 			return value;
 		}
 	};

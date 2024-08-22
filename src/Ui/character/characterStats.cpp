@@ -20,21 +20,30 @@ UI::CharacterStats::operator squi::Child() const {
 			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(character.stats.character.base.element)}};
 
 			Children ret2{};
+			auto &team = Store::teams.at(0);
 
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
 						std::vector<std::string> a{};
-						auto &modifiers = character.stats.character.sheet.stats.postMods.fromStat(stat).modifiers;
-						for (auto &modifier: modifiers) {
-							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats));
+						auto &modifiersPre = character.stats.character.sheet.preMods.fromStat(stat).modifiers;
+						auto &modifiersPost = character.stats.character.sheet.postMods.fromStat(stat).modifiers;
+						auto printMod = [&](auto &&mod) {
+							if (!mod.hasValue()) return;
+							if (mod.eval(character.stats, team) == 0.f) return;
+							a.emplace_back(mod.print(character.stats, team));
+						};
+						for (auto &modifier: modifiersPre) {
+							printMod(modifier);
 						}
+						printMod(modifiersPost.at(0));
+						printMod(modifiersPost.at(1));
+						printMod(modifiersPost.at(3));
 						return std::accumulate(
 							a.begin(), a.end(),
 							std::string(),
 							[&](const std::string &val1, const std::string &val2) {
-								return val1 + ((val1.empty() || val2.empty()) ? "" : " + ") + val2;
+								return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
 							}
 						);
 					}(),
@@ -42,7 +51,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.stats.character.sheet.stats.postMods.fromStat(stat).get(character.stats),
+							.value = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, team),
 						},
 					},
 				});

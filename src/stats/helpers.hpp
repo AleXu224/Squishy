@@ -5,10 +5,11 @@
 #include "stats/stat.hpp"
 #include "type_traits"
 #include "utility"
-
+#include "utils.hpp"
+#include "functional"
 
 namespace Stats {
-	template<class T, size_t Size, class V = float>
+	template<class P1, class P2, size_t Size>
 	struct Value;
 
 	template<class T>
@@ -47,6 +48,16 @@ namespace Stats {
 		{ std::remove_cvref_t<T>::skill };
 		{ std::remove_cvref_t<T>::burst };
 	};
+}// namespace Stats
+
+namespace Formula {
+	template<Stats::SheetLike T, class U>
+	struct SkillPtr;
+	template<Stats::SheetLike T, class U>
+	struct StatPtr;
+}// namespace Formula
+
+namespace Stats {
 
 	template<SheetLike T>
 	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const typename T::_Value &, typename T::_Value &> fromStat(T &sheet, const Stat &stat) {
@@ -261,6 +272,59 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
+	[[nodiscard]] consteval auto getSheetSkillsMembers() {
+		constexpr auto elements = getSheetElementsMembers<T>();
+		constexpr auto attackSources = getSheetAttackSourceMembers<T>();
+
+		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(elements, attackSources);
+	}
+
+	template<SheetLike T, class U>
+	struct SheetValueMember {
+		T::_Value T:: *stat{};
+		T U:: *location{};
+
+		consteval auto makeFormula() const {
+			return Formula::StatPtr<T, U>(location, stat);
+		}
+	};
+	template<SheetLike T, class U>
+	struct SheetSkillMember {
+		T::_SkillValue T:: *skill{};
+		T::_Value T::_SkillValue:: *stat{};
+		T U:: *location{};
+
+		consteval auto makeFormula() const {
+			return Formula::SkillPtr<T, U>(location, skill, stat);
+		}
+	};
+
+	template<SheetLike T, class U>
+	[[nodiscard]] consteval inline auto getSheetAllMembers(T U:: *location) {
+		return std::tuple{
+			squi::utils::evalRange(std::views::transform(
+				getSheetValuesMembers<T>(),
+				[location](auto &&val) {
+					return SheetValueMember<T, U>{
+						.stat = val,
+						.location = location,
+					};
+				}
+			)),
+			squi::utils::evalRange(std::views::transform(
+				std::views::cartesian_product(getSheetSkillsMembers<T>(), T::_SkillValue::getMembers()),
+				[location](auto &&val) {
+					return SheetSkillMember<T, U>{
+						.skill = std::get<0>(val),
+						.stat = std::get<1>(val),
+						.location = location,
+					};
+				}
+			)),
+		};
+	}
+
+	template<SheetLike T>
 	[[nodiscard]] inline auto allSheetValuesView(T &&sheet) {
 		using TT = std::remove_cvref_t<T>;
 
@@ -272,26 +336,12 @@ namespace Stats {
 		);
 	}
 	template<SheetLike T>
-	[[nodiscard]] inline auto allSheetAttackSourceView(T &&sheet) {
+	[[nodiscard]] inline auto allSheetSkillsView(T &&sheet) {
 		using TT = std::remove_cvref_t<T>;
 
 		return std::views::transform(
 			std::views::cartesian_product(
-				Stats::getSheetAttackSourceMembers<TT>(),
-				TT::_SkillValue::getMembers()
-			),
-			[&sheet](auto &&val) {
-				return std::ref(std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet)));
-			}
-		);
-	}
-	template<SheetLike T>
-	[[nodiscard]] inline auto allSheetElementsView(T &&sheet) {
-		using TT = std::remove_cvref_t<T>;
-
-		return std::views::transform(
-			std::views::cartesian_product(
-				Stats::getSheetElementsMembers<TT>(),
+				Stats::getSheetSkillsMembers<TT>(),
 				TT::_SkillValue::getMembers()
 			),
 			[&sheet](auto &&val) {
@@ -301,7 +351,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T, SheetLike U>
-	inline void setupModifiers(T && newMods, U && stats, size_t index) {
+	inline void setupModifiers(T &&newMods, U &&stats, size_t index) {
 		for (auto [stat, statCharacter]: std::views::zip(
 				 Stats::allSheetValuesView(newMods),
 				 Stats::allSheetValuesView(stats)
@@ -309,14 +359,8 @@ namespace Stats {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}
 		for (auto [stat, statCharacter]: std::views::zip(
-				 Stats::allSheetAttackSourceView(newMods),
-				 Stats::allSheetAttackSourceView(stats)
-			 )) {
-			statCharacter.get().modifiers.at(index) = stat.get();
-		}
-		for (auto [stat, statCharacter]: std::views::zip(
-				 Stats::allSheetElementsView(newMods),
-				 Stats::allSheetElementsView(stats)
+				 Stats::allSheetSkillsView(newMods),
+				 Stats::allSheetSkillsView(stats)
 			 )) {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}

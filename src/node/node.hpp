@@ -52,15 +52,6 @@ namespace Node {
 				&CharacterList::constellation6,
 			};
 		}
-
-
-		// static inline void combineNodes(Node::CharacterList &to, const Node::CharacterList &from) {
-		// 	for (auto listPtr: CharacterList::getMembers()) {
-		// 		for (auto &node: std::invoke(listPtr, from)) {
-		// 			std::invoke(listPtr, to).emplace_back(std::move(node));
-		// 		}
-		// 	}
-		// }
 	};
 
 	using WeaponList = std::vector<Node::Types>;
