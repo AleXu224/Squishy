@@ -30,8 +30,8 @@ UI::CharacterStats::operator squi::Child() const {
 						auto &modifiersPost = character.stats.character.sheet.postMods.fromStat(stat).modifiers;
 						auto printMod = [&](auto &&mod) {
 							if (!mod.hasValue()) return;
-							if (mod.eval(character.stats, team) == 0.f) return;
-							a.emplace_back(mod.print(character.stats, team));
+							if (mod.eval(character.stats, team.stats) == 0.f) return;
+							a.emplace_back(mod.print(character.stats, team.stats));
 						};
 						for (auto &modifier: modifiersPre) {
 							printMod(modifier);
@@ -51,7 +51,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, team),
+							.value = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, team.stats),
 						},
 					},
 				});

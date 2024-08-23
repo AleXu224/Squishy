@@ -82,7 +82,8 @@ struct Contents {
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, Store::teams.at(0));
+								// FIXME: add a placeholder team to calculate the damage of characters
+								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, Store::teams.at(0).stats);
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},

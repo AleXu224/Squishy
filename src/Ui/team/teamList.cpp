@@ -7,6 +7,7 @@
 #include "navigator.hpp"
 #include "scrollableFrame.hpp"
 #include "store.hpp"
+#include "teamPage.hpp"
 #include <GLFW/glfw3.h>
 
 using namespace squi;
@@ -27,12 +28,12 @@ UI::TeamList::operator squi::Child() const {
 						.onInit = [controller](Widget &w) {
 							for (auto &[teamKey, team]: Store::teams) {
 								w.addChild(GestureDetector{
-									// .onClick = [controller, characterKey = character.key](GestureDetector::Event event) {
-									// 	controller.push(CharacterPage{
-									// 		.characterKey = characterKey,
-									// 		.controller = controller,
-									// 	});
-									// },
+									.onClick = [controller, teamKey](GestureDetector::Event) {
+										controller.push(TeamPage{
+											.teamKey = teamKey,
+											.controller = controller,
+										});
+									},
 									.child = TeamCard{
 										.teamKey = teamKey,
 									},
@@ -41,7 +42,7 @@ UI::TeamList::operator squi::Child() const {
 						},
 					},
 					.spacing = 2.f,
-					.columnCount = Grid::MinSize{.value = 256.f},
+					.columnCount = Grid::MinSize{.value = 300.f},
 				}
 			},
 		},

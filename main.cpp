@@ -140,8 +140,14 @@ int main() {
 		},
 	});
 
-	auto team = Store::teams.insert({0, Stats::Team{}});
-	team.first->second.characters.at(0) = character;
+	auto team = Store::teams.insert({
+		0,
+		Team::Instance{
+			.key = 0,
+			.name = "Test team",
+		},
+	});
+	team.first->second.stats.characters.at(0) = character;
 
 	character.getArtifactStats();
 

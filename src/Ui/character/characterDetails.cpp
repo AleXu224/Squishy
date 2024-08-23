@@ -45,11 +45,11 @@ struct DetailsSkill {
 					Children ret2{};
 					for (const auto &[node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
 						ret2.emplace_back(UI::Tooltip{
-							.message = node.formula.print(character.stats, team),
+							.message = node.formula.print(character.stats, team.stats),
 							.child = UI::SkillEntry{
 								.isTransparent = transparent,
 								.name = node.name,
-								.value = node.formula.eval(character.stats, team),
+								.value = node.formula.eval(character.stats, team.stats),
 								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, character.stats)),
 							},
 						});
@@ -86,19 +86,19 @@ struct DetailsSkill {
 						std::vector<std::string> a{};
 						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats, team));
+							a.emplace_back(modifier.print(character.stats, team.stats));
 						}
 						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats, team));
+							a.emplace_back(modifier.print(character.stats, team.stats));
 						}
 						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats, team));
+							a.emplace_back(modifier.print(character.stats, team.stats));
 						}
 						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(character.stats, team));
+							a.emplace_back(modifier.print(character.stats, team.stats));
 						}
 						auto message = std::accumulate(
 							a.begin(), a.end(),
@@ -111,19 +111,19 @@ struct DetailsSkill {
 						float totalValue = 0.f;
 						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats, team);
+							totalValue += modifier.eval(character.stats, team.stats);
 						}
 						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats, team);
+							totalValue += modifier.eval(character.stats, team.stats);
 						}
 						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats, team);
+							totalValue += modifier.eval(character.stats, team.stats);
 						}
 						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
 							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(character.stats, team);
+							totalValue += modifier.eval(character.stats, team.stats);
 						}
 
 						if (totalValue == 0.f) continue;
