@@ -1,0 +1,24 @@
+#pragma once
+
+#include "weapon/data.hpp"
+
+inline Weapon::Data testWeapon{
+	.key = 2,
+	.name = "Test Weapon",
+	.baseStats{
+		.type = WeaponType::polearm,
+		.baseAtk = 44.3358,
+		.substat{
+			.stat = Stat::cr,
+			.value = 0.096,
+		},
+		.atkCurve = WeaponCurveType::GROWTH_CURVE_ATTACK_304,
+		.substatCurve = WeaponCurveType::GROWTH_CURVE_CRITICAL_301,
+		.ascensionUpgrade{
+			0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7
+		}
+	},
+	.setup = []() {
+		return Weapon::Data::Setup{};
+	},
+};

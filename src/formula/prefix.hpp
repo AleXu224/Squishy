@@ -5,7 +5,7 @@
 
 
 namespace Formula {
-	template<IntermediaryLike T>
+	template<FloatFormula T>
 	struct Prefix {
 		std::string_view prefix;
 		T val;

@@ -27,4 +27,15 @@ namespace Formula {
 			return value;
 		}
 	};
+	struct ConstantBool {
+		bool value;
+
+		[[nodiscard]] inline std::string print(const Stats::Loadout &, const Stats::Team &, Step) const {
+			return fmt::format("{}", value);
+		}
+
+		[[nodiscard]] inline bool eval(const Stats::Loadout &, const Stats::Team &) const {
+			return value;
+		}
+	};
 }// namespace Formula

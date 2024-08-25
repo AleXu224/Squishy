@@ -19,6 +19,9 @@ namespace Stats {
 		Stats::Sheet<Stats::Value<Loadout, Team, 2>> teamPreMods{};
 		Stats::Sheet<Stats::Value<Loadout, Team, 2>> teamPostMods{};
 
+		Formula::ElementNode infusion;
+		Formula::ElementNode teamInfusion;
+
 		Talents talents{};
 		uint8_t constellation{};
 		uint8_t level{1};

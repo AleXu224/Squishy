@@ -118,12 +118,12 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] inline auto _getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Stats::Loadout &stats) {
+	[[nodiscard]] inline auto _getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Stats::Loadout &stats, const Stats::Team &team) {
 		switch (attackSource) {
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::charged:
 			case Misc::AttackSource::plunge:
-				return element.value_or(Misc::Element::physical);
+				return element.value_or(stats.character.sheet.infusion.eval(stats, team).value_or(Misc::Element::physical));
 			case Misc::AttackSource::skill:
 			case Misc::AttackSource::burst:
 				return element.value_or(stats.character.base.element);
@@ -139,7 +139,7 @@ namespace Formula {
 		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
 			bool isPercentage = _postModsCharacter::_SkillValue::isPercetange(stat);
 
-			auto el = _getElement(attackSource, element, stats);
+			auto el = _getElement(attackSource, element, stats, team);
 
 			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
 			return fmt::format(
@@ -151,7 +151,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
-			Misc::Element el = _getElement(attackSource, element, stats);
+			Misc::Element el = _getElement(attackSource, element, stats, team);
 			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
 			return std::invoke(stat, std::invoke(skill, stats.character.sheet.postMods)).get(stats, team);
 		}

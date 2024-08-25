@@ -6,7 +6,7 @@
 
 
 namespace Formula {
-	template<class T>
+	template<FloatFormula T>
 	struct Clamp {
 		T val1;
 		float min = 0.f;

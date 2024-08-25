@@ -18,6 +18,8 @@ namespace Stats {
 		Sheet<Value<Loadout, Team, 1>> preMods{};
 		Sheet<Value<Loadout, Team, 1>> postMods{};
 
+		Formula::ElementNode infusion;
+
 		Team();
 	};
 }// namespace Stats

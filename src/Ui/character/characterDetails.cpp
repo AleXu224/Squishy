@@ -50,7 +50,7 @@ struct DetailsSkill {
 								.isTransparent = transparent,
 								.name = node.name,
 								.value = node.formula.eval(character.stats, team.stats),
-								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, character.stats)),
+								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, character.stats, team.stats)),
 							},
 						});
 					}

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "array"
+#include "formula/infusion.hpp"
 #include "formula/node.hpp"
 #include "stats/helpers.hpp"
+
 
 namespace Stats {
 	template<class T>
@@ -86,5 +88,8 @@ namespace Stats {
 		_Sheet postMod{};
 		_Sheet teamPreMod{};
 		_Sheet teamPostMod{};
+
+		Formula::ElementNode infusion = Formula::NoInfusion{};
+		Formula::ElementNode teamInfusion = Formula::NoInfusion{};
 	};
 }// namespace Stats

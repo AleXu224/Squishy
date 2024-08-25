@@ -2,6 +2,7 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"
 #include "character/characters.hpp"
+#include "formula/teamCharacter.hpp"
 #include "store.hpp"
 
 
@@ -21,6 +22,9 @@ Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
 	Stats::setupModifiers(character.data.mods.postMod, stats.character.sheet.postMods, 0);
 	Stats::setupModifiers(character.data.mods.teamPreMod, stats.character.sheet.teamPreMods, 0);
 	Stats::setupModifiers(character.data.mods.teamPostMod, stats.character.sheet.teamPostMods, 0);
+
+	stats.character.sheet.infusion = Formula::CharacterTeamInfusion(character.data.mods.infusion);
+	stats.character.sheet.teamInfusion = character.data.mods.teamInfusion;
 
 	stats.character.sheet.init(stats);
 }

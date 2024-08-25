@@ -34,7 +34,10 @@ namespace Character::Datas {
 					.key = "endseerStance",
 					.name = "During Endseer stance",
 				},
-
+				Conditional::Boolean{
+					.key = "test",
+					.name = "Test",
+				},
 			},
 		},
 		.setup = []() -> Data::Setup {
@@ -42,7 +45,7 @@ namespace Character::Datas {
 				Formula::Modifier(
 					Formula::ModifierLocation::DMG,
 					Formula::Requires(
-						Formula::Requirement::passive1,
+						Requirement::Passive1{},
 						Formula::Conditional(
 							Conditional::Location::passive1,
 							"endseerStance",
@@ -56,7 +59,7 @@ namespace Character::Datas {
 				Formula::Modifier(
 					Formula::ModifierLocation::additiveDMG,
 					Formula::Requires(
-						Formula::Requirement::passive2,
+						Requirement::Passive2{},
 						Formula::Stat(Stat::em) * 1.5f
 					)
 				)
@@ -71,6 +74,10 @@ namespace Character::Datas {
 							Formula::ConstantFlat(100.f)
 						),
 					},
+					.teamInfusion = Formula::Requires(
+						Formula::ConditionalBool(Conditional::Location::passive1, "test"),
+						Formula::Infusion(Misc::Element::electro)
+					),
 				},
 				.nodes{
 					.normal{
@@ -179,7 +186,7 @@ namespace Character::Datas {
 								Formula::Modifier(
 									Formula::ModifierLocation::additiveDMG,
 									Formula::Requires(
-										Formula::Requirement::passive2,
+										Requirement::Passive2{},
 										Formula::Stat(Stat::em) * 2.5f
 									)
 								)

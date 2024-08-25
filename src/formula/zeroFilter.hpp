@@ -3,7 +3,7 @@
 #include "intermediary.hpp"
 
 namespace Formula {
-	template<IntermediaryLike T>
+	template<FloatFormula T>
 	struct ZeroFilter {
 		T val;
 

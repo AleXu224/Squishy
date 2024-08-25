@@ -47,3 +47,13 @@ target_link_libraries(squishyBench PRIVATE squishy_lib)
 target_link_libraries(squishyBench PRIVATE glt)
 find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(squishyBench PRIVATE benchmark::benchmark benchmark::benchmark_main)
+
+file(GLOB_RECURSE all_test_files CONFIGURE_DEPENDS "tests/*.cc")
+add_executable(squishyTest ${all_test_files})
+find_package(Catch2 CONFIG REQUIRED)
+target_link_libraries(squishyTest PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(squishyTest PRIVATE squishy_lib)
+
+include(CTest)
+include(Catch)
+catch_discover_tests(squishyTest)

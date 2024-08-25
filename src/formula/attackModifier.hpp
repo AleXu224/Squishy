@@ -13,7 +13,7 @@ namespace Formula {
 		critDMG,
 	};
 
-	template<IntermediaryLike T>
+	template<FloatFormula T>
 	[[nodiscard]] consteval auto Modifier(ModifierLocation location, T formula) {
 		return std::tuple{
 			formula * Constant(location == ModifierLocation::DMG ? 1.f : 0.f),

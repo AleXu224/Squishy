@@ -39,7 +39,7 @@ namespace Formula {
 		std::unreachable();
 	}
 
-	template<class T>
+	template<FloatFormula T>
 	struct Conditional {
 		::Conditional::Location location{};
 		Utils::HashedString name;
@@ -56,6 +56,19 @@ namespace Formula {
 				return val.eval(stats, team);
 
 			return 0.f;
+		}
+	};
+	struct ConditionalBool {
+		::Conditional::Location location{};
+		Utils::HashedString name;
+
+		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
+			auto cond = eval(stats, team);
+			return fmt::format("{}", cond);
+		}
+
+		[[nodiscard]] inline bool eval(const Stats::Loadout &stats, const Stats::Team &) const {
+			return ::Conditional::getBool(_getConditionalLocation(location, stats), name);
 		}
 	};
 	struct ConditionalValue {

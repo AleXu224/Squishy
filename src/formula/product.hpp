@@ -5,7 +5,7 @@
 
 
 namespace Formula {
-	template<class T, class U>
+	template<FloatFormula T, FloatFormula U>
 	struct Product {
 		T val1;
 		U val2;

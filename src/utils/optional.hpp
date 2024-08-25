@@ -8,16 +8,29 @@ namespace Utils {
 
 	template<class T>
 	struct JankyOptional {
-		constexpr JankyOptional() : hasValue(false), value() {}
-		constexpr JankyOptional(const T &value) : hasValue(true), value(value) {}
+		constexpr JankyOptional() : _hasValue(false), _value() {}
+		constexpr JankyOptional(const T &value) : _hasValue(true), _value(value) {}
 
 		constexpr T value_or(this auto &&self, const T &other) {
-			if (self.hasValue) return self.value;
+			if (self._hasValue) return self._value;
+			return other;
+		}
+
+		[[nodiscard]] constexpr bool has_value(this auto &&self) {
+			return self._hasValue;
+		}
+
+		[[nodiscard]] constexpr T value(this auto &&self) {
+			return self._value;
+		}
+
+		[[nodiscard]] constexpr const JankyOptional& this_or(this auto &&self, const JankyOptional<T> &other) {
+			if (self._hasValue) return self;
 			return other;
 		}
 
 	private:
-		bool hasValue;
-		T value;
+		bool _hasValue;
+		T _value;
 	};
 }// namespace Utils

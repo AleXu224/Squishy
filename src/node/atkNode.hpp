@@ -39,7 +39,7 @@ namespace Node {
 			   formula;
 	}
 
-	template<Formula::IntermediaryLike Frm, class Tpl>
+	template<Formula::FloatFormula Frm, class Tpl>
 	[[nodiscard]] consteval auto _getFormula(std::string_view name, Utils::JankyOptional<Misc::Element> element, Misc::AttackSource source, Frm formula, Tpl stats) {
 		auto skill = Stats::getSheetMemberByAttackSource<_Sheet>(source);
 
@@ -62,21 +62,21 @@ namespace Node {
 		);
 	}
 
-	template<Formula::IntermediaryLike Frm>
+	template<Formula::FloatFormula Frm>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::AttackSource source, Frm formula) {
 		return _getFormula(name, {}, source, formula, std::tuple{Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f)});
 	}
 
-	template<Formula::IntermediaryLike Frm>
+	template<Formula::FloatFormula Frm>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::Element element, Misc::AttackSource source, Frm formula) {
 		return _getFormula(name, element, source, formula, std::tuple{Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f)});
 	}
 
-	template<Formula::IntermediaryLike Frm, class T>
+	template<Formula::FloatFormula Frm, class T>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::AttackSource source, Frm formula, T modifiers) {
 		return _getFormula(name, {}, source, formula, modifiers);
 	}
-	template<Formula::IntermediaryLike Frm, class T>
+	template<Formula::FloatFormula Frm, class T>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::Element element, Misc::AttackSource source, Frm formula, T modifiers) {
 		return _getFormula(name, element, source, formula, modifiers);
 	}

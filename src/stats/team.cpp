@@ -31,7 +31,7 @@ template<class T, class V>
 	};
 }
 
-Stats::Team::Team() {
+Stats::Team::Team() : infusion(Formula::TeamInfusion{}) {
 	constexpr auto addMods = []<class T>(Team &stats, T val) {
 		auto [values, skills] = val;
 		const auto &[valuesCharacter, valuesMod] = values;
