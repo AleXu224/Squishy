@@ -147,7 +147,7 @@ static void formulaCalc(benchmark::State &state) {
 	// team.characters.at(3) = character;
 
 	for (auto _: state) {
-		benchmark::DoNotOptimize(node.formula.eval(character.stats, team));
+		benchmark::DoNotOptimize(node.formula.eval(character.stats, character.stats, team));
 	}
 }
 BENCHMARK(formulaCalc);

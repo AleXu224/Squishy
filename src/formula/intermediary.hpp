@@ -15,18 +15,18 @@ namespace Stats {
 namespace Formula {
 	template<class T>
 	concept FloatFormula = requires(T t) {
-		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
-		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<float>;
+		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<float>;
 	};
 	template<class T>
 	concept BoolFormula = requires(T t) {
-		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
-		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<bool>;
+		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<bool>;
 	};
 	template<class T>
 	concept ElementFormula = requires(T t) {
-		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
-		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<Utils::JankyOptional<Misc::Element>>;
+		{ t.print(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Stats::Loadout &>(), std::declval<const Stats::Loadout &>(), std::declval<const Stats::Team &>()) } -> std::same_as<Utils::JankyOptional<Misc::Element>>;
 	};
 
 	template<class T>

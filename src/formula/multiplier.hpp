@@ -10,14 +10,14 @@
 
 
 namespace Formula {
-	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Stats::Loadout &stats) {
+	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Stats::Loadout &source) {
 		switch (talent) {
 			case LevelableTalent::normal:
-				return values.at(stats.character.sheet.talents.normal);
+				return values.at(source.character.sheet.talents.normal);
 			case LevelableTalent::skill:
-				return values.at(stats.character.sheet.talents.skill);
+				return values.at(source.character.sheet.talents.skill);
 			case LevelableTalent::burst:
-				return values.at(stats.character.sheet.talents.burst);
+				return values.at(source.character.sheet.talents.burst);
 		}
 		std::unreachable();
 	}
@@ -26,13 +26,13 @@ namespace Formula {
 		LevelableTalent talent;
 		std::array<float, 15> values;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &, Step) const {
-			const auto &multiplier = _getMultiplier(talent, values, stats);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &, Step) const {
+			const auto &multiplier = _getMultiplier(talent, values, source);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &) const {
-			return _getMultiplier(talent, values, stats);
+		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) const {
+			return _getMultiplier(talent, values, source);
 		}
 	};
 

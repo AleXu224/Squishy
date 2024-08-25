@@ -7,13 +7,13 @@ namespace Formula {
 	struct ZeroFilter {
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step prevStep) const {
-			if (val.eval(stats, team) == 0.f) return "";
-			return val.print(stats, team, prevStep);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step prevStep) const {
+			if (val.eval(source, target, team) == 0.f) return "";
+			return val.print(source, target, team, prevStep);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &stats, const Stats::Team &team) const {
-			return val.eval(stats, team);
+		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
+			return val.eval(source, target, team);
 		}
 	};
 }// namespace Formula

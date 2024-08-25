@@ -30,5 +30,5 @@
 [[nodiscard]] inline auto eval(auto &&evalThing) {
     const auto&[team, character] = getCharacter();
 
-    return evalThing.eval(character.stats, team);
+    return evalThing.eval(character.stats, character.stats, team);
 }

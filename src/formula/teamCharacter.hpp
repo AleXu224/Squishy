@@ -13,40 +13,40 @@ namespace Formula {
 		size_t index = 0;
 		T formula;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &, const Stats::Team &team, Step prevStep) const {
+		[[nodiscard]] inline std::string print(const Stats::Loadout &, const Stats::Loadout &target, const Stats::Team &team, Step prevStep) const {
 			const auto &character = team.characters.at(index);
 			if (!character.has_value()) return "";
 			auto &stats = character->get().stats;
 			return fmt::format(
 				"{} {}",
 				stats.character.data.name,
-				formula.print(stats, team, prevStep)
+				formula.print(stats, target, team, prevStep)
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &, const Stats::Team &team) const {
+		[[nodiscard]] inline float eval(const Stats::Loadout &, const Stats::Loadout &target, const Stats::Team &team) const {
 			const auto &character = team.characters.at(index);
 			if (!character.has_value()) return 0.f;
-			return formula.eval(character->get().stats, team);
+			return formula.eval(character->get().stats, target, team);
 		}
 	};
 
 	struct TeamInfusion {
-		[[nodiscard]] static inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) {
-			auto elem = eval(stats, team);
+		[[nodiscard]] static inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) {
+			auto elem = eval(source, target, team);
 			if (elem.has_value()) {
 				return fmt::format("{}", Utils::Stringify(elem.value()));
 			}
 			return "None";
 		}
 
-		[[nodiscard]] static inline Utils::JankyOptional<Misc::Element> eval(const Stats::Loadout &stats, const Stats::Team &team) {
+		[[nodiscard]] static inline Utils::JankyOptional<Misc::Element> eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) {
 			const auto &character1 = team.characters.at(0);
 			const auto &character2 = team.characters.at(1);
 			const auto &character3 = team.characters.at(2);
 			const auto &character4 = team.characters.at(3);
 			auto getInfusion = [&](const std::optional<std::reference_wrapper<Character::Instance>> &character) -> Utils::JankyOptional<Misc::Element> {
-				if (character.has_value() && character->get().stats.character.sheet.teamInfusion.hasValue()) return character->get().stats.character.sheet.teamInfusion.eval(stats, team);
+				if (character.has_value() && character->get().stats.character.sheet.teamInfusion.hasValue()) return character->get().stats.character.sheet.teamInfusion.eval(source, target, team);
 				return {};
 			};
 			auto infusion1 = getInfusion(character1);
@@ -64,19 +64,19 @@ namespace Formula {
 	struct CharacterTeamInfusion {
 		Formula::ElementNode val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &stats, const Stats::Team &team, Step) const {
-			auto elem = eval(stats, team);
+		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
+			auto elem = eval(source, target, team);
 			if (elem.has_value()) {
 				return fmt::format("{}", Utils::Stringify(elem.value()));
 			}
 			return "None";
 		}
 
-		[[nodiscard]] inline Utils::JankyOptional<Misc::Element> eval(const Stats::Loadout &stats, const Stats::Team &team) const {
-			auto characterInfusion = val.eval(stats, team);
+		[[nodiscard]] inline Utils::JankyOptional<Misc::Element> eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
+			auto characterInfusion = val.eval(source, target, team);
 			if (characterInfusion.has_value()) return characterInfusion;
 
-			return team.infusion.eval(stats, team);
+			return team.infusion.eval(source, target, team);
 		}
 	};
 }// namespace Formula

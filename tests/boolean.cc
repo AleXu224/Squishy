@@ -2,17 +2,12 @@
 #include "storeSetup.hpp"
 #include <catch2/catch_test_macros.hpp>
 
-
-TEST_CASE("Boolean") {
-	const auto &[team, character] = ::getCharacter();
-
+TEST_CASE("Boolean", "[Equality]") {
 	constexpr auto falseConstant = Formula::ConstantBool(false);
 	constexpr auto trueConstant = Formula::ConstantBool(true);
 	constexpr auto someConstant1 = Formula::Constant(2.f);
 	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
-	constexpr auto someConstant3 = Formula::ConstantFlat(3.f);
 
-	// Equality
 	REQUIRE(eval(falseConstant == falseConstant) == true);
 	REQUIRE(eval(falseConstant == trueConstant) == false);
 	REQUIRE(eval(falseConstant == false) == true);
@@ -24,8 +19,14 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(someConstant2 == someConstant2) == true);
 	REQUIRE(eval(someConstant2 == 3.f) == true);
 	REQUIRE(eval(3.f == someConstant2) == true);
+}
 
-	// Inequality
+TEST_CASE("Boolean", "[Inequality]") {
+	constexpr auto falseConstant = Formula::ConstantBool(false);
+	constexpr auto trueConstant = Formula::ConstantBool(true);
+	constexpr auto someConstant1 = Formula::Constant(2.f);
+	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
+
 	REQUIRE(eval(falseConstant != falseConstant) == false);
 	REQUIRE(eval(falseConstant != trueConstant) == true);
 	REQUIRE(eval(falseConstant != false) == false);
@@ -37,11 +38,19 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(someConstant2 != someConstant2) == false);
 	REQUIRE(eval(someConstant2 != 3.f) == false);
 	REQUIRE(eval(3.f != someConstant2) == false);
+}
+TEST_CASE("Boolean", "[Not]") {
+	constexpr auto falseConstant = Formula::ConstantBool(false);
+	constexpr auto trueConstant = Formula::ConstantBool(true);
 
-	// Not
 	REQUIRE(eval(!falseConstant) == true);
+	REQUIRE(eval(!trueConstant) == false);
+}
+TEST_CASE("Boolean", "[Less]") {
+	constexpr auto someConstant1 = Formula::Constant(2.f);
+	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
+	constexpr auto someConstant3 = Formula::ConstantFlat(3.f);
 
-	// Less
 	REQUIRE(eval(someConstant1 < someConstant2) == true);
 	REQUIRE(eval(someConstant2 < someConstant1) == false);
 	REQUIRE(eval(someConstant2 < someConstant3) == false);
@@ -51,8 +60,12 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(1.f < someConstant1) == true);
 	REQUIRE(eval(2.f < someConstant1) == false);
 	REQUIRE(eval(3.f < someConstant1) == false);
+}
+TEST_CASE("Boolean", "[LessEqual]") {
+	constexpr auto someConstant1 = Formula::Constant(2.f);
+	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
+	constexpr auto someConstant3 = Formula::ConstantFlat(3.f);
 
-	// Less Equal
 	REQUIRE(eval(someConstant1 <= someConstant2) == true);
 	REQUIRE(eval(someConstant2 <= someConstant1) == false);
 	REQUIRE(eval(someConstant2 <= someConstant3) == true);
@@ -62,8 +75,12 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(1.f <= someConstant1) == true);
 	REQUIRE(eval(2.f <= someConstant1) == true);
 	REQUIRE(eval(3.f <= someConstant1) == false);
+}
+TEST_CASE("Boolean", "[Greater]") {
+	constexpr auto someConstant1 = Formula::Constant(2.f);
+	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
+	constexpr auto someConstant3 = Formula::ConstantFlat(3.f);
 
-	// Greater
 	REQUIRE(eval(someConstant1 > someConstant2) == false);
 	REQUIRE(eval(someConstant2 > someConstant1) == true);
 	REQUIRE(eval(someConstant2 > someConstant3) == false);
@@ -73,8 +90,12 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(1.f > someConstant1) == false);
 	REQUIRE(eval(2.f > someConstant1) == false);
 	REQUIRE(eval(3.f > someConstant1) == true);
+}
+TEST_CASE("Boolean", "[GreaterEqual]") {
+	constexpr auto someConstant1 = Formula::Constant(2.f);
+	constexpr auto someConstant2 = Formula::ConstantFlat(3.f);
+	constexpr auto someConstant3 = Formula::ConstantFlat(3.f);
 
-	// Greater Equal
 	REQUIRE(eval(someConstant1 >= someConstant2) == false);
 	REQUIRE(eval(someConstant2 >= someConstant1) == true);
 	REQUIRE(eval(someConstant2 >= someConstant3) == true);
@@ -84,8 +105,12 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(1.f >= someConstant1) == false);
 	REQUIRE(eval(2.f >= someConstant1) == true);
 	REQUIRE(eval(3.f >= someConstant1) == true);
+}
 
-	// And
+TEST_CASE("Boolean", "[And]") {
+	constexpr auto falseConstant = Formula::ConstantBool(false);
+	constexpr auto trueConstant = Formula::ConstantBool(true);
+
 	REQUIRE(eval(falseConstant && falseConstant) == false);
 	REQUIRE(eval(falseConstant && trueConstant) == false);
 	REQUIRE(eval(trueConstant && falseConstant) == false);
@@ -100,8 +125,11 @@ TEST_CASE("Boolean") {
 	REQUIRE(eval(true && falseConstant) == false);
 	REQUIRE(eval(falseConstant && false) == false);
 	REQUIRE(eval(false && falseConstant) == false);
+}
+TEST_CASE("Boolean", "[Or]") {
+	constexpr auto falseConstant = Formula::ConstantBool(false);
+	constexpr auto trueConstant = Formula::ConstantBool(true);
 
-	// Or
 	REQUIRE(eval(falseConstant || falseConstant) == false);
 	REQUIRE(eval(falseConstant || trueConstant) == true);
 	REQUIRE(eval(trueConstant || falseConstant) == true);

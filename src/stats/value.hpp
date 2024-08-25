@@ -16,7 +16,7 @@ namespace Stats {
 		float constant = 0.f;
 		std::array<Formula::Node, Count> modifiers{};
 
-		[[nodiscard]] inline float get(const P1 &statSheet, const P2 &team) const {
+		[[nodiscard]] inline float get(const P1 &source, const P1 &target, const P2 &team) const {
 #ifndef NDEBUG
 			if (isRunning) {
 				std::println("WARNING: recursion while computing stat, returning 0.");
@@ -29,7 +29,7 @@ namespace Stats {
 			float ret = constant;
 			for (const auto &modifier: modifiers) {
 				if (!modifier.hasValue()) continue;
-				ret += modifier.eval(statSheet, team);
+				ret += modifier.eval(source, target, team);
 			}
 
 #ifndef NDEBUG

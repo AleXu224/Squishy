@@ -83,7 +83,7 @@ struct Contents {
 									 Utils::trueFalse
 								 )) {
 								// FIXME: add a placeholder team to calculate the damage of characters
-								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, Store::teams.at(0).stats);
+								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, character.stats, Store::teams.at(0).stats);
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},
