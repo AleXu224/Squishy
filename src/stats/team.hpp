@@ -15,8 +15,8 @@ namespace Stats {
 	struct Team {
 		std::array<std::optional<std::reference_wrapper<::Character::Instance>>, 4> characters{};
 
-		Sheet<Value<Loadout, Team, 1>> preMods{};
-		Sheet<Value<Loadout, Team, 1>> postMods{};
+		Sheet<Value<Formula::Context, 1>> preMods{};
+		Sheet<Value<Formula::Context, 1>> postMods{};
 
 		Formula::ElementNode infusion;
 

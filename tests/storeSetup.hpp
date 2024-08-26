@@ -21,14 +21,20 @@
 	}();
 	Stats::Team testTeam{};
 
-    auto &character = Store::characters.at(::testCharacter.key);
-    testTeam.characters.at(0) = character;
+	auto &character = Store::characters.at(::testCharacter.key);
+	testTeam.characters.at(0) = character;
 
-    return std::pair{testTeam, character};
+	return std::pair{testTeam, character};
 }
 
 [[nodiscard]] inline auto eval(auto &&evalThing) {
-    const auto&[team, character] = getCharacter();
+	const auto &[team, character] = getCharacter();
 
-    return evalThing.eval(character.stats, character.stats, team);
+	Formula::Context ctx{
+		.source = character.stats,
+		.target = character.stats,
+		.team = team,
+	};
+
+	return evalThing.eval(ctx);
 }

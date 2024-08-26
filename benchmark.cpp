@@ -4,10 +4,11 @@
 #include "character/characters.hpp"
 #include "character/characters/Cyno.hpp"
 #include "src/formula/node.hpp"
+#include "stats/team.hpp"
 #include "store.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
 #include <random>
-#include "stats/team.hpp"
+
 
 #include "benchmark/benchmark.h"
 
@@ -146,8 +147,14 @@ static void formulaCalc(benchmark::State &state) {
 	// team.characters.at(2) = character;
 	// team.characters.at(3) = character;
 
+	Formula::Context ctx{
+		.source = character.stats,
+		.target = character.stats,
+		.team = team,
+	};
+
 	for (auto _: state) {
-		benchmark::DoNotOptimize(node.formula.eval(character.stats, character.stats, team));
+		benchmark::DoNotOptimize(node.formula.eval(ctx));
 	}
 }
 BENCHMARK(formulaCalc);

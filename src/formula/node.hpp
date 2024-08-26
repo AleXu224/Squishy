@@ -2,15 +2,19 @@
 
 #include "string"
 
-#include "intermediary.hpp"
+#include "context.hpp"
 #include "memory"
+#include "misc/element.hpp"
+#include "step.hpp"
+#include "utils/optional.hpp"
+
 
 namespace Formula {
 	template<class RetType>
 	struct NodeType {
 		struct interface {
-			[[nodiscard]] constexpr virtual std::string print(const Stats::Loadout &, const Stats::Loadout &, const Stats::Team &) const = 0;
-			[[nodiscard]] constexpr virtual RetType eval(const Stats::Loadout &, const Stats::Loadout &, const Stats::Team &) const = 0;
+			[[nodiscard]] constexpr virtual std::string print(const Context &) const = 0;
+			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			constexpr virtual ~interface() = default;
 		};
@@ -19,11 +23,11 @@ namespace Formula {
 		struct implementation final : interface {
 			constexpr explicit(true) implementation(Fn fn) : fn{fn} {}
 
-			[[nodiscard]] constexpr std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const override {
-				return fn.print(source, target, team, Step::none);
+			[[nodiscard]] constexpr std::string print(const Context &context) const override {
+				return fn.print(context, Step::none);
 			}
-			[[nodiscard]] constexpr RetType eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const override {
-				return fn.eval(source, target, team);
+			[[nodiscard]] constexpr RetType eval(const Context &context) const override {
+				return fn.eval(context);
 			}
 			[[nodiscard]] constexpr std::unique_ptr<interface> clone() const override {
 				return std::make_unique<implementation<Fn>>(fn);
@@ -56,11 +60,11 @@ namespace Formula {
 			return *this;
 		}
 
-		[[nodiscard]] constexpr std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return fn->print(source, target, team);
+		[[nodiscard]] constexpr std::string print(const Context &context) const {
+			return fn->print(context);
 		}
-		[[nodiscard]] constexpr RetType eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return fn->eval(source, target, team);
+		[[nodiscard]] constexpr RetType eval(const Context &context) const {
+			return fn->eval(context);
 		}
 
 		NodeType() = default;

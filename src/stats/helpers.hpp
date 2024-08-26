@@ -9,7 +9,7 @@
 #include "functional"
 
 namespace Stats {
-	template<class P1, class P2, size_t Size>
+	template<class P1, size_t Size>
 	struct Value;
 
 	template<class T>

@@ -10,12 +10,12 @@ namespace Formula {
 		std::string_view prefix;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} {}", prefix, val.eval(source, target, team));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} {}", prefix, val.eval(context));
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val.eval(source, target, team);
+		[[nodiscard]] inline float eval(const Context &context) const {
+			return val.eval(context);
 		}
 	};
 }// namespace Formula

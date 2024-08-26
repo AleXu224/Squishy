@@ -9,8 +9,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	// HP
 	this->preMods.baseHp.modifiers.at(2) = Formula::Prefix(
 		"Character Base",
-		Formula::Custom([](const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) {
-			return source.character.base.getHpAt(source.character.sheet.level, source.character.sheet.ascension);
+		Formula::Custom([](const Formula::Context &context) {
+			return context.source.character.base.getHpAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
 	this->preMods.hp.modifiers.at(2) = (Formula::Stat(Stat::hp_) + 1.f) * Formula::Stat(Stat::baseHp);
@@ -18,8 +18,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	// ATK
 	this->preMods.baseAtk.modifiers.at(2) = Formula::Prefix(
 		"Character Base",
-		Formula::Custom([](const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) {
-			return source.character.base.getAtkAt(source.character.sheet.level, source.character.sheet.ascension);
+		Formula::Custom([](const Formula::Context &context) {
+			return context.source.character.base.getAtkAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
 	this->preMods.atk.modifiers.at(2) = (Formula::Stat(Stat::atk_) + 1.f) * Formula::Stat(Stat::baseAtk);
@@ -27,8 +27,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	// DEF
 	this->preMods.baseDef.modifiers.at(2) = Formula::Prefix(
 		"Character Base",
-		Formula::Custom([](const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) {
-			return source.character.base.getDefAt(source.character.sheet.level, source.character.sheet.ascension);
+		Formula::Custom([](const Formula::Context &context) {
+			return context.source.character.base.getDefAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
 	this->preMods.def.modifiers.at(2) = (Formula::Stat(Stat::def_) + 1.f) * Formula::Stat(Stat::baseDef);
@@ -37,8 +37,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->preMods.fromStat(stats.character.base.ascensionStat).modifiers.at(2) = Formula::Prefix(
 		"Character Base",
 		Formula::Custom(
-			[](const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) {
-				return source.character.base.getAscensionStatAt(source.character.sheet.ascension);
+			[](const Formula::Context &context) {
+				return context.source.character.base.getAscensionStatAt(context.source.character.sheet.ascension);
 			},
 			Stats::isPercentage(stats.character.base.ascensionStat)
 		)

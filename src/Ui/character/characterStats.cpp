@@ -22,6 +22,11 @@ UI::CharacterStats::operator squi::Child() const {
 			Children ret2{};
 			auto &team = Store::teams.at(0);
 
+			Formula::Context ctx{
+				.source = character.stats,
+				.target = character.stats,
+				.team = team.stats,
+			};
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
@@ -30,8 +35,8 @@ UI::CharacterStats::operator squi::Child() const {
 						auto &modifiersPost = character.stats.character.sheet.postMods.fromStat(stat).modifiers;
 						auto printMod = [&](auto &&mod) {
 							if (!mod.hasValue()) return;
-							if (mod.eval(character.stats, character.stats, team.stats) == 0.f) return;
-							a.emplace_back(mod.print(character.stats, character.stats, team.stats));
+							if (mod.eval(ctx) == 0.f) return;
+							a.emplace_back(mod.print(ctx));
 						};
 						for (auto &modifier: modifiersPre) {
 							printMod(modifier);
@@ -51,7 +56,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.stats.character.sheet.postMods.fromStat(stat).get(character.stats, character.stats, team.stats),
+							.value = character.stats.character.sheet.postMods.fromStat(stat).get(ctx),
 						},
 					},
 				});

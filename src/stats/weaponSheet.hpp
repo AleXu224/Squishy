@@ -16,10 +16,10 @@ namespace Stats {
 		[[nodiscard]] float getBaseAtk();
 		[[nodiscard]] float getSubstat();
 
-		Stats::Sheet<Stats::Value<Loadout, Team, 2>> preMods{};
-		Stats::Sheet<Stats::Value<Loadout, Team, 1>> postMods{};
-		Stats::Sheet<Stats::Value<Loadout, Team, 1>> teamPreMods{};
-		Stats::Sheet<Stats::Value<Loadout, Team, 1>> teamPostMods{};
+		Stats::Sheet<Stats::Value<Formula::Context, 2>> preMods{};
+		Stats::Sheet<Stats::Value<Formula::Context, 1>> postMods{};
+		Stats::Sheet<Stats::Value<Formula::Context, 1>> teamPreMods{};
+		Stats::Sheet<Stats::Value<Formula::Context, 1>> teamPostMods{};
 
 		explicit WeaponSheet(const WeaponBase &base);
 	};

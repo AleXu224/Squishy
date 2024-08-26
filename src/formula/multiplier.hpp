@@ -2,8 +2,8 @@
 
 #include "Talents.hpp"
 #include "character/data.hpp"
+#include "context.hpp"
 #include "formula/stat.hpp"
-#include "intermediary.hpp"
 #include "operators.hpp"
 #include "stats/loadout.hpp"
 #include "stats/stat.hpp"
@@ -26,13 +26,13 @@ namespace Formula {
 		LevelableTalent talent;
 		std::array<float, 15> values;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &, Step) const {
-			const auto &multiplier = _getMultiplier(talent, values, source);
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			const auto &multiplier = _getMultiplier(talent, values, context.source);
 			return fmt::format("{:.2f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) const {
-			return _getMultiplier(talent, values, source);
+		[[nodiscard]] inline float eval(const Context &context) const {
+			return _getMultiplier(talent, values, context.source);
 		}
 	};
 

@@ -45,15 +45,15 @@ namespace Formula {
 		Utils::HashedString name;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			auto cond = ::Conditional::getBool(_getConditionalLocation(location, source), name);
-			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(source, target, team, Step::none)) : "");
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			auto cond = ::Conditional::getBool(_getConditionalLocation(location, context.source), name);
+			return fmt::format("{}", cond ? fmt::format("{} {}", name.str, val.print(context, Step::none)) : "");
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			auto cond = ::Conditional::getBool(_getConditionalLocation(location, source), name);
+		[[nodiscard]] inline float eval(const Context &context) const {
+			auto cond = ::Conditional::getBool(_getConditionalLocation(location, context.source), name);
 			if (cond)
-				return val.eval(source, target, team);
+				return val.eval(context);
 
 			return 0.f;
 		}
@@ -62,13 +62,13 @@ namespace Formula {
 		::Conditional::Location location{};
 		Utils::HashedString name;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			auto cond = eval(source, target, team);
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			auto cond = eval(context);
 			return fmt::format("{}", cond);
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) const {
-			return ::Conditional::getBool(_getConditionalLocation(location, source), name);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return ::Conditional::getBool(_getConditionalLocation(location, context.source), name);
 		}
 	};
 	struct ConditionalValue {
@@ -76,13 +76,13 @@ namespace Formula {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &, Step) const {
-			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, source), name, defaultValue);
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, context.source), name, defaultValue);
 			return fmt::format("{} {}", name.str, cond);
 		}
 
-		[[nodiscard]] inline float eval(const Stats::Loadout &source, const Stats::Loadout &, const Stats::Team &) const {
-			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, source), name, defaultValue);
+		[[nodiscard]] inline float eval(const Context &context) const {
+			auto cond = ::Conditional::getFloat(_getConditionalLocation(location, context.source), name, defaultValue);
 			return cond;
 		}
 	};

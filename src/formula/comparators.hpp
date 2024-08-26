@@ -9,12 +9,12 @@ namespace Formula {
 	struct Equal {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} == {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} == {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) == val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) == val2.eval(context);
 		}
 	};
 
@@ -22,24 +22,24 @@ namespace Formula {
 	struct NotEqual {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} != {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} != {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) != val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) != val2.eval(context);
 		}
 	};
 
 	template<BoolFormula T>
 	struct Not {
 		T val;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("!{}", val.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("!{}", val.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return !val.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return !val.eval(context);
 		}
 	};
 
@@ -47,48 +47,48 @@ namespace Formula {
 	struct Less {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} < {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} < {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) < val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) < val2.eval(context);
 		}
 	};
 	template<FloatFormula T, FloatFormula V>
 	struct LessEqual {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} <= {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} <= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) <= val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) <= val2.eval(context);
 		}
 	};
 	template<FloatFormula T, FloatFormula V>
 	struct Greater {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} > {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} > {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) > val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) > val2.eval(context);
 		}
 	};
 	template<FloatFormula T, FloatFormula V>
 	struct GreaterEqual {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} >= {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} >= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) >= val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) >= val2.eval(context);
 		}
 	};
 
@@ -96,24 +96,24 @@ namespace Formula {
 	struct And {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} && {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} && {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) && val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) && val2.eval(context);
 		}
 	};
 	template<BoolFormula T, BoolFormula V>
 	struct Or {
 		T val1;
 		V val2;
-		[[nodiscard]] inline std::string print(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team, Step) const {
-			return fmt::format("{} || {}", val1.print(source, target, team, Step::none), val2.print(source, target, team, Step::none));
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} || {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
-		[[nodiscard]] inline bool eval(const Stats::Loadout &source, const Stats::Loadout &target, const Stats::Team &team) const {
-			return val1.eval(source, target, team) || val2.eval(source, target, team);
+		[[nodiscard]] inline bool eval(const Context &context) const {
+			return val1.eval(context) || val2.eval(context);
 		}
 	};
 }// namespace Formula

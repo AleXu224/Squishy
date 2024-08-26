@@ -34,10 +34,6 @@ namespace Character::Datas {
 					.key = "endseerStance",
 					.name = "During Endseer stance",
 				},
-				Conditional::Boolean{
-					.key = "test",
-					.name = "Test",
-				},
 			},
 		},
 		.setup = []() -> Data::Setup {
@@ -74,10 +70,6 @@ namespace Character::Datas {
 							Formula::ConstantFlat(100.f)
 						),
 					},
-					.teamInfusion = Formula::Requires(
-						Formula::ConditionalBool(Conditional::Location::passive1, "test"),
-						Formula::Infusion(Misc::Element::electro)
-					),
 				},
 				.nodes{
 					.normal{
