@@ -35,5 +35,3 @@ namespace Character {
 		}
 	};
 }// namespace Character
-
-#include "formula/formula.hpp"// IWYU pragma: export

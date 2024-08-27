@@ -1,8 +1,10 @@
 #pragma once
 
-#include "context.hpp"
+#include "formula/formulaContext.hpp"
+#include "operators.hpp"
+#include "stat.hpp"
 #include "stats/loadout.hpp"
-#include "weapon/data.hpp"
+
 
 namespace Formula {
 	[[nodiscard]] inline const auto &_getRefinementMultiplier(const std::array<float, 5> &values, const Stats::Loadout &source) {

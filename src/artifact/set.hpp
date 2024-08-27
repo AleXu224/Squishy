@@ -2,10 +2,9 @@
 
 #include "artifact/instance.hpp"
 #include "conditional/conditional.hpp"
-#include "formula/formula.hpp"// IWYU pragma: export
 #include "functional"
 #include "node/node.hpp"
-
+#include "stats/sheet.hpp"
 
 namespace Character {
 	struct Instance;

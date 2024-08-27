@@ -17,7 +17,7 @@ namespace Formula {
 			if (val1.eval(context) == 0.f) return p2;
 			if (val2.eval(context) == 0.f) return p1;
 
-			if (prevStep == Step::multiplication) {
+			if (prevStep == Step::multiplication || prevStep == Step::division) {
 				return fmt::format("({} + {})", p1, p2);
 			}
 			return fmt::format("{} + {}", p1, p2);

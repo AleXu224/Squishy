@@ -9,7 +9,10 @@
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 #include "artifact/set.hpp"
+#include "character/data.hpp"
 #include "characterStats.hpp"
+#include "formula/stat.hpp"
+#include "reaction/reaction.hpp"
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 

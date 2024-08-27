@@ -1,4 +1,5 @@
-#include "formula/formula.hpp"
+#include "formula/constant.hpp"
+#include "formula/operators.hpp"
 #include "storeSetup.hpp"
 #include <catch2/catch_test_macros.hpp>
 

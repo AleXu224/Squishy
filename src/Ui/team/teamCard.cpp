@@ -2,13 +2,14 @@
 
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/skillHeader.hpp"
+#include "character/data.hpp"
+
 #include "box.hpp"
+#include "column.hpp"
 #include "container.hpp"
 #include "image.hpp"
-#include "store.hpp"
-
-#include "column.hpp"
 #include "row.hpp"
+#include "store.hpp"
 
 
 using namespace squi;

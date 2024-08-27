@@ -1,12 +1,13 @@
 #pragma once
 
+#include "functional"
 #include "misc/attackSource.hpp"
 #include "ranges"
 #include "stats/stat.hpp"
 #include "type_traits"
 #include "utility"
 #include "utils.hpp"
-#include "functional"
+
 
 namespace Stats {
 	template<class P1, size_t Size>

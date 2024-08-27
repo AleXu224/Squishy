@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Talents.hpp"
-#include "character/data.hpp"
-#include "context.hpp"
+#include "formula/formulaContext.hpp"
 #include "formula/stat.hpp"
 #include "operators.hpp"
+#include "reaction/levelMultiplier.hpp"
 #include "stats/loadout.hpp"
 #include "stats/stat.hpp"
 
@@ -39,4 +39,14 @@ namespace Formula {
 	[[nodiscard]] consteval auto Multiplier(::Stat stat, LevelableTalent talent, const std::array<float, 15> &values) {
 		return Formula::Stat(stat) * MultiplierValue(talent, values);
 	}
+
+	struct LevelMultiplier {
+		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+			return fmt::format("Level Multiplier {:.2f}%", eval(context) * 100.f);
+		}
+
+		[[nodiscard]] static inline float eval(const Context &context) {
+			return Reaction::CharacterLevelMultiplier.at(context.source.character.sheet.level);
+		}
+	};
 }// namespace Formula

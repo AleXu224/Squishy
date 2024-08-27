@@ -2,6 +2,7 @@
 
 #include "formula/clamp.hpp"
 #include "formula/operators.hpp"
+#include "formula/reaction.hpp"
 #include "formula/stat.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
@@ -44,7 +45,7 @@ namespace Node {
 		auto skill = Stats::getSheetMemberByAttackSource<_Sheet>(source);
 
 		auto totalDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::DMG, std::get<0>(stats));
-		auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, std::get<1>(stats));
+		auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, std::get<1>(stats)) + Formula::AdditiveMultiplier{};
 		auto totalMultiplicativeDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::multiplicativeDMG, std::get<2>(stats));
 		auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &_Sheet::_SkillValue::critRate, std::get<3>(stats)) + Formula::Stat(Stat::cr), 0.f, 1.f);
 		auto totalCritDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::critDMG, std::get<4>(stats)) + Formula::Stat(Stat::cd);
@@ -53,12 +54,13 @@ namespace Node {
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 		auto enemy = Formula::Constant(0.487f) * (1.0f - 0.1f);
+		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return _NodeRet(
 			name,
 			element,
 			source,
-			multiplier * dmgBonus * crit * enemy
+			multiplier * dmgBonus * crit * enemy * amplifyingMultiplier
 		);
 	}
 

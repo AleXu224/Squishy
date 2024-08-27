@@ -1,6 +1,6 @@
 #pragma once
 
-#include "character/data.hpp"
+#include "character/setup.hpp"
 
 namespace Character::Datas {
 	inline const Character::Data cyno{

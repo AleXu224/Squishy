@@ -5,5 +5,6 @@ namespace Formula {
         none,
         addition,
         multiplication,
+        division,
     };
 }

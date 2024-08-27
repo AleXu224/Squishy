@@ -5,6 +5,7 @@
 #include "node/node.hpp"
 #include "stats/weaponBase.hpp"
 #include "weapon/key.hpp"
+#include "stats/sheet.hpp"
 
 
 namespace Weapon {
@@ -32,5 +33,3 @@ namespace Weapon {
 		}
 	};
 }// namespace Weapon
-
-#include "formula/formula.hpp"// IWYU pragma: export

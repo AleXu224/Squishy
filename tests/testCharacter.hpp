@@ -1,6 +1,6 @@
 #pragma once
 
-#include "character/data.hpp"
+#include "character/setup.hpp"
 
 inline Character::Data testCharacter{
 	.key = 1,

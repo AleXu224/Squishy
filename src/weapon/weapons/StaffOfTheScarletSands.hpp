@@ -1,6 +1,6 @@
 #pragma once
 
-#include "weapon/data.hpp"
+#include "weapon/setup.hpp"
 
 namespace Weapon::Datas {
 	const inline Weapon::Data staffOfTheScarletSands{

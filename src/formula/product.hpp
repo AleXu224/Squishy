@@ -17,6 +17,10 @@ namespace Formula {
 			if (r1 == 1.f) return fmt::format("{}", val2.print(context, prevStep));
 			if (r2 == 1.f) return fmt::format("{}", val1.print(context, prevStep));
 
+			if (prevStep == Step::division) {
+				return fmt::format("({} * {})", val1.print(context, Step::multiplication), val2.print(context, Step::multiplication));
+			}
+
 			return fmt::format("{} * {}", val1.print(context, Step::multiplication), val2.print(context, Step::multiplication));
 		}
 

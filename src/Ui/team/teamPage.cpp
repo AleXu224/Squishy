@@ -2,6 +2,7 @@
 
 #include "Ui/character/characterDetails.hpp"
 
+#include "character/data.hpp"
 #include "image.hpp"
 #include "navigationView.hpp"
 #include "store.hpp"

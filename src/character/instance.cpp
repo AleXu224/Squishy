@@ -2,6 +2,7 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"
 #include "character/characters.hpp"
+#include "formula/artifact.hpp"
 #include "formula/teamCharacter.hpp"
 #include "store.hpp"
 

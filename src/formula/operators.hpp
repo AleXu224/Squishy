@@ -2,6 +2,7 @@
 
 #include "comparators.hpp"
 #include "constant.hpp"
+#include "fraction.hpp"
 #include "product.hpp"
 #include "sum.hpp"
 
@@ -37,6 +38,22 @@ namespace Formula {
 	template<FloatFormula T>
 	[[nodiscard]] consteval auto operator*(T param1, float param2) {
 		return Product(param1, Constant(param2));
+	}
+
+	// Fraction
+	template<FloatFormula T, FloatFormula U>
+	[[nodiscard]] consteval auto operator/(T param1, U param2) {
+		return Fraction(param1, param2);
+	}
+
+	template<FloatFormula T>
+	[[nodiscard]] consteval auto operator/(float param1, T param2) {
+		return Fraction(Constant(param1), param2);
+	}
+
+	template<FloatFormula T>
+	[[nodiscard]] consteval auto operator/(T param1, float param2) {
+		return Fraction(param1, Constant(param2));
 	}
 
 	// Equal

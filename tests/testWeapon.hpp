@@ -1,6 +1,6 @@
 #pragma once
 
-#include "weapon/data.hpp"
+#include "weapon/setup.hpp"
 
 inline Weapon::Data testWeapon{
 	.key = 2,

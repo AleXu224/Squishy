@@ -1,6 +1,6 @@
 #pragma once
 
-#include "artifact/set.hpp"
+#include "artifact/setup.hpp"
 
 namespace Artifact::Sets {
 	const inline Artifact::Set gildedDreams{

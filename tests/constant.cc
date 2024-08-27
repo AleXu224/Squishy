@@ -1,5 +1,7 @@
+#include "formula/constant.hpp"
 #include "storeSetup.hpp"
 #include <catch2/catch_test_macros.hpp>
+
 
 TEST_CASE("Constant") {
 	constexpr auto falseConstant = Formula::ConstantBool(false);

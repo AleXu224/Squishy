@@ -1,7 +1,10 @@
 #include "team.hpp"
 
+#include "formula/operators.hpp"// IWYU pragma: keep
+#include "formula/stat.hpp"     // IWYU pragma: keep
 #include "formula/teamCharacter.hpp"
 #include "stats/characterSheet.hpp"
+#include "utils.hpp"
 
 
 template<class T, class V>
