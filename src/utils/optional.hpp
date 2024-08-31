@@ -9,7 +9,7 @@ namespace Utils {
 	template<class T>
 	struct JankyOptional {
 		constexpr JankyOptional() : _hasValue(false), _value() {}
-		constexpr JankyOptional(const T &value) : _hasValue(true), _value(value) {}
+		constexpr JankyOptional(T value) : _hasValue(true), _value(value) {}
 
 		constexpr T value_or(this auto &&self, const T &other) {
 			if (self._hasValue) return self._value;

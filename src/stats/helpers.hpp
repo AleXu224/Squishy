@@ -302,11 +302,31 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
+	[[nodiscard]] consteval auto getSheetReactionsMembers() {
+		return std::array{
+			&T::vape,
+			&T::melt,
+			&T::aggravate,
+			&T::spread,
+			&T::burning,
+			&T::superconduct,
+			&T::swirl,
+			&T::electroCharged,
+			&T::shattered,
+			&T::overloaded,
+			&T::bloom,
+			&T::burgeon,
+			&T::hyperbloom,
+		};
+	}
+
+	template<SheetLike T>
 	[[nodiscard]] consteval auto getSheetSkillsMembers() {
 		constexpr auto elements = getSheetElementsMembers<T>();
 		constexpr auto attackSources = getSheetAttackSourceMembers<T>();
+		constexpr auto reactions = getSheetReactionsMembers<T>();
 
-		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(elements, attackSources);
+		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(elements, attackSources, reactions);
 	}
 
 	// Enemy

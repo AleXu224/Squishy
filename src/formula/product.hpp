@@ -11,17 +11,17 @@ namespace Formula {
 		U val2;
 
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
-			auto r1 = val1.eval(context);
-			auto r2 = val2.eval(context);
+			if (val1.eval(context) == 1.f) return val2.print(context, prevStep);
+			if (val2.eval(context) == 1.f) return val1.print(context, prevStep);
 
-			if (r1 == 1.f) return fmt::format("{}", val2.print(context, prevStep));
-			if (r2 == 1.f) return fmt::format("{}", val1.print(context, prevStep));
+			auto p1 = val1.print(context, Step::multiplication);
+			auto p2 = val2.print(context, Step::multiplication);
 
 			if (prevStep == Step::division) {
-				return fmt::format("({} * {})", val1.print(context, Step::multiplication), val2.print(context, Step::multiplication));
+				return fmt::format("({} * {})", p1, p2);
 			}
 
-			return fmt::format("{} * {}", val1.print(context, Step::multiplication), val2.print(context, Step::multiplication));
+			return fmt::format("{} * {}", p1, p2);
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {

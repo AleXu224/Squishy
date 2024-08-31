@@ -39,10 +39,10 @@ namespace Formula {
 			return std::visit(
 				Utils::overloaded{
 					[](const Reaction::None *) {
-						return 1.f;
+						return 0.f;
 					},
 					[](const Reaction::Amplifying *) {
-						return 1.f;
+						return 0.f;
 					},
 					[&](const Reaction::Additive *reaction) {
 						return reaction->formula.eval(context);

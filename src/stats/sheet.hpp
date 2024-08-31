@@ -126,7 +126,23 @@ namespace Stats {
 		_SkillValue skill{};
 		_SkillValue burst{};
 
-		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
+		_SkillValue vape{};
+		_SkillValue melt{};
+
+		_SkillValue aggravate{};
+		_SkillValue spread{};
+
+		_SkillValue burning{};
+		_SkillValue superconduct{};
+		_SkillValue swirl{};
+		_SkillValue electroCharged{};
+		_SkillValue shattered{};
+		_SkillValue overloaded{};
+		_SkillValue bloom{};
+		_SkillValue burgeon{};
+		_SkillValue hyperbloom{};
+
+			[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);
 		}
 

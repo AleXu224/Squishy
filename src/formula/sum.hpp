@@ -5,22 +5,34 @@
 
 
 namespace Formula {
+	inline std::string stepPrint(Step step) {
+		switch (step) {
+			case Step::addition:
+				return "add";
+			case Step::division:
+				return "div";
+			case Step::multiplication:
+				return "mul";
+			case Step::none:
+				return "non";
+		}
+	}
 	template<FloatFormula T, FloatFormula U>
 	struct Sum {
 		T val1;
 		U val2;
 
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+			if (val1.eval(context) == 0.f) return val2.print(context, prevStep);
+			if (val2.eval(context) == 0.f) return val1.print(context, prevStep);
+
 			auto p1 = val1.print(context, Step::addition);
 			auto p2 = val2.print(context, Step::addition);
-
-			if (val1.eval(context) == 0.f) return p2;
-			if (val2.eval(context) == 0.f) return p1;
 
 			if (prevStep == Step::multiplication || prevStep == Step::division) {
 				return fmt::format("({} + {})", p1, p2);
 			}
-			return fmt::format("{} + {}", p1, p2);
+			return fmt::format("{} +{}", p1, p2);
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {

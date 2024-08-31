@@ -42,7 +42,7 @@ namespace Formula {
 
 	struct LevelMultiplier {
 		[[nodiscard]] static inline std::string print(const Context &context, Step) {
-			return fmt::format("Level Multiplier {:.1f}%", eval(context) * 100.f);
+			return fmt::format("Level Multiplier {:.1f}", eval(context));
 		}
 
 		[[nodiscard]] static inline float eval(const Context &context) {
