@@ -81,6 +81,7 @@ struct Contents {
 								.source = character.stats,
 								.target = character.stats,
 								.team = Store::teams.at(0).stats,
+								.enemy = Store::enemies.at(0).stats,
 							};
 
 							for (const auto &[stat, transparent]: std::views::zip(

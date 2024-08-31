@@ -20,6 +20,7 @@ namespace Stats {
 		Stats::Sheet<Stats::Value<Formula::Context, 1>> postMods{};
 		Stats::Sheet<Stats::Value<Formula::Context, 1>> teamPreMods{};
 		Stats::Sheet<Stats::Value<Formula::Context, 1>> teamPostMods{};
+		Stats::EnemySheet<Stats::Value<Formula::Context, 1>> enemySheet{};
 
 		explicit WeaponSheet(const WeaponBase &base);
 	};

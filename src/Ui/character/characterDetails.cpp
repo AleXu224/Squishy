@@ -12,7 +12,6 @@
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "formula/stat.hpp"
-#include "reaction/reaction.hpp"
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
@@ -43,10 +42,12 @@ struct DetailsSkill {
 			.children = [&]() -> Children {
 				Children ret{};
 				auto &team = Store::teams.at(0);
+				auto &enemy = Store::enemies.at(0);
 				Formula::Context ctx{
 					.source = character.stats,
 					.target = character.stats,
 					.team = team.stats,
+					.enemy = enemy.stats,
 				};
 
 				if (!nodes.empty()) {

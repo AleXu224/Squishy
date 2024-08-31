@@ -149,6 +149,18 @@ int main() {
 	});
 	team.first->second.stats.characters.at(0) = character;
 
+	auto enemy = Store::enemies.insert(
+		{
+			0,
+			Enemy::Instance{
+				.key = 0,
+				.name = "Default enemy",
+			},
+		}
+	);
+
+	enemy.first->second.stats.sheet.level.modifiers.at(0) = Formula::ConstantFlat(100.f);
+
 	character.getArtifactStats();
 
 	// auto attacknode = Character::Datas::cyno.nodeSetup().normal.at(3);

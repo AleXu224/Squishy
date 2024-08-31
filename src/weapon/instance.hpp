@@ -17,6 +17,7 @@ namespace Weapon {
 			Stats::setupModifiers(data.data.mods.postMod, stats.sheet.postMods, 0);
 			Stats::setupModifiers(data.data.mods.teamPreMod, stats.sheet.teamPreMods, 0);
 			Stats::setupModifiers(data.data.mods.teamPostMod, stats.sheet.teamPostMods, 0);
+			Stats::setupModifiers(data.data.mods.enemy, stats.sheet.enemySheet, 0);
 		}
 	};
 }// namespace Weapon

@@ -27,7 +27,7 @@ UI::SkillEntry::operator squi::Child() const {
 					Align{
 						.xAlign = 1.f,
 						.child = Text{
-							.text = isPercentage ? std::format("{:.2f}%", value * 100.f) : std::format("{:.0f}", value),
+							.text = isPercentage ? std::format("{:.1f}%", value * 100.f) : std::format("{:.0f}", value),
 						},
 					},
 				},

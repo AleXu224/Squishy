@@ -21,11 +21,13 @@ UI::CharacterStats::operator squi::Child() const {
 
 			Children ret2{};
 			auto &team = Store::teams.at(0);
+			auto &enemy = Store::enemies.at(0);
 
 			Formula::Context ctx{
 				.source = character.stats,
 				.target = character.stats,
 				.team = team.stats,
+				.enemy = enemy.stats,
 			};
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				ret2.emplace_back(UI::Tooltip{

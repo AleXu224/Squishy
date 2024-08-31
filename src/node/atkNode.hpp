@@ -1,6 +1,7 @@
 #pragma once
 
 #include "formula/clamp.hpp"
+#include "formula/enemy.hpp"
 #include "formula/operators.hpp"
 #include "formula/reaction.hpp"
 #include "formula/stat.hpp"
@@ -53,7 +54,7 @@ namespace Node {
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::Constant(0.487f) * (1.0f - 0.1f);
+		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier(source, element);
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return _NodeRet(

@@ -18,6 +18,7 @@ namespace Stats {
 		// Idx 0: kit, Idx 1: weapon and artifact
 		Stats::Sheet<Stats::Value<Formula::Context, 2>> teamPreMods{};
 		Stats::Sheet<Stats::Value<Formula::Context, 2>> teamPostMods{};
+		Stats::EnemySheet<Stats::Value<Formula::Context, 2>> enemySheet{};
 
 		Formula::ElementNode infusion;
 		Formula::ElementNode teamInfusion;

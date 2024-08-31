@@ -35,6 +35,7 @@
 /.idea/
 /.vscode/
 /build/
+/build-linux/
 /.cache/
 /.vs/
 /out/

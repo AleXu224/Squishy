@@ -49,17 +49,27 @@ namespace Stats {
 		{ std::remove_cvref_t<T>::skill };
 		{ std::remove_cvref_t<T>::burst };
 	};
+	template<class T>
+	concept EnemySheetLike = requires(T a) {
+		typename std::remove_cvref_t<T>::_Value;
+		{ std::remove_cvref_t<T>::level };
+		{ std::remove_cvref_t<T>::DEFReduction };
+		{ std::remove_cvref_t<T>::DEFIgnored };
+
+		{ std::remove_cvref_t<T>::resistance };
+	};
 }// namespace Stats
 
 namespace Formula {
-	template<Stats::SheetLike T, class U>
+	template<class T, class U>
 	struct SkillPtr;
-	template<Stats::SheetLike T, class U>
+	template<class T, class U>
 	struct StatPtr;
 }// namespace Formula
 
 namespace Stats {
-
+	// Values
+	// Character
 	template<SheetLike T>
 	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const typename T::_Value &, typename T::_Value &> fromStat(T &sheet, const Stat &stat) {
 		switch (stat) {
@@ -169,6 +179,25 @@ namespace Stats {
 		std::unreachable();
 	}
 
+	// Enemy
+	template<EnemySheetLike T>
+	[[nodiscard]] consteval auto getSheetValuesMembers() {
+		return std::array{
+			&T::level,
+			&T::DEFReduction,
+			&T::DEFIgnored,
+		};
+	}
+
+	template<EnemySheetLike T>
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T:: *member) {
+		if (member == &T::DEFReduction) return true;
+		if (member == &T::DEFIgnored) return true;
+		return false;
+	}
+
+	// Skills
+	// Character
 	template<SheetLike T>
 	[[nodiscard]] constexpr auto getSheetMemberByElement(Misc::Element element) {
 		switch (element) {
@@ -280,7 +309,23 @@ namespace Stats {
 		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(elements, attackSources);
 	}
 
-	template<SheetLike T, class U>
+	// Enemy
+	template<EnemySheetLike T>
+	[[nodiscard]] consteval auto getEnemySheetResistances() {
+		return std::array{
+			&T::resistance,
+		};
+	}
+
+	template<EnemySheetLike T>
+	[[nodiscard]] consteval auto getSheetSkillsMembers() {
+		constexpr auto resistances = getEnemySheetResistances<T>();
+
+		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(resistances);
+	}
+
+	// Containers
+	template<class T, class U>
 	struct SheetValueMember {
 		T::_Value T:: *stat{};
 		T U:: *location{};
@@ -289,7 +334,7 @@ namespace Stats {
 			return Formula::StatPtr<T, U>(location, stat);
 		}
 	};
-	template<SheetLike T, class U>
+	template<class T, class U>
 	struct SheetSkillMember {
 		T::_SkillValue T:: *skill{};
 		T::_Value T::_SkillValue:: *stat{};
@@ -300,6 +345,8 @@ namespace Stats {
 		}
 	};
 
+	// All members
+	// Character
 	template<SheetLike T, class U>
 	[[nodiscard]] consteval inline auto getSheetAllMembers(T U:: *location) {
 		return std::tuple{
@@ -324,8 +371,34 @@ namespace Stats {
 			)),
 		};
 	}
+	// Enemy
+	template<class T, class U>
+	[[nodiscard]] consteval inline auto getEnemySheetAllMembers(T U:: *location) {
+		return std::tuple{
+			squi::utils::evalRange(std::views::transform(
+				getSheetValuesMembers<T>(),
+				[location](auto &&val) {
+					return SheetValueMember<T, U>{
+						.stat = val,
+						.location = location,
+					};
+				}
+			)),
+			squi::utils::evalRange(std::views::transform(
+				std::views::cartesian_product(getSheetSkillsMembers<T>(), T::_SkillValue::getMembers()),
+				[location](auto &&val) {
+					return SheetSkillMember<T, U>{
+						.skill = std::get<0>(val),
+						.stat = std::get<1>(val),
+						.location = location,
+					};
+				}
+			)),
+		};
+	}
 
-	template<SheetLike T>
+	// Views
+	template<class T>
 	[[nodiscard]] inline auto allSheetValuesView(T &&sheet) {
 		using TT = std::remove_cvref_t<T>;
 
@@ -336,7 +409,7 @@ namespace Stats {
 			}
 		);
 	}
-	template<SheetLike T>
+	template<class T>
 	[[nodiscard]] inline auto allSheetSkillsView(T &&sheet) {
 		using TT = std::remove_cvref_t<T>;
 
@@ -351,7 +424,7 @@ namespace Stats {
 		);
 	}
 
-	template<SheetLike T, SheetLike U>
+	template<class T, class U>
 	inline void setupModifiers(T &&newMods, U &&stats, size_t index) {
 		for (auto [stat, statCharacter]: std::views::zip(
 				 Stats::allSheetValuesView(newMods),
@@ -399,5 +472,49 @@ namespace Utils {
 		}();
 
 		return std::string(prefix) + std::string(suffix);
+	}
+	template<Stats::EnemySheetLike T, class U>
+	constexpr std::string Stringify(typename T::_SkillValue T:: *skill, typename T::_Value U:: *stat) {
+		std::string_view suffix = [&]() {
+			if (skill == &T::resistance) return "RES%";
+			std::unreachable();
+		}();
+
+		std::string_view prefix = [&]() {
+			if (stat == &U::pyro) return "Pyro ";
+			if (stat == &U::hydro) return "Hydro ";
+			if (stat == &U::cryo) return "Cryo ";
+			if (stat == &U::electro) return "Electro ";
+			if (stat == &U::dendro) return "Dendro ";
+			if (stat == &U::anemo) return "Anemo ";
+			if (stat == &U::geo) return "Geo ";
+			if (stat == &U::physical) return "Physical ";
+			std::unreachable();
+		}();
+
+		return std::string(prefix) + std::string(suffix);
+	}
+	template<Stats::SheetLike T, class U>
+	constexpr std::string Stringify(typename T::_Value U:: *stat) {
+		if (stat == &U::hp) return "HP";
+		if (stat == &U::hp_) return "HP%";
+		if (stat == &U::baseHp) return "Base HP";
+		if (stat == &U::atk) return "ATK";
+		if (stat == &U::atk_) return "ATK%";
+		if (stat == &U::baseAtk) return "Base ATK";
+		if (stat == &U::additionalAtk) return "Additional ATK";
+		if (stat == &U::def) return "DEF";
+		if (stat == &U::def_) return "DEF%";
+		if (stat == &U::baseDef) return "Base DEF";
+		if (stat == &U::er) return "Energy Recharge";
+		if (stat == &U::em) return "Elemental Mastery";
+		if (stat == &U::cr) return "Crit Rate";
+		if (stat == &U::cd) return "Crit DMG";
+		if (stat == &U::hb) return "Healing Bonus";
+	}
+	template<Stats::EnemySheetLike T, class U>
+	constexpr std::string Stringify(typename T::_Value U:: *stat) {
+		if (stat == &U::level) return "Level";
+		if (stat == &U::defense) return "Defense";
 	}
 }// namespace Utils

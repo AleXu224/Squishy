@@ -147,10 +147,14 @@ static void formulaCalc(benchmark::State &state) {
 	// team.characters.at(2) = character;
 	// team.characters.at(3) = character;
 
+	Stats::Enemy enemy{};
+	enemy.sheet.level.modifiers.at(0) = Formula::Constant(100.f);
+
 	Formula::Context ctx{
 		.source = character.stats,
 		.target = character.stats,
 		.team = team,
+		.enemy = enemy,
 	};
 
 	for (auto _: state) {

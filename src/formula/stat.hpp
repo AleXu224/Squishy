@@ -14,7 +14,7 @@ namespace Formula {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
-				"{} {:.2f}{}",
+				"{} {:.1f}{}",
 				Utils::Stringify(stat),
 				context.target.character.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
@@ -26,7 +26,7 @@ namespace Formula {
 		}
 	};
 
-	template<Stats::SheetLike T, class U>
+	template<class T, class U>
 	struct StatPtr {
 		T U:: *category;
 		T::_Value T:: *stat;
@@ -36,6 +36,7 @@ namespace Formula {
 			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
 			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
 			if (std::is_same_v<U, Stats::Team>) return "Team ";
+			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
 		}();
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
@@ -49,11 +50,13 @@ namespace Formula {
 					return &context.target.artifact.sheet;
 				else if constexpr (std::is_same_v<U, Stats::Team>)
 					return &context.team;
+				else if constexpr (std::is_same_v<U, Stats::Enemy>)
+					return &context.enemy;
 			}();
 			return fmt::format(
-				"{}{} {:.2f}{}",
+				"{}{} {:.1f}{}",
 				prefix,
-				Utils::Stringify(Stats::getSheetMemberStat(stat)),
+				Utils::Stringify(stat),
 				std::invoke(stat, std::invoke(category, *sheet)).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);
@@ -68,10 +71,12 @@ namespace Formula {
 				return std::invoke(stat, std::invoke(category, context.target.artifact.sheet)).get(context);
 			else if constexpr (std::is_same_v<U, Stats::Team>)
 				return std::invoke(stat, std::invoke(category, context.team)).get(context);
+			else if constexpr (std::is_same_v<U, Stats::Enemy>)
+				return std::invoke(stat, std::invoke(category, context.enemy)).get(context);
 		}
 	};
 
-	template<Stats::SheetLike T, class U>
+	template<class T, class U>
 	struct SkillPtr {
 		T U:: *category;
 		T::_SkillValue T:: *skill;
@@ -82,6 +87,7 @@ namespace Formula {
 			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
 			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
 			if (std::is_same_v<U, Stats::Team>) return "Team ";
+			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
 		}();
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
@@ -95,9 +101,11 @@ namespace Formula {
 					return &context.target.artifact.sheet;
 				else if constexpr (std::is_same_v<U, Stats::Team>)
 					return &context.team;
+				else if constexpr (std::is_same_v<U, Stats::Enemy>)
+					return &context.enemy;
 			}();
 			return fmt::format(
-				"{}{} {:.2f}{}",
+				"{}{} {:.1f}{}",
 				prefix,
 				Utils::Stringify<T>(skill, stat),
 				std::invoke(stat, std::invoke(skill, std::invoke(category, *sheet))).get(context) * (isPercentage ? 100.f : 1.f),
@@ -114,6 +122,8 @@ namespace Formula {
 				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.target.artifact.sheet))).get(context);
 			} else if constexpr (std::is_same_v<U, Stats::Team>) {
 				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.team))).get(context);
+			} else if constexpr (std::is_same_v<U, Stats::Enemy>) {
+				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.enemy))).get(context);
 			}
 		}
 	};
@@ -143,7 +153,7 @@ namespace Formula {
 
 			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
 			return fmt::format(
-				"{} {:.2f}{}",
+				"{} {:.1f}{}",
 				Utils::Stringify<_postModsCharacter>(skill, stat),
 				std::invoke(stat, std::invoke(skill, context.target.character.sheet.postMods)).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
@@ -163,7 +173,7 @@ namespace Formula {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
-				"{} {:.2f}{}",
+				"{} {:.1f}{}",
 				Utils::Stringify(stat),
 				context.target.weapon.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
@@ -181,7 +191,7 @@ namespace Formula {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
-				"{} {:.2f}{}",
+				"{} {:.1f}{}",
 				Utils::Stringify(stat),
 				context.target.artifact.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""

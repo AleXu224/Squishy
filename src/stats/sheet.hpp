@@ -8,6 +8,64 @@
 
 namespace Stats {
 	template<class T>
+	struct EnemySheet {
+		using _Value = T;
+		struct _SkillValue {
+			_Value pyro{};
+			_Value hydro{};
+			_Value cryo{};
+			_Value electro{};
+			_Value dendro{};
+			_Value anemo{};
+			_Value geo{};
+			_Value physical{};
+
+			[[nodiscard]] static consteval auto getMembers() {
+				return std::array{
+					&_SkillValue::pyro,
+					&_SkillValue::hydro,
+					&_SkillValue::cryo,
+					&_SkillValue::electro,
+					&_SkillValue::dendro,
+					&_SkillValue::anemo,
+					&_SkillValue::geo,
+					&_SkillValue::physical,
+				};
+			}
+
+			[[nodiscard]] constexpr auto &fromElement(this auto &&self, const Misc::Element &element) {
+				switch (element) {
+					case Misc::Element::pyro:
+						return self.pyro;
+					case Misc::Element::hydro:
+						return self.hydro;
+					case Misc::Element::cryo:
+						return self.cryo;
+					case Misc::Element::electro:
+						return self.electro;
+					case Misc::Element::dendro:
+						return self.dendro;
+					case Misc::Element::anemo:
+						return self.anemo;
+					case Misc::Element::geo:
+						return self.geo;
+					case Misc::Element::physical:
+						return self.physical;
+				}
+			}
+
+			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue:: *) {
+				return true;
+			}
+		};
+
+		_Value level{};
+		_Value DEFReduction{};
+		_Value DEFIgnored{};
+		_SkillValue resistance{};
+	};
+
+	template<class T>
 	struct Sheet {
 		using _Value = T;
 		struct _SkillValue {
@@ -83,11 +141,14 @@ namespace Stats {
 
 	struct ModsSheet {
 		using _Sheet = Stats::Sheet<Formula::Node>;
+		using _EnemySheet = Stats::EnemySheet<Formula::Node>;
 
 		_Sheet preMod{};
 		_Sheet postMod{};
 		_Sheet teamPreMod{};
 		_Sheet teamPostMod{};
+
+		_EnemySheet enemy{};
 
 		Formula::ElementNode infusion = Formula::NoInfusion{};
 		Formula::ElementNode teamInfusion = Formula::NoInfusion{};

@@ -16,7 +16,7 @@ namespace Formula {
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getRefinementMultiplier(values, context.source);
-			return fmt::format("{:.2f}%", multiplier * 100.f);
+			return fmt::format("{:.1f}%", multiplier * 100.f);
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {
