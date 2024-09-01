@@ -1,3 +1,4 @@
+#include "catch2/benchmark/catch_benchmark.hpp"
 #include "formula/constant.hpp"
 #include "formula/operators.hpp"
 #include "storeSetup.hpp"

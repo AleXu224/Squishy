@@ -12,8 +12,8 @@ inline Weapon::Data testWeapon{
 			.stat = Stat::cr,
 			.value = 0.096,
 		},
-		.atkCurve = WeaponCurveType::GROWTH_CURVE_ATTACK_304,
-		.substatCurve = WeaponCurveType::GROWTH_CURVE_CRITICAL_301,
+		.atkCurve = Curves::WeaponGrow::ATTACK_304,
+		.substatCurve = Curves::WeaponGrow::CRITICAL_301,
 		.ascensionUpgrade{
 			0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7
 		}

@@ -8,8 +8,7 @@
 #include "testWeapon.hpp"
 #include "weapon/weapons.hpp"
 
-
-[[nodiscard]] inline auto getCharacter() {
+[[nodiscard]] inline auto getContext() {
 	[[maybe_unused]] static auto _ = []() {
 		Character::list = {{::testCharacter.key, ::testCharacter}};
 		Weapon::list = {{::testWeapon.key, ::testWeapon}};
@@ -21,24 +20,17 @@
 
 		return true;
 	}();
-	auto &team = Store::teams.at(0);
-	auto &enemy = Store::enemies.at(0);
 
-	auto &character = Store::characters.at(::testCharacter.key);
-	team.stats.characters.at(0) = character;
-
-	return std::tuple{team.stats, enemy.stats, character};
+	return Formula::Context{
+		.source = Store::characters.at(::testCharacter.key).stats,
+		.target = Store::characters.at(::testCharacter.key).stats,
+		.team = Store::teams.at(0).stats,
+		.enemy = Store::enemies.at(0).stats,
+	};
 }
 
 [[nodiscard]] inline auto eval(auto &&evalThing) {
-	const auto &[team, enemy, character] = getCharacter();
-
-	Formula::Context ctx{
-		.source = character.stats,
-		.target = character.stats,
-		.team = team,
-		.enemy = enemy,
-	};
+	auto ctx = getContext();
 
 	return evalThing.eval(ctx);
 }
