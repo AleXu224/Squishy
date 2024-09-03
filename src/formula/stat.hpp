@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include "formula/formulaContext.hpp"
+#include "stats/helpers.hpp"
 #include "stats/loadout.hpp"
 #include "utils/optional.hpp"
 
@@ -56,7 +57,7 @@ namespace Formula {
 			return fmt::format(
 				"{}{} {:.1f}{}",
 				prefix,
-				Utils::Stringify(stat),
+				Utils::Stringify<T>(stat),
 				std::invoke(stat, std::invoke(category, *sheet)).get(context) * (isPercentage ? 100.f : 1.f),
 				isPercentage ? "%" : ""
 			);

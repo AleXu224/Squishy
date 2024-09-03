@@ -8,7 +8,7 @@
 
 namespace Formula {
 	[[nodiscard]] inline const auto &_getRefinementMultiplier(const std::array<float, 5> &values, const Stats::Loadout &source) {
-		return values.at(source.weapon.sheet.refinement);
+		return values.at(source.weapon.sheet.refinement - 1);
 	}
 
 	struct WeaponMultiplierValue {

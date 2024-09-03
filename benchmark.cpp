@@ -16,13 +16,13 @@
 	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	weapon.stats.sheet.level = 90;
 	weapon.stats.sheet.ascension = 6;
-	weapon.stats.sheet.refinement = 0;
+	weapon.stats.sheet.refinement = 1;
 	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
 	character.stats.character.sheet.level = 90;
 	character.stats.character.sheet.ascension = 6;
 	character.stats.character.sheet.talents.burst = 9;
 	character.stats.character.sheet.talents.skill = 9;
-	character.stats.character.sheet.constellation = 1;
+	character.stats.character.sheet.constellation = 0;
 	character.stats.artifact.equipped = {1, 2, 3, 4, 5};
 
 	Store::artifacts.insert({

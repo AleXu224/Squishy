@@ -479,6 +479,19 @@ namespace Utils {
 			if (skill == &T::plunge) return "Plunge Attack ";
 			if (skill == &T::skill) return "Elemental Skill ";
 			if (skill == &T::burst) return "Elemental Burst ";
+			if (skill == &T::vape) return "Vape ";
+			if (skill == &T::melt) return "Melt ";
+			if (skill == &T::aggravate) return "Aggravate ";
+			if (skill == &T::spread) return "Spread ";
+			if (skill == &T::burning) return "Burning ";
+			if (skill == &T::superconduct) return "Superconduct ";
+			if (skill == &T::swirl) return "Swirl ";
+			if (skill == &T::electroCharged) return "ElectroCharged ";
+			if (skill == &T::shattered) return "Shattered ";
+			if (skill == &T::overloaded) return "Overloaded ";
+			if (skill == &T::bloom) return "Bloom ";
+			if (skill == &T::burgeon) return "Burgeon ";
+			if (skill == &T::hyperbloom) return "Hyperbloom ";
 			std::unreachable();
 		}();
 
@@ -514,27 +527,30 @@ namespace Utils {
 
 		return std::string(prefix) + std::string(suffix);
 	}
-	template<Stats::SheetLike T, class U>
-	constexpr std::string Stringify(typename T::_Value U:: *stat) {
-		if (stat == &U::hp) return "HP";
-		if (stat == &U::hp_) return "HP%";
-		if (stat == &U::baseHp) return "Base HP";
-		if (stat == &U::atk) return "ATK";
-		if (stat == &U::atk_) return "ATK%";
-		if (stat == &U::baseAtk) return "Base ATK";
-		if (stat == &U::additionalAtk) return "Additional ATK";
-		if (stat == &U::def) return "DEF";
-		if (stat == &U::def_) return "DEF%";
-		if (stat == &U::baseDef) return "Base DEF";
-		if (stat == &U::er) return "Energy Recharge";
-		if (stat == &U::em) return "Elemental Mastery";
-		if (stat == &U::cr) return "Crit Rate";
-		if (stat == &U::cd) return "Crit DMG";
-		if (stat == &U::hb) return "Healing Bonus";
+	template<Stats::SheetLike T>
+	constexpr std::string Stringify(typename T::_Value T:: *stat) {
+		if (stat == &T::hp) return "HP";
+		if (stat == &T::hp_) return "HP%";
+		if (stat == &T::baseHp) return "Base HP";
+		if (stat == &T::atk) return "ATK";
+		if (stat == &T::atk_) return "ATK%";
+		if (stat == &T::baseAtk) return "Base ATK";
+		if (stat == &T::additionalAtk) return "Additional ATK";
+		if (stat == &T::def) return "DEF";
+		if (stat == &T::def_) return "DEF%";
+		if (stat == &T::baseDef) return "Base DEF";
+		if (stat == &T::er) return "Energy Recharge";
+		if (stat == &T::em) return "Elemental Mastery";
+		if (stat == &T::cr) return "Crit Rate";
+		if (stat == &T::cd) return "Crit DMG";
+		if (stat == &T::hb) return "Healing Bonus";
+		std::unreachable();
 	}
-	template<Stats::EnemySheetLike T, class U>
-	constexpr std::string Stringify(typename T::_Value U:: *stat) {
-		if (stat == &U::level) return "Level";
-		if (stat == &U::defense) return "Defense";
+	template<Stats::EnemySheetLike T>
+	constexpr std::string Stringify(typename T::_Value T:: *stat) {
+		if (stat == &T::level) return "Level";
+		if (stat == &T::DEFReduction) return "DEF Reduction%";
+		if (stat == &T::DEFIgnored) return "DEF Ignored%";
+		std::unreachable();
 	}
 }// namespace Utils

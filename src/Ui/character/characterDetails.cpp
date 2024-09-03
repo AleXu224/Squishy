@@ -10,6 +10,7 @@
 #include "Ui/utils/trueFalse.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
+#include "characterOptions.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
 #include "formula/stat.hpp"
@@ -204,6 +205,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	auto &character = Store::characters.at(characterKey);
 
 	w.addChild(UI::CharacterStats{.characterKey = characterKey});
+	w.addChild(UI::CharacterOptions{.characterKey = characterKey});
 	w.addChild(UI::CharacterTransformativeReactions{.characterKey = characterKey});
 
 	std::vector<std::reference_wrapper<std::unordered_map<uint32_t, Conditional::Types>>> conditionals{};
