@@ -16,7 +16,7 @@ namespace Formula {
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character.has_value()) return "";
-			auto &stats = character->get().stats;
+			auto &stats = character->get().loadout;
 			return fmt::format(
 				"{} {}",
 				stats.character.data.name,
@@ -27,7 +27,7 @@ namespace Formula {
 		[[nodiscard]] inline float eval(const Context &context) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character.has_value()) return 0.f;
-			return formula.eval(context.withSource(character->get().stats));
+			return formula.eval(context.withSource(character->get().loadout));
 		}
 	};
 
@@ -46,7 +46,7 @@ namespace Formula {
 			const auto &character3 = context.team.characters.at(2);
 			const auto &character4 = context.team.characters.at(3);
 			auto getInfusion = [&](const std::optional<std::reference_wrapper<Character::Instance>> &character) -> Utils::JankyOptional<Misc::Element> {
-				if (character.has_value() && character->get().stats.character.sheet.teamInfusion.hasValue()) return character->get().stats.character.sheet.teamInfusion.eval(context);
+				if (character.has_value() && character->get().loadout.character.sheet.teamInfusion.hasValue()) return character->get().loadout.character.sheet.teamInfusion.eval(context);
 				return {};
 			};
 			auto infusion1 = getInfusion(character1);

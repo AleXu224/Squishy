@@ -11,7 +11,7 @@ namespace Character {
 	struct Instance {
 		const Key key;
 		Weapon::Key weaponKey;
-		Stats::Loadout stats;
+		Stats::Loadout loadout;
 		squi::VoidObservable updateEvent{};
 
 		explicit Instance(const Key &key, const Weapon::Key &weaponKey);

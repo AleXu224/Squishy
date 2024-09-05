@@ -19,12 +19,12 @@
 	weapon.stats.sheet.ascension = 6;
 	weapon.stats.sheet.refinement = 1;
 	auto &character = Store::characters.insert({characterData.key, Character::Instance(characterData.key, weaponData.key)}).first->second;
-	character.stats.character.sheet.level = 90;
-	character.stats.character.sheet.ascension = 6;
-	character.stats.character.sheet.talents.burst.constant = 9;
-	character.stats.character.sheet.talents.skill.constant = 9;
-	character.stats.character.sheet.constellation = 0;
-	character.stats.artifact.equipped = {1, 2, 3, 4, 5};
+	character.loadout.character.sheet.level = 90;
+	character.loadout.character.sheet.ascension = 6;
+	character.loadout.character.sheet.talents.burst.constant = 9;
+	character.loadout.character.sheet.talents.skill.constant = 9;
+	character.loadout.character.sheet.constellation = 0;
+	character.loadout.artifact.equipped = {1, 2, 3, 4, 5};
 
 	Store::artifacts.insert({
 		++Store::lastId,
@@ -123,7 +123,7 @@
 }
 
 [[nodiscard]] const Node::Instance &getNode(Character::Instance &character) {
-	return character.stats.character.data.data.nodes.burst.at(0);
+	return character.loadout.character.data.data.nodes.burst.at(0);
 }
 
 static void formulaCalc(benchmark::State &state) {
@@ -152,8 +152,8 @@ static void formulaCalc(benchmark::State &state) {
 	enemy.sheet.level.modifiers.at(0) = Formula::Constant(100.f);
 
 	Formula::Context ctx{
-		.source = character.stats,
-		.target = character.stats,
+		.source = character.loadout,
+		.target = character.loadout,
 		.team = team,
 		.enemy = enemy,
 	};

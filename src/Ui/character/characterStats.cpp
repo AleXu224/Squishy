@@ -17,15 +17,15 @@ UI::CharacterStats::operator squi::Child() const {
 		.children = [characterKey = characterKey]() {
 			auto &character = Store::characters.at(characterKey);
 			Children ret{};
-			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(character.stats.character.base.element)}};
+			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(character.loadout.character.base.element)}};
 
 			Children ret2{};
 			auto &team = Store::teams.at(0);
 			auto &enemy = Store::enemies.at(0);
 
 			Formula::Context ctx{
-				.source = character.stats,
-				.target = character.stats,
+				.source = character.loadout,
+				.target = character.loadout,
 				.team = team.stats,
 				.enemy = enemy.stats,
 			};
@@ -33,8 +33,8 @@ UI::CharacterStats::operator squi::Child() const {
 				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
 						std::vector<std::string> a{};
-						auto &modifiersPre = character.stats.character.sheet.preMods.fromStat(stat).modifiers;
-						auto &modifiersPost = character.stats.character.sheet.postMods.fromStat(stat).modifiers;
+						auto &modifiersPre = character.loadout.character.sheet.preMods.fromStat(stat).modifiers;
+						auto &modifiersPost = character.loadout.character.sheet.postMods.fromStat(stat).modifiers;
 						auto printMod = [&](auto &&mod) {
 							if (!mod.hasValue()) return;
 							if (mod.eval(ctx) == 0.f) return;
@@ -58,7 +58,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.stats.character.sheet.postMods.fromStat(stat).get(ctx),
+							.value = character.loadout.character.sheet.postMods.fromStat(stat).get(ctx),
 						},
 					},
 				});

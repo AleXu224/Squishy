@@ -50,7 +50,7 @@ struct CharacterCardBanner {
 									.fontSize = 24.f,
 								},
 								Text{
-									.text = std::format("Lvl {}", character.stats.character.sheet.level),
+									.text = std::format("Lvl {}", character.loadout.character.sheet.level),
 								},
 							},
 						},
@@ -76,10 +76,10 @@ struct Contents {
 						.padding = Padding{4.f},
 						.onInit = [characterKey = characterKey](Widget &w) {
 							auto &character = Store::characters.at(characterKey);
-							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.stats.character.base.element)}};
+							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.loadout.character.base.element)}};
 							Formula::Context ctx{
-								.source = character.stats,
-								.target = character.stats,
+								.source = character.loadout,
+								.target = character.loadout,
 								.team = Store::teams.at(0).stats,
 								.enemy = Store::enemies.at(0).stats,
 							};
@@ -89,7 +89,7 @@ struct Contents {
 									 Utils::trueFalse
 								 )) {
 								// FIXME: add a placeholder team to calculate the damage of characters
-								auto val = character.stats.character.sheet.postMods.fromStat(stat).get(ctx);
+								auto val = character.loadout.character.sheet.postMods.fromStat(stat).get(ctx);
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
 									.stat = StatValue{.stat = stat, .value = val},

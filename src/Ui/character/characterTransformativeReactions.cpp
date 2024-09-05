@@ -26,13 +26,13 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 			auto &enemy = Store::enemies.at(0);
 
 			auto ctx = Formula::Context{
-				.source = character.stats,
-				.target = character.stats,
+				.source = character.loadout,
+				.target = character.loadout,
 				.team = team.stats,
 				.enemy = enemy.stats,
 			};
 
-			std::vector elements{character.stats.character.data.baseStats.element};
+			std::vector elements{character.loadout.character.data.baseStats.element};
 
 			bool transparent = true;
 			squi::utils::iterateTuple(reactions, [&](auto &&val) {

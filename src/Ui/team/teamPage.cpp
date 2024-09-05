@@ -25,14 +25,14 @@ UI::TeamPage::operator squi::Child() const {
 			for (auto &character: team.stats.characters) {
 				if (character.has_value()) {
 					pages.emplace_back(NavigationView::Page{
-						.name = character->get().stats.character.data.name,
+						.name = character->get().loadout.character.data.name,
 						.icon = Image{
 							.widget{
 								.width = 16.f,
 								.height = 16.f,
 							},
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().stats.character.data.name)),
+							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name)),
 						},
 						.content = CharacterDetails{
 							.characterKey = character->get().key,

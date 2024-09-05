@@ -197,8 +197,8 @@ inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy
 	auto &team = Store::teams.at(teamKey);
 	auto &enemy = Store::enemies.at(enemyKey);
 	Formula::Context ctx{
-		.source = character.stats,
-		.target = character.stats,
+		.source = character.loadout,
+		.target = character.loadout,
 		.team = team.stats,
 		.enemy = enemy.stats,
 	};
@@ -209,12 +209,12 @@ inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy
 
 	std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 	for (auto &optPtr: Option::CharacterList::getMembers()) {
-		const auto &optList = std::invoke(optPtr, character.stats.character.data.opts);
+		const auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
 		std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
 		for (const auto &opt: optList) {
 			std::visit(
 				[&](auto &&optVisited) {
-					ret.insert({optVisited.key.hash, std::ref(character.stats.character.options.at(optVisited.key.hash))});
+					ret.insert({optVisited.key.hash, std::ref(character.loadout.character.options.at(optVisited.key.hash))});
 				},
 				opt
 			);
@@ -223,7 +223,7 @@ inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy
 	}
 	std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 	for (auto &nodePtr: Node::CharacterList::getMembers()) {
-		nodes.emplace_back(std::invoke(nodePtr, character.stats.character.data.data.nodes));
+		nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
 	}
 	const std::vector<std::string_view> names = {
 		"Normal attack",
@@ -260,27 +260,27 @@ inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy
 		return ret;
 	};
 
-	auto weaponOpts = makeOpts(character.stats.weapon.options);
+	auto weaponOpts = makeOpts(character.loadout.weapon.options);
 
 	w.addChild(DetailsSkill<Stats::WeaponSheet>{
-		.name = character.stats.weapon.data.name,
+		.name = character.loadout.weapon.data.name,
 		.characterKey = characterKey,
 		.ctx = ctx,
-		.nodes = character.stats.weapon.data.data.nodes,
-		.sheet = std::ref(character.stats.weapon.sheet),
+		.nodes = character.loadout.weapon.data.data.nodes,
+		.sheet = std::ref(character.loadout.weapon.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 1,
 		.options = weaponOpts,
 	});
 
 	std::vector<Node::Types> artiNodesPlaceholder{};
-	auto artifactOpts = makeOpts(character.stats.artifact.options);
+	auto artifactOpts = makeOpts(character.loadout.artifact.options);
 	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
-		.name = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "Artifacts",
+		.name = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,
 		.ctx = ctx,
-		.nodes = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().data.nodes : artiNodesPlaceholder,
-		.sheet = std::ref(character.stats.artifact.sheet),
+		.nodes = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().data.nodes : artiNodesPlaceholder,
+		.sheet = std::ref(character.loadout.artifact.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 2,
 		.options = artifactOpts,

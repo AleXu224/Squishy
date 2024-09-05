@@ -30,7 +30,7 @@ struct TeamAvatar {
 			.child = character.has_value()
 						 ? Image{
 							   .fit = Image::Fit::contain,
-							   .image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().stats.character.data.name))
+							   .image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name))
 						   }
 						 : Child{},
 		};
