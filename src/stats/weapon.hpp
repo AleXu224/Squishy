@@ -1,6 +1,6 @@
 #pragma once
 
-#include "conditional/conditional.hpp"
+#include "option/option.hpp"
 #include "weaponBase.hpp"
 #include "weaponSheet.hpp"
 
@@ -14,7 +14,7 @@ namespace Stats {
 		const ::Weapon::Data &data;
 		const Stats::WeaponBase &base;
 		Stats::WeaponSheet sheet;
-		Conditional::WeaponMap conditionals{};
+		Option::WeaponMap options{};
 
 		explicit Weapon(const ::Weapon::Data &data);
 	};

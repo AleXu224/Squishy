@@ -7,7 +7,7 @@
 #include <vector>
 
 
-namespace Conditional {
+namespace Option {
 	struct ValueList {
 		Utils::HashedString key;
 		std::string_view prefix;
@@ -19,4 +19,4 @@ namespace Conditional {
 			return values.at(currentIndex.value());
 		}
 	};
-}// namespace Conditional
+}// namespace Option

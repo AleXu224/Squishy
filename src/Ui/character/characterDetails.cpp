@@ -1,8 +1,8 @@
 #include "characterDetails.hpp"
 
-#include "Ui/conditional/toggleConditional.hpp"
-#include "Ui/conditional/valueListConditional.hpp"
 #include "Ui/elementToColor.hpp"
+#include "Ui/option/toggleOption.hpp"
+#include "Ui/option/valueListOption.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "Ui/utils/skillEntry.hpp"
@@ -34,7 +34,7 @@ struct DetailsSkill {
 	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxPreModifierIndex = 0;
 	size_t maxPostModifierIndex = 0;
-	std::unordered_map<uint32_t, Conditional::Types> &conditionals;
+	std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> &options;
 
 	operator squi::Child() const {
 		auto &character = Store::characters.at(characterKey);
@@ -156,7 +156,7 @@ struct DetailsSkill {
 					}
 				}
 
-				if (conditionals.empty()) return ret;
+				if (options.empty()) return ret;
 
 				ret.emplace_back(Box{
 					.widget{
@@ -170,23 +170,23 @@ struct DetailsSkill {
 						.children = [&]() {
 							Children ret{};
 
-							for (auto &conditional: conditionals) {
+							for (auto &option: options) {
 								std::visit(
 									Utils::overloaded{
-										[&](Conditional::Boolean &cond) {
-											ret.emplace_back(UI::ToggleConditional{
-												.conditional = cond,
+										[&](Option::Boolean &opt) {
+											ret.emplace_back(UI::ToggleOption{
+												.option = opt,
 												.characterKey = characterKey,
 											});
 										},
-										[&](Conditional::ValueList &cond) {
-											ret.emplace_back(UI::ValueListConditional{
-												.conditional = cond,
+										[&](Option::ValueList &opt) {
+											ret.emplace_back(UI::ValueListOption{
+												.option = opt,
 												.characterKey = characterKey,
 											});
 										},
 									},
-									conditional.second
+									option.second.get()
 								);
 							}
 
@@ -208,9 +208,19 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	w.addChild(UI::CharacterOptions{.characterKey = characterKey});
 	w.addChild(UI::CharacterTransformativeReactions{.characterKey = characterKey});
 
-	std::vector<std::reference_wrapper<std::unordered_map<uint32_t, Conditional::Types>>> conditionals{};
-	for (auto &condPtr: Conditional::CharacterMap::getMembers()) {
-		conditionals.emplace_back(std::invoke(condPtr, character.stats.character.conditionals));
+	std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
+	for (auto &optPtr: Option::CharacterList::getMembers()) {
+		const auto &optList = std::invoke(optPtr, character.stats.character.data.opts);
+		std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
+		for (const auto &opt: optList) {
+			std::visit(
+				[&](auto &&optVisited) {
+					ret.insert({optVisited.key.hash, std::ref(character.stats.character.options.at(optVisited.key.hash))});
+				},
+				opt
+			);
+		}
+		characterOpts.emplace_back(ret);
 	}
 	std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 	for (auto &nodePtr: Node::CharacterList::getMembers()) {
@@ -230,18 +240,27 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		"Constellation 6",
 	};
 
-	for (const auto &[nodeWrapper, conditionalWrapper, name]: std::views::zip(nodes, conditionals, names)) {
+	for (const auto &[nodeWrapper, options, name]: std::views::zip(nodes, characterOpts, names)) {
 		const auto &nodes = nodeWrapper.get();
-		auto &conditionals = conditionalWrapper.get();
-		if (nodes.empty() && conditionals.empty()) continue;
+		if (nodes.empty() && options.empty()) continue;
 
 		w.addChild(DetailsSkill{
 			.name = name,
 			.characterKey = characterKey,
 			.nodes = nodes,
-			.conditionals = conditionals,
+			.options = options,
 		});
 	}
+
+	auto makeOpts = [](std::unordered_map<uint32_t, Option::Types> &opts) {
+		std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
+		for (auto &[key, value]: opts) {
+			ret.insert({key, std::ref(value)});
+		}
+		return ret;
+	};
+
+	auto weaponOpts = makeOpts(character.stats.weapon.options);
 
 	w.addChild(DetailsSkill<Stats::WeaponSheet>{
 		.name = character.stats.weapon.data.name,
@@ -250,10 +269,11 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		.sheet = std::ref(character.stats.weapon.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 1,
-		.conditionals = character.stats.weapon.conditionals,
+		.options = weaponOpts,
 	});
 
 	std::vector<Node::Types> artiNodesPlaceholder{};
+	auto artifactOpts = makeOpts(character.stats.artifact.options);
 	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
 		.name = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,
@@ -261,7 +281,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		.sheet = std::ref(character.stats.artifact.sheet),
 		.maxPreModifierIndex = 2,
 		.maxPostModifierIndex = 2,
-		.conditionals = character.stats.artifact.conditionals,
+		.options = artifactOpts,
 	});
 }
 

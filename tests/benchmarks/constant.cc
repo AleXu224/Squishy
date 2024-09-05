@@ -23,7 +23,7 @@ TEST_CASE("Constant", "[Bench]") {
 		return boolConstant.eval(ctx);
 	};
 
-	constexpr auto stat = Formula::Stat(Stat::hp);
+	constexpr auto stat = Formula::CharacterStat(Stat::hp);
 	BENCHMARK("Stat") {
 		return stat.eval(ctx);
 	};

@@ -12,7 +12,7 @@ namespace Weapon {
 
 		explicit Instance(const Weapon::Key &key)
 			: stats(Weapon::list.at(key)), data(Weapon::list.at(key)) {
-			data.getConds(stats.conditionals);
+			data.getOpts(stats.options);
 			Stats::setupModifiers(data.data.mods.preMod, stats.sheet.preMods, 0);
 			Stats::setupModifiers(data.data.mods.postMod, stats.sheet.postMods, 0);
 			Stats::setupModifiers(data.data.mods.teamPreMod, stats.sheet.teamPreMods, 0);

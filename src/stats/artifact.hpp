@@ -1,7 +1,7 @@
 #pragma once
 
 #include "artifact/key.hpp"
-#include "conditional/conditional.hpp"
+#include "option/option.hpp"
 #include "stats/artifactSheet.hpp"
 
 
@@ -13,7 +13,7 @@ namespace Stats {
 	struct Artifact {
 		// The 4 piece set equipped if it exists
 		std::optional<std::reference_wrapper<const ::Artifact::Set>> set{};
-		Conditional::ArtifactMap conditionals{};
+		Option::ArtifactMap options{};
 		ArtifactSheet sheet{};
 
 		struct Slotted {

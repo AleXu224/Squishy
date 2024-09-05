@@ -16,7 +16,7 @@ namespace Node {
 		std::string_view name;
 		Utils::JankyOptional<Misc::Element> element;
 		Misc::AttackSource source;
-		Formula::Node formula;
+		Formula::FloatNode formula;
 
 		template<class T>
 		Instance(const T &t) : name(t.name), element(t.element), source(t.source), formula(t.formula) {}

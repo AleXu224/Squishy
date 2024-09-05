@@ -4,7 +4,7 @@
 #include "utils/hashedString.hpp"
 
 
-namespace Conditional {
+namespace Option {
 	struct Boolean {
 		Utils::HashedString key;
 		std::string_view name;
@@ -14,4 +14,4 @@ namespace Conditional {
 			active = !active;
 		}
 	};
-}// namespace Conditional
+}// namespace Option

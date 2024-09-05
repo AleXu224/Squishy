@@ -12,7 +12,7 @@ namespace Reaction {
 	using _postMods = decltype(Stats::CharacterSheet::postMods);
 	[[nodiscard]] static consteval auto makeAdditiveFormula(float multiplier, _postMods::_SkillValue _postMods:: *skill) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
-		constexpr auto emBonus = (5.f * Formula::Stat(Stat::em)) / (Formula::Stat(Stat::em) + 1200.f);
+		constexpr auto emBonus = (5.f * Formula::CharacterStat(Stat::em)) / (Formula::CharacterStat(Stat::em) + 1200.f);
 		auto reactionBonus = Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::DMG);
 		return Formula::Constant(multiplier) * levelMultiplier * (1.f + emBonus + reactionBonus);
 	}

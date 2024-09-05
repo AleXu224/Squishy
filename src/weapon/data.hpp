@@ -1,11 +1,11 @@
 #pragma once
 
-#include "conditional/conditional.hpp"
 #include "functional"
 #include "node/node.hpp"
+#include "option/option.hpp"
+#include "stats/sheet.hpp"
 #include "stats/weaponBase.hpp"
 #include "weapon/key.hpp"
-#include "stats/sheet.hpp"
 
 
 namespace Weapon {
@@ -18,17 +18,17 @@ namespace Weapon {
 		const Key key;
 		const std::string name;
 		const Stats::WeaponBase baseStats;
-		const Conditional::WeaponList conds{};
+		const Option::WeaponList opts{};
 		const std::function<Setup(void)> setup;
 
 		const Setup data = [](const std::function<Setup(void)> &setup) {
 			return setup();
 		}(setup);
 
-		void getConds(Conditional::WeaponMap &conditionals) const {
-			Conditional::mapConditionals(
-				conditionals,
-				conds
+		void getOpts(Option::WeaponMap &options) const {
+			Option::mapOptions(
+				options,
+				opts
 			);
 		}
 	};

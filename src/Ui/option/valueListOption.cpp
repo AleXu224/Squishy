@@ -1,4 +1,4 @@
-#include "valueListConditional.hpp"
+#include "valueListOption.hpp"
 
 #include "button.hpp"
 #include "container.hpp"
@@ -13,7 +13,7 @@
 
 using namespace squi;
 
-UI::ValueListConditional::operator squi::Child() const {
+UI::ValueListOption::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 	CountObserver readyEvent(2);
 	Observable<std::optional<uint32_t>> valueChangedEvent{};
@@ -25,7 +25,7 @@ UI::ValueListConditional::operator squi::Child() const {
 			.sizeConstraints{
 				.minHeight = 32.f,
 			},
-			.onInit = [readyEvent, valueChangedEvent, &conditional = conditional](Widget &w) {
+			.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
 				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newVal) {
 					if (newVal.has_value()) {
 						w.customState.get<ButtonStyle>("style") = ButtonStyle::Accent();
@@ -33,22 +33,22 @@ UI::ValueListConditional::operator squi::Child() const {
 						w.customState.get<ButtonStyle>("style") = ButtonStyle::Standard();
 					}
 				}));
-				w.customState.add(readyEvent.observe([valueChangedEvent, &conditional]() {
-					valueChangedEvent.notify(conditional.getValue());
+				w.customState.add(readyEvent.observe([valueChangedEvent, &option]() {
+					valueChangedEvent.notify(option.getValue());
 				}));
 			},
 		},
 		.style = ButtonStyle::Standard(),
-		.onClick = [valueChangedEvent, &conditional = conditional, characterKey = characterKey](GestureDetector::Event event) {
+		.onClick = [valueChangedEvent, &option = option, characterKey = characterKey](GestureDetector::Event event) {
 			Window::of(&event.widget).addOverlay(ContextMenu{
 				.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
 				.items = [&]() {
 					std::vector<ContextMenu::Item> ret{
 						ContextMenu::Item{
 							.text = "Not Active",
-							.content = [valueChangedEvent, &conditional, characterKey]() {
-								conditional.currentIndex = std::nullopt;
-								valueChangedEvent.notify(conditional.getValue());
+							.content = [valueChangedEvent, &option, characterKey]() {
+								option.currentIndex = std::nullopt;
+								valueChangedEvent.notify(option.getValue());
 								Store::characters.at(characterKey).updateEvent.notify();
 							},
 						},
@@ -58,12 +58,12 @@ UI::ValueListConditional::operator squi::Child() const {
 						},
 					};
 
-					for (auto [index, item]: std::views::enumerate(conditional.values)) {
+					for (const auto &[index, item]: std::views::enumerate(option.values)) {
 						ret.emplace_back(ContextMenu::Item{
 							.text = std::format("{}", item),
-							.content = [index, valueChangedEvent, &conditional, characterKey]() {
-								conditional.currentIndex = index;
-								valueChangedEvent.notify(conditional.getValue());
+							.content = [index, valueChangedEvent, &option, characterKey]() {
+								option.currentIndex = index;
+								valueChangedEvent.notify(option.getValue());
 								Store::characters.at(characterKey).updateEvent.notify();
 							},
 						});
@@ -81,14 +81,14 @@ UI::ValueListConditional::operator squi::Child() const {
 						.xAlign = 0.f,
 						.child = Text{
 							.widget{
-								.onInit = [readyEvent, valueChangedEvent, &conditional = conditional](Widget &w) {
-									w.customState.add(valueChangedEvent.observe([&w, &conditional](std::optional<uint32_t> newValue) {
+								.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
+									w.customState.add(valueChangedEvent.observe([&w, &option](std::optional<uint32_t> newValue) {
 										auto &text = w.as<Text::Impl>();
 										if (newValue.has_value()) {
-											text.setText(std::format("{}: {}", conditional.prefix, newValue.value()));
+											text.setText(std::format("{}: {}", option.prefix, newValue.value()));
 											text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
 										} else {
-											text.setText(std::format("{}: Not Active", conditional.prefix));
+											text.setText(std::format("{}: Not Active", option.prefix));
 											text.setColor(Color{1.f, 1.f, 1.f, 0.9f});
 										}
 									}));

@@ -14,7 +14,7 @@ namespace Stats {
 #endif
 
 		float constant = 0.f;
-		std::array<Formula::Node, Count> modifiers{};
+		std::array<Formula::FloatNode, Count> modifiers{};
 
 		[[nodiscard]] inline float get(const P1 &context) const {
 #ifndef NDEBUG

@@ -28,7 +28,7 @@ namespace Formula {
 }// namespace Formula
 
 namespace Requirement {
-	struct Passive1 {
+	static constexpr struct impl_Passive1 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Passive 1";
 		}
@@ -36,8 +36,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.ascension >= 1;
 		}
-	};
-	struct Passive2 {
+	} passive1{};
+	static constexpr struct impl_Passive2 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Passive 2";
 		}
@@ -45,8 +45,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.ascension >= 4;
 		}
-	};
-	struct Constellation1 {
+	} passive2{};
+	static constexpr struct impl_Constellation1 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 1";
 		}
@@ -54,8 +54,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 1;
 		}
-	};
-	struct Constellation2 {
+	} constellation1{};
+	static constexpr struct impl_Constellation2 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 2";
 		}
@@ -63,8 +63,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 2;
 		}
-	};
-	struct Constellation3 {
+	} constellation2{};
+	static constexpr struct impl_Constellation3 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 3";
 		}
@@ -72,8 +72,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 3;
 		}
-	};
-	struct Constellation4 {
+	} constellation3{};
+	static constexpr struct impl_Constellation4 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 4";
 		}
@@ -81,8 +81,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 4;
 		}
-	};
-	struct Constellation5 {
+	} constellation4{};
+	static constexpr struct impl_Constellation5 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 5";
 		}
@@ -90,8 +90,8 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 5;
 		}
-	};
-	struct Constellation6 {
+	} constellation5{};
+	static constexpr struct impl_Constellation6 {
 		[[nodiscard]] static inline std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 6";
 		}
@@ -99,5 +99,5 @@ namespace Requirement {
 		[[nodiscard]] static inline bool eval(const Formula::Context &context) {
 			return context.source.character.sheet.constellation >= 6;
 		}
-	};
+	} constellation6{};
 }// namespace Requirement

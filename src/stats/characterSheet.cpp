@@ -13,7 +13,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			return context.source.character.base.getHpAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
-	this->preMods.hp.modifiers.at(2) = (Formula::Stat(Stat::hp_) + 1.f) * Formula::Stat(Stat::baseHp);
+	this->preMods.hp.modifiers.at(2) = (Formula::CharacterStat(Stat::hp_) + 1.f) * Formula::CharacterStat(Stat::baseHp);
 
 	// ATK
 	this->preMods.baseAtk.modifiers.at(2) = Formula::Prefix(
@@ -22,7 +22,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			return context.source.character.base.getAtkAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
-	this->preMods.atk.modifiers.at(2) = (Formula::Stat(Stat::atk_) + 1.f) * Formula::Stat(Stat::baseAtk);
+	this->preMods.atk.modifiers.at(2) = (Formula::CharacterStat(Stat::atk_) + 1.f) * Formula::CharacterStat(Stat::baseAtk);
 
 	// DEF
 	this->preMods.baseDef.modifiers.at(2) = Formula::Prefix(
@@ -31,7 +31,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			return context.source.character.base.getDefAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
 		})
 	);
-	this->preMods.def.modifiers.at(2) = (Formula::Stat(Stat::def_) + 1.f) * Formula::Stat(Stat::baseDef);
+	this->preMods.def.modifiers.at(2) = (Formula::CharacterStat(Stat::def_) + 1.f) * Formula::CharacterStat(Stat::baseDef);
 
 	// Ascension stat
 	this->preMods.fromStat(stats.character.base.ascensionStat).modifiers.at(2) = Formula::Prefix(

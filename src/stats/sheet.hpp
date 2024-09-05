@@ -156,8 +156,8 @@ namespace Stats {
 	};
 
 	struct ModsSheet {
-		using _Sheet = Stats::Sheet<Formula::Node>;
-		using _EnemySheet = Stats::EnemySheet<Formula::Node>;
+		using _Sheet = Stats::Sheet<Formula::FloatNode>;
+		using _EnemySheet = Stats::EnemySheet<Formula::FloatNode>;
 
 		_Sheet preMod{};
 		_Sheet postMod{};

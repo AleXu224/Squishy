@@ -17,7 +17,7 @@ Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
 	  }) {
 
 	const auto &character = Character::list.at(key);
-	character.getConds(stats.character.conditionals);
+	character.getOpts(stats.character.options);
 
 	Stats::setupModifiers(character.data.mods.preMod, stats.character.sheet.preMods, 0);
 	Stats::setupModifiers(character.data.mods.postMod, stats.character.sheet.postMods, 0);
@@ -33,7 +33,7 @@ Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
 
 void Character::Instance::getArtifactStats() {
 	static std::unordered_map<Artifact::SetKey, uint8_t> occurences{};
-	stats.artifact.conditionals.clear();
+	stats.artifact.options.clear();
 	// FIXME: also clear sheet
 	stats.artifact.set = std::nullopt;
 
@@ -60,7 +60,7 @@ void Character::Instance::getArtifactStats() {
 			// only if there is a two set
 			if (occurence.second >= 4) {
 				stats.artifact.set = Artifact::sets.at(occurence.first);
-				artifactData.getConds(stats.artifact.conditionals);
+				artifactData.getOptions(stats.artifact.options);
 				Stats::setupModifiers(artifactData.data.fourPcMods.preMod, stats.artifact.sheet.preMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.postMod, stats.artifact.sheet.postMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.teamPreMod, stats.artifact.sheet.teamPreMods, 1);

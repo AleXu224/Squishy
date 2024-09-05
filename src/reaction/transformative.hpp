@@ -14,7 +14,7 @@ namespace Reaction {
 	using _postMods = decltype(Stats::CharacterSheet::postMods);
 	[[nodiscard]] static consteval auto makeTransformativeFormula(float multiplier, Misc::Element element, _postMods::_SkillValue _postMods:: *skill) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
-		constexpr auto emBonus = (Formula::ConstantFlat(16.f) * Formula::Stat(Stat::em)) / (Formula::Stat(Stat::em) + Formula::ConstantFlat(2000.f));
+		constexpr auto emBonus = (Formula::ConstantFlat(16.f) * Formula::CharacterStat(Stat::em)) / (Formula::CharacterStat(Stat::em) + Formula::ConstantFlat(2000.f));
 		auto reactionBonus = Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::DMG);
 		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
 		auto critMultiplier = 1.f + Formula::Clamp(Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::critRate), 0.f, 1.f) * Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::critDMG);

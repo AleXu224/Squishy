@@ -25,6 +25,6 @@ namespace Formula {
 	};
 
 	[[nodiscard]] consteval auto WeaponMultiplier(::Stat stat, const std::array<float, 5> &values) {
-		return Formula::Stat(stat) * WeaponMultiplierValue(values);
+		return Formula::CharacterStat(stat) * WeaponMultiplierValue(values);
 	}
 }// namespace Formula

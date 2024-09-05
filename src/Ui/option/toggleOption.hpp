@@ -1,17 +1,21 @@
 #pragma once
 
 #include "widget.hpp"
-#include "conditional/valueList.hpp"
+
 #include "character/key.hpp"
+#include "option/boolean.hpp"
+
 
 namespace UI {
-	struct ValueListConditional {
+	struct ToggleOption {
 		// Args
-        Conditional::ValueList &conditional;
-		Character::Key characterKey;
+		squi::Widget::Args widget{};
+		Option::Boolean &option;
+		Character::Key characterKey{};
 
 		struct Storage {
 			// Data
+			bool active;
 		};
 
 		operator squi::Child() const;

@@ -1,23 +1,24 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"// IWYU pragma: keep
-#include "artifact/sets/GildedDreams.hpp"
 #include "character/characters.hpp"
-#include "character/characters/Cyno.hpp"
+#include "formula/constant.hpp"
 #include "src/formula/node.hpp"
 #include "stats/team.hpp"
 #include "store.hpp"
-#include "weapon/weapons/StaffOfTheScarletSands.hpp"
 #include <random>
 
 
 #include "benchmark/benchmark.h"
 
 [[nodiscard]] Character::Instance &getCharacter() {
-	auto &weapon = Store::weapons.insert({Weapon::Datas::staffOfTheScarletSands.key, Weapon::Instance(Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
+	auto weaponData = Weapon::list.begin()->second;
+	auto characterData = Character::list.begin()->second;
+	auto artifactData = Artifact::sets.begin()->second;
+	auto &weapon = Store::weapons.insert({weaponData.key, Weapon::Instance(weaponData.key)}).first->second;
 	weapon.stats.sheet.level = 90;
 	weapon.stats.sheet.ascension = 6;
 	weapon.stats.sheet.refinement = 1;
-	auto &character = Store::characters.insert({Character::Datas::cyno.key, Character::Instance(Character::Datas::cyno.key, Weapon::Datas::staffOfTheScarletSands.key)}).first->second;
+	auto &character = Store::characters.insert({characterData.key, Character::Instance(characterData.key, weaponData.key)}).first->second;
 	character.stats.character.sheet.level = 90;
 	character.stats.character.sheet.ascension = 6;
 	character.stats.character.sheet.talents.burst = 9;
@@ -29,7 +30,7 @@
 		++Store::lastId,
 		Artifact::Instance{
 			.key = Store::lastId,
-			.set = Artifact::Sets::gildedDreams.key,
+			.set = artifactData.key,
 			.slot = Artifact::Slot::flower,
 			.mainStat = Stat::hp,
 			.subStats = {
@@ -40,14 +41,14 @@
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = Character::Datas::cyno.key,
+			.equippedCharacter = characterData.key,
 		},
 	});
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
 			.key = Store::lastId,
-			.set = Artifact::Sets::gildedDreams.key,
+			.set = artifactData.key,
 			.slot = Artifact::Slot::plume,
 			.mainStat = Stat::atk,
 			.subStats = {
@@ -58,14 +59,14 @@
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = Character::Datas::cyno.key,
+			.equippedCharacter = characterData.key,
 		},
 	});
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
 			.key = Store::lastId,
-			.set = Artifact::Sets::gildedDreams.key,
+			.set = artifactData.key,
 			.slot = Artifact::Slot::sands,
 			.mainStat = Stat::em,
 			.subStats = {
@@ -76,14 +77,14 @@
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = Character::Datas::cyno.key,
+			.equippedCharacter = characterData.key,
 		},
 	});
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
 			.key = Store::lastId,
-			.set = Artifact::Sets::gildedDreams.key,
+			.set = artifactData.key,
 			.slot = Artifact::Slot::goblet,
 			.mainStat = Stat::electroDmg,
 			.subStats = {
@@ -94,14 +95,14 @@
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = Character::Datas::cyno.key,
+			.equippedCharacter = characterData.key,
 		},
 	});
 	Store::artifacts.insert({
 		++Store::lastId,
 		Artifact::Instance{
 			.key = Store::lastId,
-			.set = Artifact::Sets::gildedDreams.key,
+			.set = artifactData.key,
 			.slot = Artifact::Slot::circlet,
 			.mainStat = Stat::cd,
 			.subStats = {
@@ -112,7 +113,7 @@
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = Character::Datas::cyno.key,
+			.equippedCharacter = characterData.key,
 		},
 	});
 

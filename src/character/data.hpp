@@ -1,8 +1,8 @@
 #pragma once
 
-#include "conditional/conditional.hpp"
 #include "key.hpp"
 #include "node/node.hpp"
+#include "option/option.hpp"
 #include "stats/character.hpp"
 #include "stats/characterBase.hpp"
 #include "string_view"
@@ -20,17 +20,17 @@ namespace Character {
 		const Key key;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
-		const Conditional::CharacterList conds{};
+		const Option::CharacterList opts{};
 		const std::function<Setup(void)> setup;
 
 		const Setup data = [](const std::function<Setup(void)> &setup) {
 			return setup();
 		}(setup);
 
-		void getConds(Conditional::CharacterMap &conditionals) const {
-			Conditional::mapConditionals(
-				conditionals,
-				conds
+		void getOpts(Option::CharacterMap &options) const {
+			Option::mapOptions(
+				options,
+				opts
 			);
 		}
 	};

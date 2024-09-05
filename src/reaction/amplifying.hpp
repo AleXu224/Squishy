@@ -10,7 +10,7 @@
 namespace Reaction {
 	using _postMods = decltype(Stats::CharacterSheet::postMods);
 	[[nodiscard]] static consteval auto makeAmplifyingFormula(float multiplier, _postMods::_SkillValue _postMods:: *skill) {
-		constexpr auto emBonus = 2.78f * (Formula::Stat(Stat::em) / (Formula::Stat(Stat::em) + 1400.f));
+		constexpr auto emBonus = 2.78f * (Formula::CharacterStat(Stat::em) / (Formula::CharacterStat(Stat::em) + 1400.f));
 		auto reactionBonus = Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::DMG);
 		return Formula::Constant(multiplier) * (1 + emBonus + reactionBonus);
 	}

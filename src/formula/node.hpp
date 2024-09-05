@@ -77,6 +77,6 @@ namespace Formula {
 		std::unique_ptr<interface> fn{};
 	};
 
-	using Node = NodeType<float>;
+	using FloatNode = NodeType<float>;
 	using ElementNode = NodeType<Utils::JankyOptional<Misc::Element>>;
 }// namespace Formula

@@ -1,4 +1,4 @@
-#include "toggleConditional.hpp"
+#include "toggleOption.hpp"
 #include "button.hpp"
 #include "fontIcon.hpp"
 #include "observer.hpp"
@@ -59,9 +59,9 @@ struct ToggleBox {
 	}
 };
 
-UI::ToggleConditional::operator squi::Child() const {
+UI::ToggleOption::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>(Storage{
-		.active = conditional.active,
+		.active = option.active,
 	});
 	Observable<bool> switchEvent{};
 	CountObserver readyEvent{2};
@@ -76,9 +76,9 @@ UI::ToggleConditional::operator squi::Child() const {
 			},
 		},
 		.style = ButtonStyle::Subtle(),
-		.onClick = [storage, switchEvent, &conditional = conditional, characterKey = characterKey](GestureDetector::Event) {
+		.onClick = [storage, switchEvent, &option = option, characterKey = characterKey](GestureDetector::Event) {
 			storage->active = !storage->active;
-			conditional.active = storage->active;
+			option.active = storage->active;
 			switchEvent.notify(storage->active);
 			Store::characters.at(characterKey).updateEvent.notify();
 		},
@@ -91,7 +91,7 @@ UI::ToggleConditional::operator squi::Child() const {
 					.readyEvent = readyEvent,
 				},
 				Text{
-					.text = conditional.name,
+					.text = option.name,
 					.lineWrap = true,
 				},
 			},

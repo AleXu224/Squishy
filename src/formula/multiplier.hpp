@@ -37,7 +37,7 @@ namespace Formula {
 	};
 
 	[[nodiscard]] consteval auto Multiplier(::Stat stat, LevelableTalent talent, const std::array<float, 15> &values) {
-		return Formula::Stat(stat) * MultiplierValue(talent, values);
+		return Formula::CharacterStat(stat) * MultiplierValue(talent, values);
 	}
 
 	struct LevelMultiplier {

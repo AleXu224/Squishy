@@ -9,7 +9,7 @@
 
 namespace Formula {
 	using _postModsCharacter = decltype(Stats::CharacterSheet::postMods);
-	struct Stat {
+	struct CharacterStat {
 		::Stat stat;
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
