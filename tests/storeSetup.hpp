@@ -22,8 +22,8 @@
 	}();
 
 	return Formula::Context{
-		.source = Store::characters.at(::testCharacter.key).stats,
-		.target = Store::characters.at(::testCharacter.key).stats,
+		.source = Store::characters.at(::testCharacter.key).loadout,
+		.target = Store::characters.at(::testCharacter.key).loadout,
 		.team = Store::teams.at(0).stats,
 		.enemy = Store::enemies.at(0).stats,
 	};
