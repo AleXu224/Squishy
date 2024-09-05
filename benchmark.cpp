@@ -21,8 +21,8 @@
 	auto &character = Store::characters.insert({characterData.key, Character::Instance(characterData.key, weaponData.key)}).first->second;
 	character.stats.character.sheet.level = 90;
 	character.stats.character.sheet.ascension = 6;
-	character.stats.character.sheet.talents.burst = 9;
-	character.stats.character.sheet.talents.skill = 9;
+	character.stats.character.sheet.talents.burst.constant = 9;
+	character.stats.character.sheet.talents.skill.constant = 9;
 	character.stats.character.sheet.constellation = 0;
 	character.stats.artifact.equipped = {1, 2, 3, 4, 5};
 

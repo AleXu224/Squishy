@@ -10,14 +10,14 @@
 
 
 namespace Formula {
-	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Stats::Loadout &source) {
+	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Formula::Context &context) {
 		switch (talent) {
 			case LevelableTalent::normal:
-				return values.at(source.character.sheet.talents.normal);
+				return values.at(context.source.character.sheet.talents.normal.get(context));
 			case LevelableTalent::skill:
-				return values.at(source.character.sheet.talents.skill);
+				return values.at(context.source.character.sheet.talents.skill.get(context));
 			case LevelableTalent::burst:
-				return values.at(source.character.sheet.talents.burst);
+				return values.at(context.source.character.sheet.talents.burst.get(context));
 		}
 		std::unreachable();
 	}
@@ -27,12 +27,12 @@ namespace Formula {
 		std::array<float, 15> values;
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			const auto &multiplier = _getMultiplier(talent, values, context.source);
+			const auto &multiplier = _getMultiplier(talent, values, context);
 			return fmt::format("{:.1f}%", multiplier * 100.f);
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {
-			return _getMultiplier(talent, values, context.source);
+			return _getMultiplier(talent, values, context);
 		}
 	};
 

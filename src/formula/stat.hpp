@@ -129,7 +129,58 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] inline auto _getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Context &context) {
+	template<class T, class U>
+	struct TalentPtr {
+		T U:: *category;
+		T::Type T:: *talent;
+
+		std::string_view prefix = [&]() consteval {
+			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
+			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
+			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
+			if (std::is_same_v<U, Stats::Team>) return "Team ";
+			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
+		}();
+
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			bool isPercentage = Stats::isSheetMemberPercentage<T>(talent);
+			const auto sheet = [&]() {
+				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
+					return &context.target.character.sheet;
+				else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
+					return &context.target.weapon.sheet;
+				else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
+					return &context.target.artifact.sheet;
+				else if constexpr (std::is_same_v<U, Stats::Team>)
+					return &context.team;
+				else if constexpr (std::is_same_v<U, Stats::Enemy>)
+					return &context.enemy;
+			}();
+			return fmt::format(
+				"{}{} {:.1f}{}",
+				prefix,
+				Utils::Stringify<T>(talent),
+				std::invoke(talent, std::invoke(category, *sheet)).get(context) * (isPercentage ? 100.f : 1.f),
+				isPercentage ? "%" : ""
+			);
+		}
+
+		[[nodiscard]] inline float eval(const Context &context) const {
+			if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
+				return std::invoke(talent, std::invoke(category, context.target.character.sheet)).get(context);
+			else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
+				return std::invoke(talent, std::invoke(category, context.target.weapon.sheet)).get(context);
+			else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
+				return std::invoke(talent, std::invoke(category, context.target.artifact.sheet)).get(context);
+			else if constexpr (std::is_same_v<U, Stats::Team>)
+				return std::invoke(talent, std::invoke(category, context.team)).get(context);
+			else if constexpr (std::is_same_v<U, Stats::Enemy>)
+				return std::invoke(talent, std::invoke(category, context.enemy)).get(context);
+		}
+	};
+
+	[[nodiscard]] inline auto
+	_getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Context &context) {
 		switch (attackSource) {
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::charged:

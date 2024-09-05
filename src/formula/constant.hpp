@@ -39,4 +39,15 @@ namespace Formula {
 			return value;
 		}
 	};
+	struct ConstantInt {
+		uint32_t value;
+
+		[[nodiscard]] inline std::string print(const Context &, Step) const {
+			return fmt::format("{}", value);
+		}
+
+		[[nodiscard]] inline uint32_t eval(const Context &) const {
+			return value;
+		}
+	};
 }// namespace Formula

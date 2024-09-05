@@ -1,6 +1,7 @@
 #pragma once
 
 #include "print"
+#include "array"
 
 enum class Talent {
 	normal,
@@ -18,12 +19,15 @@ enum class Talent {
 	constellation6,
 };
 
+template<class T>
 struct Talents {
-	uint8_t normal;
-	uint8_t skill;
-	uint8_t burst;
+	using Type = T;
+	
+	T normal{};
+	T skill{};
+	T burst{};
 
-	[[nodiscard]] uint8_t getLevel(const Talent &t) const {
+	[[nodiscard]] const T &fromTalent(const Talent &t) const {
 		switch (t) {
 			case Talent::normal:
 			case Talent::charged:
@@ -40,6 +44,14 @@ struct Talents {
 				std::println("Warning: asked for a talent that isn't supported {}", static_cast<int>(t));
 				return normal;
 		}
+	}
+
+	[[nodiscard]] static consteval auto getMembers() {
+		return std::array{
+			&Talents::normal,
+			&Talents::skill,
+			&Talents::burst,
+		};
 	}
 };
 

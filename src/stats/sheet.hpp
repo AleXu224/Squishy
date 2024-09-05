@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Talents.hpp"
 #include "array"
 #include "formula/infusion.hpp"
 #include "formula/node.hpp"
@@ -142,7 +143,7 @@ namespace Stats {
 		_SkillValue burgeon{};
 		_SkillValue hyperbloom{};
 
-			[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
+		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);
 		}
 
@@ -158,6 +159,7 @@ namespace Stats {
 	struct ModsSheet {
 		using _Sheet = Stats::Sheet<Formula::FloatNode>;
 		using _EnemySheet = Stats::EnemySheet<Formula::FloatNode>;
+		using _Talents = Talents<Formula::IntNode>;
 
 		_Sheet preMod{};
 		_Sheet postMod{};
@@ -165,6 +167,9 @@ namespace Stats {
 		_Sheet teamPostMod{};
 
 		_EnemySheet enemy{};
+
+		_Talents talents{};
+		_Talents teamTalents{};
 
 		Formula::ElementNode infusion = Formula::NoInfusion{};
 		Formula::ElementNode teamInfusion = Formula::NoInfusion{};

@@ -6,7 +6,7 @@
 
 namespace Stats {
 	struct Enemy {
-		using _Value = Value<Formula::Context, 1>;
+		using _Value = Value<float, 1>;
 		EnemySheet<_Value> sheet{
 			.resistance{
 				.pyro{.constant = 0.1f},

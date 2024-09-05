@@ -24,7 +24,7 @@ namespace Weapon::Datas {
 				.key = "eHits",
 				.prefix = "Elemental Skill hits",
 				.values{1, 2, 3},
-			}
+			},
 		},
 		.setup = []() {
 			return Data::Setup{

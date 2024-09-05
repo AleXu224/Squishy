@@ -197,23 +197,24 @@ namespace UI {
 	struct TalentLevelSelector {
 		// Args
 		Character::Key characterKey{};
-		uint8_t Talents:: *talent{};
+		Stats::CharacterSheet::_Talents::Type Stats::CharacterSheet::_Talents:: *talent{};
 		std::string_view prefix;
 
-		using Type = uint8_t;
+		using Type = uint32_t;
 
 		operator squi::Child() const {
 			return Selector<Type>{
 				.titlePrefix = std::format("{} Level", prefix),
 				.valuePrefix = "Level",
 				.getter = [characterKey = characterKey, talent = talent]() {
-					auto &sheet = Store::characters.at(characterKey).stats.character.sheet;
-					return std::invoke(talent, sheet.talents);
+					auto &character = Store::characters.at(characterKey);
+					auto &sheet = character.stats.character.sheet;
+					return std::invoke(talent, sheet.talents).constant;
 				},
 				.setter = [characterKey = characterKey, talent = talent](const Type &val) {
 					auto &character = Store::characters.at(characterKey);
 					auto &sheet = character.stats.character.sheet;
-					std::invoke(talent, sheet.talents) = val;
+					std::invoke(talent, sheet.talents).constant = val;
 					character.updateEvent.notify();
 				},
 				.printer = [](const Type &val) {
@@ -231,7 +232,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Talents::normal,
+				.talent = &Stats::CharacterSheet::_Talents::normal,
 				.prefix = "Normal",
 			};
 		}
@@ -243,7 +244,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Talents::skill,
+				.talent = &Stats::CharacterSheet::_Talents::skill,
 				.prefix = "Skill",
 			};
 		}
@@ -255,7 +256,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Talents::burst,
+				.talent = &Stats::CharacterSheet::_Talents::burst,
 				.prefix = "Burst",
 			};
 		}

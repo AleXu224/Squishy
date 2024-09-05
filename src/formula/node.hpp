@@ -78,5 +78,6 @@ namespace Formula {
 	};
 
 	using FloatNode = NodeType<float>;
+	using IntNode = NodeType<uint32_t>;
 	using ElementNode = NodeType<Utils::JankyOptional<Misc::Element>>;
 }// namespace Formula

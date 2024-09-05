@@ -4,19 +4,19 @@
 #include "formula/node.hpp"
 #include "print"
 #include "stats/helpers.hpp"
-
+#include "formula/formulaContext.hpp"
 
 namespace Stats {
-	template<class P1, size_t Count>
+	template<class T, size_t Count>
 	struct Value {
 #ifndef NDEBUG
 		mutable bool isRunning = false;
 #endif
 
-		float constant = 0.f;
-		std::array<Formula::FloatNode, Count> modifiers{};
+		T constant = 0.f;
+		std::array<Formula::NodeType<T>, Count> modifiers{};
 
-		[[nodiscard]] inline float get(const P1 &context) const {
+		[[nodiscard]] inline T get(const Formula::Context &context) const {
 #ifndef NDEBUG
 			if (isRunning) {
 				std::println("WARNING: recursion while computing stat, returning 0.");
@@ -26,7 +26,7 @@ namespace Stats {
 			isRunning = true;
 #endif
 
-			float ret = constant;
+			T ret = constant;
 			for (const auto &modifier: modifiers) {
 				if (!modifier.hasValue()) continue;
 				ret += modifier.eval(context);

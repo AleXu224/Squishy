@@ -15,22 +15,6 @@
 //#include "benchmark/benchmark.h"
 //benchmark::State& state
 int main() {
-	// using T = Stats::Sheet::_Stat;
-	// T sheet{};
-	// auto a = std::views::transform(
-	// 	std::views::cartesian_product(
-	// 		Stats::getSheetAttackSourceMembers<T>(),
-	// 		T::_SkillValue::getMembers()
-	// 	),
-	// 	[&](const auto &val) {
-	// 		return std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet));
-	// 	}
-	// );
-
-
-	// static_assert(Stats::SheetLike<Stats::CharacterSheet>, "Character sheet must be SheetLike");
-	// static_assert(Stats::SheetLike<Stats::WeaponSheet>, "Character sheet must be SheetLike");
-
 	Weapon::initWeapons();
 	Character::initCharacters();
 	Artifact::initArtifacts();
@@ -44,8 +28,8 @@ int main() {
 	auto &character = Store::characters.insert({characterData.key, Character::Instance(characterData.key, weaponData.key)}).first->second;
 	character.stats.character.sheet.level = 90;
 	character.stats.character.sheet.ascension = 6;
-	character.stats.character.sheet.talents.burst = 9;
-	character.stats.character.sheet.talents.skill = 9;
+	character.stats.character.sheet.talents.burst.constant = 9;
+	character.stats.character.sheet.talents.skill.constant = 9;
 	character.stats.character.sheet.constellation = 0;
 	character.stats.artifact.equipped = {1, 2, 3, 4, 5};
 

@@ -28,6 +28,9 @@ Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
 	stats.character.sheet.infusion = Formula::CharacterTeamInfusion(character.data.mods.infusion);
 	stats.character.sheet.teamInfusion = character.data.mods.teamInfusion;
 
+	Stats::setupTalents(character.data.mods.talents, stats.character.sheet.talents, 0);
+	Stats::setupTalents(character.data.mods.teamTalents, stats.character.sheet.teamTalents, 0);
+
 	stats.character.sheet.init(stats);
 }
 
@@ -56,6 +59,8 @@ void Character::Instance::getArtifactStats() {
 			Stats::setupModifiers(artifactData.data.twoPcMods.teamPreMod, stats.artifact.sheet.teamPreMods, 0);
 			Stats::setupModifiers(artifactData.data.twoPcMods.teamPostMod, stats.artifact.sheet.teamPostMods, 0);
 			Stats::setupModifiers(artifactData.data.twoPcMods.enemy, stats.artifact.sheet.enemySheet, 0);
+			Stats::setupTalents(artifactData.data.twoPcMods.talents, stats.artifact.sheet.talents, 0);
+			Stats::setupTalents(artifactData.data.twoPcMods.teamTalents, stats.artifact.sheet.teamTalents, 0);
 			// The second check should not be be outside since a four set can only happen
 			// only if there is a two set
 			if (occurence.second >= 4) {
@@ -66,6 +71,8 @@ void Character::Instance::getArtifactStats() {
 				Stats::setupModifiers(artifactData.data.fourPcMods.teamPreMod, stats.artifact.sheet.teamPreMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.teamPostMod, stats.artifact.sheet.teamPostMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.enemy, stats.artifact.sheet.enemySheet, 1);
+				Stats::setupTalents(artifactData.data.fourPcMods.talents, stats.artifact.sheet.talents, 1);
+				Stats::setupTalents(artifactData.data.fourPcMods.teamTalents, stats.artifact.sheet.teamTalents, 1);
 			}
 		}
 	}

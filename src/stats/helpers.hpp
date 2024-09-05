@@ -10,7 +10,7 @@
 
 
 namespace Stats {
-	template<class P1, size_t Size>
+	template<class T, size_t Size>
 	struct Value;
 
 	template<class T>
@@ -58,6 +58,12 @@ namespace Stats {
 
 		{ std::remove_cvref_t<T>::resistance };
 	};
+	template<class T>
+	concept TalentSheetLike = requires(T a) {
+		{ std::remove_cvref_t<T>::normal };
+		{ std::remove_cvref_t<T>::skill };
+		{ std::remove_cvref_t<T>::burst };
+	};
 }// namespace Stats
 
 namespace Formula {
@@ -65,6 +71,8 @@ namespace Formula {
 	struct SkillPtr;
 	template<class T, class U>
 	struct StatPtr;
+	template<class T, class U>
+	struct TalentPtr;
 }// namespace Formula
 
 namespace Stats {
@@ -193,6 +201,12 @@ namespace Stats {
 	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T:: *member) {
 		if (member == &T::DEFReduction) return true;
 		if (member == &T::DEFIgnored) return true;
+		return false;
+	}
+
+	// Talents
+	template<TalentSheetLike T>
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::Type T:: *) {
 		return false;
 	}
 
@@ -344,6 +358,12 @@ namespace Stats {
 		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(resistances);
 	}
 
+	// Talents
+	template<TalentSheetLike T>
+	[[nodiscard]] consteval auto getSheetTalentsMembers() {
+		return T::getMembers();
+	}
+
 	// Containers
 	template<class T, class U>
 	struct SheetValueMember {
@@ -362,6 +382,15 @@ namespace Stats {
 
 		consteval auto makeFormula() const {
 			return Formula::SkillPtr<T, U>(location, skill, stat);
+		}
+	};
+	template<class T, class U>
+	struct SheetTalentMember {
+		T::Type T:: *talent{};
+		T U:: *location{};
+
+		consteval auto makeFormula() const {
+			return Formula::TalentPtr<T, U>(location, talent);
 		}
 	};
 
@@ -392,7 +421,7 @@ namespace Stats {
 		};
 	}
 	// Enemy
-	template<class T, class U>
+	template<EnemySheetLike T, class U>
 	[[nodiscard]] consteval inline auto getEnemySheetAllMembers(T U:: *location) {
 		return std::tuple{
 			squi::utils::evalRange(std::views::transform(
@@ -415,6 +444,19 @@ namespace Stats {
 				}
 			)),
 		};
+	}
+	// Talents
+	template<TalentSheetLike T, class U>
+	[[nodiscard]] consteval inline auto getTalentSheetAllMembers(T U:: *location) {
+		return squi::utils::evalRange(std::views::transform(
+			T::getMembers(),
+			[location](auto &&val) {
+				return SheetTalentMember<T, U>{
+					.talent = val,
+					.location = location,
+				};
+			}
+		));
 	}
 
 	// Views
@@ -443,6 +485,17 @@ namespace Stats {
 			}
 		);
 	}
+	template<class T>
+	[[nodiscard]] inline auto allSheetTalentsView(T &&sheet) {
+		using TT = std::remove_cvref_t<T>;
+
+		return std::views::transform(
+			Stats::getSheetTalentsMembers<TT>(),
+			[&sheet](auto &&val) {
+				return std::ref(std::invoke(val, sheet));
+			}
+		);
+	}
 
 	template<class T, class U>
 	inline void setupModifiers(T &&newMods, U &&stats, size_t index) {
@@ -455,6 +508,15 @@ namespace Stats {
 		for (auto [stat, statCharacter]: std::views::zip(
 				 Stats::allSheetSkillsView(newMods),
 				 Stats::allSheetSkillsView(stats)
+			 )) {
+			statCharacter.get().modifiers.at(index) = stat.get();
+		}
+	}
+	template<class T, class U>
+	inline void setupTalents(T &&newMods, U &&stats, size_t index) {
+		for (auto [stat, statCharacter]: std::views::zip(
+				 Stats::allSheetTalentsView(newMods),
+				 Stats::allSheetTalentsView(stats)
 			 )) {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}
@@ -551,6 +613,13 @@ namespace Utils {
 		if (stat == &T::level) return "Level";
 		if (stat == &T::DEFReduction) return "DEF Reduction%";
 		if (stat == &T::DEFIgnored) return "DEF Ignored%";
+		std::unreachable();
+	}
+	template<Stats::TalentSheetLike T>
+	constexpr std::string Stringify(typename T::Type T:: *stat) {
+		if (stat == &T::normal) return "Normal Lvl";
+		if (stat == &T::skill) return "Skill Lvl";
+		if (stat == &T::burst) return "Burst Lvl";
 		std::unreachable();
 	}
 }// namespace Utils

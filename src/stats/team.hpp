@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Talents.hpp"
 #include "array"
 #include "optional"
 #include "sheet.hpp"
@@ -15,8 +16,9 @@ namespace Stats {
 	struct Team {
 		std::array<std::optional<std::reference_wrapper<::Character::Instance>>, 4> characters{};
 
-		Sheet<Value<Formula::Context, 1>> preMods{};
-		Sheet<Value<Formula::Context, 1>> postMods{};
+		Sheet<Value<float, 1>> preMods{};
+		Sheet<Value<float, 1>> postMods{};
+		Talents<Value<uint8_t, 1>> talents{};
 
 		Formula::ElementNode infusion;
 

@@ -33,6 +33,23 @@ template<class T, class V>
 		},
 	};
 }
+template<class T, class V>
+[[nodiscard]] consteval auto getTeamTalentFormulas(T teamArg, V charArg) {
+	constexpr auto makeFormula = [](auto val) consteval {
+		return Formula::TeamCharacter(0, val.makeFormula()) +
+			   Formula::TeamCharacter(1, val.makeFormula()) +
+			   Formula::TeamCharacter(2, val.makeFormula()) +
+			   Formula::TeamCharacter(3, val.makeFormula());
+	};
+
+	return std::tuple{
+		Stats::getTalentSheetAllMembers(teamArg),
+		squi::utils::transformRange(
+			Stats::getTalentSheetAllMembers(charArg),
+			makeFormula
+		),
+	};
+}
 
 Stats::Team::Team() : infusion(Formula::TeamInfusion{}) {
 	constexpr auto addMods = []<class T>(Team &stats, T val) {
@@ -49,4 +66,12 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}) {
 
 	addMods(*this, getTeamFormulas(&Team::preMods, &CharacterSheet::teamPreMods));
 	addMods(*this, getTeamFormulas(&Team::postMods, &CharacterSheet::teamPostMods));
+
+	constexpr auto addTalentMods = []<class T>(Team &stats, T val) {
+		auto [character, mod] = val;
+		for (const auto &[valueCharacter, valueMod]: std::views::zip(character, mod)) {
+			std::invoke(valueCharacter.talent, std::invoke(valueCharacter.location, stats)).modifiers.at(0) = valueMod;
+		}
+	};
+	addTalentMods(*this, getTeamTalentFormulas(&Team::talents, &CharacterSheet::teamTalents));
 }

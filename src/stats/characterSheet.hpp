@@ -8,22 +8,28 @@ namespace Stats {
 	struct Loadout;
 	struct CharacterSheet {
 		// Idx 0: kit, Idx 1: weapon and artifact, Idx 2: ascension and base, Idx 3: team mods
-		Stats::Sheet<Stats::Value<Formula::Context, 4>> preMods{
+		Stats::Sheet<Stats::Value<float, 4>> preMods{
 			.er{.constant = 1.f},
 			.cr{.constant = 0.05f},
 			.cd{.constant = 0.5f},
 		};
 		// Idx 0: kit, Idx 1: weapon and artifact, Idx 2: preMods, Idx 3: team mods
-		Stats::Sheet<Stats::Value<Formula::Context, 4>> postMods{};
+		Stats::Sheet<Stats::Value<float, 4>> postMods{};
 		// Idx 0: kit, Idx 1: weapon and artifact
-		Stats::Sheet<Stats::Value<Formula::Context, 2>> teamPreMods{};
-		Stats::Sheet<Stats::Value<Formula::Context, 2>> teamPostMods{};
-		Stats::EnemySheet<Stats::Value<Formula::Context, 2>> enemySheet{};
+		Stats::Sheet<Stats::Value<float, 2>> teamPreMods{};
+		Stats::Sheet<Stats::Value<float, 2>> teamPostMods{};
+		Stats::EnemySheet<Stats::Value<float, 2>> enemySheet{};
 
 		Formula::ElementNode infusion;
 		Formula::ElementNode teamInfusion;
 
-		Talents talents{};
+		// Idx 0: kit, Idx 1: weapon and artifact, Idx 2: team
+		using _Talents = Talents<Stats::Value<uint32_t, 3>>;
+		_Talents talents{};
+		// Idx 0: kit, Idx 1: weapon and artifact
+		using _TeamTalents = Talents<Stats::Value<uint32_t, 2>>;
+		_TeamTalents teamTalents{};
+
 		uint8_t constellation{};
 		uint8_t level{1};
 		uint8_t ascension{0};

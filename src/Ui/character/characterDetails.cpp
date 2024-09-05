@@ -30,6 +30,7 @@ struct DetailsSkill {
 	// Args
 	std::string_view name;
 	Character::Key characterKey{};
+	const Formula::Context &ctx;
 	const std::vector<Node::Types> &nodes;
 	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxPreModifierIndex = 0;
@@ -37,20 +38,10 @@ struct DetailsSkill {
 	std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> &options;
 
 	operator squi::Child() const {
-		auto &character = Store::characters.at(characterKey);
-
 		return UI::DisplayCard{
 			.title = name,
 			.children = [&]() -> Children {
 				Children ret{};
-				auto &team = Store::teams.at(0);
-				auto &enemy = Store::enemies.at(0);
-				Formula::Context ctx{
-					.source = character.stats,
-					.target = character.stats,
-					.team = team.stats,
-					.enemy = enemy.stats,
-				};
 
 				if (!nodes.empty()) {
 					Children ret2{};
@@ -201,8 +192,16 @@ struct DetailsSkill {
 	}
 };
 
-inline void initializeList(Character::Key characterKey, Widget &w) {
+inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy::Key enemyKey, Widget &w) {
 	auto &character = Store::characters.at(characterKey);
+	auto &team = Store::teams.at(teamKey);
+	auto &enemy = Store::enemies.at(enemyKey);
+	Formula::Context ctx{
+		.source = character.stats,
+		.target = character.stats,
+		.team = team.stats,
+		.enemy = enemy.stats,
+	};
 
 	w.addChild(UI::CharacterStats{.characterKey = characterKey});
 	w.addChild(UI::CharacterOptions{.characterKey = characterKey});
@@ -247,6 +246,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 		w.addChild(DetailsSkill{
 			.name = name,
 			.characterKey = characterKey,
+			.ctx = ctx,
 			.nodes = nodes,
 			.options = options,
 		});
@@ -265,6 +265,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	w.addChild(DetailsSkill<Stats::WeaponSheet>{
 		.name = character.stats.weapon.data.name,
 		.characterKey = characterKey,
+		.ctx = ctx,
 		.nodes = character.stats.weapon.data.data.nodes,
 		.sheet = std::ref(character.stats.weapon.sheet),
 		.maxPreModifierIndex = 2,
@@ -277,6 +278,7 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
 		.name = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,
+		.ctx = ctx,
 		.nodes = character.stats.artifact.set.has_value() ? character.stats.artifact.set->get().data.nodes : artiNodesPlaceholder,
 		.sheet = std::ref(character.stats.artifact.sheet),
 		.maxPreModifierIndex = 2,
@@ -286,21 +288,19 @@ inline void initializeList(Character::Key characterKey, Widget &w) {
 }
 
 UI::CharacterDetails::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
 	return ScrollableFrame{
 		.children{Masonry{
 			.widget{
 				.height = Size::Shrink,
 				.padding = Padding{8.f},
-				.onInit = [characterKey = characterKey](Widget &w) {
-					w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey]() {
+				.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
+					w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
 						if (auto w = wPtr.lock()) {
 							w->setChildren({});
-							initializeList(characterKey, *w);
+							initializeList(characterKey, teamKey, enemyKey, *w);
 						}
 					}));
-					initializeList(characterKey, w);
+					initializeList(characterKey, teamKey, enemyKey, w);
 				},
 			},
 			.spacing = 4.f,

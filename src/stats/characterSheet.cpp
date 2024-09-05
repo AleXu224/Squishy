@@ -93,4 +93,21 @@ void Stats::CharacterSheet::linkWeaponAndArtifacts() {
 	};
 	addModsTeam(*this, CharacterSheetUtils::getTeamModifiers(&CharacterSheet::preMods, &::Stats::Team::preMods));
 	addModsTeam(*this, CharacterSheetUtils::getTeamModifiers(&CharacterSheet::postMods, &::Stats::Team::postMods));
+
+	constexpr auto addModsTalent = []<class T>(CharacterSheet &stats, T val) {
+		auto [character, mod] = val;
+		for (const auto &[valueCharacter, valueMod]: std::views::zip(character, mod)) {
+			std::invoke(valueCharacter.talent, std::invoke(valueCharacter.location, stats)).modifiers.at(1) = valueMod;
+		}
+	};
+	addModsTalent(*this, CharacterSheetUtils::getTalentModifiers(&CharacterSheet::talents, &WeaponSheet::talents, &ArtifactSheet::talents));
+	addModsTalent(*this, CharacterSheetUtils::getTalentModifiers(&CharacterSheet::teamTalents, &WeaponSheet::teamTalents, &ArtifactSheet::teamTalents));
+
+	constexpr auto addModsTeamTalent = []<class T>(CharacterSheet &stats, T val) {
+		auto [character, mod] = val;
+		for (const auto &[valueCharacter, valueMod]: std::views::zip(character, mod)) {
+			std::invoke(valueCharacter.talent, std::invoke(valueCharacter.location, stats)).modifiers.at(2) = valueMod;
+		}
+	};
+	addModsTeamTalent(*this, CharacterSheetUtils::getTeamTalentModifiers());
 }
