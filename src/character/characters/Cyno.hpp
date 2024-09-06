@@ -35,6 +35,13 @@ namespace Character::Datas {
 					.name = "During Endseer stance",
 				},
 			},
+			.constellation2{
+				Option::ValueList{
+					.key = "c2Hits",
+					.prefix = "Normal Attack Hits",
+					.values{1, 2, 3, 4, 5},
+				},
+			},
 		},
 		.setup = []() -> Data::Setup {
 			constexpr auto a1SkillBonus = Modifiers(
@@ -64,6 +71,9 @@ namespace Character::Datas {
 							IsActive("burstActive"),
 							ConstantFlat(100.f)
 						),
+						.electro{
+							.DMG = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f),
+						},
 					},
 				},
 				.nodes{
