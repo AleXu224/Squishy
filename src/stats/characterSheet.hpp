@@ -23,8 +23,8 @@ namespace Stats {
 		Formula::ElementNode infusion;
 		Formula::ElementNode teamInfusion;
 
-		// Idx 0: kit, Idx 1: weapon and artifact, Idx 2: team
-		using _Talents = Talents<Stats::Value<uint32_t, 3>>;
+		// Idx 0: kit, Idx 1: weapon and artifact, Idx 2: Constellation 3 and 5, Idx 3: team
+		using _Talents = Talents<Stats::Value<uint32_t, 4>>;
 		_Talents talents{};
 		// Idx 0: kit, Idx 1: weapon and artifact
 		using _TeamTalents = Talents<Stats::Value<uint32_t, 2>>;

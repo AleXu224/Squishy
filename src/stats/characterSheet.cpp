@@ -43,6 +43,10 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			Stats::isPercentage(stats.character.base.ascensionStat)
 		)
 	);
+
+	// Constellation talents
+	this->talents.fromTalent(stats.character.base.c3Talent).modifiers.at(2) = Formula::Requires(Requirement::constellation3, Formula::ConstantInt(3));
+	this->talents.fromTalent(stats.character.base.c5Talent).modifiers.at(2) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));
 	linkWeaponAndArtifacts();
 }
 
@@ -106,7 +110,7 @@ void Stats::CharacterSheet::linkWeaponAndArtifacts() {
 	constexpr auto addModsTeamTalent = []<class T>(CharacterSheet &stats, T val) {
 		auto [character, mod] = val;
 		for (const auto &[valueCharacter, valueMod]: std::views::zip(character, mod)) {
-			std::invoke(valueCharacter.talent, std::invoke(valueCharacter.location, stats)).modifiers.at(2) = valueMod;
+			std::invoke(valueCharacter.talent, std::invoke(valueCharacter.location, stats)).modifiers.at(3) = valueMod;
 		}
 	};
 	addModsTeamTalent(*this, CharacterSheetUtils::getTeamTalentModifiers());

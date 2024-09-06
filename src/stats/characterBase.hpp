@@ -4,13 +4,7 @@
 #include "curves.hpp"
 #include "misc/element.hpp"
 #include "stat.hpp"
-
-
-enum class ConstellationTalent {
-	normal,
-	skill,
-	burst,
-};
+#include "Talents.hpp"
 
 namespace Stats {
 	struct CharacterBase {
