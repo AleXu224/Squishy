@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formula/attackModifier.hpp"
 #include "formula/clamp.hpp"
 #include "formula/enemy.hpp"
 #include "formula/operators.hpp"
@@ -27,8 +28,8 @@ namespace Node {
 	[[nodiscard]] consteval auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
 		Misc::AttackSource atkSource,
-		_Sheet::_SkillValue _Sheet:: *skill,
-		_Sheet::_Value _Sheet::_SkillValue:: *stat,
+		_Sheet::_SkillValue _Sheet::*skill,
+		_Sheet::_Value _Sheet::_SkillValue::*stat,
 		T formula
 	) {
 		auto allStats = Formula::SkillPtr(&_Stats::postMods, &_Sheet::all, stat);
@@ -45,11 +46,11 @@ namespace Node {
 	[[nodiscard]] consteval auto _getFormula(std::string_view name, Utils::JankyOptional<Misc::Element> element, Misc::AttackSource source, Frm formula, Tpl stats) {
 		auto skill = Stats::getSheetMemberByAttackSource<_Sheet>(source);
 
-		auto totalDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::DMG, std::get<0>(stats));
-		auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, std::get<1>(stats)) + Formula::AdditiveMultiplier{};
-		auto totalMultiplicativeDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::multiplicativeDMG, std::get<2>(stats));
-		auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &_Sheet::_SkillValue::critRate, std::get<3>(stats)) + Formula::CharacterStat(Stat::cr), 0.f, 1.f);
-		auto totalCritDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::critDMG, std::get<4>(stats)) + Formula::CharacterStat(Stat::cd);
+		auto totalDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::DMG, stats.DMG);
+		auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, stats.additiveDMG) + Formula::AdditiveMultiplier{};
+		auto totalMultiplicativeDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::multiplicativeDMG, stats.multiplicativeDMG);
+		auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &_Sheet::_SkillValue::critRate, stats.critRate) + Formula::CharacterStat(Stat::cr), 0.f, 1.f);
+		auto totalCritDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::critDMG, stats.critDMG) + Formula::CharacterStat(Stat::cd);
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
@@ -67,12 +68,12 @@ namespace Node {
 
 	template<Formula::FloatFormula Frm>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::AttackSource source, Frm formula) {
-		return _getFormula(name, {}, source, formula, std::tuple{Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f)});
+		return _getFormula(name, {}, source, formula, Formula::Modifier{});
 	}
 
 	template<Formula::FloatFormula Frm>
 	[[nodiscard]] consteval auto Atk(std::string_view name, Misc::Element element, Misc::AttackSource source, Frm formula) {
-		return _getFormula(name, element, source, formula, std::tuple{Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f), Formula::Constant(0.f)});
+		return _getFormula(name, element, source, formula, Formula::Modifier{});
 	}
 
 	template<Formula::FloatFormula Frm, class T>

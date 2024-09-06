@@ -44,25 +44,19 @@ namespace Character::Datas {
 			},
 		},
 		.setup = []() -> Data::Setup {
-			constexpr auto a1SkillBonus = Modifiers(
-				Modifier(
-					ModifierLocation::DMG,
-					Requires(
-						Requirement::passive1 && IsActive("endseerStance"),
-						Constant(0.35f)
-					)
-				)
-			);
+			constexpr auto a1SkillBonus = Modifier{
+				.DMG = Requires(
+					Requirement::passive1 && IsActive("endseerStance"),
+					Constant(0.35f)
+				),
+			};
 
-			constexpr auto a4BurstBonus = Modifiers(
-				Modifier(
-					ModifierLocation::additiveDMG,
-					Requires(
-						Requirement::passive2,
-						CharacterStat(Stat::em) * 1.5f
-					)
-				)
-			);
+			constexpr auto a4BurstBonus = Modifier{
+				.additiveDMG = Requires(
+					Requirement::passive2,
+					CharacterStat(Stat::em) * 1.5f
+				),
+			};
 
 			return Data::Setup{
 				.mods{
@@ -179,15 +173,12 @@ namespace Character::Datas {
 							"Duststalker bolt DMG",
 							Misc::AttackSource::skill,
 							CharacterStat(Stat::atk) * 1.f,
-							Modifiers(
-								Modifier(
-									ModifierLocation::additiveDMG,
-									Requires(
-										Requirement::passive2,
-										CharacterStat(Stat::em) * 2.5f
-									)
-								)
-							)
+							Modifier{
+								.additiveDMG = Requires(
+									Requirement::passive2,
+									CharacterStat(Stat::em) * 2.5f
+								),
+							}
 						),
 					},
 				},
