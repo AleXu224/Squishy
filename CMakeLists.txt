@@ -29,6 +29,7 @@ if (MSVC)
     target_compile_definitions(squishy_lib PUBLIC _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()
     target_compile_options(squishy_lib PUBLIC -Wall -Wextra -Wno-unused-parameter -Werror -ferror-limit=0)
+    # target_link_options(squishy_lib PUBLIC -fsanitize=address,undefined)
 endif()
 
 find_package(fmt CONFIG REQUIRED)

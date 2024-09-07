@@ -1,6 +1,5 @@
 #include "characterDetails.hpp"
 
-#include "Ui/elementToColor.hpp"
 #include "Ui/option/toggleOption.hpp"
 #include "Ui/option/valueListOption.hpp"
 #include "Ui/utils/displayCard.hpp"
@@ -13,7 +12,6 @@
 #include "characterOptions.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
-#include "formula/stat.hpp"
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
@@ -52,7 +50,8 @@ struct DetailsSkill {
 								.isTransparent = transparent,
 								.name = node.name,
 								.value = node.formula.eval(ctx),
-								.color = Utils::elementToColor(Formula::_getElement(node.source, node.element, ctx)),
+								.color = Node::getColor(node.data, ctx),
+								.isPercentage = Node::isPercentage(node.data),
 							},
 						});
 					}

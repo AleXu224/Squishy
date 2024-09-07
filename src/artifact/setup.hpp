@@ -3,6 +3,7 @@
 #include "artifact/set.hpp"   // IWYU pragma: export
 #include "formula/formula.hpp"// IWYU pragma: export
 #include "node/atkNode.hpp"   // IWYU pragma: export
+#include "node/infoNode.hpp"  // IWYU pragma: export
 
 namespace Artifact {
 	using IsActive = Formula::impl_IsActive<Stats::ArtifactSheet>;

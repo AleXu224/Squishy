@@ -2,24 +2,19 @@
 
 #include "array"
 #include "formula/node.hpp"
-#include "misc/attackSource.hpp"
-#include "misc/element.hpp"
+#include "nodeData.hpp"
 #include "string_view"
-#include "utils/optional.hpp"
 #include "vector"
-
-// #include "atkNode.hpp"// IWYU pragma: export
 
 
 namespace Node {
 	struct Instance {
 		std::string_view name;
-		Utils::JankyOptional<Misc::Element> element;
-		Misc::AttackSource source;
+		Data data;
 		Formula::FloatNode formula;
 
 		template<class T>
-		Instance(const T &t) : name(t.name), element(t.element), source(t.source), formula(t.formula) {}
+		Instance(const T &t) : name(t.name), data(t._data), formula(t._formula) {}
 	};
 
 	using Types = Instance;

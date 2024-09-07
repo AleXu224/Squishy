@@ -13,7 +13,7 @@ namespace UI {
 		// Args
 		std::string_view titlePrefix;
 		std::string_view valuePrefix;
-		std::function<const T &(void)> getter;
+		std::function<T (void)> getter;
 		std::function<void(const T &)> setter;
 		std::function<std::string(const T &)> printer;
 		std::vector<T> values;

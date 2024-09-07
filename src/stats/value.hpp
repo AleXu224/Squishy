@@ -13,7 +13,7 @@ namespace Stats {
 		mutable bool isRunning = false;
 #endif
 
-		T constant = 0.f;
+		T constant = T{};
 		std::array<Formula::NodeType<T>, Count> modifiers{};
 
 		[[nodiscard]] inline T get(const Formula::Context &context) const {

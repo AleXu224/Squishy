@@ -1,34 +1,40 @@
 #include "skillEntry.hpp"
-#include "align.hpp"
+
 #include "box.hpp"
-#include "stack.hpp"
+#include "container.hpp"
+#include "row.hpp"
 #include "text.hpp"
 
 using namespace squi;
 UI::SkillEntry::operator squi::Child() const {
 	return Box{
 		.widget{
-			.height = 36.f,
+			.height = Size::Shrink,
+			.sizeConstraints{
+				.minHeight = 36.f,
+			},
 			.margin = Margin{0.f},
-			.padding = Padding{12.f, 0.f},
+			.padding = Padding{12.f, 4.f},
 		},
 		.color = isTransparent ? Color{1.f, 1.f, 1.f, 0.0419f} : Color{0.f, 0.f, 0.f, 0.f},
 		.borderRadius{4.f},
 		.child{
-			Stack{
+			Row{
+				.alignment = squi::Row::Alignment::center,
+				.spacing = 4.f,
 				.children{
-					Align{
-						.xAlign = 0.f,
+					Container{
+						.widget{
+							.height = Size::Shrink,
+						},
 						.child = Text{
 							.text = name,
+							.lineWrap = true,
 							.color = color,
 						},
 					},
-					Align{
-						.xAlign = 1.f,
-						.child = Text{
-							.text = isPercentage ? std::format("{:.1f}%", value * 100.f) : std::format("{:.0f}", value),
-						},
+					Text{
+						.text = isPercentage ? std::format("{:.1f}%", value * 100.f) : std::format("{:.0f}", value),
 					},
 				},
 			},
