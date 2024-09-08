@@ -4,7 +4,7 @@
 
 namespace Artifact::Sets {
 	const inline Artifact::Set gildedDreams{
-		.key = 15026,
+		.key{15026},
 		.name = "Gilded Dreams",
 		.opts{
 			// FIXME: this should be done automagically

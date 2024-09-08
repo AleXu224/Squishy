@@ -27,7 +27,7 @@ template<class T = Stats::CharacterSheet>
 struct DetailsSkill {
 	// Args
 	std::string_view name;
-	Character::Key characterKey{};
+	Character::InstanceKey characterKey{};
 	const Formula::Context &ctx;
 	const std::vector<Node::Types> &nodes;
 	std::optional<std::reference_wrapper<T>> sheet{};
@@ -191,7 +191,7 @@ struct DetailsSkill {
 	}
 };
 
-inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy::Key enemyKey, Widget &w) {
+inline void initializeList(Character::InstanceKey characterKey, Team::Key teamKey, Enemy::Key enemyKey, Widget &w) {
 	auto &character = Store::characters.at(characterKey);
 	auto &team = Store::teams.at(teamKey);
 	auto &enemy = Store::enemies.at(enemyKey);
@@ -288,22 +288,24 @@ inline void initializeList(Character::Key characterKey, Team::Key teamKey, Enemy
 
 UI::CharacterDetails::operator squi::Child() const {
 	return ScrollableFrame{
-		.children{Masonry{
-			.widget{
-				.height = Size::Shrink,
-				.padding = Padding{8.f},
-				.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
-					w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
-						if (auto w = wPtr.lock()) {
-							w->setChildren({});
-							initializeList(characterKey, teamKey, enemyKey, *w);
-						}
-					}));
-					initializeList(characterKey, teamKey, enemyKey, w);
+		.children{
+			Masonry{
+				.widget{
+					.height = Size::Shrink,
+					.padding = Padding{8.f},
+					.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
+						w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
+							if (auto w = wPtr.lock()) {
+								w->setChildren({});
+								initializeList(characterKey, teamKey, enemyKey, *w);
+							}
+						}));
+						initializeList(characterKey, teamKey, enemyKey, w);
+					},
 				},
-			},
-			.spacing = 4.f,
-			.columnCount = Masonry::MinSize{256.f},
-		}},
+				.spacing = 4.f,
+				.columnCount = Masonry::MinSize{256.f},
+			}
+		},
 	};
 }

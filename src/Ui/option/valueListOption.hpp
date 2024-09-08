@@ -9,7 +9,7 @@ namespace UI {
 	struct ValueListOption {
 		// Args
 		Option::ValueList &option;
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		struct Storage {
 			// Data

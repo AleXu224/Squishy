@@ -18,7 +18,7 @@ using namespace squi;
 
 struct CharacterCardBanner {
 	// Args
-	Character::Key characterKey;
+	Character::InstanceKey characterKey;
 
 	operator squi::Child() const {
 		auto &character = Store::characters.at(characterKey);
@@ -30,14 +30,14 @@ struct CharacterCardBanner {
 				Container{
 					.child = Image{
 						.fit = squi::Image::Fit::cover,
-						.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/banner.png", Character::list.at(character.key).name)),
+						.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/banner.png", Character::list.at(character.dataKey).name)),
 					},
 				},
 				Row{
 					.children{
 						Image{
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", Character::list.at(character.key).name)),
+							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", Character::list.at(character.dataKey).name)),
 						},
 						Column{
 							.widget{
@@ -46,7 +46,7 @@ struct CharacterCardBanner {
 							.spacing = 4.f,
 							.children{
 								Text{
-									.text = Character::list.at(character.key).name,
+									.text = Character::list.at(character.dataKey).name,
 									.fontSize = 24.f,
 								},
 								Text{
@@ -63,7 +63,7 @@ struct CharacterCardBanner {
 
 struct Contents {
 	// Args
-	Character::Key characterKey;
+	Character::InstanceKey characterKey;
 
 	operator squi::Child() const {
 		return Column{

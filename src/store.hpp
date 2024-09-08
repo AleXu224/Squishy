@@ -19,11 +19,11 @@
 // };
 
 namespace Store {
-	inline std::unordered_map<Character::Key, Character::Instance> characters{};
+	inline std::unordered_map<Character::InstanceKey, Character::Instance> characters{};
 	inline std::unordered_map<Team::Key, Team::Instance> teams{};
 	inline std::unordered_map<Enemy::Key, Enemy::Instance> enemies{};
-	inline std::unordered_map<Weapon::Key, Weapon::Instance> weapons{};
-	inline std::unordered_map<uint32_t, Artifact::Instance> artifacts{};
+	inline std::unordered_map<Weapon::InstanceKey, Weapon::Instance> weapons{};
+	inline std::unordered_map<Artifact::InstanceKey, Artifact::Instance> artifacts{};
 
 	inline uint32_t lastId;
 }// namespace Store

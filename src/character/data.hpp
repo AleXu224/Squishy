@@ -17,7 +17,7 @@ namespace Character {
 			Node::CharacterList nodes{};
 		};
 
-		const Key key;
+		const DataKey key;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
 		const Option::CharacterList opts{};

@@ -15,7 +15,7 @@ namespace Weapon {
 			Node::WeaponList nodes{};
 		};
 
-		const Key key;
+		const DataKey key;
 		const std::string name;
 		const Stats::WeaponBase baseStats;
 		const Option::WeaponList opts{};

@@ -11,7 +11,7 @@ namespace UI {
 	struct CharacterDetails {
 		// Args
 		squi::Widget::Args widget{};
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 		Team::Key teamKey{};
 		Enemy::Key enemyKey{};
 

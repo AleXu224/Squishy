@@ -9,12 +9,13 @@
 
 namespace Character {
 	struct Instance {
-		const Key key;
-		Weapon::Key weaponKey;
+		const InstanceKey instanceKey;
+		const DataKey dataKey;
+		Weapon::InstanceKey weaponInstanceKey;
 		Stats::Loadout loadout;
 		squi::VoidObservable updateEvent{};
 
-		explicit Instance(const Key &key, const Weapon::Key &weaponKey);
+		explicit Instance(const InstanceKey &instanceKey, const DataKey& dataKey, const Weapon::InstanceKey &weaponInstanceKey);
 
 		void getArtifactStats();
 	};

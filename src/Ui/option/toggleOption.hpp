@@ -11,7 +11,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		Option::Boolean &option;
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 
 		struct Storage {
 			// Data

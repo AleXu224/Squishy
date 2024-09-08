@@ -8,7 +8,7 @@ namespace UI {
 	struct CharacterStats {
 		// Args
 		squi::Widget::Args widget{};
-		Character::Key characterKey;
+		Character::InstanceKey characterKey{};
 
 		struct Storage {
 			// Data

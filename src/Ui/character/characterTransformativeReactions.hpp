@@ -8,7 +8,7 @@ namespace UI {
 	struct CharacterTransformativeReactions {
 		// Args
 		squi::Widget::Args widget{};
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 
 		struct Storage {
 			// Data

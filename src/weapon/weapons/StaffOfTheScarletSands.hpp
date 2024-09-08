@@ -4,7 +4,7 @@
 
 namespace Weapon::Datas {
 	const inline Weapon::Data staffOfTheScarletSands{
-		.key = 13511,
+		.key{13511},
 		.name = "Staff of the Scarlet Sands",
 		.baseStats{
 			.type = WeaponType::polearm,

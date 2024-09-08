@@ -13,7 +13,7 @@ namespace UI {
 		// Args
 		std::string_view titlePrefix;
 		std::string_view valuePrefix;
-		std::function<T (void)> getter;
+		std::function<T(void)> getter;
 		std::function<void(const T &)> setter;
 		std::function<std::string(const T &)> printer;
 		std::vector<T> values;
@@ -68,7 +68,7 @@ namespace UI {
 		// Args
 		std::string_view titlePrefix;
 		std::function<T &()> sheetGetter;
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 
 		using PairType = std::pair<uint8_t, uint8_t>;
 
@@ -112,7 +112,7 @@ namespace UI {
 
 	struct CharacterLevelSelector {
 		// Args
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		operator squi::Child() const {
 			return LevelSelector<Stats::CharacterSheet>{
@@ -127,7 +127,7 @@ namespace UI {
 
 	struct WeaponLevelSelector {
 		// Args
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		operator squi::Child() const {
 			return LevelSelector<Stats::WeaponSheet>{
@@ -142,7 +142,7 @@ namespace UI {
 
 	struct ConstellationSelector {
 		// Args
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 
 		using Type = uint8_t;
 
@@ -169,7 +169,7 @@ namespace UI {
 	};
 	struct RefinementSelector {
 		// Args
-		Character::Key characterKey{};
+		Character::InstanceKey characterKey{};
 
 		using Type = uint8_t;
 
@@ -196,8 +196,8 @@ namespace UI {
 	};
 	struct TalentLevelSelector {
 		// Args
-		Character::Key characterKey{};
-		Stats::CharacterSheet::_Talents::Type Stats::CharacterSheet::_Talents:: *talent{};
+		Character::InstanceKey characterKey{};
+		Stats::CharacterSheet::_Talents::Type Stats::CharacterSheet::_Talents::*talent{};
 		std::string_view prefix;
 
 		using Type = uint32_t;
@@ -227,7 +227,7 @@ namespace UI {
 
 	struct NormalTalentLevelSelector {
 		// Args
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		operator squi::Child() const {
 			return TalentLevelSelector{
@@ -239,7 +239,7 @@ namespace UI {
 	};
 	struct SkillTalentLevelSelector {
 		// Args
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		operator squi::Child() const {
 			return TalentLevelSelector{
@@ -251,7 +251,7 @@ namespace UI {
 	};
 	struct BurstTalentLevelSelector {
 		// Args
-		Character::Key characterKey;
+		Character::InstanceKey characterKey;
 
 		operator squi::Child() const {
 			return TalentLevelSelector{

@@ -7,16 +7,16 @@
 #include "store.hpp"
 
 
-Character::Instance::Instance(const Key &key, const Weapon::Key &weaponKey)
-	: key(key),
-	  weaponKey(weaponKey),
+Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dataKey, const Weapon::InstanceKey &weaponInstanceKey)
+	: instanceKey(instanceKey),
+	  dataKey(dataKey),
+	  weaponInstanceKey(weaponInstanceKey),
 	  loadout(Stats::Loadout{
-		  .character = Stats::Character(Character::list.at(key)),
-		  .weapon = Store::weapons.at(weaponKey).stats,
+		  .character = Stats::Character(Character::list.at(dataKey)),
+		  .weapon = Store::weapons.at(weaponInstanceKey).stats,
 		  .artifact{},
 	  }) {
-
-	const auto &character = Character::list.at(key);
+	const auto &character = Character::list.at(dataKey);
 	character.getOpts(loadout.character.options);
 
 	Stats::setupModifiers(character.data.mods.preMod, loadout.character.sheet.preMods, 0);
@@ -42,7 +42,7 @@ void Character::Instance::getArtifactStats() {
 
 	for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(2, 7))) {
 		auto artId = std::invoke(artPtr, loadout.artifact.equipped);
-		if (artId == 0) continue;
+		if (artId.key == 0) continue;
 		auto &artifact = Store::artifacts.at(artId);
 		occurences[artifact.set]++;
 		loadout.artifact.sheet.preMods.fromStat(artifact.mainStat).modifiers.at(index) = Formula::ArtifactMainStat(artifact.mainStat, artifact.level);

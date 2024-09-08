@@ -4,7 +4,7 @@
 
 namespace Character::Datas {
 	inline const Character::Data cyno{
-		.key = 10000071,
+		.key{10000071},
 		.name{"Cyno"},
 		.baseStats{
 			.baseHp = 972.3864,

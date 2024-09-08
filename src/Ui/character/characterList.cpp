@@ -27,14 +27,14 @@ UI::CharacterList::operator squi::Child() const {
 						.onInit = [controller](Widget &w) {
 							for (auto &[_, character]: Store::characters) {
 								w.addChild(GestureDetector{
-									.onClick = [controller, characterKey = character.key](GestureDetector::Event event) {
+									.onClick = [controller, characterKey = character.instanceKey](GestureDetector::Event) {
 										controller.push(CharacterPage{
 											.characterKey = characterKey,
 											.controller = controller,
 										});
 									},
 									.child = CharacterCard{
-										.characterKey = character.key,
+										.characterKey = character.instanceKey,
 									},
 								});
 							}

@@ -7,11 +7,14 @@
 
 namespace Weapon {
 	struct Instance {
+		const InstanceKey instanceKey;
 		Stats::Weapon stats;
 		const Weapon::Data &data;
 
-		explicit Instance(const Weapon::Key &key)
-			: stats(Weapon::list.at(key)), data(Weapon::list.at(key)) {
+		explicit Instance(const Weapon::DataKey &dataKey, const Weapon::InstanceKey &instanceKey)
+			: instanceKey(instanceKey),
+			  stats(Weapon::list.at(dataKey)),
+			  data(Weapon::list.at(dataKey)) {
 			data.getOpts(stats.options);
 			Stats::setupModifiers(data.data.mods.preMod, stats.sheet.preMods, 0);
 			Stats::setupModifiers(data.data.mods.postMod, stats.sheet.postMods, 0);

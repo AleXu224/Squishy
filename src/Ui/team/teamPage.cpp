@@ -35,7 +35,7 @@ UI::TeamPage::operator squi::Child() const {
 							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name)),
 						},
 						.content = CharacterDetails{
-							.characterKey = character->get().key,
+							.characterKey = character->get().instanceKey,
 						},
 					});
 				}

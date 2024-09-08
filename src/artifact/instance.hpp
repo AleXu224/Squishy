@@ -11,7 +11,6 @@
 #include <array>
 
 namespace Artifact {
-	using SetKey = uint16_t;
 	using Level = uint8_t;
 
 	enum class Slot {
@@ -23,14 +22,14 @@ namespace Artifact {
 	};
 
 	struct Instance {
-		Key key;
+		InstanceKey key;
 		SetKey set;
 		Slot slot;
 		Stat mainStat;
 		std::array<StatValue, 4> subStats;
 		Level level;
 		Rarity rarity;
-		Character::Key equippedCharacter;
+		Character::InstanceKey equippedCharacter;
 	};
 }// namespace Artifact
 

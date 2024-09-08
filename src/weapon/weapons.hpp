@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 namespace Weapon {
-	inline std::unordered_map<Weapon::Key, const Weapon::Data &> list;
+	inline std::unordered_map<Weapon::DataKey, const Weapon::Data &> list;
 
 	extern void initWeapons();
 }// namespace Weapon

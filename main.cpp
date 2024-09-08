@@ -21,22 +21,29 @@ int main() {
 	auto weaponData = Weapon::list.begin()->second;
 	auto characterData = Character::list.begin()->second;
 	auto artifactData = Artifact::sets.begin()->second;
-	auto &weapon = Store::weapons.insert({weaponData.key, Weapon::Instance(weaponData.key)}).first->second;
+	Weapon::InstanceKey weaponKey{0};
+	Character::InstanceKey characterKey{0};
+	auto &weapon = Store::weapons.insert({weaponKey, Weapon::Instance(weaponData.key, weaponKey)}).first->second;
 	weapon.stats.sheet.level = 90;
 	weapon.stats.sheet.ascension = 6;
 	weapon.stats.sheet.refinement = 1;
-	auto &character = Store::characters.insert({characterData.key, Character::Instance(characterData.key, weaponData.key)}).first->second;
+	auto &character = Store::characters.insert({characterKey, Character::Instance(characterKey, characterData.key, weaponKey)}).first->second;
 	character.loadout.character.sheet.level = 90;
 	character.loadout.character.sheet.ascension = 6;
 	character.loadout.character.sheet.talents.burst.constant = 9;
 	character.loadout.character.sheet.talents.skill.constant = 9;
 	character.loadout.character.sheet.constellation = 0;
-	character.loadout.artifact.equipped = {1, 2, 3, 4, 5};
+	Artifact::InstanceKey artiKey1{1};
+	Artifact::InstanceKey artiKey2{2};
+	Artifact::InstanceKey artiKey3{3};
+	Artifact::InstanceKey artiKey4{4};
+	Artifact::InstanceKey artiKey5{5};
+	character.loadout.artifact.equipped = {artiKey1, artiKey2, artiKey3, artiKey4, artiKey5};
 
 	Store::artifacts.insert({
-		++Store::lastId,
+		{++Store::lastId},
 		Artifact::Instance{
-			.key = Store::lastId,
+			.key = {Store::lastId},
 			.set = artifactData.key,
 			.slot = Artifact::Slot::flower,
 			.mainStat = Stat::hp,
@@ -48,13 +55,13 @@ int main() {
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = characterData.key,
+			.equippedCharacter = characterKey,
 		},
 	});
 	Store::artifacts.insert({
-		++Store::lastId,
+		{++Store::lastId},
 		Artifact::Instance{
-			.key = Store::lastId,
+			.key = {Store::lastId},
 			.set = artifactData.key,
 			.slot = Artifact::Slot::plume,
 			.mainStat = Stat::atk,
@@ -66,13 +73,13 @@ int main() {
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = characterData.key,
+			.equippedCharacter = characterKey,
 		},
 	});
 	Store::artifacts.insert({
-		++Store::lastId,
+		{++Store::lastId},
 		Artifact::Instance{
-			.key = Store::lastId,
+			.key = {Store::lastId},
 			.set = artifactData.key,
 			.slot = Artifact::Slot::sands,
 			.mainStat = Stat::em,
@@ -84,13 +91,13 @@ int main() {
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = characterData.key,
+			.equippedCharacter = characterKey,
 		},
 	});
 	Store::artifacts.insert({
-		++Store::lastId,
+		{++Store::lastId},
 		Artifact::Instance{
-			.key = Store::lastId,
+			.key = {Store::lastId},
 			.set = artifactData.key,
 			.slot = Artifact::Slot::goblet,
 			.mainStat = Stat::electroDmg,
@@ -102,13 +109,13 @@ int main() {
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = characterData.key,
+			.equippedCharacter = characterKey,
 		},
 	});
 	Store::artifacts.insert({
-		++Store::lastId,
+		{++Store::lastId},
 		Artifact::Instance{
-			.key = Store::lastId,
+			.key = {Store::lastId},
 			.set = artifactData.key,
 			.slot = Artifact::Slot::circlet,
 			.mainStat = Stat::cd,
@@ -120,7 +127,7 @@ int main() {
 			},
 			.level = 20,
 			.rarity = Rarity::fiveStar,
-			.equippedCharacter = characterData.key,
+			.equippedCharacter = characterKey,
 		},
 	});
 

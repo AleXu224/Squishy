@@ -1,15 +1,9 @@
 #pragma once
 
-#include "artifact/instance.hpp"
 #include "functional"
 #include "node/node.hpp"
 #include "option/option.hpp"
 #include "stats/sheet.hpp"
-
-
-namespace Character {
-	struct Instance;
-}
 
 namespace Artifact {
 	struct Set {
