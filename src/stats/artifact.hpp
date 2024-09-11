@@ -13,15 +13,16 @@ namespace Stats {
 	struct Artifact {
 		// The 4 piece set equipped if it exists
 		std::optional<std::reference_wrapper<const ::Artifact::Set>> set{};
-		Option::ArtifactMap options{};
+		std::optional<std::reference_wrapper<Option::ArtifactMap>> currentOptions{};
+		std::unordered_map<::Artifact::SetKey, Option::ArtifactMap> options{};
 		ArtifactSheet sheet{};
 
 		struct Slotted {
-			::Artifact::InstanceKey flower;
-			::Artifact::InstanceKey plume;
-			::Artifact::InstanceKey sands;
-			::Artifact::InstanceKey goblet;
-			::Artifact::InstanceKey circlet;
+			std::optional<::Artifact::InstanceKey> flower;
+			std::optional<::Artifact::InstanceKey> plume;
+			std::optional<::Artifact::InstanceKey> sands;
+			std::optional<::Artifact::InstanceKey> goblet;
+			std::optional<::Artifact::InstanceKey> circlet;
 
 			[[nodiscard]] static inline auto getMembers() {
 				return std::array{

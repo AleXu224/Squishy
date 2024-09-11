@@ -1,7 +1,9 @@
 #pragma once
 
+#include "cereal/cereal.hpp"
 #include "cstdint"
 #include "functional"
+
 
 namespace Artifact {
 	struct InstanceKey {
@@ -10,12 +12,26 @@ namespace Artifact {
 		bool operator==(const InstanceKey &other) const {
 			return key == other.key;
 		}
+
+		template<class Archive>
+		void serialize(Archive &ar) {
+			ar(
+				CEREAL_NVP(key)
+			);
+		}
 	};
 	struct SetKey {
 		uint32_t key;
 
 		bool operator==(const SetKey &other) const {
 			return key == other.key;
+		}
+
+		template<class Archive>
+		void serialize(Archive &ar) {
+			ar(
+				CEREAL_NVP(key)
+			);
 		}
 	};
 }// namespace Artifact

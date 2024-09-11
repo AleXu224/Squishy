@@ -90,9 +90,10 @@ UI::ArtifactCard::operator squi::Child() const {
 							auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));
 
 							for (const auto &[transparent, substat]: std::views::zip(trueFalseInf, artifact.subStats)) {
+								if (!substat.has_value()) continue;
 								w.addChild(StatDisplay{
 									.isTransparent = transparent,
-									.stat = substat,
+									.stat = substat.value(),
 								});
 							}
 						},

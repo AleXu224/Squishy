@@ -77,10 +77,12 @@ struct Contents {
 						.onInit = [characterKey = characterKey](Widget &w) {
 							auto &character = Store::characters.at(characterKey);
 							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.loadout.character.base.element)}};
+							Team::Instance placeholderTeam{};
+							placeholderTeam.stats.characters.at(0) = std::ref(character);
 							Formula::Context ctx{
 								.source = character.loadout,
 								.target = character.loadout,
-								.team = Store::teams.at(0).stats,
+								.team = placeholderTeam.stats,
 								.enemy = Store::enemies.at(0).stats,
 							};
 
@@ -88,7 +90,6 @@ struct Contents {
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								// FIXME: add a placeholder team to calculate the damage of characters
 								auto val = character.loadout.character.sheet.postMods.fromStat(stat).get(ctx);
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,

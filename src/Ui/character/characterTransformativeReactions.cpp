@@ -6,7 +6,6 @@
 #include "Ui/utils/tooltip.hpp"
 #include "character/data.hpp"
 #include "reaction/transformative.hpp"
-#include "store.hpp"
 
 
 using namespace squi;
@@ -17,22 +16,12 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 	return UI::DisplayCard{
 		.widget = widget,
 		.title = "Transformative Reactions",
-		.children = [characterKey = characterKey]() -> Children {
+		.children = [&]() -> Children {
 			Children ret;
-			auto &character = Store::characters.at(characterKey);
+			const auto &loadout = ctx.target;
 			auto reactions = Reaction::List::Transformative::getMembers();
 
-			auto &team = Store::teams.at(0);
-			auto &enemy = Store::enemies.at(0);
-
-			auto ctx = Formula::Context{
-				.source = character.loadout,
-				.target = character.loadout,
-				.team = team.stats,
-				.enemy = enemy.stats,
-			};
-
-			std::vector elements{character.loadout.character.data.baseStats.element};
+			std::vector elements{loadout.character.data.baseStats.element};
 
 			bool transparent = true;
 			squi::utils::iterateTuple(reactions, [&](auto &&val) {

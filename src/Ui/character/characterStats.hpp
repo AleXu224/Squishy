@@ -1,6 +1,6 @@
 #pragma once
 
-#include "character/key.hpp"
+#include "formula/formulaContext.hpp"
 
 #include "widget.hpp"
 
@@ -8,7 +8,7 @@ namespace UI {
 	struct CharacterStats {
 		// Args
 		squi::Widget::Args widget{};
-		Character::InstanceKey characterKey{};
+		Formula::Context ctx;
 
 		struct Storage {
 			// Data

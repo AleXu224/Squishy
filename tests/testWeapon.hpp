@@ -3,7 +3,7 @@
 #include "weapon/setup.hpp"
 
 inline Weapon::Data testWeapon{
-	.key = 2,
+	.key{2},
 	.name = "Test Weapon",
 	.baseStats{
 		.type = WeaponType::polearm,

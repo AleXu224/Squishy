@@ -1,7 +1,9 @@
 #pragma once
 
+#include "cereal/cereal.hpp"
 #include "cstdint"
 #include "functional"
+
 
 namespace Weapon {
 	struct InstanceKey {
@@ -10,12 +12,26 @@ namespace Weapon {
 		bool operator==(const InstanceKey &other) const {
 			return key == other.key;
 		}
+
+		template<class Archive>
+		void serialize(Archive &ar) {
+			ar(
+				CEREAL_NVP(key)
+			);
+		}
 	};
 	struct DataKey {
 		uint32_t key;
 
 		bool operator==(const DataKey &other) const {
 			return key == other.key;
+		}
+
+		template<class Archive>
+		void serialize(Archive &ar) {
+			ar(
+				CEREAL_NVP(key)
+			);
 		}
 	};
 }// namespace Weapon

@@ -8,7 +8,7 @@ namespace UI {
 	struct TeamCard {
 		// Args
 		squi::Widget::Args widget{};
-		Team::Key teamKey{};
+		Team::InstanceKey teamKey{};
 
 		operator squi::Child() const;
 	};

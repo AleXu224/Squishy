@@ -13,18 +13,21 @@
 		Character::list = {{::testCharacter.key, ::testCharacter}};
 		Weapon::list = {{::testWeapon.key, ::testWeapon}};
 
-		Store::weapons.insert({::testWeapon.key, Weapon::Instance(::testWeapon.key)});
-		Store::characters.insert({::testCharacter.key, Character::Instance(::testCharacter.key, ::testWeapon.key)});
-		Store::teams.insert({0, Team::Instance{}});
+		Character::InstanceKey characterKey{0};
+		Weapon::InstanceKey weaponKey{0};
+
+		Store::weapons.insert({weaponKey, Weapon::Instance(::testWeapon.key, weaponKey)});
+		Store::characters.insert({characterKey, Character::Instance(characterKey, ::testCharacter.key, weaponKey)});
+		Store::teams.insert({{0}, Team::Instance{}});
 		Store::enemies.insert({0, Enemy::Instance{}});
 
 		return true;
 	}();
 
 	return Formula::Context{
-		.source = Store::characters.at(::testCharacter.key).loadout,
-		.target = Store::characters.at(::testCharacter.key).loadout,
-		.team = Store::teams.at(0).stats,
+		.source = Store::characters.at({0}).loadout,
+		.target = Store::characters.at({0}).loadout,
+		.team = Store::teams.at({0}).stats,
 		.enemy = Store::enemies.at(0).stats,
 	};
 }

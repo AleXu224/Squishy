@@ -3,7 +3,7 @@
 #include "character/setup.hpp"
 
 inline Character::Data testCharacter{
-	.key = 1,
+	.key{1},
 	.name{"Test Character"},
 	.baseStats{
 		.baseHp = 972.3864,

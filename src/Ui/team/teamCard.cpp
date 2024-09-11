@@ -39,7 +39,7 @@ struct TeamAvatar {
 
 struct TeamContents {
 	// Args
-	Team::Key teamKey;
+	Team::InstanceKey teamKey;
 
 	operator squi::Child() const {
 		auto &team = Store::teams.at(teamKey);

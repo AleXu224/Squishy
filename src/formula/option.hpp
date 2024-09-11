@@ -43,7 +43,7 @@ namespace Formula {
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
 					return &context.source.weapon.options;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return &context.source.artifact.options;
+					return &context.source.artifact.currentOptions->get();
 			}();
 			auto cond = ::Option::getFloat(*options, name, defaultValue);
 			return cond;

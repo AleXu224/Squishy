@@ -4,7 +4,8 @@
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
-#include "store.hpp"
+
+#include "stats/loadout.hpp"
 
 #include <numeric>
 
@@ -14,33 +15,25 @@ UI::CharacterStats::operator squi::Child() const {
 
 	return UI::DisplayCard{
 		.title = "Stats",
-		.children = [characterKey = characterKey]() {
-			auto &character = Store::characters.at(characterKey);
+		.children = [&]() {
+			const auto &loadout = ctx.source;
 			Children ret{};
-			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(character.loadout.character.base.element)}};
+			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(loadout.character.base.element)}};
 
 			Children ret2{};
-			auto &team = Store::teams.at(0);
-			auto &enemy = Store::enemies.at(0);
 
-			Formula::Context ctx{
-				.source = character.loadout,
-				.target = character.loadout,
-				.team = team.stats,
-				.enemy = enemy.stats,
-			};
 			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				ret2.emplace_back(UI::Tooltip{
 					.message = [&]() {
 						std::vector<std::string> a{};
-						auto &modifiersPre = character.loadout.character.sheet.preMods.fromStat(stat).modifiers;
-						auto &modifiersPost = character.loadout.character.sheet.postMods.fromStat(stat).modifiers;
+						const auto &modifiersPre = loadout.character.sheet.preMods.fromStat(stat).modifiers;
+						const auto &modifiersPost = loadout.character.sheet.postMods.fromStat(stat).modifiers;
 						auto printMod = [&](auto &&mod) {
 							if (!mod.hasValue()) return;
 							if (mod.eval(ctx) == 0.f) return;
 							a.emplace_back(mod.print(ctx));
 						};
-						for (auto &modifier: modifiersPre) {
+						for (const auto &modifier: modifiersPre) {
 							printMod(modifier);
 						}
 						printMod(modifiersPost.at(0));
@@ -58,7 +51,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = character.loadout.character.sheet.postMods.fromStat(stat).get(ctx),
+							.value = loadout.character.sheet.postMods.fromStat(stat).get(ctx),
 						},
 					},
 				});

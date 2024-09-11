@@ -33,7 +33,7 @@ struct DetailsSkill {
 	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxPreModifierIndex = 0;
 	size_t maxPostModifierIndex = 0;
-	std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> &options;
+	std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 
 	operator squi::Child() const {
 		return UI::DisplayCard{
@@ -146,7 +146,8 @@ struct DetailsSkill {
 					}
 				}
 
-				if (options.empty()) return ret;
+				if (!options.has_value()) return ret;
+				if (options->empty()) return ret;
 
 				ret.emplace_back(Box{
 					.widget{
@@ -160,7 +161,7 @@ struct DetailsSkill {
 						.children = [&]() {
 							Children ret{};
 
-							for (auto &option: options) {
+							for (const auto &option: options.value()) {
 								std::visit(
 									Utils::overloaded{
 										[&](Option::Boolean &opt) {
@@ -191,7 +192,7 @@ struct DetailsSkill {
 	}
 };
 
-inline void initializeList(Character::InstanceKey characterKey, Team::Key teamKey, Enemy::Key enemyKey, Widget &w) {
+inline void initializeList(Character::InstanceKey characterKey, Team::InstanceKey teamKey, Enemy::Key enemyKey, Widget &w) {
 	auto &character = Store::characters.at(characterKey);
 	auto &team = Store::teams.at(teamKey);
 	auto &enemy = Store::enemies.at(enemyKey);
@@ -202,9 +203,9 @@ inline void initializeList(Character::InstanceKey characterKey, Team::Key teamKe
 		.enemy = enemy.stats,
 	};
 
-	w.addChild(UI::CharacterStats{.characterKey = characterKey});
+	w.addChild(UI::CharacterStats{.ctx = ctx});
 	w.addChild(UI::CharacterOptions{.characterKey = characterKey});
-	w.addChild(UI::CharacterTransformativeReactions{.characterKey = characterKey});
+	w.addChild(UI::CharacterTransformativeReactions{.ctx = ctx});
 
 	std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 	for (auto &optPtr: Option::CharacterList::getMembers()) {
@@ -251,8 +252,9 @@ inline void initializeList(Character::InstanceKey characterKey, Team::Key teamKe
 		});
 	}
 
+	using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
 	auto makeOpts = [](std::unordered_map<uint32_t, Option::Types> &opts) {
-		std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
+		MakeOptsRet ret{};
 		for (auto &[key, value]: opts) {
 			ret.insert({key, std::ref(value)});
 		}
@@ -273,7 +275,12 @@ inline void initializeList(Character::InstanceKey characterKey, Team::Key teamKe
 	});
 
 	std::vector<Node::Types> artiNodesPlaceholder{};
-	auto artifactOpts = makeOpts(character.loadout.artifact.options);
+	std::optional<MakeOptsRet> artifactOpts = [&]() -> std::optional<MakeOptsRet> {
+		if (character.loadout.artifact.currentOptions.has_value())
+			return makeOpts(character.loadout.artifact.currentOptions->get());
+
+		return std::nullopt;
+	}();
 	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
 		.name = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().name : "Artifacts",
 		.characterKey = characterKey,

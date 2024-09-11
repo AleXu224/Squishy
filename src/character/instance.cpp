@@ -32,22 +32,27 @@ Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dat
 	Stats::setupTalents(character.data.mods.teamTalents, loadout.character.sheet.teamTalents, 0);
 
 	loadout.character.sheet.init(loadout);
+
+	for (const auto &[setKey, set]: Artifact::sets) {
+		auto &val = loadout.artifact.options.insert({setKey, {}}).first->second;
+		set.getOptions(val);
+	}
 }
 
 void Character::Instance::getArtifactStats() {
 	static std::unordered_map<Artifact::SetKey, uint8_t> occurences{};
-	loadout.artifact.options.clear();
-	// FIXME: also clear sheet
 	loadout.artifact.set = std::nullopt;
+	loadout.artifact.currentOptions = std::nullopt;
 
 	for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(2, 7))) {
 		auto artId = std::invoke(artPtr, loadout.artifact.equipped);
-		if (artId.key == 0) continue;
-		auto &artifact = Store::artifacts.at(artId);
+		if (!artId.has_value()) continue;
+		auto &artifact = Store::artifacts.at(artId.value());
 		occurences[artifact.set]++;
 		loadout.artifact.sheet.preMods.fromStat(artifact.mainStat).modifiers.at(index) = Formula::ArtifactMainStat(artifact.mainStat, artifact.level);
 		for (auto &subStat: artifact.subStats) {
-			loadout.artifact.sheet.preMods.fromStat(subStat.stat).modifiers.at(index) = Formula::ArtifactSubStat(subStat);
+			if (!subStat.has_value()) continue;
+			loadout.artifact.sheet.preMods.fromStat(subStat->stat).modifiers.at(index) = Formula::ArtifactSubStat(subStat.value());
 		}
 	}
 	for (auto &occurence: occurences) {
@@ -64,8 +69,8 @@ void Character::Instance::getArtifactStats() {
 			// The second check should not be be outside since a four set can only happen
 			// only if there is a two set
 			if (occurence.second >= 4) {
+				loadout.artifact.currentOptions = std::ref(loadout.artifact.options.at(occurence.first));
 				loadout.artifact.set = Artifact::sets.at(occurence.first);
-				artifactData.getOptions(loadout.artifact.options);
 				Stats::setupModifiers(artifactData.data.fourPcMods.preMod, loadout.artifact.sheet.preMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.postMod, loadout.artifact.sheet.postMods, 1);
 				Stats::setupModifiers(artifactData.data.fourPcMods.teamPreMod, loadout.artifact.sheet.teamPreMods, 1);

@@ -2,6 +2,7 @@
 
 #include "Rarity.hpp"
 #include "artifact/key.hpp"
+#include "artifact/slot.hpp"
 #include "character/key.hpp"
 #include "stats/stat.hpp"
 #include "utility"
@@ -9,27 +10,20 @@
 
 
 #include <array>
+#include <optional>
 
 namespace Artifact {
 	using Level = uint8_t;
 
-	enum class Slot {
-		flower,
-		plume,
-		sands,
-		goblet,
-		circlet,
-	};
-
 	struct Instance {
-		InstanceKey key;
-		SetKey set;
-		Slot slot;
-		Stat mainStat;
-		std::array<StatValue, 4> subStats;
-		Level level;
-		Rarity rarity;
-		Character::InstanceKey equippedCharacter;
+		InstanceKey key{};
+		SetKey set{};
+		Slot slot{};
+		Stat mainStat{};
+		std::array<std::optional<StatValue>, 4> subStats;
+		Level level{};
+		Rarity rarity{};
+		Character::InstanceKey equippedCharacter{};
 	};
 }// namespace Artifact
 

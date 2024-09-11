@@ -9,7 +9,7 @@ namespace UI {
 	struct TeamPage {
 		// Args
 		squi::Widget::Args widget{};
-		Team::Key teamKey{};
+		Team::InstanceKey teamKey{};
 		squi::Navigator::Controller controller;
 
 		struct Storage {

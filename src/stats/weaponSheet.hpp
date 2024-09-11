@@ -9,9 +9,9 @@ namespace Stats {
 	struct Loadout;
 	struct Weapon;
 	struct WeaponSheet {
-		unsigned short level{1};
+		uint8_t level{1};
 		uint8_t ascension{0};
-		unsigned short refinement{0};
+		uint8_t refinement{0};
 
 		[[nodiscard]] float getBaseAtk();
 		[[nodiscard]] float getSubstat();

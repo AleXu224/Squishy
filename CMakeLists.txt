@@ -15,7 +15,7 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" $<TARG
 add_custom_command(TARGET Assets PRE_BUILD
 COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" ${PROJECT_BINARY_DIR}/assets)
 
-file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
+file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h")
 
 add_library(squishy_lib ${all_files})
 target_compile_features(squishy_lib PUBLIC cxx_std_23)
@@ -38,11 +38,13 @@ target_link_libraries(squishy_lib PUBLIC fmt::fmt)
 add_subdirectory(glt)
 include_directories(glt/include)
 target_link_libraries(squishy_lib PUBLIC glt)
+find_package(cereal CONFIG REQUIRED)
+target_link_libraries(squishy_lib PRIVATE cereal::cereal)
 
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
 
-add_executable(squishyBench benchmark.cpp)
+add_executable(squishyBench EXCLUDE_FROM_ALL benchmark.cpp)
 target_link_libraries(squishyBench PRIVATE squishy_lib)
 
 target_link_libraries(squishyBench PRIVATE glt)
@@ -50,7 +52,7 @@ find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(squishyBench PRIVATE benchmark::benchmark benchmark::benchmark_main)
 
 file(GLOB_RECURSE all_test_files CONFIGURE_DEPENDS "tests/*.cc")
-add_executable(squishyTest ${all_test_files})
+add_executable(squishyTest EXCLUDE_FROM_ALL ${all_test_files})
 find_package(Catch2 CONFIG REQUIRED)
 target_link_libraries(squishyTest PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(squishyTest PRIVATE squishy_lib)

@@ -3,13 +3,13 @@
 #include "key.hpp"
 #include "observer.hpp"
 #include "stats/team.hpp"
-#include "string_view"
+#include "string"
 
 
 namespace Team {
 	struct Instance {
-		Team::Key key;
-		std::string_view name;
+		Team::InstanceKey instanceKey;
+		std::string name;
 		squi::VoidObservable updateEvent{};
 
 		Stats::Team stats{};
