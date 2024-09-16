@@ -38,7 +38,7 @@ struct ArtifactHeader {
 						.xAlign = 1.f,
 						.child = Image{
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
+							.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 						},
 					},
 					Align{

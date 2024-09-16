@@ -286,6 +286,7 @@ namespace Stats {
 			case Misc::AttackSource::burst:
 				return &T::burst;
 		}
+		std::unreachable();
 	}
 
 	template<SheetLike T>

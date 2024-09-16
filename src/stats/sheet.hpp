@@ -53,6 +53,7 @@ namespace Stats {
 					case Misc::Element::physical:
 						return self.physical;
 				}
+				std::unreachable();
 			}
 
 			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue:: *) {

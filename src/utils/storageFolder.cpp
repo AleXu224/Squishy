@@ -1,7 +1,7 @@
 #include "storageFolder.hpp"
 
 #ifdef _WIN32
-#include "ShlObj_core.h"
+#include "ShlObj.h"// IWYU pragma: keep
 #elif defined(__APPLE__)
 #error "Not implemented"
 #else

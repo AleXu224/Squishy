@@ -36,7 +36,7 @@ struct WeaponHeader {
 						.xAlign = 1.f,
 						.child = Image{
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Weapons/{}/icon_ascended.png", weapon.data.name)),
+							.image = ImageProvider::fromFile(std::format("assets/Weapons/{}/icon_ascended.png", weapon.data.name)),
 						},
 					},
 					Align{

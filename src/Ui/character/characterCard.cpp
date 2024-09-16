@@ -30,14 +30,14 @@ struct CharacterCardBanner {
 				Container{
 					.child = Image{
 						.fit = squi::Image::Fit::cover,
-						.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/banner.png", Character::list.at(character.dataKey).name)),
+						.image = ImageProvider::fromFile(std::format("assets/Characters/{}/banner.png", Character::list.at(character.dataKey).name)),
 					},
 				},
 				Row{
 					.children{
 						Image{
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", Character::list.at(character.dataKey).name)),
+							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", Character::list.at(character.dataKey).name)),
 						},
 						Column{
 							.widget{

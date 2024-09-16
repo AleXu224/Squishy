@@ -33,7 +33,8 @@ int main() {
 	Window window{};
 	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");
 	window.addChild(UI::homePage{});
-	window.run();
+
+	Window::run();
 
 	::Store::saveToFile(fileSavePath);
 }

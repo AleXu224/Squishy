@@ -36,6 +36,7 @@
 /.vscode/
 /build/
 /build-linux/
+/build-linux-gcc/
 /.cache/
 /.vs/
 /out/

@@ -49,7 +49,7 @@ UI::ValueListOption::operator squi::Child() const {
 							.content = [valueChangedEvent, &option, characterKey]() {
 								option.currentIndex = std::nullopt;
 								valueChangedEvent.notify(option.getValue());
-								Store::characters.at(characterKey).updateEvent.notify();
+								::Store::characters.at(characterKey).updateEvent.notify();
 							},
 						},
 						ContextMenu::Item{
@@ -64,7 +64,7 @@ UI::ValueListOption::operator squi::Child() const {
 							.content = [index, valueChangedEvent, &option, characterKey]() {
 								option.currentIndex = index;
 								valueChangedEvent.notify(option.getValue());
-								Store::characters.at(characterKey).updateEvent.notify();
+								::Store::characters.at(characterKey).updateEvent.notify();
 							},
 						});
 					}

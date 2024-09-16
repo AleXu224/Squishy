@@ -60,7 +60,11 @@ namespace Node {
 			auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier(source, element);
 			auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
-			return multiplier * dmgBonus * crit * enemy * amplifyingMultiplier;
+			return multiplier
+				 * dmgBonus
+				 * crit
+				 * enemy
+				 * amplifyingMultiplier;
 		}
 
 		using _FormulaRetType = decltype(_getFormula(

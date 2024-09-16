@@ -32,7 +32,7 @@ UI::TeamPage::operator squi::Child() const {
 								.height = 16.f,
 							},
 							.fit = squi::Image::Fit::contain,
-							.image = Image::Data::fromFileAsync(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name)),
+							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name)),
 						},
 						.content = CharacterDetails{
 							.characterKey = character->get().instanceKey,

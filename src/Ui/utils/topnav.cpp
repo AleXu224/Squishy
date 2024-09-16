@@ -114,13 +114,14 @@ UI::TopNav::operator squi::Child() const {
 							});
 						}
 					},
-					.onUpdate = [storage](Widget &) {
-						if (GestureDetector::isKeyPressedOrRepeat(GLFW_KEY_TAB, GLFW_MOD_CONTROL)) {
+					.onUpdate = [storage](Widget &w) {
+						auto &inputState = InputState::of(&w);
+						if (inputState.isKeyPressedOrRepeat(GLFW_KEY_TAB, GLFW_MOD_CONTROL)) {
 							if (storage->currentPage < storage->maxPage) {
 								storage->pageObserver.notifyOthers(storage->currentPage + 1);
 							}
 						}
-						if (GestureDetector::isKeyPressedOrRepeat(GLFW_KEY_TAB, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT)) {
+						if (inputState.isKeyPressedOrRepeat(GLFW_KEY_TAB, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT)) {
 							if (storage->currentPage > 0) {
 								storage->pageObserver.notifyOthers(storage->currentPage - 1);
 							}
