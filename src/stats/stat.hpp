@@ -11,7 +11,7 @@
 
 // An underscore after the stat name means %
 // Ex: hp_ -> HP%
-enum class Stat {
+enum class Stat : uint8_t {
 	hp,
 	hp_,
 	baseHp,

@@ -4,10 +4,12 @@
 #include "column.hpp"
 #include "gestureDetector.hpp"
 #include "observer.hpp"
+#include "ranges"
 #include "row.hpp"
 #include "stack.hpp"
 #include "text.hpp"
 #include <GLFW/glfw3.h>
+
 
 using namespace squi;
 

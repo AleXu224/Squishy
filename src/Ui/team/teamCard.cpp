@@ -42,7 +42,7 @@ struct TeamContents {
 	Team::InstanceKey teamKey;
 
 	operator squi::Child() const {
-		auto &team = Store::teams.at(teamKey);
+		auto &team = ::Store::teams.at(teamKey);
 
 		return Column{
 			.children{
@@ -74,7 +74,7 @@ UI::TeamCard::operator squi::Child() const {
 		.widget{
 			.padding = Padding{1.f},
 			.onInit = [teamKey = teamKey](Widget &w) {
-				w.customState.add(Store::teams.at(teamKey).updateEvent.observe([teamKey, &w]() {
+				w.customState.add(::Store::teams.at(teamKey).updateEvent.observe([teamKey, &w]() {
 					w.setChildren({TeamContents{.teamKey = teamKey}});
 				}));
 			},

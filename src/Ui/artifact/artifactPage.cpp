@@ -16,7 +16,7 @@ UI::ArtifactPage::operator squi::Child() const {
 					.height = Size::Shrink,
 					.padding = Padding{8.f},
 					.onInit = [](Widget &w) {
-						for (auto &[_, artifact]: Store::artifacts) {
+						for (auto &[_, artifact]: ::Store::artifacts) {
 							w.addChild(ArtifactCard{
 								.artifact = artifact,
 							});

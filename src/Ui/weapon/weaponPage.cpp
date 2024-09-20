@@ -17,7 +17,7 @@ UI::WeaponPage::operator squi::Child() const {
 					.height = Size::Shrink,
 					.padding = Padding{8.f},
 					.onInit = [](Widget &w) {
-						for (auto &[_, weapon]: Store::weapons) {
+						for (auto &[_, weapon]: ::Store::weapons) {
 							w.addChild(WeaponCard{
 								.weapon = weapon,
 							});

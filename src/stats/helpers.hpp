@@ -155,7 +155,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T:: *member) {
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T::*member) {
 		if (member == &T::hp_) return true;
 		if (member == &T::atk_) return true;
 		if (member == &T::def_) return true;
@@ -167,7 +167,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T>
-	[[nodiscard]] constexpr Stat getSheetMemberStat(typename T::_Value T:: *member) {
+	[[nodiscard]] constexpr Stat getSheetMemberStat(typename T::_Value T::*member) {
 		if (member == &T::hp) return Stat::hp;
 		if (member == &T::hp_) return Stat::hp_;
 		if (member == &T::baseHp) return Stat::baseHp;
@@ -198,7 +198,7 @@ namespace Stats {
 	}
 
 	template<EnemySheetLike T>
-	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T:: *member) {
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::_Value T::*member) {
 		if (member == &T::DEFReduction) return true;
 		if (member == &T::DEFIgnored) return true;
 		return false;
@@ -206,7 +206,7 @@ namespace Stats {
 
 	// Talents
 	template<TalentSheetLike T>
-	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::Type T:: *) {
+	[[nodiscard]] constexpr bool isSheetMemberPercentage(typename T::Type T::*) {
 		return false;
 	}
 
@@ -341,7 +341,7 @@ namespace Stats {
 		constexpr auto attackSources = getSheetAttackSourceMembers<T>();
 		constexpr auto reactions = getSheetReactionsMembers<T>();
 
-		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(elements, attackSources, reactions);
+		return squi::utils::mergeRanges<typename T::_SkillValue T::*>(elements, attackSources, reactions);
 	}
 
 	// Enemy
@@ -356,7 +356,7 @@ namespace Stats {
 	[[nodiscard]] consteval auto getSheetSkillsMembers() {
 		constexpr auto resistances = getEnemySheetResistances<T>();
 
-		return squi::utils::mergeRanges<typename T::_SkillValue T:: *>(resistances);
+		return squi::utils::mergeRanges<typename T::_SkillValue T::*>(resistances);
 	}
 
 	// Talents
@@ -368,8 +368,8 @@ namespace Stats {
 	// Containers
 	template<class T, class U>
 	struct SheetValueMember {
-		T::_Value T:: *stat{};
-		T U:: *location{};
+		T::_Value T::*stat{};
+		T U::*location{};
 
 		consteval auto makeFormula() const {
 			return Formula::StatPtr<T, U>(location, stat);
@@ -377,9 +377,9 @@ namespace Stats {
 	};
 	template<class T, class U>
 	struct SheetSkillMember {
-		T::_SkillValue T:: *skill{};
-		T::_Value T::_SkillValue:: *stat{};
-		T U:: *location{};
+		T::_SkillValue T::*skill{};
+		T::_Value T::_SkillValue::*stat{};
+		T U::*location{};
 
 		consteval auto makeFormula() const {
 			return Formula::SkillPtr<T, U>(location, skill, stat);
@@ -387,8 +387,8 @@ namespace Stats {
 	};
 	template<class T, class U>
 	struct SheetTalentMember {
-		T::Type T:: *talent{};
-		T U:: *location{};
+		T::Type T::*talent{};
+		T U::*location{};
 
 		consteval auto makeFormula() const {
 			return Formula::TalentPtr<T, U>(location, talent);
@@ -398,7 +398,7 @@ namespace Stats {
 	// All members
 	// Character
 	template<SheetLike T, class U>
-	[[nodiscard]] consteval inline auto getSheetAllMembers(T U:: *location) {
+	[[nodiscard]] consteval auto getSheetAllMembers(T U::*location) {
 		return std::tuple{
 			squi::utils::evalRange(std::views::transform(
 				getSheetValuesMembers<T>(),
@@ -423,7 +423,7 @@ namespace Stats {
 	}
 	// Enemy
 	template<EnemySheetLike T, class U>
-	[[nodiscard]] consteval inline auto getEnemySheetAllMembers(T U:: *location) {
+	[[nodiscard]] consteval auto getEnemySheetAllMembers(T U::*location) {
 		return std::tuple{
 			squi::utils::evalRange(std::views::transform(
 				getSheetValuesMembers<T>(),
@@ -448,7 +448,7 @@ namespace Stats {
 	}
 	// Talents
 	template<TalentSheetLike T, class U>
-	[[nodiscard]] consteval inline auto getTalentSheetAllMembers(T U:: *location) {
+	[[nodiscard]] consteval auto getTalentSheetAllMembers(T U::*location) {
 		return squi::utils::evalRange(std::views::transform(
 			T::getMembers(),
 			[location](auto &&val) {
@@ -468,7 +468,7 @@ namespace Stats {
 		return std::views::transform(
 			Stats::getSheetValuesMembers<TT>(),
 			[&sheet](auto &&val) {
-				return std::ref(std::invoke(val, sheet));
+				return std::ref(std::invoke(val, std::forward<T>(sheet)));
 			}
 		);
 	}
@@ -482,7 +482,7 @@ namespace Stats {
 				TT::_SkillValue::getMembers()
 			),
 			[&sheet](auto &&val) {
-				return std::ref(std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), sheet)));
+				return std::ref(std::invoke(std::get<1>(val), std::invoke(std::get<0>(val), std::forward<T>(sheet))));
 			}
 		);
 	}
@@ -493,7 +493,7 @@ namespace Stats {
 		return std::views::transform(
 			Stats::getSheetTalentsMembers<TT>(),
 			[&sheet](auto &&val) {
-				return std::ref(std::invoke(val, sheet));
+				return std::ref(std::invoke(val, std::forward<T>(sheet)));
 			}
 		);
 	}
@@ -501,14 +501,14 @@ namespace Stats {
 	template<class T, class U>
 	inline void setupModifiers(T &&newMods, U &&stats, size_t index) {
 		for (auto [stat, statCharacter]: std::views::zip(
-				 Stats::allSheetValuesView(newMods),
-				 Stats::allSheetValuesView(stats)
+				 Stats::allSheetValuesView(std::forward<T>(newMods)),
+				 Stats::allSheetValuesView(std::forward<U>(stats))
 			 )) {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}
 		for (auto [stat, statCharacter]: std::views::zip(
-				 Stats::allSheetSkillsView(newMods),
-				 Stats::allSheetSkillsView(stats)
+				 Stats::allSheetSkillsView(std::forward<T>(newMods)),
+				 Stats::allSheetSkillsView(std::forward<U>(stats))
 			 )) {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}
@@ -516,8 +516,8 @@ namespace Stats {
 	template<class T, class U>
 	inline void setupTalents(T &&newMods, U &&stats, size_t index) {
 		for (auto [stat, statCharacter]: std::views::zip(
-				 Stats::allSheetTalentsView(newMods),
-				 Stats::allSheetTalentsView(stats)
+				 Stats::allSheetTalentsView(std::forward<T>(newMods)),
+				 Stats::allSheetTalentsView(std::forward<U>(stats))
 			 )) {
 			statCharacter.get().modifiers.at(index) = stat.get();
 		}
@@ -526,7 +526,7 @@ namespace Stats {
 
 namespace Utils {
 	template<Stats::SheetLike T, class U>
-	constexpr std::string Stringify(typename T::_SkillValue T:: *skill, typename T::_Value U:: *stat) {
+	constexpr std::string Stringify(typename T::_SkillValue T::*skill, typename T::_Value U::*stat) {
 		std::string_view prefix = [&]() {
 			if (skill == &T::pyro) return "Pyro ";
 			if (skill == &T::hydro) return "Hydro ";
@@ -570,7 +570,7 @@ namespace Utils {
 		return std::string(prefix) + std::string(suffix);
 	}
 	template<Stats::EnemySheetLike T, class U>
-	constexpr std::string Stringify(typename T::_SkillValue T:: *skill, typename T::_Value U:: *stat) {
+	constexpr std::string Stringify(typename T::_SkillValue T::*skill, typename T::_Value U::*stat) {
 		std::string_view suffix = [&]() {
 			if (skill == &T::resistance) return "RES%";
 			std::unreachable();
@@ -591,7 +591,7 @@ namespace Utils {
 		return std::string(prefix) + std::string(suffix);
 	}
 	template<Stats::SheetLike T>
-	constexpr std::string Stringify(typename T::_Value T:: *stat) {
+	constexpr std::string Stringify(typename T::_Value T::*stat) {
 		if (stat == &T::hp) return "HP";
 		if (stat == &T::hp_) return "HP%";
 		if (stat == &T::baseHp) return "Base HP";
@@ -610,14 +610,14 @@ namespace Utils {
 		std::unreachable();
 	}
 	template<Stats::EnemySheetLike T>
-	constexpr std::string Stringify(typename T::_Value T:: *stat) {
+	constexpr std::string Stringify(typename T::_Value T::*stat) {
 		if (stat == &T::level) return "Level";
 		if (stat == &T::DEFReduction) return "DEF Reduction%";
 		if (stat == &T::DEFIgnored) return "DEF Ignored%";
 		std::unreachable();
 	}
 	template<Stats::TalentSheetLike T>
-	constexpr std::string Stringify(typename T::Type T:: *stat) {
+	constexpr std::string Stringify(typename T::Type T::*stat) {
 		if (stat == &T::normal) return "Normal Lvl";
 		if (stat == &T::skill) return "Skill Lvl";
 		if (stat == &T::burst) return "Burst Lvl";

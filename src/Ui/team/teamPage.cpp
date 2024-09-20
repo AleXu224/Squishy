@@ -21,7 +21,7 @@ UI::TeamPage::operator squi::Child() const {
 		},
 		.pages = [teamKey = teamKey]() {
 			std::vector<NavigationView::Page> pages{};
-			auto &team = Store::teams.at(teamKey);
+			auto &team = ::Store::teams.at(teamKey);
 			for (auto &character: team.stats.characters) {
 				if (character.has_value()) {
 					pages.emplace_back(NavigationView::Page{

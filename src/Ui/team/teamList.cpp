@@ -26,7 +26,7 @@ UI::TeamList::operator squi::Child() const {
 						.height = Size::Shrink,
 						.padding = Padding{8.f},
 						.onInit = [controller](Widget &w) {
-							for (auto &[teamKey, team]: Store::teams) {
+							for (auto &[teamKey, team]: ::Store::teams) {
 								w.addChild(GestureDetector{
 									.onClick = [controller, teamKey](GestureDetector::Event) {
 										controller.push(TeamPage{

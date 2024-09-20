@@ -21,7 +21,7 @@ struct CharacterCardBanner {
 	Character::InstanceKey characterKey;
 
 	operator squi::Child() const {
-		auto &character = Store::characters.at(characterKey);
+		auto &character = ::Store::characters.at(characterKey);
 		return Stack{
 			.widget{
 				.height = 64.f,
@@ -75,7 +75,7 @@ struct Contents {
 					.widget{
 						.padding = Padding{4.f},
 						.onInit = [characterKey = characterKey](Widget &w) {
-							auto &character = Store::characters.at(characterKey);
+							auto &character = ::Store::characters.at(characterKey);
 							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.loadout.character.base.element)}};
 							Team::Instance placeholderTeam{};
 							placeholderTeam.stats.characters.at(0) = std::ref(character);
@@ -83,7 +83,7 @@ struct Contents {
 								.source = character.loadout,
 								.target = character.loadout,
 								.team = placeholderTeam.stats,
-								.enemy = Store::enemies.at(0).stats,
+								.enemy = ::Store::enemies.at(0).stats,
 							};
 
 							for (const auto &[stat, transparent]: std::views::zip(
@@ -111,7 +111,7 @@ UI::CharacterCard::operator squi::Child() const {
 		.widget{
 			.padding = Padding{1.f},
 			.onInit = [characterKey = characterKey](Widget &w) {
-				w.customState.add(Store::characters.at(characterKey).updateEvent.observe([characterKey, &w]() {
+				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([characterKey, &w]() {
 					w.setChildren({Contents{.characterKey = characterKey}});
 				}));
 			},

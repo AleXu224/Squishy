@@ -1,11 +1,13 @@
 #include "valueListOption.hpp"
 
+#include "align.hpp"
 #include "button.hpp"
 #include "container.hpp"
 #include "contextMenu.hpp"
 #include "fontIcon.hpp"
 #include "row.hpp"
 #include "store.hpp"
+#include "text.hpp"
 #include "window.hpp"
 
 

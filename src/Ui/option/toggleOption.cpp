@@ -1,9 +1,11 @@
 #include "toggleOption.hpp"
+#include "align.hpp"
 #include "button.hpp"
 #include "fontIcon.hpp"
 #include "observer.hpp"
 #include "row.hpp"
 #include "store.hpp"
+#include "text.hpp"
 
 using namespace squi;
 
@@ -80,7 +82,7 @@ UI::ToggleOption::operator squi::Child() const {
 			storage->active = !storage->active;
 			option.active = storage->active;
 			switchEvent.notify(storage->active);
-			Store::characters.at(characterKey).updateEvent.notify();
+			::Store::characters.at(characterKey).updateEvent.notify();
 		},
 		.child = Row{
 			.alignment = squi::Row::Alignment::center,

@@ -22,7 +22,7 @@ namespace Formula {
 		const Stats::Enemy &enemy;
 		const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction{};
 
-		[[nodiscard]] inline Context withSource(const Stats::Loadout &newSource) const {
+		[[nodiscard]] Context withSource(const Stats::Loadout &newSource) const {
 			return {
 				.source = newSource,
 				.target = target,

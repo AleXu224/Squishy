@@ -86,7 +86,7 @@ UI::WeaponCard::operator squi::Child() const {
 					.widget{
 						.padding = Padding{4.f},
 						.onInit = [instanceKey = weapon.instanceKey](Widget &w) {
-							auto &weapon = Store::weapons.at(instanceKey);
+							auto &weapon = ::Store::weapons.at(instanceKey);
 							w.addChild(StatDisplay{
 								.isTransparent = false,
 								.stat{

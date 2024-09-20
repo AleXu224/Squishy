@@ -1,14 +1,20 @@
 #include "artifactCard.hpp"
+
+#include "Ui/artifact/artifactEditor.hpp"
 #include "Ui/rarityToColor.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "align.hpp"
 #include "artifact/sets.hpp"
 #include "box.hpp"
+#include "button.hpp"
 #include "column.hpp"
+#include "gestureDetector.hpp"
 #include "image.hpp"
+#include "row.hpp"
 #include "stack.hpp"
 #include "text.hpp"
+#include "window.hpp"
 
 
 using namespace squi;
@@ -96,6 +102,23 @@ UI::ArtifactCard::operator squi::Child() const {
 									.stat = substat.value(),
 								});
 							}
+						},
+					},
+				},
+				Row{
+					.widget{
+						.height = Size::Shrink,
+						.padding = 4.f,
+					},
+					.children{
+						Button{
+							.text = "Edit",
+							.style = ButtonStyle::Standard(),
+							.onClick = [artifact = artifact](GestureDetector::Event event) {
+								Window::of(&event.widget).addOverlay(ArtifactEditor{
+									.artifact = artifact,
+								});
+							},
 						},
 					},
 				},

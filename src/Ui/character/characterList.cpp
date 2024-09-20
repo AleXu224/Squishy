@@ -25,7 +25,7 @@ UI::CharacterList::operator squi::Child() const {
 						.height = Size::Shrink,
 						.padding = Padding{8.f},
 						.onInit = [controller](Widget &w) {
-							for (auto &[_, character]: Store::characters) {
+							for (auto &[_, character]: ::Store::characters) {
 								w.addChild(GestureDetector{
 									.onClick = [controller, characterKey = character.instanceKey](GestureDetector::Event) {
 										controller.push(CharacterPage{

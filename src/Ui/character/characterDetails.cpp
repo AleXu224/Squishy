@@ -192,106 +192,108 @@ struct DetailsSkill {
 	}
 };
 
-inline void initializeList(Character::InstanceKey characterKey, Team::InstanceKey teamKey, Enemy::Key enemyKey, Widget &w) {
-	auto &character = Store::characters.at(characterKey);
-	auto &team = Store::teams.at(teamKey);
-	auto &enemy = Store::enemies.at(enemyKey);
-	Formula::Context ctx{
-		.source = character.loadout,
-		.target = character.loadout,
-		.team = team.stats,
-		.enemy = enemy.stats,
-	};
+namespace {
+	void initializeList(Character::InstanceKey characterKey, Team::InstanceKey teamKey, Enemy::Key enemyKey, Widget &w) {
+		auto &character = ::Store::characters.at(characterKey);
+		auto &team = ::Store::teams.at(teamKey);
+		auto &enemy = ::Store::enemies.at(enemyKey);
+		Formula::Context ctx{
+			.source = character.loadout,
+			.target = character.loadout,
+			.team = team.stats,
+			.enemy = enemy.stats,
+		};
 
-	w.addChild(UI::CharacterStats{.ctx = ctx});
-	w.addChild(UI::CharacterOptions{.characterKey = characterKey});
-	w.addChild(UI::CharacterTransformativeReactions{.ctx = ctx});
+		w.addChild(UI::CharacterStats{.ctx = ctx});
+		w.addChild(UI::CharacterOptions{.characterKey = characterKey});
+		w.addChild(UI::CharacterTransformativeReactions{.ctx = ctx});
 
-	std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
-	for (auto &optPtr: Option::CharacterList::getMembers()) {
-		const auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
-		std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
-		for (const auto &opt: optList) {
-			std::visit(
-				[&](auto &&optVisited) {
-					ret.insert({optVisited.key.hash, std::ref(character.loadout.character.options.at(optVisited.key.hash))});
-				},
-				opt
-			);
+		std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
+		for (auto &optPtr: Option::CharacterList::getMembers()) {
+			const auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
+			std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
+			for (const auto &opt: optList) {
+				std::visit(
+					[&](auto &&optVisited) {
+						ret.insert({optVisited.key.hash, std::ref(character.loadout.character.options.at(optVisited.key.hash))});
+					},
+					opt
+				);
+			}
+			characterOpts.emplace_back(ret);
 		}
-		characterOpts.emplace_back(ret);
-	}
-	std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
-	for (auto &nodePtr: Node::CharacterList::getMembers()) {
-		nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
-	}
-	const std::vector<std::string_view> names = {
-		"Normal attack",
-		"Charged attack",
-		"Plunge attack",
-		"Elemental skill",
-		"Elemental burst",
-		"Passive 1",
-		"Passive 2",
-		"Constellation 1",
-		"Constellation 2",
-		"Constellation 4",
-		"Constellation 6",
-	};
+		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
+		for (auto &nodePtr: Node::CharacterList::getMembers()) {
+			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
+		}
+		const std::vector<std::string_view> names = {
+			"Normal attack",
+			"Charged attack",
+			"Plunge attack",
+			"Elemental skill",
+			"Elemental burst",
+			"Passive 1",
+			"Passive 2",
+			"Constellation 1",
+			"Constellation 2",
+			"Constellation 4",
+			"Constellation 6",
+		};
 
-	for (const auto &[nodeWrapper, options, name]: std::views::zip(nodes, characterOpts, names)) {
-		const auto &nodes = nodeWrapper.get();
-		if (nodes.empty() && options.empty()) continue;
+		for (const auto &[nodeWrapper, options, name]: std::views::zip(nodes, characterOpts, names)) {
+			const auto &nodes = nodeWrapper.get();
+			if (nodes.empty() && options.empty()) continue;
 
-		w.addChild(DetailsSkill{
-			.name = name,
+			w.addChild(DetailsSkill{
+				.name = name,
+				.characterKey = characterKey,
+				.ctx = ctx,
+				.nodes = nodes,
+				.options = options,
+			});
+		}
+
+		using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
+		auto makeOpts = [](std::unordered_map<uint32_t, Option::Types> &opts) {
+			MakeOptsRet ret{};
+			for (auto &[key, value]: opts) {
+				ret.insert({key, std::ref(value)});
+			}
+			return ret;
+		};
+
+		auto weaponOpts = makeOpts(character.loadout.weapon.options);
+
+		w.addChild(DetailsSkill<Stats::WeaponSheet>{
+			.name = character.loadout.weapon.data.name,
 			.characterKey = characterKey,
 			.ctx = ctx,
-			.nodes = nodes,
-			.options = options,
+			.nodes = character.loadout.weapon.data.data.nodes,
+			.sheet = std::ref(character.loadout.weapon.sheet),
+			.maxPreModifierIndex = 2,
+			.maxPostModifierIndex = 1,
+			.options = weaponOpts,
+		});
+
+		std::vector<Node::Types> artiNodesPlaceholder{};
+		std::optional<MakeOptsRet> artifactOpts = [&]() -> std::optional<MakeOptsRet> {
+			if (character.loadout.artifact.currentOptions.has_value())
+				return makeOpts(character.loadout.artifact.currentOptions->get());
+
+			return std::nullopt;
+		}();
+		w.addChild(DetailsSkill<Stats::ArtifactSheet>{
+			.name = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().name : "Artifacts",
+			.characterKey = characterKey,
+			.ctx = ctx,
+			.nodes = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().data.nodes : artiNodesPlaceholder,
+			.sheet = std::ref(character.loadout.artifact.sheet),
+			.maxPreModifierIndex = 2,
+			.maxPostModifierIndex = 2,
+			.options = artifactOpts,
 		});
 	}
-
-	using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
-	auto makeOpts = [](std::unordered_map<uint32_t, Option::Types> &opts) {
-		MakeOptsRet ret{};
-		for (auto &[key, value]: opts) {
-			ret.insert({key, std::ref(value)});
-		}
-		return ret;
-	};
-
-	auto weaponOpts = makeOpts(character.loadout.weapon.options);
-
-	w.addChild(DetailsSkill<Stats::WeaponSheet>{
-		.name = character.loadout.weapon.data.name,
-		.characterKey = characterKey,
-		.ctx = ctx,
-		.nodes = character.loadout.weapon.data.data.nodes,
-		.sheet = std::ref(character.loadout.weapon.sheet),
-		.maxPreModifierIndex = 2,
-		.maxPostModifierIndex = 1,
-		.options = weaponOpts,
-	});
-
-	std::vector<Node::Types> artiNodesPlaceholder{};
-	std::optional<MakeOptsRet> artifactOpts = [&]() -> std::optional<MakeOptsRet> {
-		if (character.loadout.artifact.currentOptions.has_value())
-			return makeOpts(character.loadout.artifact.currentOptions->get());
-
-		return std::nullopt;
-	}();
-	w.addChild(DetailsSkill<Stats::ArtifactSheet>{
-		.name = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().name : "Artifacts",
-		.characterKey = characterKey,
-		.ctx = ctx,
-		.nodes = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().data.nodes : artiNodesPlaceholder,
-		.sheet = std::ref(character.loadout.artifact.sheet),
-		.maxPreModifierIndex = 2,
-		.maxPostModifierIndex = 2,
-		.options = artifactOpts,
-	});
-}
+}// namespace
 
 UI::CharacterDetails::operator squi::Child() const {
 	return ScrollableFrame{
@@ -301,7 +303,7 @@ UI::CharacterDetails::operator squi::Child() const {
 					.height = Size::Shrink,
 					.padding = Padding{8.f},
 					.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
-						w.customState.add(Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
+						w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
 							if (auto w = wPtr.lock()) {
 								w->setChildren({});
 								initializeList(characterKey, teamKey, enemyKey, *w);
