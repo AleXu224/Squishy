@@ -8,7 +8,6 @@
 #include "row.hpp"
 #include "store.hpp"
 #include "text.hpp"
-#include "window.hpp"
 
 
 #include "vector"
@@ -19,6 +18,56 @@ UI::ValueListOption::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 	CountObserver readyEvent(2);
 	Observable<std::optional<uint32_t>> valueChangedEvent{};
+
+	auto buttonText = Text{
+		.widget{
+			.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
+				w.customState.add(valueChangedEvent.observe([&w, &option](std::optional<uint32_t> newValue) {
+					auto &text = w.as<Text::Impl>();
+					if (newValue.has_value()) {
+						text.setText(std::format("{}: {}", option.prefix, newValue.value()));
+						text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
+					} else {
+						text.setText(std::format("{}: Not Active", option.prefix));
+						text.setColor(Color{1.f, 1.f, 1.f, 0.9f});
+					}
+				}));
+				readyEvent.notify();
+			},
+		},
+		.text = "placeholder",
+		.lineWrap = true,
+	};
+	
+	auto buttonCaret = FontIcon{
+		.textWidget{
+			.onInit = [readyEvent, valueChangedEvent](Widget &w) {
+				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newValue) {
+					auto &text = w.as<Text::Impl>();
+					if (newValue.has_value()) {
+						text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
+					} else {
+						text.setColor(Color{1.f, 1.f, 1.f, 0.9f});
+					}
+				}));
+				readyEvent.notify();
+			},
+		},
+		.icon = 0xE972,
+	};
+
+	auto buttonContent = Row{
+		.alignment = squi::Row::Alignment::center,
+		.children{
+			Container{
+				.child = Align{
+					.xAlign = 0.f,
+					.child = buttonText,
+				},
+			},
+			buttonCaret,
+		},
+	};
 
 	return Button{
 		.widget{
@@ -40,9 +89,9 @@ UI::ValueListOption::operator squi::Child() const {
 				}));
 			},
 		},
-		.style = ButtonStyle::Standard(),
+		.style = option.getValue().has_value() ? ButtonStyle::Accent() : ButtonStyle::Standard(),
 		.onClick = [valueChangedEvent, &option = option, characterKey = characterKey](GestureDetector::Event event) {
-			Window::of(&event.widget).addOverlay(ContextMenu{
+			event.widget.addOverlay(ContextMenu{
 				.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
 				.items = [&]() {
 					std::vector<ContextMenu::Item> ret{
@@ -75,50 +124,6 @@ UI::ValueListOption::operator squi::Child() const {
 				}(),
 			});
 		},
-		.child = Row{
-			.alignment = squi::Row::Alignment::center,
-			.children{
-				Container{
-					.child = Align{
-						.xAlign = 0.f,
-						.child = Text{
-							.widget{
-								.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
-									w.customState.add(valueChangedEvent.observe([&w, &option](std::optional<uint32_t> newValue) {
-										auto &text = w.as<Text::Impl>();
-										if (newValue.has_value()) {
-											text.setText(std::format("{}: {}", option.prefix, newValue.value()));
-											text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
-										} else {
-											text.setText(std::format("{}: Not Active", option.prefix));
-											text.setColor(Color{1.f, 1.f, 1.f, 0.9f});
-										}
-									}));
-									readyEvent.notify();
-								},
-							},
-							.text = "placeholder",
-							.lineWrap = true,
-						},
-					},
-				},
-				FontIcon{
-					.textWidget{
-						.onInit = [readyEvent, valueChangedEvent](Widget &w) {
-							w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newValue) {
-								auto &text = w.as<Text::Impl>();
-								if (newValue.has_value()) {
-									text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
-								} else {
-									text.setColor(Color{1.f, 1.f, 1.f, 0.9f});
-								}
-							}));
-							readyEvent.notify();
-						},
-					},
-					.icon = 0xE972,
-				},
-			},
-		},
+		.child = buttonContent,
 	};
 }

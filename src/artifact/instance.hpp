@@ -4,6 +4,7 @@
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "character/key.hpp"
+#include "observer.hpp"
 #include "stats/stat.hpp"
 #include "utility"
 #include "utils/stringify.hpp"// IWYU pragma: keep
@@ -24,6 +25,8 @@ namespace Artifact {
 		Level level{};
 		Rarity rarity{};
 		Character::InstanceKey equippedCharacter{};
+
+		squi::VoidObservable updateEvent{};
 	};
 }// namespace Artifact
 

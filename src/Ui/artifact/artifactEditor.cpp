@@ -12,6 +12,7 @@
 #include "observer.hpp"
 #include "row.hpp"
 #include "stack.hpp"
+#include "teachingTip.hpp"
 #include "text.hpp"
 
 using namespace squi;
@@ -125,21 +126,23 @@ UI::ArtifactEditor::operator squi::Child() const {
 		}
 		return ret;
 	};
+	Child setButton = DropdownButton{
+		.widget{
+			.onInit = [setChangeEvent, setTextUpdater, setItemsProvider, storage](Widget &w) {
+				w.customState.add(setChangeEvent.observe([setTextUpdater, setItemsProvider, storage](const Artifact::Set &set) {
+					storage->artifact.set = set.key;
+					setTextUpdater.notify(std::string{set.name});
+				}));
+			},
+		},
+		.style = ButtonStyle::Standard(),
+		.text = storage->artifact.set.key != 0 ? Artifact::sets.at(storage->artifact.set).name : "No set",
+		.items = setItemsProvider(),
+		.textUpdater = setTextUpdater,
+	};
 	Child setSelector = ArtifactEditorItem{
 		.name = "Set",
-		.child = DropdownButton{
-			.widget{
-				.onInit = [setChangeEvent, setTextUpdater, setItemsProvider](Widget &w) {
-					w.customState.add(setChangeEvent.observe([setTextUpdater, setItemsProvider](const Artifact::Set &set) {
-						setTextUpdater.notify(std::string{set.name});
-					}));
-				},
-			},
-			.style = ButtonStyle::Standard(),
-			.text = storage->artifact.set.key != 0 ? Artifact::sets.at(storage->artifact.set).name : "No set",
-			.items = setItemsProvider(),
-			.textUpdater = setTextUpdater,
-		},
+		.child = setButton,
 	};
 
 	// Slot
@@ -148,14 +151,16 @@ UI::ArtifactEditor::operator squi::Child() const {
 		.name = "Slot",
 		.child = DropdownButton{
 			.widget{
-				.onInit = [slotChangeEvent, slotTextUpdater](Widget &w) {
-					w.customState.add(slotChangeEvent.observe([slotTextUpdater](Artifact::Slot newSlot) {
+				.onInit = [slotChangeEvent, slotTextUpdater, storage](Widget &w) {
+					w.customState.add(slotChangeEvent.observe([slotTextUpdater, storage](Artifact::Slot newSlot) {
+						storage->artifact.slot = newSlot;
 						slotTextUpdater.notify(Utils::Stringify(newSlot));
 					}));
 				},
 			},
 			.style = ButtonStyle::Standard(),
 			.text = Utils::Stringify(storage->artifact.slot),
+			.disabled = (storage->artifact.equippedCharacter.key != 0),
 			.items = [&]() {
 				std::vector<ContextMenu::Item> ret{};
 				ret.reserve(Artifact::slots.size());
@@ -367,9 +372,17 @@ UI::ArtifactEditor::operator squi::Child() const {
 					.widget{.width = Size::Expand},
 					.text = "Save",
 					.style = ButtonStyle::Accent(),
-					.onClick = [closeEvent](GestureDetector::Event) {
+					.onClick = [closeEvent, onSubmit = onSubmit, setButton = std::weak_ptr(setButton), storage](GestureDetector::Event event) {
 						// FIXME: return the new artifact
+						if (storage->artifact.set.key == 0) {
+							event.widget.addOverlay(TeachingTip{
+								.target = setButton,
+								.message = "You must specify a set",
+							});
+							return;
+						}
 						closeEvent.notify();
+						if (onSubmit) onSubmit(storage->artifact);
 					},
 				},
 				Button{

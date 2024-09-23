@@ -171,7 +171,7 @@ void Store::load(const Serialization::Save::Save &save) {
 	::Store::teams.clear();
 	::Store::enemies.clear();
 
-	uint32_t maxArtifactKey = 0;
+	uint32_t maxArtifactKey = 1;
 	for (const auto &artifact: save.artifacts) {
 		maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
 		::Store::artifacts.insert({
@@ -199,7 +199,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		});
 	}
 
-	uint32_t maxWeaponKey = 0;
+	uint32_t maxWeaponKey = 1;
 	for (const auto &weapon: save.weapons) {
 		maxWeaponKey = std::max(maxWeaponKey, weapon.instanceKey.key);
 		auto &wepInstance = ::Store::weapons.insert({weapon.instanceKey, ::Weapon::Instance(weapon.dataKey, weapon.instanceKey)}).first->second;
@@ -209,7 +209,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		deserializeOptions(weapon.options, wepInstance.stats.options);
 	}
 
-	uint32_t maxCharacterKey = 0;
+	uint32_t maxCharacterKey = 1;
 	for (const auto &character: save.characters) {
 		maxCharacterKey = std::max(maxCharacterKey, character.instanceKey.key);
 		auto &charInstance = ::Store::characters.insert({character.instanceKey, ::Character::Instance(character.instanceKey, character.dataKey, character.weaponInstanceKey)}).first->second;
@@ -232,7 +232,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		charInstance.getArtifactStats();
 	}
 
-	uint32_t maxTeamKey = 0;
+	uint32_t maxTeamKey = 1;
 	for (const auto &team: save.teams) {
 		maxTeamKey = std::max(maxTeamKey, team.instanceKey.key);
 		auto &teamInstance = ::Store::teams.insert({team.instanceKey, ::Team::Instance{.instanceKey = team.instanceKey, .name = team.name}}).first->second;

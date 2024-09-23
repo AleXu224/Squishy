@@ -20,10 +20,10 @@ namespace Store {
 	inline std::unordered_map<Weapon::InstanceKey, Weapon::Instance> weapons{};
 	inline std::unordered_map<Artifact::InstanceKey, Artifact::Instance> artifacts{};
 
-	inline uint32_t lastArtifactId = 0;
-	inline uint32_t lastWeaponId = 0;
-	inline uint32_t lastCharacterId = 0;
-	inline uint32_t lastTeamId = 0;
+	inline uint32_t lastArtifactId = 1;
+	inline uint32_t lastWeaponId = 1;
+	inline uint32_t lastCharacterId = 1;
+	inline uint32_t lastTeamId = 1;
 
 	[[nodiscard]] extern auto serializeOptions(auto &&options);
 
