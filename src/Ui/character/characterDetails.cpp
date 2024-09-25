@@ -67,75 +67,120 @@ struct DetailsSkill {
 					Children ret3{};
 
 					bool transparent = true;
-					for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
-							 Stats::getSheetValuesMembers<decltype(T::preMods)>(),
-							 Stats::getSheetValuesMembers<decltype(T::postMods)>(),
-							 Stats::getSheetValuesMembers<decltype(T::teamPreMods)>(),
-							 Stats::getSheetValuesMembers<decltype(T::teamPostMods)>()
-						 )) {
-						auto &statPre = std::invoke(prePtr, sheet.value().get().preMods);
-						auto &statPost = std::invoke(postPtr, sheet.value().get().postMods);
-						auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMods);
-						auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMods);
-						auto &modifiersPre = statPre.modifiers;
-						auto &modifiersPost = statPost.modifiers;
-						auto &modifiersTeamPre = statTeamPre.modifiers;
-						auto &modifiersTeamPost = statTeamPost.modifiers;
+					if constexpr (std::is_same_v<std::remove_cvref_t<T>, Stats::ModsSheet>) {
+						for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
+								 Stats::getSheetValuesMembers<decltype(T::preMod)>(),
+								 Stats::getSheetValuesMembers<decltype(T::postMod)>(),
+								 Stats::getSheetValuesMembers<decltype(T::teamPreMod)>(),
+								 Stats::getSheetValuesMembers<decltype(T::teamPostMod)>()
+							 )) {
+							auto &statPre = std::invoke(prePtr, sheet.value().get().preMod);
+							auto &statPost = std::invoke(postPtr, sheet.value().get().postMod);
+							auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMod);
+							auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMod);
 
-						std::vector<std::string> a{};
-						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(ctx));
+							std::vector<std::string> a{};
+							if (statPre.hasValue() && statPre.eval(ctx) != 0.f) a.emplace_back(statPre.print(ctx));
+							if (statPost.hasValue() && statPost.eval(ctx) != 0.f) a.emplace_back(statPost.print(ctx));
+							if (statTeamPre.hasValue() && statTeamPre.eval(ctx) != 0.f) a.emplace_back(statTeamPre.print(ctx));
+							if (statTeamPost.hasValue() && statTeamPost.eval(ctx) != 0.f) a.emplace_back(statTeamPost.print(ctx));
+							auto message = std::accumulate(
+								a.begin(), a.end(),
+								std::string(),
+								[&](const std::string &val1, const std::string &val2) {
+									return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
+								}
+							);
+
+							float totalValue = 0.f;
+							if (statPre.hasValue()) totalValue += statPre.eval(ctx);
+							if (statPost.hasValue()) totalValue += statPost.eval(ctx);
+							if (statTeamPre.hasValue()) totalValue += statTeamPre.eval(ctx);
+							if (statTeamPost.hasValue()) totalValue += statTeamPost.eval(ctx);
+
+							if (totalValue == 0.f) continue;
+							ret3.emplace_back(UI::Tooltip{
+								.message = message,
+								.child = UI::SkillEntry{
+									.isTransparent = transparent = !transparent,
+									.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
+									.value = totalValue,
+									.color = Color(0xFFFFFFFF),
+									.isPercentage = Stats::isSheetMemberPercentage(prePtr),
+								},
+							});
 						}
-						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(ctx));
-						}
-						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(ctx));
-						}
-						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							a.emplace_back(modifier.print(ctx));
-						}
-						auto message = std::accumulate(
-							a.begin(), a.end(),
-							std::string(),
-							[&](const std::string &val1, const std::string &val2) {
-								return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
+					} else {
+						for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
+								 Stats::getSheetValuesMembers<decltype(T::preMods)>(),
+								 Stats::getSheetValuesMembers<decltype(T::postMods)>(),
+								 Stats::getSheetValuesMembers<decltype(T::teamPreMods)>(),
+								 Stats::getSheetValuesMembers<decltype(T::teamPostMods)>()
+							 )) {
+							auto &statPre = std::invoke(prePtr, sheet.value().get().preMods);
+							auto &statPost = std::invoke(postPtr, sheet.value().get().postMods);
+							auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMods);
+							auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMods);
+							auto &modifiersPre = statPre.modifiers;
+							auto &modifiersPost = statPost.modifiers;
+							auto &modifiersTeamPre = statTeamPre.modifiers;
+							auto &modifiersTeamPost = statTeamPost.modifiers;
+
+							std::vector<std::string> a{};
+							for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								a.emplace_back(modifier.print(ctx));
 							}
-						);
+							for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								a.emplace_back(modifier.print(ctx));
+							}
+							for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								a.emplace_back(modifier.print(ctx));
+							}
+							for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								a.emplace_back(modifier.print(ctx));
+							}
+							auto message = std::accumulate(
+								a.begin(), a.end(),
+								std::string(),
+								[&](const std::string &val1, const std::string &val2) {
+									return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
+								}
+							);
 
-						float totalValue = 0.f;
-						for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(ctx);
-						}
-						for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(ctx);
-						}
-						for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(ctx);
-						}
-						for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
-							if (!modifier.hasValue()) continue;
-							totalValue += modifier.eval(ctx);
-						}
+							float totalValue = 0.f;
+							for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								totalValue += modifier.eval(ctx);
+							}
+							for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								totalValue += modifier.eval(ctx);
+							}
+							for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								totalValue += modifier.eval(ctx);
+							}
+							for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
+								if (!modifier.hasValue()) continue;
+								totalValue += modifier.eval(ctx);
+							}
 
-						if (totalValue == 0.f) continue;
-						ret3.emplace_back(UI::Tooltip{
-							.message = message,
-							.child = UI::SkillEntry{
-								.isTransparent = transparent = !transparent,
-								.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
-								.value = totalValue,
-								.color = Color(0xFFFFFFFF),
-								.isPercentage = Stats::isSheetMemberPercentage(prePtr),
-							},
-						});
+							if (totalValue == 0.f) continue;
+							ret3.emplace_back(UI::Tooltip{
+								.message = message,
+								.child = UI::SkillEntry{
+									.isTransparent = transparent = !transparent,
+									.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
+									.value = totalValue,
+									.color = Color(0xFFFFFFFF),
+									.isPercentage = Stats::isSheetMemberPercentage(prePtr),
+								},
+							});
+						}
 					}
 
 					if (!ret3.empty()) {
@@ -275,23 +320,53 @@ namespace {
 			.options = weaponOpts,
 		});
 
-		std::vector<Node::Types> artiNodesPlaceholder{};
-		std::optional<MakeOptsRet> artifactOpts = [&]() -> std::optional<MakeOptsRet> {
-			if (character.loadout.artifact.currentOptions.has_value())
-				return makeOpts(character.loadout.artifact.currentOptions->get());
+		auto makeArtifactOpts = [](const Option::ArtifactList &opts, Option::ArtifactMap &map) {
+			MakeOptsRet ret{};
+			for (const auto &opt: opts) {
+				std::visit([&](auto &&val) {
+					ret.insert({val.key, map.at(val.key)});
+				},
+						   opt);
+			}
+			return ret;
+		};
+
+		std::optional<MakeOptsRet> artifactOpts1 = [&]() -> std::optional<MakeOptsRet> {
+			if (character.loadout.artifact.bonus1.has_value())
+				return makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.artifact.options);
 
 			return std::nullopt;
 		}();
-		w.addChild(DetailsSkill<Stats::ArtifactSheet>{
-			.name = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().name : "Artifacts",
-			.characterKey = characterKey,
-			.ctx = ctx,
-			.nodes = character.loadout.artifact.set.has_value() ? character.loadout.artifact.set->get().data.nodes : artiNodesPlaceholder,
-			.sheet = std::ref(character.loadout.artifact.sheet),
-			.maxPreModifierIndex = 2,
-			.maxPostModifierIndex = 2,
-			.options = artifactOpts,
-		});
+		std::optional<MakeOptsRet> artifactOpts2 = [&]() -> std::optional<MakeOptsRet> {
+			if (character.loadout.artifact.bonus2.has_value())
+				return makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.artifact.options);
+
+			return std::nullopt;
+		}();
+		if (character.loadout.artifact.bonus1.has_value()) {
+			w.addChild(DetailsSkill<const Stats::ModsSheet>{
+				.name = character.loadout.artifact.bonus1->setPtr.name,
+				.characterKey = characterKey,
+				.ctx = ctx,
+				.nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
+				.sheet = std::ref(character.loadout.artifact.bonus1->bonusPtr.mods),
+				.maxPreModifierIndex = 1,
+				.maxPostModifierIndex = 1,
+				.options = artifactOpts1,
+			});
+		}
+		if (character.loadout.artifact.bonus1.has_value()) {
+			w.addChild(DetailsSkill<const Stats::ModsSheet>{
+				.name = character.loadout.artifact.bonus2->setPtr.name,
+				.characterKey = characterKey,
+				.ctx = ctx,
+				.nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
+				.sheet = std::ref(character.loadout.artifact.bonus2->bonusPtr.mods),
+				.maxPreModifierIndex = 1,
+				.maxPostModifierIndex = 1,
+				.options = artifactOpts2,
+			});
+		}
 	}
 }// namespace
 

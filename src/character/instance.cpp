@@ -2,7 +2,6 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"
 #include "character/characters.hpp"
-#include "formula/artifact.hpp"
 #include "formula/teamCharacter.hpp"
 #include "store.hpp"
 
@@ -34,50 +33,49 @@ Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dat
 	loadout.character.sheet.init(loadout);
 
 	for (const auto &[setKey, set]: Artifact::sets) {
-		auto &val = loadout.artifact.options.insert({setKey, {}}).first->second;
-		set.getOptions(val);
+		set.getOptions(loadout.artifact.options);
 	}
+
+	loadout.artifact.sheet.init();
 }
 
 void Character::Instance::getArtifactStats() {
 	static std::unordered_map<Artifact::SetKey, uint8_t> occurences{};
-	loadout.artifact.set = std::nullopt;
-	loadout.artifact.currentOptions = std::nullopt;
+	loadout.artifact.bonus1 = std::nullopt;
+	loadout.artifact.bonus2 = std::nullopt;
+	for (auto &artifact: loadout.artifact.sheet.equippedArtifacts) {
+		artifact = std::nullopt;
+	}
 
-	for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(2, 7))) {
+	for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(0, 5))) {
 		auto artId = std::invoke(artPtr, loadout.artifact.equipped);
 		if (!artId.has_value()) continue;
 		auto &artifact = Store::artifacts.at(artId.value());
 		occurences[artifact.set]++;
-		loadout.artifact.sheet.preMods.fromStat(artifact.mainStat).modifiers.at(index) = Formula::ArtifactMainStat(artifact.mainStat, artifact.level);
-		for (auto &subStat: artifact.subStats) {
-			if (!subStat.has_value()) continue;
-			loadout.artifact.sheet.preMods.fromStat(subStat->stat).modifiers.at(index) = Formula::ArtifactSubStat(subStat.value());
-		}
+		loadout.artifact.sheet.equippedArtifacts.at(index) = std::make_optional(&artifact.stats);
 	}
 	for (auto &occurence: occurences) {
 		if (occurence.second >= 2) {
 			// Cache the ArtifactData to avoid doing two accesses
 			const Artifact::Set &artifactData = Artifact::sets.at(occurence.first);
-			Stats::setupModifiers(artifactData.data.twoPcMods.preMod, loadout.artifact.sheet.preMods, 0);
-			Stats::setupModifiers(artifactData.data.twoPcMods.postMod, loadout.artifact.sheet.postMods, 0);
-			Stats::setupModifiers(artifactData.data.twoPcMods.teamPreMod, loadout.artifact.sheet.teamPreMods, 0);
-			Stats::setupModifiers(artifactData.data.twoPcMods.teamPostMod, loadout.artifact.sheet.teamPostMods, 0);
-			Stats::setupModifiers(artifactData.data.twoPcMods.enemy, loadout.artifact.sheet.enemySheet, 0);
-			Stats::setupTalents(artifactData.data.twoPcMods.talents, loadout.artifact.sheet.talents, 0);
-			Stats::setupTalents(artifactData.data.twoPcMods.teamTalents, loadout.artifact.sheet.teamTalents, 0);
+
+			auto &targetBonus = [&]() -> std::optional<Stats::ArtifactBonus> & {
+				if (!loadout.artifact.bonus1.has_value()) return loadout.artifact.bonus1;
+
+				return loadout.artifact.bonus2;
+			}();
+			targetBonus.emplace(Stats::ArtifactBonus{
+				.setPtr = artifactData,
+				.bonusPtr = artifactData.data.twoPc,
+			});
+
 			// The second check should not be be outside since a four set can only happen
 			// only if there is a two set
 			if (occurence.second >= 4) {
-				loadout.artifact.currentOptions = std::ref(loadout.artifact.options.at(occurence.first));
-				loadout.artifact.set = Artifact::sets.at(occurence.first);
-				Stats::setupModifiers(artifactData.data.fourPcMods.preMod, loadout.artifact.sheet.preMods, 1);
-				Stats::setupModifiers(artifactData.data.fourPcMods.postMod, loadout.artifact.sheet.postMods, 1);
-				Stats::setupModifiers(artifactData.data.fourPcMods.teamPreMod, loadout.artifact.sheet.teamPreMods, 1);
-				Stats::setupModifiers(artifactData.data.fourPcMods.teamPostMod, loadout.artifact.sheet.teamPostMods, 1);
-				Stats::setupModifiers(artifactData.data.fourPcMods.enemy, loadout.artifact.sheet.enemySheet, 1);
-				Stats::setupTalents(artifactData.data.fourPcMods.talents, loadout.artifact.sheet.talents, 1);
-				Stats::setupTalents(artifactData.data.fourPcMods.teamTalents, loadout.artifact.sheet.teamTalents, 1);
+				loadout.artifact.bonus2.emplace(Stats::ArtifactBonus{
+					.setPtr = artifactData,
+					.bonusPtr = artifactData.data.fourPc,
+				});
 			}
 		}
 	}

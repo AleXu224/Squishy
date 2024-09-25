@@ -19,7 +19,7 @@ namespace Option {
 	}
 
 	inline float getFloat(const TypesMap &options, const Utils::HashedString &key, float defaultValue = 0.f) {
-		return std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue);
+		return static_cast<float>(std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue));
 	}
 
 	struct CharacterList {
@@ -35,7 +35,7 @@ namespace Option {
 		const std::vector<Types> constellation4{};
 		const std::vector<Types> constellation6{};
 
-		[[nodiscard]] static inline auto getMembers() {
+		[[nodiscard]] static auto getMembers() {
 			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};
 		}
 	};

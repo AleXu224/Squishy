@@ -118,6 +118,7 @@ struct ArtifactCardContent {
 							.artifact = artifact,
 							.onSubmit = [key = artifact.key](Artifact::Instance artifact) {
 								artifact.key = key;
+								artifact.updateStats();
 								Store::artifacts[key] = artifact;
 								if (artifact.equippedCharacter.key != 0) {
 									auto &character = Store::characters.at(artifact.equippedCharacter);

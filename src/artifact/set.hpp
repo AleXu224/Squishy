@@ -6,17 +6,20 @@
 #include "stats/sheet.hpp"
 
 namespace Artifact {
+	struct SetBonus {
+		Option::ArtifactList opts{};
+		Stats::ModsSheet mods{};
+		Node::ArtifactList nodes{};
+	};
 	struct Set {
 		struct Setup {
-			Stats::ModsSheet twoPcMods{};
-			Stats::ModsSheet fourPcMods{};
-			Node::ArtifactList nodes{};
+			SetBonus twoPc;
+			SetBonus fourPc;
 		};
 
 		SetKey key{};
 		std::string_view name;
 
-		Option::ArtifactList opts{};
 		std::function<Setup(void)> setup;
 
 		Setup data = [](const std::function<Setup(void)> &setup) {
@@ -26,7 +29,11 @@ namespace Artifact {
 		void getOptions(Option::ArtifactMap &options) const {
 			Option::mapOptions(
 				options,
-				opts
+				data.twoPc.opts
+			);
+			Option::mapOptions(
+				options,
+				data.fourPc.opts
 			);
 		}
 	};

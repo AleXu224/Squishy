@@ -12,7 +12,7 @@ namespace Formula {
 	struct CharacterStat {
 		::Stat stat;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
 				"{} {:.1f}{}",
@@ -22,15 +22,15 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return context.target.character.sheet.postMods.fromStat(stat).get(context);
 		}
 	};
 
 	template<class T, class U>
 	struct StatPtr {
-		T U:: *category;
-		T::_Value T:: *stat;
+		T U::*category;
+		T::_Value T::*stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
@@ -40,7 +40,7 @@ namespace Formula {
 			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
 		}();
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isSheetMemberPercentage(stat);
 			const auto sheet = [&]() {
 				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
@@ -63,7 +63,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
 				return std::invoke(stat, std::invoke(category, context.target.character.sheet)).get(context);
 			else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
@@ -79,9 +79,9 @@ namespace Formula {
 
 	template<class T, class U>
 	struct SkillPtr {
-		T U:: *category;
-		T::_SkillValue T:: *skill;
-		T::_Value T::_SkillValue:: *stat;
+		T U::*category;
+		T::_SkillValue T::*skill;
+		T::_Value T::_SkillValue::*stat;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
@@ -91,7 +91,7 @@ namespace Formula {
 			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
 		}();
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = T::_SkillValue::isPercetange(stat);
 			const auto sheet = [&]() {
 				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
@@ -114,7 +114,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			if constexpr (std::is_same_v<U, Stats::CharacterSheet>) {
 				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.target.character.sheet))).get(context);
 			} else if constexpr (std::is_same_v<U, Stats::WeaponSheet>) {
@@ -131,8 +131,8 @@ namespace Formula {
 
 	template<class T, class U>
 	struct TalentPtr {
-		T U:: *category;
-		T::Type T:: *talent;
+		T U::*category;
+		T::Type T::*talent;
 
 		std::string_view prefix = [&]() consteval {
 			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
@@ -142,7 +142,7 @@ namespace Formula {
 			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
 		}();
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isSheetMemberPercentage<T>(talent);
 			const auto sheet = [&]() {
 				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
@@ -165,7 +165,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
 				return std::invoke(talent, std::invoke(category, context.target.character.sheet)).get(context);
 			else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
@@ -179,8 +179,7 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] inline auto
-	_getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Context &context) {
+	[[nodiscard]] inline auto _getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Context &context) {
 		switch (attackSource) {
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::charged:
@@ -196,9 +195,9 @@ namespace Formula {
 	struct ElementStat {
 		Misc::AttackSource attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
-		_postModsCharacter::_Value _postModsCharacter::_SkillValue:: *stat{};
+		_postModsCharacter::_Value _postModsCharacter::_SkillValue::*stat{};
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = _postModsCharacter::_SkillValue::isPercetange(stat);
 
 			auto el = _getElement(attackSource, element, context);
@@ -212,7 +211,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			Misc::Element el = _getElement(attackSource, element, context);
 			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
 			return std::invoke(stat, std::invoke(skill, context.target.character.sheet.postMods)).get(context);
@@ -222,7 +221,7 @@ namespace Formula {
 	struct WeaponStat {
 		::Stat stat;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
 				"{} {:.1f}{}",
@@ -232,7 +231,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return context.target.weapon.sheet.postMods.fromStat(stat).get(context);
 		}
 	};
@@ -240,7 +239,7 @@ namespace Formula {
 	struct ArtifactStat {
 		::Stat stat;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			bool isPercentage = Stats::isPercentage(stat);
 			return fmt::format(
 				"{} {:.1f}{}",
@@ -250,7 +249,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return context.target.artifact.sheet.postMods.fromStat(stat).get(context);
 		}
 	};

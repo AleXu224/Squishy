@@ -4,8 +4,7 @@
 #include "print"
 #include "utility"
 
-
-enum class Talent {
+enum class Talent : uint8_t {
 	normal,
 	charged,
 	plunge,
@@ -21,7 +20,7 @@ enum class Talent {
 	constellation6,
 };
 
-enum class ConstellationTalent {
+enum class ConstellationTalent : uint8_t {
 	normal,
 	skill,
 	burst,
@@ -74,8 +73,18 @@ struct Talents {
 	}
 };
 
-enum class LevelableTalent {
+enum class LevelableTalent : uint8_t {
 	normal,
 	skill,
 	burst,
 };
+
+namespace Utils {
+	template<class T>
+	inline std::string Stringify(T Talents<T>::* t) {
+		if (t == &Talents<T>::normal) return "Normal";
+		if (t == &Talents<T>::normal) return "Skill";
+		if (t == &Talents<T>::normal) return "Burst";
+		std::unreachable();
+	}
+}// namespace Utils

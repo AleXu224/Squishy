@@ -1,10 +1,11 @@
 #pragma once
 
+#include "cstdint"
 #include "curves.hpp"
 #include "stats/stat.hpp"
 
 
-enum class WeaponType {
+enum class WeaponType : uint8_t {
 	sword,
 	claymore,
 	polearm,
@@ -22,7 +23,7 @@ namespace Stats {
 		const std::array<float, 7> ascensionUpgrade;
 
 		[[nodiscard]] float getAtkAt(unsigned short level, unsigned short ascension) const {
-			return baseAtk * Curves::Weapon(atkCurve).at(level - 1) + ascensionUpgrade.at(ascension);
+			return (baseAtk * Curves::Weapon(atkCurve).at(level - 1)) + ascensionUpgrade.at(ascension);
 		}
 
 		[[nodiscard]] float getSubstatAt(unsigned short level) const {

@@ -5,6 +5,7 @@
 #include "artifact/slot.hpp"
 #include "character/key.hpp"
 #include "observer.hpp"
+#include "stats/sheet.hpp"
 #include "stats/stat.hpp"
 #include "utility"
 #include "utils/stringify.hpp"// IWYU pragma: keep
@@ -26,7 +27,26 @@ namespace Artifact {
 		Rarity rarity{};
 		Character::InstanceKey equippedCharacter{};
 
+		Stats::Sheet<float> stats{};
+
 		squi::VoidObservable updateEvent{};
+
+		void updateStats() {
+			// Reset the stats
+			// It's easier to to just recreate the entire thing that to go through each stat
+			stats = Stats::Sheet<float>();
+
+			// Main stat
+			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(level);
+
+			// Sub stats
+			for (const auto &subStat: subStats) {
+				if (subStat.has_value()) {
+					const auto &val = subStat.value();
+					stats.fromStat(val.stat) = val.value;
+				}
+			}
+		}
 	};
 }// namespace Artifact
 

@@ -124,17 +124,7 @@ Serialization::Save::Save Store::save() {
 			// std::vector<Serialization::Save::OptionTypes> options;
 			.options = serializeOptions(characterInstance.loadout.character.options),
 			// std::vector<ArtifactOptions> artifactOptions;
-			.artifactOptions = [&]() {
-				std::vector<Serialization::Save::ArtifactOptions> ret{};
-				ret.reserve(characterInstance.loadout.artifact.options.size());
-				for (const auto &[setKey, setOptions]: characterInstance.loadout.artifact.options) {
-					ret.emplace_back(Serialization::Save::ArtifactOptions{
-						.setKey = setKey,
-						.options = serializeOptions(setOptions),
-					});
-				}
-				return ret;
-			}(),
+			.artifactOptions = serializeOptions(characterInstance.loadout.artifact.options),
 		});
 	}
 
@@ -174,7 +164,7 @@ void Store::load(const Serialization::Save::Save &save) {
 	uint32_t maxArtifactKey = 1;
 	for (const auto &artifact: save.artifacts) {
 		maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
-		::Store::artifacts.insert({
+		auto &artInstance = ::Store::artifacts.insert({
 			artifact.instanceKey,
 			::Artifact::Instance{
 				.key = artifact.instanceKey,
@@ -196,7 +186,8 @@ void Store::load(const Serialization::Save::Save &save) {
 				.rarity = artifact.rarity,
 				.equippedCharacter = artifact.equippedCharacter,
 			},
-		});
+		}).first->second;
+		artInstance.updateStats();
 	}
 
 	uint32_t maxWeaponKey = 1;
@@ -225,9 +216,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		charInstance.loadout.artifact.equipped.goblet = character.artifactGoblet;
 		charInstance.loadout.artifact.equipped.circlet = character.artifactCirclet;
 		deserializeOptions(character.options, charInstance.loadout.character.options);
-		for (const auto &options: character.artifactOptions) {
-			deserializeOptions(options.options, charInstance.loadout.artifact.options.at(options.setKey));
-		}
+		deserializeOptions(character.artifactOptions, charInstance.loadout.artifact.options);
 
 		charInstance.getArtifactStats();
 	}

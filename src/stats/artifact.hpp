@@ -8,14 +8,25 @@
 
 namespace Artifact {
 	struct Set;
+	struct SetBonus;
 }
 
 namespace Stats {
+	struct ArtifactBonus {
+		const ::Artifact::Set & setPtr;
+		const Artifact::SetBonus & bonusPtr;
+	};
+
 	struct Artifact {
-		// The 4 piece set equipped if it exists
-		std::optional<std::reference_wrapper<const ::Artifact::Set>> set{};
-		std::optional<std::reference_wrapper<Option::ArtifactMap>> currentOptions{};
-		std::unordered_map<::Artifact::SetKey, Option::ArtifactMap> options{};
+		// The options from all the sets are combined into one big map for ease of use and performance
+		Option::ArtifactMap options{};
+		
+		// These slots contain the necessary data to correctly identify which modifiers should be applied
+		// Two of them sould cover all possible combinations:
+		// 2pc 2pc, 2pc 4pc (4pc has a separate slot), 2pc (one of the slots is left empty)
+		std::optional<ArtifactBonus> bonus1;
+		std::optional<ArtifactBonus> bonus2;
+
 		ArtifactSheet sheet{};
 
 		struct Slotted {

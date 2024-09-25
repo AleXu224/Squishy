@@ -9,19 +9,6 @@
 
 
 namespace Serialization::Save {
-	struct ArtifactOptions {
-		::Artifact::SetKey setKey;
-		std::vector<Serialization::Save::OptionTypes> options;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(setKey),
-				CEREAL_NVP(options)
-			);
-		}
-	};
-
 	struct Character {
 		::Character::InstanceKey instanceKey;
 		::Character::DataKey dataKey;
@@ -38,7 +25,7 @@ namespace Serialization::Save {
 		std::optional<::Artifact::InstanceKey> artifactGoblet;
 		std::optional<::Artifact::InstanceKey> artifactCirclet;
 		std::vector<Serialization::Save::OptionTypes> options;
-		std::vector<ArtifactOptions> artifactOptions;
+		std::vector<Serialization::Save::OptionTypes> artifactOptions;
 
 		template<class Archive>
 		void serialize(Archive &ar) {
