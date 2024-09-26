@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cstdint"
+#include <vector>
 
 namespace Artifact {
 	enum class Slot : uint8_t {

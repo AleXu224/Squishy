@@ -9,18 +9,18 @@
 namespace Artifact {
 	struct Set;
 	struct SetBonus;
-}
+}// namespace Artifact
 
 namespace Stats {
 	struct ArtifactBonus {
-		const ::Artifact::Set & setPtr;
-		const Artifact::SetBonus & bonusPtr;
+		const ::Artifact::Set &setPtr;
+		const Artifact::SetBonus &bonusPtr;
 	};
 
 	struct Artifact {
 		// The options from all the sets are combined into one big map for ease of use and performance
 		Option::ArtifactMap options{};
-		
+
 		// These slots contain the necessary data to correctly identify which modifiers should be applied
 		// Two of them sould cover all possible combinations:
 		// 2pc 2pc, 2pc 4pc (4pc has a separate slot), 2pc (one of the slots is left empty)
@@ -44,6 +44,21 @@ namespace Stats {
 					&Slotted::goblet,
 					&Slotted::circlet,
 				};
+			}
+
+			[[nodiscard]] auto &fromSlot(this auto &&self, ::Artifact::Slot slot) {
+				switch (slot) {
+					case ::Artifact::Slot::flower:
+						return self.flower;
+					case ::Artifact::Slot::plume:
+						return self.plume;
+					case ::Artifact::Slot::sands:
+						return self.sands;
+					case ::Artifact::Slot::goblet:
+						return self.goblet;
+					case ::Artifact::Slot::circlet:
+						return self.circlet;
+				}
 			}
 		};
 

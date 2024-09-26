@@ -78,13 +78,3 @@ enum class LevelableTalent : uint8_t {
 	skill,
 	burst,
 };
-
-namespace Utils {
-	template<class T>
-	inline std::string Stringify(T Talents<T>::* t) {
-		if (t == &Talents<T>::normal) return "Normal";
-		if (t == &Talents<T>::normal) return "Skill";
-		if (t == &Talents<T>::normal) return "Burst";
-		std::unreachable();
-	}
-}// namespace Utils

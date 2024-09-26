@@ -25,6 +25,11 @@ namespace Store {
 	inline uint32_t lastCharacterId = 1;
 	inline uint32_t lastTeamId = 1;
 
+	inline squi::VoidObservable artifactListUpdateEvent{};
+	inline squi::VoidObservable weaponListUpdateEvent{};
+	inline squi::VoidObservable characterListUpdateEvent{};
+	inline squi::VoidObservable teamListUpdateEvent{};
+
 	[[nodiscard]] extern auto serializeOptions(auto &&options);
 
 	extern void deserializeOptions(const std::vector<Serialization::Save::OptionTypes> &options, auto &&targetMap);

@@ -94,10 +94,9 @@ namespace Formula {
 		}
 	};
 
-	template<class T>
 	struct ArtifactModTalent {
-		T Stats::ModsSheet::*location;
-		T::Type T::*talent;
+		Stats::ModsSheet::_Talents Stats::ModsSheet::*location;
+		Stats::ModsSheet::_Talents::Type Stats::ModsSheet::_Talents::*talent;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Artifact {} {}", Utils::Stringify(talent), eval(context));

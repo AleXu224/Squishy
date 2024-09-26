@@ -109,6 +109,7 @@ struct ArtifactCardContent {
 				.height = Size::Shrink,
 				.padding = 4.f,
 			},
+			.spacing = 4.f,
 			.children{
 				Button{
 					.text = "Edit",
@@ -128,6 +129,21 @@ struct ArtifactCardContent {
 								artifact.updateEvent.notify();
 							},
 						});
+					},
+				},
+				Button{
+					.text = "Delete",
+					.style = ButtonStyle::Standard(),
+					.onClick = [key = artifact.key](GestureDetector::Event){
+						auto &artifact = Store::artifacts.at(key);
+						if (artifact.equippedCharacter.key) {
+							auto &character = Store::characters.at(artifact.equippedCharacter);
+							character.loadout.artifact.equipped.fromSlot(artifact.slot) = std::nullopt;
+							character.getArtifactStats();
+						}
+						
+						Store::artifacts.erase(key);
+						Store::artifactListUpdateEvent.notify();
 					},
 				},
 			},

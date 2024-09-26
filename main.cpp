@@ -1,4 +1,3 @@
-#include "Ui/artifact/artifactEditor.hpp"
 #include "artifact/sets.hpp"
 #include "character/characters.hpp"
 #include "store.hpp"
@@ -41,9 +40,6 @@ int main() {
 	Window window{};
 	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");
 	window.addChild(UI::homePage{});
-
-	Window win2{};
-	win2.addChild(UI::ArtifactEditor{});
 
 	Window::run();
 
