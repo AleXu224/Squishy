@@ -7,7 +7,7 @@
 #include "misc/skillStat.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/helpers.hpp"
-
+#include "utility"
 
 namespace Formula {
 	template<Misc::SkillStat skillStat>
@@ -47,6 +47,7 @@ namespace Formula {
 				case Misc::Reaction::hyperbloom:
 					return Stats::fromSkillStat<Modifiers::total.hyperbloom, skillStat>().eval(context);
 			}
+			std::unreachable();
 		}
 	};
 }// namespace Formula

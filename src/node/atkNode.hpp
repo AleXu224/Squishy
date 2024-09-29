@@ -53,6 +53,7 @@ namespace Node {
 				case Misc::AttackSource::burst:
 					return switchElement(element.value_or(context.target.character.base.element), context);
 			}
+			std::unreachable();
 		}
 	};
 	template<Misc::SkillStat skillStat>
@@ -76,6 +77,7 @@ namespace Node {
 				case Misc::AttackSource::burst:
 					return Stats::fromSkillStat<Modifiers::total.burst, skillStat>().eval(context);
 			}
+			std::unreachable();
 		}
 	};
 	template<Misc::SkillStat skillStat>
