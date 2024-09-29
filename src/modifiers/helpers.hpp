@@ -109,6 +109,7 @@ namespace Modifiers {
 				case Type::enemyRes:
 					return fmt::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
 			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] constexpr bool isPercentage() const {
