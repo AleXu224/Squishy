@@ -79,7 +79,7 @@ struct Contents {
 							auto &character = ::Store::characters.at(characterKey);
 							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.loadout.character.base.element)}};
 							Team::Instance placeholderTeam{};
-							placeholderTeam.stats.characters.at(0) = std::ref(character);
+							placeholderTeam.stats.characters.at(0) = &character;
 							Formula::Context ctx{
 								.source = character.loadout,
 								.target = character.loadout,

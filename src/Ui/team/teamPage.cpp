@@ -23,19 +23,19 @@ UI::TeamPage::operator squi::Child() const {
 			std::vector<NavigationView::Page> pages{};
 			auto &team = ::Store::teams.at(teamKey);
 			for (auto &character: team.stats.characters) {
-				if (character.has_value()) {
+				if (character) {
 					pages.emplace_back(NavigationView::Page{
-						.name = character->get().loadout.character.data.name,
+						.name = character->loadout.character.data.name,
 						.icon = Image{
 							.widget{
 								.width = 16.f,
 								.height = 16.f,
 							},
 							.fit = squi::Image::Fit::contain,
-							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name)),
+							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->loadout.character.data.name)),
 						},
 						.content = CharacterDetails{
-							.characterKey = character->get().instanceKey,
+							.characterKey = character->instanceKey,
 						},
 					});
 				}

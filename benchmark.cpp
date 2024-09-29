@@ -1,7 +1,6 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"// IWYU pragma: keep
 #include "character/characters.hpp"
-#include "formula/constant.hpp"
 #include "src/formula/node.hpp"
 #include "stats/team.hpp"
 #include "store.hpp"
@@ -152,10 +151,10 @@ namespace {
 		std::uniform_int_distribution<unsigned short> levelGen(1, 90);
 
 		Stats::Team team{};
-		team.characters.at(0) = character;
-		team.characters.at(1) = character;
-		team.characters.at(2) = character;
-		team.characters.at(3) = character;
+		team.characters.at(0) = &character;
+		team.characters.at(1) = &character;
+		team.characters.at(2) = &character;
+		team.characters.at(3) = &character;
 
 		Stats::Enemy enemy{};
 		enemy.sheet.level.constant = 100.f;

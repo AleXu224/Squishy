@@ -21,11 +21,9 @@ namespace Modifiers::Team {
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			Ret total = 0;
 			for (const auto &character: context.team.characters) {
-				total += character.transform([&](const std::reference_wrapper<::Character::Instance> &character) {
-									  auto newContext = context.withSource(character.get().loadout);
-									  return (characterStat + weaponStat + artifactStat).eval(newContext);
-								  })
-							 .value_or(Ret{});
+				if (!character) continue;
+				auto newContext = context.withSource(character->loadout);
+				total += (characterStat + weaponStat + artifactStat).eval(newContext);
 			}
 			return total;
 		}

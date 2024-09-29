@@ -16,7 +16,7 @@ using namespace squi;
 
 struct TeamAvatar {
 	// Args
-	std::optional<std::reference_wrapper<Character::Instance>> character;
+	Character::Instance *character;
 
 	operator squi::Child() const {
 
@@ -27,12 +27,12 @@ struct TeamAvatar {
 			},
 			.color{1.f, 1.f, 1.f, 0.1f},
 			.borderRadius{4.f},
-			.child = character.has_value()
-						 ? Image{
-							   .fit = Image::Fit::contain,
-							   .image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->get().loadout.character.data.name))
-						   }
-						 : Child{},
+			.child = character
+					   ? Image{
+							 .fit = Image::Fit::contain,
+							 .image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->loadout.character.data.name))
+						 }
+					   : Child{},
 		};
 	}
 };

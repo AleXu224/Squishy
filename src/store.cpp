@@ -137,8 +137,8 @@ Serialization::Save::Save Store::save() {
 			.characters = [&]() {
 				std::array<std::optional<::Character::InstanceKey>, 4> ret{};
 				for (auto [retCharacter, storeCharacter]: std::views::zip(ret, teamInstance.stats.characters)) {
-					if (!storeCharacter.has_value()) continue;
-					retCharacter = storeCharacter->get().instanceKey;
+					if (!storeCharacter) continue;
+					retCharacter = storeCharacter->instanceKey;
 				}
 				return ret;
 			}(),
@@ -227,10 +227,10 @@ void Store::load(const Serialization::Save::Save &save) {
 		maxTeamKey = std::max(maxTeamKey, team.instanceKey.key);
 		auto &teamInstance = ::Store::teams.insert({team.instanceKey, ::Team::Instance{.instanceKey = team.instanceKey, .name = team.name}}).first->second;
 		teamInstance.stats.characters = [&]() {
-			std::array<std::optional<std::reference_wrapper<::Character::Instance>>, 4> ret{};
+			std::array<::Character::Instance *, 4> ret{};
 			for (auto [retCharRef, saveChar]: std::views::zip(ret, team.characters)) {
 				if (!saveChar.has_value()) continue;
-				retCharRef = std::ref(::Store::characters.at(saveChar.value()));
+				retCharRef = &::Store::characters.at(saveChar.value());
 			}
 			return ret;
 		}();
