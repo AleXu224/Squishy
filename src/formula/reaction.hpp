@@ -9,11 +9,11 @@
 
 namespace Formula {
 	struct AmplifyingMultiplier {
-		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Reaction Multiplier {:.1f}%", eval(context) * 100.f);
 		}
 
-		[[nodiscard]] static inline float eval(const Context &context) {
+		[[nodiscard]] static constexpr float eval(const Context &context) {
 			return std::visit(
 				Utils::overloaded{
 					[](const Reaction::None *) {
@@ -31,11 +31,11 @@ namespace Formula {
 		}
 	};
 	struct AdditiveMultiplier {
-		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Reaction Bonus {:.1f}", eval(context));
 		}
 
-		[[nodiscard]] static inline float eval(const Context &context) {
+		[[nodiscard]] static constexpr float eval(const Context &context) {
 			return std::visit(
 				Utils::overloaded{
 					[](const Reaction::None *) {

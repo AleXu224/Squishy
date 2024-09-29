@@ -1,11 +1,12 @@
 #pragma once
 
+#include "cstdint"
 #include "utility"
 #include "utils/stringify.hpp"
 
 
 namespace Misc {
-	enum class Element {
+	enum class Element : uint8_t {
 		pyro,
 		hydro,
 		cryo,

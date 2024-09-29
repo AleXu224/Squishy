@@ -1,16 +1,11 @@
 #pragma once
 
+#include "artifact/key.hpp"
 #include "functional"
-#include "node/node.hpp"
 #include "option/option.hpp"
-#include "stats/sheet.hpp"
+#include "setBonus.hpp"
 
 namespace Artifact {
-	struct SetBonus {
-		Option::ArtifactList opts{};
-		Stats::ModsSheet mods{};
-		Node::ArtifactList nodes{};
-	};
 	struct Set {
 		struct Setup {
 			SetBonus twoPc;

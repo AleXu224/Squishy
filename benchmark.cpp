@@ -158,7 +158,7 @@ namespace {
 		team.characters.at(3) = character;
 
 		Stats::Enemy enemy{};
-		enemy.sheet.level.modifiers.at(0) = Formula::Constant(100.f);
+		enemy.sheet.level.constant = 100.f;
 
 		Formula::Context ctx{
 			.source = character.loadout,

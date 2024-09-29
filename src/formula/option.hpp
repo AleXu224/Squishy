@@ -10,8 +10,8 @@ namespace Formula {
 	struct impl_IsActive {
 		Utils::HashedString name;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", name.str, eval(context));
+		[[nodiscard]] std::string print(const Context &, Step) const {
+			return fmt::format("{}", name.str);
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {

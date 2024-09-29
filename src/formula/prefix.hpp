@@ -10,11 +10,11 @@ namespace Formula {
 		std::string_view prefix;
 		T val;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", prefix, val.eval(context));
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return val.eval(context);
 		}
 	};

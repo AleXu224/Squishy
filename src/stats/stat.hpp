@@ -5,7 +5,8 @@
 #include "misc/element.hpp"
 #include "unordered_map"
 #include "utility"
-#include "utils/stringify.hpp"// IWYU pragma: keep
+#include "utils/isPercentage.hpp"// IWYU pragma: keep
+#include "utils/stringify.hpp"   // IWYU pragma: keep
 #include <vector>
 
 
@@ -55,29 +56,34 @@ namespace Stats {
 		Stat::cd
 	};
 
-	[[maybe_unused]] constexpr bool isPercentage(const Stat &stat) {
-		switch (stat) {
-			case Stat::hp_:
-			case Stat::atk_:
-			case Stat::def_:
-			case Stat::er:
-			case Stat::cr:
-			case Stat::cd:
-			case Stat::hb:
-			case Stat::pyroDmg:
-			case Stat::hydroDmg:
-			case Stat::cryoDmg:
-			case Stat::electroDmg:
-			case Stat::dendroDmg:
-			case Stat::anemoDmg:
-			case Stat::geoDmg:
-			case Stat::physicalDmg:
-			case Stat::allDmg:
-				return true;
-			default:
-				return false;
-		};
-	}
+	const inline std::vector all{
+		std::vector{
+			Stat::hp,
+			Stat::hp_,
+			Stat::baseHp,
+			Stat::atk,
+			Stat::atk_,
+			Stat::baseAtk,
+			Stat::additionalAtk,
+			Stat::def,
+			Stat::def_,
+			Stat::baseDef,
+			Stat::er,
+			Stat::em,
+			Stat::cr,
+			Stat::cd,
+			Stat::hb,
+			Stat::pyroDmg,
+			Stat::hydroDmg,
+			Stat::cryoDmg,
+			Stat::electroDmg,
+			Stat::dendroDmg,
+			Stat::anemoDmg,
+			Stat::geoDmg,
+			Stat::physicalDmg,
+			Stat::allDmg,
+		}
+	};
 
 	[[maybe_unused]] constexpr Stat fromElement(const Misc::Element &element) {
 		switch (element) {
@@ -131,6 +137,31 @@ struct StatValue {
 };
 
 namespace Utils {
+	template<>
+	[[nodiscard]] constexpr bool isPercentage<::Stat>(const ::Stat &stat) {
+		switch (stat) {
+			case Stat::hp_:
+			case Stat::atk_:
+			case Stat::def_:
+			case Stat::er:
+			case Stat::cr:
+			case Stat::cd:
+			case Stat::hb:
+			case Stat::pyroDmg:
+			case Stat::hydroDmg:
+			case Stat::cryoDmg:
+			case Stat::electroDmg:
+			case Stat::dendroDmg:
+			case Stat::anemoDmg:
+			case Stat::geoDmg:
+			case Stat::physicalDmg:
+			case Stat::allDmg:
+				return true;
+			default:
+				return false;
+		};
+	}
+
 	template<>
 	constexpr std::string Stringify<>(const Stat &stat) {
 		switch (stat) {
@@ -188,7 +219,7 @@ namespace Utils {
 
 	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
-		if (Stats::isPercentage(stat.stat)) {
+		if (Utils::isPercentage(stat.stat)) {
 			return fmt::format("{:.1f}%", stat.value * 100.f);
 		}
 		return fmt::format("{:.0f}", stat.value);

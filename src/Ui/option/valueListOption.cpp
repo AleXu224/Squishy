@@ -9,7 +9,7 @@
 #include "store.hpp"
 #include "text.hpp"
 
-
+#include "ranges"
 #include "vector"
 
 using namespace squi;
@@ -38,7 +38,7 @@ UI::ValueListOption::operator squi::Child() const {
 		.text = "placeholder",
 		.lineWrap = true,
 	};
-	
+
 	auto buttonCaret = FontIcon{
 		.textWidget{
 			.onInit = [readyEvent, valueChangedEvent](Widget &w) {

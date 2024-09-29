@@ -2,7 +2,7 @@
 
 #include "cereal/archives/json.hpp"
 #include "fstream"
-
+#include "ranges"
 
 auto Store::serializeOptions(auto &&options) {
 	std::vector<Serialization::Save::OptionTypes> ret{};
@@ -165,28 +165,29 @@ void Store::load(const Serialization::Save::Save &save) {
 	for (const auto &artifact: save.artifacts) {
 		maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
 		auto &artInstance = ::Store::artifacts.insert({
-			artifact.instanceKey,
-			::Artifact::Instance{
-				.key = artifact.instanceKey,
-				.set = artifact.setKey,
-				.slot = artifact.slot,
-				.mainStat = artifact.mainStat,
-				.subStats = [&]() {
-					std::array<std::optional<StatValue>, 4> ret;
-					for (auto [retOpt, saveOpt]: std::views::zip(ret, artifact.subStats)) {
-						if (!saveOpt.has_value()) continue;
-						retOpt = StatValue{
-							.stat = saveOpt->stat,
-							.value = saveOpt->value,
-						};
-					}
-					return ret;
-				}(),
-				.level = artifact.level,
-				.rarity = artifact.rarity,
-				.equippedCharacter = artifact.equippedCharacter,
-			},
-		}).first->second;
+														  artifact.instanceKey,
+														  ::Artifact::Instance{
+															  .key = artifact.instanceKey,
+															  .set = artifact.setKey,
+															  .slot = artifact.slot,
+															  .mainStat = artifact.mainStat,
+															  .subStats = [&]() {
+																  std::array<std::optional<StatValue>, 4> ret;
+																  for (auto [retOpt, saveOpt]: std::views::zip(ret, artifact.subStats)) {
+																	  if (!saveOpt.has_value()) continue;
+																	  retOpt = StatValue{
+																		  .stat = saveOpt->stat,
+																		  .value = saveOpt->value,
+																	  };
+																  }
+																  return ret;
+															  }(),
+															  .level = artifact.level,
+															  .rarity = artifact.rarity,
+															  .equippedCharacter = artifact.equippedCharacter,
+														  },
+													  })
+								.first->second;
 		artInstance.updateStats();
 	}
 

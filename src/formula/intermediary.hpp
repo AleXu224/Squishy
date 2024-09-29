@@ -20,11 +20,18 @@ namespace Formula {
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<bool>;
 	};
 	template<class T>
+	concept IntFormula = requires(T t) {
+		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
+		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<uint32_t>;
+	};
+	template<class T>
 	concept ElementFormula = requires(T t) {
 		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<Utils::JankyOptional<Misc::Element>>;
 	};
 
 	template<class T>
-	concept FormulaLike = FloatFormula<T> || BoolFormula<T>;
+	concept FormulaLike = FloatFormula<T> || BoolFormula<T> || IntFormula<T>;
+	template<class T>
+	concept ArithmeticFormula = FloatFormula<T> || IntFormula<T>;
 }// namespace Formula

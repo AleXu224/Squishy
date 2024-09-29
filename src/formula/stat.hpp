@@ -1,256 +1,79 @@
 #pragma once
 
-#include "fmt/core.h"
-#include "formula/formulaContext.hpp"
-#include "stats/helpers.hpp"
-#include "stats/loadout.hpp"
-#include "utils/optional.hpp"
-
+#include "formulaContext.hpp"
+#include "modifiers/total/total.hpp"
+#include "stats/stat.hpp"
+#include "step.hpp"
+#include "utility"
 
 namespace Formula {
-	using _postModsCharacter = decltype(Stats::CharacterSheet::postMods);
-	struct CharacterStat {
-		::Stat stat;
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = Stats::isPercentage(stat);
-			return fmt::format(
-				"{} {:.1f}{}",
-				Utils::Stringify(stat),
-				context.target.character.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			return context.target.character.sheet.postMods.fromStat(stat).get(context);
-		}
-	};
-
-	template<class T, class U>
-	struct StatPtr {
-		T U::*category;
-		T::_Value T::*stat;
-
-		std::string_view prefix = [&]() consteval {
-			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
-			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
-			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
-			if (std::is_same_v<U, Stats::Team>) return "Team ";
-			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
-		}();
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = Stats::isSheetMemberPercentage(stat);
-			const auto sheet = [&]() {
-				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
-					return &context.target.character.sheet;
-				else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
-					return &context.target.weapon.sheet;
-				else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
-					return &context.target.artifact.sheet;
-				else if constexpr (std::is_same_v<U, Stats::Team>)
-					return &context.team;
-				else if constexpr (std::is_same_v<U, Stats::Enemy>)
-					return &context.enemy;
-			}();
-			return fmt::format(
-				"{}{} {:.1f}{}",
-				prefix,
-				Utils::Stringify<T>(stat),
-				std::invoke(stat, std::invoke(category, *sheet)).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
-				return std::invoke(stat, std::invoke(category, context.target.character.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
-				return std::invoke(stat, std::invoke(category, context.target.weapon.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
-				return std::invoke(stat, std::invoke(category, context.target.artifact.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::Team>)
-				return std::invoke(stat, std::invoke(category, context.team)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::Enemy>)
-				return std::invoke(stat, std::invoke(category, context.enemy)).get(context);
-		}
-	};
-
-	template<class T, class U>
-	struct SkillPtr {
-		T U::*category;
-		T::_SkillValue T::*skill;
-		T::_Value T::_SkillValue::*stat;
-
-		std::string_view prefix = [&]() consteval {
-			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
-			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
-			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
-			if (std::is_same_v<U, Stats::Team>) return "Team ";
-			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
-		}();
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = T::_SkillValue::isPercetange(stat);
-			const auto sheet = [&]() {
-				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
-					return &context.target.character.sheet;
-				else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
-					return &context.target.weapon.sheet;
-				else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
-					return &context.target.artifact.sheet;
-				else if constexpr (std::is_same_v<U, Stats::Team>)
-					return &context.team;
-				else if constexpr (std::is_same_v<U, Stats::Enemy>)
-					return &context.enemy;
-			}();
-			return fmt::format(
-				"{}{} {:.1f}{}",
-				prefix,
-				Utils::Stringify<T>(skill, stat),
-				std::invoke(stat, std::invoke(skill, std::invoke(category, *sheet))).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			if constexpr (std::is_same_v<U, Stats::CharacterSheet>) {
-				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.target.character.sheet))).get(context);
-			} else if constexpr (std::is_same_v<U, Stats::WeaponSheet>) {
-				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.target.weapon.sheet))).get(context);
-			} else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>) {
-				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.target.artifact.sheet))).get(context);
-			} else if constexpr (std::is_same_v<U, Stats::Team>) {
-				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.team))).get(context);
-			} else if constexpr (std::is_same_v<U, Stats::Enemy>) {
-				return std::invoke(stat, std::invoke(skill, std::invoke(category, context.enemy))).get(context);
-			}
-		}
-	};
-
-	template<class T, class U>
-	struct TalentPtr {
-		T U::*category;
-		T::Type T::*talent;
-
-		std::string_view prefix = [&]() consteval {
-			if (std::is_same_v<U, Stats::CharacterSheet>) return "";
-			if (std::is_same_v<U, Stats::WeaponSheet>) return "Weapon ";
-			if (std::is_same_v<U, Stats::ArtifactSheet>) return "Artifact ";
-			if (std::is_same_v<U, Stats::Team>) return "Team ";
-			if (std::is_same_v<U, Stats::Enemy>) return "Enemy ";
-		}();
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = Stats::isSheetMemberPercentage<T>(talent);
-			const auto sheet = [&]() {
-				if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
-					return &context.target.character.sheet;
-				else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
-					return &context.target.weapon.sheet;
-				else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
-					return &context.target.artifact.sheet;
-				else if constexpr (std::is_same_v<U, Stats::Team>)
-					return &context.team;
-				else if constexpr (std::is_same_v<U, Stats::Enemy>)
-					return &context.enemy;
-			}();
-			return fmt::format(
-				"{}{} {:.1f}{}",
-				prefix,
-				Utils::Stringify<T>(talent),
-				std::invoke(talent, std::invoke(category, *sheet)).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			if constexpr (std::is_same_v<U, Stats::CharacterSheet>)
-				return std::invoke(talent, std::invoke(category, context.target.character.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::WeaponSheet>)
-				return std::invoke(talent, std::invoke(category, context.target.weapon.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::ArtifactSheet>)
-				return std::invoke(talent, std::invoke(category, context.target.artifact.sheet)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::Team>)
-				return std::invoke(talent, std::invoke(category, context.team)).get(context);
-			else if constexpr (std::is_same_v<U, Stats::Enemy>)
-				return std::invoke(talent, std::invoke(category, context.enemy)).get(context);
-		}
-	};
-
-	[[nodiscard]] inline auto _getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Context &context) {
-		switch (attackSource) {
-			case Misc::AttackSource::normal:
-			case Misc::AttackSource::charged:
-			case Misc::AttackSource::plunge:
-				return element.value_or(context.target.character.sheet.infusion.eval(context).value_or(Misc::Element::physical));
-			case Misc::AttackSource::skill:
-			case Misc::AttackSource::burst:
-				return element.value_or(context.target.character.base.element);
+	[[nodiscard]] constexpr auto EvalStat(auto &&sheet, ::Stat stat, auto &&evalFunc) {
+		switch (stat) {
+			case ::Stat::hp:
+				return evalFunc(sheet.hp);
+			case ::Stat::hp_:
+				return evalFunc(sheet.hp_);
+			case ::Stat::baseHp:
+				return evalFunc(sheet.baseHp);
+			case ::Stat::atk:
+				return evalFunc(sheet.atk);
+			case ::Stat::atk_:
+				return evalFunc(sheet.atk_);
+			case ::Stat::baseAtk:
+				return evalFunc(sheet.baseAtk);
+			case ::Stat::additionalAtk:
+				return evalFunc(sheet.additionalAtk);
+			case ::Stat::def:
+				return evalFunc(sheet.def);
+			case ::Stat::def_:
+				return evalFunc(sheet.def_);
+			case ::Stat::baseDef:
+				return evalFunc(sheet.baseDef);
+			case ::Stat::er:
+				return evalFunc(sheet.er);
+			case ::Stat::em:
+				return evalFunc(sheet.em);
+			case ::Stat::cr:
+				return evalFunc(sheet.cr);
+			case ::Stat::cd:
+				return evalFunc(sheet.cd);
+			case ::Stat::hb:
+				return evalFunc(sheet.hb);
+			case ::Stat::pyroDmg:
+				return evalFunc(sheet.pyro.DMG);
+			case ::Stat::hydroDmg:
+				return evalFunc(sheet.hydro.DMG);
+			case ::Stat::cryoDmg:
+				return evalFunc(sheet.cryo.DMG);
+			case ::Stat::electroDmg:
+				return evalFunc(sheet.electro.DMG);
+			case ::Stat::dendroDmg:
+				return evalFunc(sheet.dendro.DMG);
+			case ::Stat::anemoDmg:
+				return evalFunc(sheet.anemo.DMG);
+			case ::Stat::geoDmg:
+				return evalFunc(sheet.geo.DMG);
+			case ::Stat::physicalDmg:
+				return evalFunc(sheet.physical.DMG);
+			case ::Stat::allDmg:
+				return evalFunc(sheet.all.DMG);
 		}
 		std::unreachable();
 	}
-
-	struct ElementStat {
-		Misc::AttackSource attackSource{};
-		Utils::JankyOptional<Misc::Element> element;
-		_postModsCharacter::_Value _postModsCharacter::_SkillValue::*stat{};
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = _postModsCharacter::_SkillValue::isPercetange(stat);
-
-			auto el = _getElement(attackSource, element, context);
-
-			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
-			return fmt::format(
-				"{} {:.1f}{}",
-				Utils::Stringify<_postModsCharacter>(skill, stat),
-				std::invoke(stat, std::invoke(skill, context.target.character.sheet.postMods)).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			Misc::Element el = _getElement(attackSource, element, context);
-			auto skill = Stats::getSheetMemberByElement<_postModsCharacter>(el);
-			return std::invoke(stat, std::invoke(skill, context.target.character.sheet.postMods)).get(context);
-		}
-	};
-
-	struct WeaponStat {
+	struct Stat {
 		::Stat stat;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = Stats::isPercentage(stat);
-			return fmt::format(
-				"{} {:.1f}{}",
-				Utils::Stringify(stat),
-				context.target.weapon.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
+
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			return EvalStat(Modifiers::total, stat, [&](auto &&stat) {
+				return stat.print(context, prevStep);
+			});
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			return context.target.weapon.sheet.postMods.fromStat(stat).get(context);
-		}
-	};
-
-	struct ArtifactStat {
-		::Stat stat;
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			bool isPercentage = Stats::isPercentage(stat);
-			return fmt::format(
-				"{} {:.1f}{}",
-				Utils::Stringify(stat),
-				context.target.artifact.sheet.postMods.fromStat(stat).get(context) * (isPercentage ? 100.f : 1.f),
-				isPercentage ? "%" : ""
-			);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			return context.target.artifact.sheet.postMods.fromStat(stat).get(context);
+			return EvalStat(Modifiers::total, stat, [&](auto &&stat) {
+				return stat.eval(context);
+			});
 		}
 	};
 }// namespace Formula

@@ -14,7 +14,7 @@ namespace Option {
 		std::optional<size_t> currentIndex = std::nullopt;
 		const std::vector<uint32_t> values;
 
-		std::optional<uint32_t> getValue() const {
+		[[nodiscard]] std::optional<uint32_t> getValue() const {
 			if (!currentIndex.has_value()) return std::nullopt;
 			return values.at(currentIndex.value());
 		}

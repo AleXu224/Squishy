@@ -197,7 +197,8 @@ namespace UI {
 	struct TalentLevelSelector {
 		// Args
 		Character::InstanceKey characterKey{};
-		Stats::CharacterSheet::_Talents::Type Stats::CharacterSheet::_Talents::*talent{};
+		using _Talents = decltype(Stats::CharacterSheet::talents);
+		_Talents::Type _Talents::*talent{};
 		std::string_view prefix;
 
 		using Type = uint32_t;
@@ -232,7 +233,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Stats::CharacterSheet::_Talents::normal,
+				.talent = &decltype(Stats::CharacterSheet::talents)::normal,
 				.prefix = "Normal",
 			};
 		}
@@ -244,7 +245,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Stats::CharacterSheet::_Talents::skill,
+				.talent = &decltype(Stats::CharacterSheet::talents)::skill,
 				.prefix = "Skill",
 			};
 		}
@@ -256,7 +257,7 @@ namespace UI {
 		operator squi::Child() const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
-				.talent = &Stats::CharacterSheet::_Talents::burst,
+				.talent = &decltype(Stats::CharacterSheet::talents)::burst,
 				.prefix = "Burst",
 			};
 		}

@@ -5,118 +5,95 @@
 #include "formula/enemy.hpp"
 #include "formula/multiplier.hpp"
 #include "formula/operators.hpp"
-#include "formula/stat.hpp"
 #include "misc/element.hpp"
 #include "string_view"
 
 
 namespace Reaction {
-	using _postMods = decltype(Stats::CharacterSheet::postMods);
-	[[nodiscard]] static consteval auto makeTransformativeFormula(float multiplier, Misc::Element element, _postMods::_SkillValue _postMods:: *skill) {
+	using namespace Formula::Operators;
+	template<auto reaction>
+	[[nodiscard]] static constexpr auto makeTransformativeFormula(float multiplier, Misc::Element element) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
-		constexpr auto emBonus = (Formula::ConstantFlat(16.f) * Formula::CharacterStat(Stat::em)) / (Formula::CharacterStat(Stat::em) + Formula::ConstantFlat(2000.f));
-		auto reactionBonus = Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::DMG);
+		constexpr auto emBonus = (Formula::ConstantFlat(16.f) * Modifiers::total.em) / (Modifiers::total.em + Formula::ConstantFlat(2000.f));
+		auto reactionBonus = reaction.DMG;
 		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
-		auto critMultiplier = 1.f + Formula::Clamp(Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::critRate), 0.f, 1.f) * Formula::SkillPtr(&Stats::CharacterSheet::postMods, skill, &_postMods::_SkillValue::critDMG);
+		auto critMultiplier = 1.f + Formula::Clamp(reaction.critRate, 0.f, 1.f) * reaction.critDMG;
 		return Formula::Constant(multiplier) * levelMultiplier * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
 	}
-	template<class Trigs>
+	template<auto ReactionFrm, class Trigs>
 	struct Transformative {
 		std::string_view name;
-		float multiplier;
-		Misc::Element damageElement;
-		_postMods::_SkillValue _postMods:: *stat;
+		float multiplier{};
+		Misc::Element damageElement{};
 		Trigs triggers;
-
-
-		const decltype(makeTransformativeFormula(std::declval<float>(), std::declval<Misc::Element>(), std::declval<_postMods::_SkillValue _postMods:: *>())) formula = makeTransformativeFormula(multiplier, damageElement, stat);
-
-		consteval Transformative(
-			std::string_view name,
-			float multiplier,
-			Misc::Element damageElement,
-			_postMods::_SkillValue _postMods:: *stat,
-			Trigs triggers
-		) : name(name),
-			multiplier(multiplier),
-			damageElement(damageElement),
-			stat(stat),
-			triggers(triggers) {}
+		decltype(makeTransformativeFormula<ReactionFrm>(std::declval<float>(), std::declval<Misc::Element>())) formula = makeTransformativeFormula<ReactionFrm>(multiplier, damageElement);
 	};
 
 	namespace List {
 		struct Transformative {
-			static inline Reaction::Transformative burning{
-				"Burning",
-				0.25f,
-				Misc::Element::pyro,
-				&_postMods::burning,
-				std::array{
+			static constexpr auto burning = Reaction::Transformative<Modifiers::total.burning, std::array<Misc::Element, 1>>{
+				.name = "Burning",
+				.multiplier = 0.25f,
+				.damageElement = Misc::Element::pyro,
+				.triggers = std::array{
 					Misc::Element::pyro,
 				},
 			};
-			static inline Reaction::Transformative superconduct{
-				"Superconduct",
-				0.5f,
-				Misc::Element::cryo,
-				&_postMods::superconduct,
-				std::array{
+			static constexpr auto superconduct = Reaction::Transformative<Modifiers::total.superconduct, std::array<Misc::Element, 2>>{
+				.name = "Superconduct",
+				.multiplier = 0.5f,
+				.damageElement = Misc::Element::cryo,
+				.triggers = std::array{
 					Misc::Element::cryo,
 					Misc::Element::electro,
 				},
 			};
-			static inline Reaction::Transformative pyroSwirl{
-				"Pyro Swirl",
-				0.6f,
-				Misc::Element::pyro,
-				&_postMods::swirl,
-				std::array{
+			static constexpr auto pyroSwirl = Reaction::Transformative<Modifiers::total.swirl, std::array<Misc::Element, 1>>{
+				.name = "Pyro Swirl",
+				.multiplier = 0.6f,
+				.damageElement = Misc::Element::pyro,
+				.triggers = std::array{
 					Misc::Element::anemo,
 				},
 			};
-			static inline Reaction::Transformative hydroSwirl{
-				"Hydro Swirl",
-				0.6f,
-				Misc::Element::hydro,
-				&_postMods::swirl,
-				std::array{
+			static constexpr auto hydroSwirl = Reaction::Transformative<Modifiers::total.swirl, std::array<Misc::Element, 1>>{
+				.name = "Hydro Swirl",
+				.multiplier = 0.6f,
+				.damageElement = Misc::Element::hydro,
+				.triggers = std::array{
 					Misc::Element::anemo,
 				},
 			};
-			static inline Reaction::Transformative electroSwirl{
-				"Electro Swirl",
-				0.6f,
-				Misc::Element::electro,
-				&_postMods::swirl,
-				std::array{
+			static constexpr auto electroSwirl = Reaction::Transformative<Modifiers::total.swirl, std::array<Misc::Element, 1>>{
+				.name = "Electro Swirl",
+				.multiplier = 0.6f,
+				.damageElement = Misc::Element::electro,
+				.triggers = std::array{
 					Misc::Element::anemo,
 				},
 			};
-			static inline Reaction::Transformative cryoSwirl{
-				"Cryo Swirl",
-				0.6f,
-				Misc::Element::cryo,
-				&_postMods::swirl,
-				std::array{
+			static constexpr auto cryoSwirl = Reaction::Transformative<Modifiers::total.swirl, std::array<Misc::Element, 1>>{
+				.name = "Cryo Swirl",
+				.multiplier = 0.6f,
+				.damageElement = Misc::Element::cryo,
+				.triggers = std::array{
 					Misc::Element::anemo,
 				},
 			};
-			static inline Reaction::Transformative electroCharged{
-				"Electro-Charged",
-				1.2f,
-				Misc::Element::electro,
-				&_postMods::electroCharged,
-				std::array{
+			static constexpr auto electroCharged = Reaction::Transformative<Modifiers::total.electroCharged, std::array<Misc::Element, 2>>{
+				.name = "Electro-Charged",
+				.multiplier = 1.2f,
+				.damageElement = Misc::Element::electro,
+				.triggers = std::array{
 					Misc::Element::electro,
 					Misc::Element::hydro,
 				},
 			};
-			static inline Reaction::Transformative shattered{
-				"Shattered",
-				1.5f,
-				Misc::Element::physical,
-				&_postMods::shattered,
-				std::array{
+			static constexpr auto shattered = Reaction::Transformative<Modifiers::total.shattered, std::array<Misc::Element, 8>>{
+				.name = "Shattered",
+				.multiplier = 1.5f,
+				.damageElement = Misc::Element::physical,
+				.triggers = std::array{
 					Misc::Element::pyro,
 					Misc::Element::hydro,
 					Misc::Element::cryo,
@@ -127,41 +104,37 @@ namespace Reaction {
 					Misc::Element::physical,
 				},
 			};
-			static inline Reaction::Transformative overloaded{
-				"Overloaded",
-				2.0f,
-				Misc::Element::pyro,
-				&_postMods::overloaded,
-				std::array{
+			static constexpr auto overloaded = Reaction::Transformative<Modifiers::total.overloaded, std::array<Misc::Element, 2>>{
+				.name = "Overloaded",
+				.multiplier = 2.0f,
+				.damageElement = Misc::Element::pyro,
+				.triggers = std::array{
 					Misc::Element::pyro,
 					Misc::Element::electro,
 				},
 			};
-			static inline Reaction::Transformative bloom{
-				"Bloom",
-				2.0f,
-				Misc::Element::dendro,
-				&_postMods::bloom,
-				std::array{
+			static constexpr auto bloom = Reaction::Transformative<Modifiers::total.bloom, std::array<Misc::Element, 2>>{
+				.name = "Bloom",
+				.multiplier = 2.0f,
+				.damageElement = Misc::Element::dendro,
+				.triggers = std::array{
 					Misc::Element::hydro,
 					Misc::Element::dendro,
 				},
 			};
-			static inline Reaction::Transformative burgeon{
-				"Burgeon",
-				3.0f,
-				Misc::Element::dendro,
-				&_postMods::burgeon,
-				std::array{
+			static constexpr auto burgeon = Reaction::Transformative<Modifiers::total.burgeon, std::array<Misc::Element, 1>>{
+				.name = "Burgeon",
+				.multiplier = 3.0f,
+				.damageElement = Misc::Element::dendro,
+				.triggers = std::array{
 					Misc::Element::pyro,
 				},
 			};
-			static inline Reaction::Transformative hyperbloom{
-				"Hyperbloom",
-				3.0f,
-				Misc::Element::dendro,
-				&_postMods::hyperbloom,
-				std::array{
+			static constexpr auto hyperbloom = Reaction::Transformative<Modifiers::total.hyperbloom, std::array<Misc::Element, 1>>{
+				.name = "Hyperbloom",
+				.multiplier = 3.0f,
+				.damageElement = Misc::Element::dendro,
+				.triggers = std::array{
 					Misc::Element::electro,
 				},
 			};

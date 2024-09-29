@@ -1,8 +1,9 @@
 #pragma once
 
+#include "element.hpp"
 #include "fmt/core.h"
-#include "formula/stat.hpp"
 #include "formulaContext.hpp"
+#include "modifiers/total/total.hpp"
 #include "stats/enemy.hpp"
 #include "stats/loadout.hpp"
 #include "step.hpp"
@@ -10,21 +11,21 @@
 
 namespace Formula {
 	struct EnemyDef {
-		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Enemy DEF {:.1f}%", eval(context));
 		}
 
-		[[nodiscard]] static inline float eval(const Context &context) {
-			return (1.f - context.enemy.sheet.DEFReduction.get(context)) * 5.f * context.enemy.sheet.level.get(context) + 500.f;
+		[[nodiscard]] static float eval(const Context &context) {
+			return ((1.f - Modifiers::totalEnemy.DEFReduction.eval(context)) * 5.f * Modifiers::totalEnemy.level.eval(context)) + 500.f;
 		}
 	};
 
 	struct EnemyDefMultiplier {
-		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Enemy DEF Multiplier {:.1f}%", eval(context) * 100.f);
 		}
 
-		[[nodiscard]] static inline float eval(const Context &context) {
+		[[nodiscard]] static float eval(const Context &context) {
 			const auto characterLevel = static_cast<float>(context.source.character.sheet.level);
 			const auto enemyLevel = context.enemy.sheet.level.get(context);
 			const auto k = (1.f - context.enemy.sheet.DEFReduction.get(context)) * (1.f - context.enemy.sheet.DEFReduction.get(context));
@@ -37,12 +38,12 @@ namespace Formula {
 		Misc::AttackSource attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Enemy RES Multiplier {:.1f}%", eval(context) * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
-			const auto attackElement = Formula::_getElement(attackSource, element, context);
+		[[nodiscard]] float eval(const Context &context) const {
+			const auto attackElement = getElement(attackSource, element, context);
 			const auto &RES = context.enemy.sheet.resistance.fromElement(attackElement).get(context);
 
 			if (RES < 0.f) return 1.f - (RES / 2.f);

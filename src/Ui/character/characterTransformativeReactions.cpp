@@ -6,6 +6,7 @@
 #include "Ui/utils/tooltip.hpp"
 #include "character/data.hpp"
 #include "reaction/transformative.hpp"
+#include "utils.hpp"
 
 
 using namespace squi;

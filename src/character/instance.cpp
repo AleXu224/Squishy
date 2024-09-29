@@ -5,6 +5,7 @@
 #include "formula/teamCharacter.hpp"
 #include "store.hpp"
 
+#include "ranges"
 
 Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dataKey, const Weapon::InstanceKey &weaponInstanceKey)
 	: instanceKey(instanceKey),
@@ -18,25 +19,14 @@ Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dat
 	const auto &character = Character::list.at(dataKey);
 	character.getOpts(loadout.character.options);
 
-	Stats::setupModifiers(character.data.mods.preMod, loadout.character.sheet.preMods, 0);
-	Stats::setupModifiers(character.data.mods.postMod, loadout.character.sheet.postMods, 0);
-	Stats::setupModifiers(character.data.mods.teamPreMod, loadout.character.sheet.teamPreMods, 0);
-	Stats::setupModifiers(character.data.mods.teamPostMod, loadout.character.sheet.teamPostMods, 0);
-	Stats::setupModifiers(character.data.mods.enemy, loadout.character.sheet.enemySheet, 0);
-
 	loadout.character.sheet.infusion = Formula::CharacterTeamInfusion(character.data.mods.infusion);
 	loadout.character.sheet.teamInfusion = character.data.mods.teamInfusion;
-
-	Stats::setupTalents(character.data.mods.talents, loadout.character.sheet.talents, 0);
-	Stats::setupTalents(character.data.mods.teamTalents, loadout.character.sheet.teamTalents, 0);
 
 	loadout.character.sheet.init(loadout);
 
 	for (const auto &[setKey, set]: Artifact::sets) {
 		set.getOptions(loadout.artifact.options);
 	}
-
-	loadout.artifact.sheet.init();
 }
 
 void Character::Instance::getArtifactStats() {

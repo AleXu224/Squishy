@@ -1,8 +1,6 @@
 #pragma once
 
 #include "formula/formulaContext.hpp"
-#include "operators.hpp"
-#include "stat.hpp"
 #include "stats/loadout.hpp"
 
 
@@ -14,17 +12,17 @@ namespace Formula {
 	struct WeaponMultiplierValue {
 		std::array<float, 5> values;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getRefinementMultiplier(values, context.source);
 			return fmt::format("{:.1f}%", multiplier * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return _getRefinementMultiplier(values, context.source);
 		}
 	};
 
-	[[nodiscard]] consteval auto WeaponMultiplier(::Stat stat, const std::array<float, 5> &values) {
-		return Formula::CharacterStat(stat) * WeaponMultiplierValue(values);
+	[[nodiscard]] consteval auto WeaponMultiplier(auto stat, const std::array<float, 5> &values) {
+		return stat * WeaponMultiplierValue(values);
 	}
 }// namespace Formula

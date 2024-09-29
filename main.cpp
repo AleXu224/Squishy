@@ -10,7 +10,6 @@
 #include "window.hpp"
 #include <GLFW/glfw3.h>
 
-
 int main() {
 	Weapon::initWeapons();
 	Character::initCharacters();

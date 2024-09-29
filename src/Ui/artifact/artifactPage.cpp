@@ -10,6 +10,18 @@
 
 using namespace squi;
 
+namespace {
+	[[nodiscard]] auto makeArtifacts() {
+		Children ret;
+		for (auto &[_, artifact]: ::Store::artifacts) {
+			ret.emplace_back(UI::ArtifactCard{
+				.artifact = artifact,
+			});
+		}
+		return ret;
+	}
+}// namespace
+
 UI::ArtifactPage::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
@@ -46,18 +58,9 @@ UI::ArtifactPage::operator squi::Child() const {
 				.widget{
 					.height = Size::Shrink,
 					.onInit = [](Widget &w) {
-						constexpr auto makeArtifacts = []() {
-							Children ret;
-							for (auto &[_, artifact]: ::Store::artifacts) {
-								ret.emplace_back(ArtifactCard{
-									.artifact = artifact,
-								});
-							}
-							return ret;
-						};
 						w.setChildren(makeArtifacts());
 
-						w.customState.add(Store::artifactListUpdateEvent.observe([&w, makeArtifacts]() {
+						w.customState.add(Store::artifactListUpdateEvent.observe([&w]() {
 							w.setChildren(makeArtifacts());
 						}));
 					},

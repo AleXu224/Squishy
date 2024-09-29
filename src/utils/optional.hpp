@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utility"
+
 namespace Utils {
 	// Why does this exist if there already is std::optional you might ask yourself
 	// Well the answer is that msvc is stupid and std::optional fails in consteval for no good reason
@@ -24,9 +26,9 @@ namespace Utils {
 			return self._value;
 		}
 
-		[[nodiscard]] constexpr const JankyOptional& this_or(this auto &&self, const JankyOptional<T> &other) {
+		[[nodiscard]] constexpr const JankyOptional &this_or(this auto &&self, JankyOptional<T> &&other) {
 			if (self._hasValue) return self;
-			return other;
+			return std::move(other);
 		}
 
 	private:

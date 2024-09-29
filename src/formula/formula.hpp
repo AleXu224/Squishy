@@ -10,4 +10,3 @@
 #include "reaction.hpp"      // IWYU pragma: export
 #include "refinement.hpp"    // IWYU pragma: export
 #include "requires.hpp"      // IWYU pragma: export
-#include "stat.hpp"          // IWYU pragma: export

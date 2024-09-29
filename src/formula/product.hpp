@@ -5,12 +5,12 @@
 
 
 namespace Formula {
-	template<FloatFormula T, FloatFormula U>
+	template<ArithmeticFormula T, ArithmeticFormula U>
 	struct Product {
 		T val1;
 		U val2;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			if (val1.eval(context) == 1.f) return val2.print(context, prevStep);
 			if (val2.eval(context) == 1.f) return val1.print(context, prevStep);
 
@@ -24,7 +24,7 @@ namespace Formula {
 			return fmt::format("{} * {}", p1, p2);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] auto eval(const Context &context) const {
 			return val1.eval(context) * val2.eval(context);
 		}
 	};

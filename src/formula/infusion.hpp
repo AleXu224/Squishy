@@ -11,21 +11,21 @@ namespace Formula {
 	struct Infusion {
 		::Misc::Element element;
 
-		[[nodiscard]] inline std::string print(const Context &, Step) const {
+		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", Utils::Stringify(element));
 		}
 
-		[[nodiscard]] inline Utils::JankyOptional<Misc::Element> eval(const Context &) const {
+		[[nodiscard]] Utils::JankyOptional<Misc::Element> eval(const Context &) const {
 			return element;
 		}
 	};
 
 	struct NoInfusion {
-		[[nodiscard]] static inline std::string print(const Context &, Step) {
+		[[nodiscard]] static std::string print(const Context &, Step) {
 			return "None";
 		}
 
-		[[nodiscard]] static inline Utils::JankyOptional<Misc::Element> eval(const Context &) {
+		[[nodiscard]] static Utils::JankyOptional<Misc::Element> eval(const Context &) {
 			return {};
 		}
 	};

@@ -32,7 +32,7 @@ namespace Node {
 		std::vector<Node::Types> constellation4{};
 		std::vector<Node::Types> constellation6{};
 
-		[[nodiscard]] static inline auto getMembers() {
+		[[nodiscard]] static auto getMembers() {
 			return std::array{
 				&CharacterList::normal,
 				&CharacterList::charged,

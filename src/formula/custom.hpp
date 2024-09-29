@@ -1,7 +1,7 @@
 #pragma once
 
-#include "formula/formulaContext.hpp"
 #include "fmt/core.h"
+#include "formula/formulaContext.hpp"
 #include "step.hpp"
 
 
@@ -16,11 +16,11 @@ namespace Formula {
 		T func;
 		bool isPercentage = false;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{:2f}{}", func(context) * (isPercentage ? 100.f : 1.f), isPercentage ? "%" : "");
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{:1f}{}", func(context) * (isPercentage ? 100.f : 1.f), isPercentage ? "%" : "");
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			return func(context);
 		}
 	};

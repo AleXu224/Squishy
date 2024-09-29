@@ -13,20 +13,20 @@ constexpr auto getWeaponSubstat = [](const Stats::Weapon &stats) {
 };
 
 Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
-	this->preMods.baseAtk.modifiers.at(1) = Formula::Prefix(
+	this->stats.baseAtk.modifiers.at(0) = Formula::Prefix(
 		"Weapon Base",
 		Formula::Custom([](const Formula::Context &context) {
 			return getWeaponAtk(context.source.weapon);
 		})
 	);
 
-	this->preMods.fromStat(base.substat.stat).modifiers.at(1) = Formula::Prefix(
+	this->stats.fromStat(base.substat.stat).modifiers.at(0) = Formula::Prefix(
 		"Weapon Base",
 		Formula::Custom(
 			[](const Formula::Context &context) {
 				return getWeaponSubstat(context.source.weapon);
 			},
-			Stats::isPercentage(base.substat.stat)
+			Utils::isPercentage(base.substat.stat)
 		)
 	);
 }

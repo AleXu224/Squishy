@@ -9,44 +9,44 @@ namespace Formula {
 	struct Constant {
 		float value;
 
-		[[nodiscard]] inline std::string print(const Context &, Step) const {
+		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{:.1f}%", value * 100.f);
 		}
 
-		[[nodiscard]] inline float eval(const Context &) const {
+		[[nodiscard]] float eval(const Context &) const {
 			return value;
 		}
 	};
 	struct ConstantFlat {
 		float value;
 
-		[[nodiscard]] inline std::string print(const Context &, Step) const {
+		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{:.1f}", value);
 		}
 
-		[[nodiscard]] inline float eval(const Context &) const {
+		[[nodiscard]] float eval(const Context &) const {
 			return value;
 		}
 	};
 	struct ConstantBool {
 		bool value;
 
-		[[nodiscard]] inline std::string print(const Context &, Step) const {
+		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", value);
 		}
 
-		[[nodiscard]] inline bool eval(const Context &) const {
+		[[nodiscard]] bool eval(const Context &) const {
 			return value;
 		}
 	};
 	struct ConstantInt {
 		uint32_t value;
 
-		[[nodiscard]] inline std::string print(const Context &, Step) const {
+		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", value);
 		}
 
-		[[nodiscard]] inline uint32_t eval(const Context &) const {
+		[[nodiscard]] uint32_t eval(const Context &) const {
 			return value;
 		}
 	};

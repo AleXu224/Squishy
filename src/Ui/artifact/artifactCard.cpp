@@ -16,6 +16,7 @@
 #include "store.hpp"
 #include "text.hpp"
 
+#include "ranges"
 
 using namespace squi;
 
@@ -134,14 +135,14 @@ struct ArtifactCardContent {
 				Button{
 					.text = "Delete",
 					.style = ButtonStyle::Standard(),
-					.onClick = [key = artifact.key](GestureDetector::Event){
+					.onClick = [key = artifact.key](GestureDetector::Event) {
 						auto &artifact = Store::artifacts.at(key);
 						if (artifact.equippedCharacter.key) {
 							auto &character = Store::characters.at(artifact.equippedCharacter);
 							character.loadout.artifact.equipped.fromSlot(artifact.slot) = std::nullopt;
 							character.getArtifactStats();
 						}
-						
+
 						Store::artifacts.erase(key);
 						Store::artifactListUpdateEvent.notify();
 					},

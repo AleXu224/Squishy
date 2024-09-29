@@ -6,7 +6,7 @@
 
 namespace Stats {
 	struct Enemy {
-		using _Value = Value<float, 1>;
+		using _Value = Value<float, 0>;
 		EnemySheet<_Value> sheet{
 			.resistance{
 				.pyro{.constant = 0.1f},
@@ -19,7 +19,5 @@ namespace Stats {
 				.physical{.constant = 0.1f},
 			},
 		};
-
-		Enemy();
 	};
 }// namespace Stats

@@ -15,22 +15,23 @@
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
+#include "formula/stat.hpp"
+
+#include "modifiers/artifact/displayStats.hpp"
+#include "modifiers/weapon/displayStats.hpp"
 
 #include "box.hpp"
 #include "scrollableFrame.hpp"
 
-#include "numeric"
-
 using namespace squi;
 
-template<class T = Stats::CharacterSheet>
+template<auto sheet = int{}>
 struct DetailsSkill {
 	// Args
 	std::string_view name;
 	Character::InstanceKey characterKey{};
 	const Formula::Context &ctx;
 	const std::vector<Node::Types> &nodes;
-	std::optional<std::reference_wrapper<T>> sheet{};
 	size_t maxPreModifierIndex = 0;
 	size_t maxPostModifierIndex = 0;
 	std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
@@ -63,124 +64,29 @@ struct DetailsSkill {
 					});
 				}
 
-				if (sheet.has_value()) {
+				if constexpr (!std::is_same_v<decltype(sheet), int>) {
 					Children ret3{};
 
 					bool transparent = true;
-					if constexpr (std::is_same_v<std::remove_cvref_t<T>, Stats::ModsSheet>) {
-						for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
-								 Stats::getSheetValuesMembers<decltype(T::preMod)>(),
-								 Stats::getSheetValuesMembers<decltype(T::postMod)>(),
-								 Stats::getSheetValuesMembers<decltype(T::teamPreMod)>(),
-								 Stats::getSheetValuesMembers<decltype(T::teamPostMod)>()
-							 )) {
-							auto &statPre = std::invoke(prePtr, sheet.value().get().preMod);
-							auto &statPost = std::invoke(postPtr, sheet.value().get().postMod);
-							auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMod);
-							auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMod);
+					for (const auto &stat: Stats::all) {
+						auto message = Formula::EvalStat(sheet, stat, [&](auto &&stat) {
+							return stat.print(ctx, Formula::Step::none);
+						});
+						auto value = Formula::EvalStat(sheet, stat, [&](auto &&stat) {
+							return stat.eval(ctx);
+						});
 
-							std::vector<std::string> a{};
-							if (statPre.hasValue() && statPre.eval(ctx) != 0.f) a.emplace_back(statPre.print(ctx));
-							if (statPost.hasValue() && statPost.eval(ctx) != 0.f) a.emplace_back(statPost.print(ctx));
-							if (statTeamPre.hasValue() && statTeamPre.eval(ctx) != 0.f) a.emplace_back(statTeamPre.print(ctx));
-							if (statTeamPost.hasValue() && statTeamPost.eval(ctx) != 0.f) a.emplace_back(statTeamPost.print(ctx));
-							auto message = std::accumulate(
-								a.begin(), a.end(),
-								std::string(),
-								[&](const std::string &val1, const std::string &val2) {
-									return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
-								}
-							);
-
-							float totalValue = 0.f;
-							if (statPre.hasValue()) totalValue += statPre.eval(ctx);
-							if (statPost.hasValue()) totalValue += statPost.eval(ctx);
-							if (statTeamPre.hasValue()) totalValue += statTeamPre.eval(ctx);
-							if (statTeamPost.hasValue()) totalValue += statTeamPost.eval(ctx);
-
-							if (totalValue == 0.f) continue;
-							ret3.emplace_back(UI::Tooltip{
-								.message = message,
-								.child = UI::SkillEntry{
-									.isTransparent = transparent = !transparent,
-									.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
-									.value = totalValue,
-									.color = Color(0xFFFFFFFF),
-									.isPercentage = Stats::isSheetMemberPercentage(prePtr),
-								},
-							});
-						}
-					} else {
-						for (const auto &[prePtr, postPtr, preTeamPtr, postTeamPtr]: std::views::zip(
-								 Stats::getSheetValuesMembers<decltype(T::preMods)>(),
-								 Stats::getSheetValuesMembers<decltype(T::postMods)>(),
-								 Stats::getSheetValuesMembers<decltype(T::teamPreMods)>(),
-								 Stats::getSheetValuesMembers<decltype(T::teamPostMods)>()
-							 )) {
-							auto &statPre = std::invoke(prePtr, sheet.value().get().preMods);
-							auto &statPost = std::invoke(postPtr, sheet.value().get().postMods);
-							auto &statTeamPre = std::invoke(preTeamPtr, sheet.value().get().teamPreMods);
-							auto &statTeamPost = std::invoke(postTeamPtr, sheet.value().get().teamPostMods);
-							auto &modifiersPre = statPre.modifiers;
-							auto &modifiersPost = statPost.modifiers;
-							auto &modifiersTeamPre = statTeamPre.modifiers;
-							auto &modifiersTeamPost = statTeamPost.modifiers;
-
-							std::vector<std::string> a{};
-							for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								a.emplace_back(modifier.print(ctx));
-							}
-							for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								a.emplace_back(modifier.print(ctx));
-							}
-							for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								a.emplace_back(modifier.print(ctx));
-							}
-							for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								a.emplace_back(modifier.print(ctx));
-							}
-							auto message = std::accumulate(
-								a.begin(), a.end(),
-								std::string(),
-								[&](const std::string &val1, const std::string &val2) {
-									return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
-								}
-							);
-
-							float totalValue = 0.f;
-							for (auto &modifier: modifiersPre | std::views::take(maxPreModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								totalValue += modifier.eval(ctx);
-							}
-							for (auto &modifier: modifiersPost | std::views::take(maxPostModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								totalValue += modifier.eval(ctx);
-							}
-							for (auto &modifier: modifiersTeamPre | std::views::take(maxPreModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								totalValue += modifier.eval(ctx);
-							}
-							for (auto &modifier: modifiersTeamPost | std::views::take(maxPostModifierIndex)) {
-								if (!modifier.hasValue()) continue;
-								totalValue += modifier.eval(ctx);
-							}
-
-							if (totalValue == 0.f) continue;
-							ret3.emplace_back(UI::Tooltip{
-								.message = message,
-								.child = UI::SkillEntry{
-									.isTransparent = transparent = !transparent,
-									.name = Utils::Stringify(Stats::getSheetMemberStat(prePtr)),
-									.value = totalValue,
-									.color = Color(0xFFFFFFFF),
-									.isPercentage = Stats::isSheetMemberPercentage(prePtr),
-								},
-							});
-						}
+						if (value == 0.f) continue;
+						ret3.emplace_back(UI::Tooltip{
+							.message = message,
+							.child = UI::SkillEntry{
+								.isTransparent = transparent = !transparent,
+								.name = Utils::Stringify(stat),
+								.value = value,
+								.color = Color(0xFFFFFFFF),
+								.isPercentage = Utils::isPercentage(stat),
+							},
+						});
 					}
 
 					if (!ret3.empty()) {
@@ -309,12 +215,11 @@ namespace {
 
 		auto weaponOpts = makeOpts(character.loadout.weapon.options);
 
-		w.addChild(DetailsSkill<Stats::WeaponSheet>{
+		w.addChild(DetailsSkill<Modifiers::Weapon::displayStats>{
 			.name = character.loadout.weapon.data.name,
 			.characterKey = characterKey,
 			.ctx = ctx,
 			.nodes = character.loadout.weapon.data.data.nodes,
-			.sheet = std::ref(character.loadout.weapon.sheet),
 			.maxPreModifierIndex = 2,
 			.maxPostModifierIndex = 1,
 			.options = weaponOpts,
@@ -344,24 +249,22 @@ namespace {
 			return std::nullopt;
 		}();
 		if (character.loadout.artifact.bonus1.has_value()) {
-			w.addChild(DetailsSkill<const Stats::ModsSheet>{
+			w.addChild(DetailsSkill<Modifiers::Artifact::display1>{
 				.name = character.loadout.artifact.bonus1->setPtr.name,
 				.characterKey = characterKey,
 				.ctx = ctx,
 				.nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
-				.sheet = std::ref(character.loadout.artifact.bonus1->bonusPtr.mods),
 				.maxPreModifierIndex = 1,
 				.maxPostModifierIndex = 1,
 				.options = artifactOpts1,
 			});
 		}
 		if (character.loadout.artifact.bonus1.has_value()) {
-			w.addChild(DetailsSkill<const Stats::ModsSheet>{
+			w.addChild(DetailsSkill<Modifiers::Artifact::display2>{
 				.name = character.loadout.artifact.bonus2->setPtr.name,
 				.characterKey = characterKey,
 				.ctx = ctx,
 				.nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
-				.sheet = std::ref(character.loadout.artifact.bonus2->bonusPtr.mods),
 				.maxPreModifierIndex = 1,
 				.maxPostModifierIndex = 1,
 				.options = artifactOpts2,

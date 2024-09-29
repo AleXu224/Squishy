@@ -1,6 +1,7 @@
 #include "artifactEditor.hpp"
 
 #include "artifact/sets.hpp"
+#include "stats/artifact.hpp"
 
 #include "align.hpp"
 #include "box.hpp"
@@ -14,6 +15,8 @@
 #include "stack.hpp"
 #include "teachingTip.hpp"
 #include "text.hpp"
+
+#include "ranges"
 
 using namespace squi;
 
@@ -234,9 +237,10 @@ UI::ArtifactEditor::operator squi::Child() const {
 					subStatChangeEvent.notify({});
 				},
 			});
-			for (const auto &stat: std::views::filter(Stats::Artifact::subStats, [&](auto &&val) {
-					 return storage->artifact.mainStat != val;
-				 })) {
+			auto filter = [&storage](auto &&val) {
+				return storage->artifact.mainStat != val;
+			};
+			for (const auto &stat: std::views::filter(Stats::Artifact::subStats, filter)) {
 				ret.emplace_back(ContextMenu::Item{
 					.text = Utils::Stringify(stat),
 					.content = [stat, subStatChangeEvent]() {
@@ -270,7 +274,7 @@ UI::ArtifactEditor::operator squi::Child() const {
 								subStatValueUpdater.notify(
 									storage->artifact.subStats.at(subStatIndex)
 										.and_then([newStat, prevStat](const StatValue &stat) -> std::optional<float> {
-											return stat.value * (Stats::isPercentage(prevStat.value_or(newStat.value())) ? 100.f : 1.f);
+											return stat.value * (Utils::isPercentage(prevStat.value_or(newStat.value())) ? 100.f : 1.f);
 										})
 										.value_or(0.f)
 								);
@@ -294,7 +298,7 @@ UI::ArtifactEditor::operator squi::Child() const {
 				},
 				NumberBox{
 					.value = storage->artifact.subStats.at(subStatIndex).transform([&](auto &&val) {
-																			return val.value * (Stats::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
+																			return val.value * (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
 																		})
 								 .value_or(0.f),
 					.min = 0.f,
@@ -302,13 +306,13 @@ UI::ArtifactEditor::operator squi::Child() const {
 					.onChange = [storage, subStatIndex](float val) {
 						if (storage->artifact.subStats.at(subStatIndex).has_value()) {
 							storage->artifact.subStats.at(subStatIndex)->value
-								= val / (Stats::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
+								= val / (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
 						}
 					},
 					.formatter = [storage, subStatIndex](float val) {
 						if (
 							!storage->artifact.subStats.at(subStatIndex).has_value()
-							|| !Stats::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat)
+							|| !Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat)
 						) {
 							return std::format("{:.0f}", val);
 						}

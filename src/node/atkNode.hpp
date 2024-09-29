@@ -5,29 +5,88 @@
 #include "formula/enemy.hpp"
 #include "formula/operators.hpp"
 #include "formula/reaction.hpp"
-#include "formula/stat.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
 #include "nodeData.hpp"
-#include "stats/sheet.hpp"
 #include "string_view"
 
 
 namespace Node {
-	using _Sheet = decltype(Stats::CharacterSheet::postMods);
-	using _Stats = Stats::CharacterSheet;
+	using namespace Formula::Operators;
+	template<Misc::SkillStat skillStat>
+	struct _NodeElement {
+		Utils::JankyOptional<Misc::Element> element{};
+		Misc::AttackSource source{};
 
-	template<class T>
+		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
+			return "";
+		}
+
+		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
+			switch (element) {
+				case Misc::Element::pyro:
+					return Stats::fromSkillStat<Modifiers::total.pyro, skillStat>().eval(context);
+				case Misc::Element::hydro:
+					return Stats::fromSkillStat<Modifiers::total.hydro, skillStat>().eval(context);
+				case Misc::Element::cryo:
+					return Stats::fromSkillStat<Modifiers::total.cryo, skillStat>().eval(context);
+				case Misc::Element::electro:
+					return Stats::fromSkillStat<Modifiers::total.electro, skillStat>().eval(context);
+				case Misc::Element::dendro:
+					return Stats::fromSkillStat<Modifiers::total.dendro, skillStat>().eval(context);
+				case Misc::Element::anemo:
+					return Stats::fromSkillStat<Modifiers::total.anemo, skillStat>().eval(context);
+				case Misc::Element::geo:
+					return Stats::fromSkillStat<Modifiers::total.geo, skillStat>().eval(context);
+				case Misc::Element::physical:
+					return Stats::fromSkillStat<Modifiers::total.physical, skillStat>().eval(context);
+			}
+		}
+
+		[[nodiscard]] float eval(const Formula::Context &context) const {
+			switch (source) {
+				case Misc::AttackSource::normal:
+				case Misc::AttackSource::charged:
+				case Misc::AttackSource::plunge:
+					return switchElement(element.value_or(context.target.character.sheet.infusion.eval(context).value_or(Misc::Element::physical)), context);
+				case Misc::AttackSource::skill:
+				case Misc::AttackSource::burst:
+					return switchElement(element.value_or(context.target.character.base.element), context);
+			}
+		}
+	};
+	template<Misc::SkillStat skillStat>
+	struct _NodeSkill {
+		Misc::AttackSource source{};
+
+		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
+			return "";
+		}
+
+		[[nodiscard]] float eval(const Formula::Context &context) const {
+			switch (source) {
+				case Misc::AttackSource::normal:
+					return Stats::fromSkillStat<Modifiers::total.normal, skillStat>().eval(context);
+				case Misc::AttackSource::charged:
+					return Stats::fromSkillStat<Modifiers::total.charged, skillStat>().eval(context);
+				case Misc::AttackSource::plunge:
+					return Stats::fromSkillStat<Modifiers::total.plunge, skillStat>().eval(context);
+				case Misc::AttackSource::skill:
+					return Stats::fromSkillStat<Modifiers::total.skill, skillStat>().eval(context);
+				case Misc::AttackSource::burst:
+					return Stats::fromSkillStat<Modifiers::total.burst, skillStat>().eval(context);
+			}
+		}
+	};
+	template<Misc::SkillStat skillStat>
 	[[nodiscard]] constexpr auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
 		Misc::AttackSource atkSource,
-		_Sheet::_SkillValue _Sheet::*skill,
-		_Sheet::_Value _Sheet::_SkillValue::*stat,
-		T formula
+		auto formula
 	) {
-		auto allStats = Formula::SkillPtr(&_Stats::postMods, &_Sheet::all, stat);
-		auto elementStats = Formula::ElementStat(atkSource, attackElement, stat);
-		auto skillStats = Formula::SkillPtr(&_Stats::postMods, skill, stat);
+		auto allStats = Stats::fromSkillStat<Modifiers::total.all, skillStat>();
+		auto elementStats = _NodeElement<skillStat>(attackElement, atkSource);
+		auto skillStats = _NodeSkill<skillStat>(atkSource);
 
 		return allStats + elementStats + skillStats + formula;
 	}
@@ -46,13 +105,11 @@ namespace Node {
 			Frm formula,
 			T modifier
 		) {
-			auto skill = Stats::getSheetMemberByAttackSource<_Sheet>(source);
-
-			auto totalDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::DMG, modifier.DMG);
-			auto totalAdditiveDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::additiveDMG, modifier.additiveDMG) + Formula::AdditiveMultiplier{};
-			auto totalMultiplicativeDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::multiplicativeDMG, modifier.multiplicativeDMG);
-			auto totalCritRate = Formula::Clamp(_getTotal(element, source, skill, &_Sheet::_SkillValue::critRate, modifier.critRate) + Formula::CharacterStat(Stat::cr), 0.f, 1.f);
-			auto totalCritDMG = _getTotal(element, source, skill, &_Sheet::_SkillValue::critDMG, modifier.critDMG) + Formula::CharacterStat(Stat::cd);
+			auto totalDMG = _getTotal<Misc::SkillStat::DMG>(element, source, modifier.DMG);
+			auto totalAdditiveDMG = _getTotal<Misc::SkillStat::additiveDMG>(element, source, modifier.additiveDMG) + Formula::AdditiveMultiplier{};
+			auto totalMultiplicativeDMG = _getTotal<Misc::SkillStat::multiplicativeDMG>(element, source, modifier.multiplicativeDMG);
+			auto totalCritRate = Formula::Clamp(_getTotal<Misc::SkillStat::critRate>(element, source, modifier.critRate) + Modifiers::total.cr, 0.f, 1.f);
+			auto totalCritDMG = _getTotal<Misc::SkillStat::critDMG>(element, source, modifier.critDMG) + Modifiers::total.cd;
 
 			auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 			auto dmgBonus = (1.0f + totalDMG);

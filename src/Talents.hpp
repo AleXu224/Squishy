@@ -3,6 +3,8 @@
 #include "array"
 #include "print"
 #include "utility"
+#include "utils/stringify.hpp"
+
 
 enum class Talent : uint8_t {
 	normal,
@@ -78,3 +80,17 @@ enum class LevelableTalent : uint8_t {
 	skill,
 	burst,
 };
+
+namespace Utils {
+	template<>
+	[[nodiscard]] inline std::string Stringify<LevelableTalent>(const LevelableTalent &talent) {
+		switch (talent) {
+			case LevelableTalent::normal:
+				return "Normal";
+			case LevelableTalent::skill:
+				return "Skill";
+			case LevelableTalent::burst:
+				return "Burst";
+		}
+	}
+}// namespace Utils

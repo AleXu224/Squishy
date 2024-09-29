@@ -5,9 +5,9 @@
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 
-#include "stats/loadout.hpp"
+#include "formula/stat.hpp"
 
-#include <numeric>
+#include "stats/loadout.hpp"
 
 using namespace squi;
 UI::CharacterStats::operator squi::Child() const {
@@ -22,36 +22,20 @@ UI::CharacterStats::operator squi::Child() const {
 
 			Children ret2{};
 
-			for (auto [stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
+			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
+				auto message = Formula::EvalStat(Modifiers::displayTotal, stat, [&](auto &&val) {
+					return val.print(ctx, Formula::Step::none);
+				});
+				auto value = Formula::EvalStat(Modifiers::displayTotal, stat, [&](auto &&val) {
+					return val.eval(ctx);
+				});
 				ret2.emplace_back(UI::Tooltip{
-					.message = [&]() {
-						std::vector<std::string> a{};
-						const auto &modifiersPre = loadout.character.sheet.preMods.fromStat(stat).modifiers;
-						const auto &modifiersPost = loadout.character.sheet.postMods.fromStat(stat).modifiers;
-						auto printMod = [&](auto &&mod) {
-							if (!mod.hasValue()) return;
-							if (mod.eval(ctx) == 0.f) return;
-							a.emplace_back(mod.print(ctx));
-						};
-						for (const auto &modifier: modifiersPre) {
-							printMod(modifier);
-						}
-						printMod(modifiersPost.at(0));
-						printMod(modifiersPost.at(1));
-						printMod(modifiersPost.at(3));
-						return std::accumulate(
-							a.begin(), a.end(),
-							std::string(),
-							[&](const std::string &val1, const std::string &val2) {
-								return std::format("{}{}{}", val1, ((val1.empty() || val2.empty()) ? "" : " + "), val2);
-							}
-						);
-					}(),
+					.message = message,
 					.child = UI::StatDisplay{
 						.isTransparent = transparent,
 						.stat{
 							.stat = stat,
-							.value = loadout.character.sheet.postMods.fromStat(stat).get(ctx),
+							.value = value,
 						},
 					},
 				});

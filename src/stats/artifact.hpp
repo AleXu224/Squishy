@@ -1,20 +1,17 @@
 #pragma once
 
 #include "artifact/key.hpp"
+#include "artifact/set.hpp"
 #include "artifact/slot.hpp"
 #include "option/option.hpp"
 #include "stats/artifactSheet.hpp"
+#include "utility"
 
-
-namespace Artifact {
-	struct Set;
-	struct SetBonus;
-}// namespace Artifact
 
 namespace Stats {
 	struct ArtifactBonus {
 		const ::Artifact::Set &setPtr;
-		const Artifact::SetBonus &bonusPtr;
+		const ::Artifact::SetBonus &bonusPtr;
 	};
 
 	struct Artifact {
@@ -59,6 +56,7 @@ namespace Stats {
 					case ::Artifact::Slot::circlet:
 						return self.circlet;
 				}
+				std::unreachable();
 			}
 		};
 
@@ -127,6 +125,7 @@ namespace Stats {
 				case ::Artifact::Slot::circlet:
 					return circlet;
 			}
+			std::unreachable();
 		}
 	};
 }// namespace Stats

@@ -4,6 +4,7 @@
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/trueFalse.hpp"
 #include "character/characters.hpp"
+#include "formula/stat.hpp"
 #include "store.hpp"
 
 #include "column.hpp"
@@ -90,10 +91,10 @@ struct Contents {
 									 std::views::join(statsToDisplay),
 									 Utils::trueFalse
 								 )) {
-								auto val = character.loadout.character.sheet.postMods.fromStat(stat).get(ctx);
+								auto formula = Formula::Stat{stat};
 								w.addChild(UI::StatDisplay{
 									.isTransparent = transparent,
-									.stat = StatValue{.stat = stat, .value = val},
+									.stat = StatValue{.stat = stat, .value = formula.eval(ctx)},
 								});
 							}
 						},

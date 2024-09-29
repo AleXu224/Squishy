@@ -13,7 +13,7 @@ namespace Formula {
 		size_t index = 0;
 		T formula;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character.has_value()) return "";
 			auto &stats = character->get().loadout;
@@ -24,7 +24,7 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline float eval(const Context &context) const {
+		[[nodiscard]] float eval(const Context &context) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character.has_value()) return 0.f;
 			return formula.eval(context.withSource(character->get().loadout));
@@ -32,7 +32,7 @@ namespace Formula {
 	};
 
 	struct TeamInfusion {
-		[[nodiscard]] static inline std::string print(const Context &context, Step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			auto elem = eval(context);
 			if (elem.has_value()) {
 				return fmt::format("{}", Utils::Stringify(elem.value()));
@@ -40,7 +40,7 @@ namespace Formula {
 			return "None";
 		}
 
-		[[nodiscard]] static inline Utils::JankyOptional<Misc::Element> eval(const Context &context) {
+		[[nodiscard]] static Utils::JankyOptional<Misc::Element> eval(const Context &context) {
 			const auto &character1 = context.team.characters.at(0);
 			const auto &character2 = context.team.characters.at(1);
 			const auto &character3 = context.team.characters.at(2);
@@ -64,7 +64,7 @@ namespace Formula {
 	struct CharacterTeamInfusion {
 		Formula::ElementNode val;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			auto elem = eval(context);
 			if (elem.has_value()) {
 				return fmt::format("{}", Utils::Stringify(elem.value()));
@@ -72,7 +72,7 @@ namespace Formula {
 			return "None";
 		}
 
-		[[nodiscard]] inline Utils::JankyOptional<Misc::Element> eval(const Context &context) const {
+		[[nodiscard]] Utils::JankyOptional<Misc::Element> eval(const Context &context) const {
 			auto characterInfusion = val.eval(context);
 			if (characterInfusion.has_value()) return characterInfusion;
 
