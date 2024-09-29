@@ -128,6 +128,7 @@ namespace Modifiers {
 				case Type::enemyRes:
 					return true;
 			}
+			std::unreachable();
 		}
 	};
 }// namespace Modifiers

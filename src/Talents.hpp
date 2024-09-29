@@ -92,5 +92,6 @@ namespace Utils {
 			case LevelableTalent::burst:
 				return "Burst";
 		}
+		std::unreachable();
 	}
 }// namespace Utils

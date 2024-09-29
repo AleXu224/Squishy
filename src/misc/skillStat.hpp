@@ -1,8 +1,10 @@
 #pragma once
 
 #include "cstdint"
+#include "utility"
 #include "utils/isPercentage.hpp"
 #include "utils/stringify.hpp"
+
 
 namespace Misc {
 	enum class SkillStat : uint8_t {
@@ -23,6 +25,7 @@ namespace Utils {
 			default:
 				return true;
 		}
+		std::unreachable();
 	}
 	template<>
 	[[nodiscard]] inline std::string Stringify<Misc::SkillStat>(const Misc::SkillStat &stat) {
@@ -38,5 +41,6 @@ namespace Utils {
 			case Misc::SkillStat::critDMG:
 				return "critDMG";
 		}
+		std::unreachable();
 	}
 }// namespace Utils

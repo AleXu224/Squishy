@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cstdint"
+#include "utility"
 #include "utils/isPercentage.hpp"
 #include "utils/stringify.hpp"
 
@@ -27,6 +28,7 @@ namespace Utils {
 			case Misc::EnemyStat::DEFIgnored:
 				return "DEF Ignored";
 		}
+		std::unreachable();
 	}
 	template<>
 	[[nodiscard]] inline std::string Stringify<Misc::EnemyResistances>(const Misc::EnemyResistances &resistance) {
@@ -34,6 +36,7 @@ namespace Utils {
 			case Misc::EnemyResistances::resistance:
 				return "RES";
 		}
+		std::unreachable();
 	}
 	template<>
 	[[nodiscard]] constexpr bool isPercentage<Misc::EnemyStat>(const Misc::EnemyStat &stat) {
@@ -44,5 +47,6 @@ namespace Utils {
 			case Misc::EnemyStat::DEFIgnored:
 				return true;
 		}
+		std::unreachable();
 	}
 }// namespace Utils
