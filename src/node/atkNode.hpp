@@ -41,6 +41,7 @@ namespace Node {
 				case Misc::Element::physical:
 					return Stats::fromSkillStat<Modifiers::total.physical, skillStat>().eval(context);
 			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
