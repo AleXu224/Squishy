@@ -17,7 +17,7 @@ namespace Utils {
 		}
 
 	private:
-		inline constexpr std::uint32_t fnv1a_32(char const *s, std::size_t count) {
+		constexpr std::uint32_t fnv1a_32(char const *s, std::size_t count) {
 			return count ? (fnv1a_32(s, count - 1) ^ s[count - 1]) * 16777619u : 2166136261u;
 		}
 	};

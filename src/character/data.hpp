@@ -9,8 +9,6 @@
 
 
 namespace Character {
-	struct Instance;
-
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};

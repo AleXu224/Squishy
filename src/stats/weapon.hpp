@@ -12,8 +12,8 @@ namespace Stats {
 	struct Weapon {
 		const ::Weapon::Data *data;
 		Stats::WeaponSheet sheet;
-		Option::WeaponMap options{};
+		Option::WeaponMap options;
 
-		explicit Weapon(const ::Weapon::Data &data);
+		Weapon(const ::Weapon::Data &data);
 	};
 }// namespace Stats

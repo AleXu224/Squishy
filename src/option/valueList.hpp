@@ -12,7 +12,7 @@ namespace Option {
 		Utils::HashedString key;
 		std::string_view prefix;
 		std::optional<size_t> currentIndex = std::nullopt;
-		const std::vector<uint32_t> values;
+		std::vector<uint32_t> values;
 
 		[[nodiscard]] std::optional<uint32_t> getValue() const {
 			if (!currentIndex.has_value()) return std::nullopt;
