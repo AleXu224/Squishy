@@ -1,7 +1,6 @@
 #pragma once
 
 #include "option/option.hpp"
-#include "weaponBase.hpp"
 #include "weaponSheet.hpp"
 
 
@@ -11,8 +10,7 @@ namespace Weapon {
 
 namespace Stats {
 	struct Weapon {
-		const ::Weapon::Data &data;
-		const Stats::WeaponBase &base;
+		const ::Weapon::Data *data;
 		Stats::WeaponSheet sheet;
 		Option::WeaponMap options{};
 

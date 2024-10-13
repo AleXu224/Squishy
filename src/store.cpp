@@ -3,6 +3,7 @@
 #include "cereal/archives/json.hpp"
 #include "fstream"
 #include "ranges"
+#include "weapon/data.hpp"
 
 auto Store::serializeOptions(auto &&options) {
 	std::vector<Serialization::Save::OptionTypes> ret{};
@@ -95,7 +96,7 @@ Serialization::Save::Save Store::save() {
 	for (const auto &[weaponKey, weaponInstance]: ::Store::weapons) {
 		retWeapons.emplace_back(Serialization::Save::Weapon{
 			.instanceKey = weaponKey,
-			.dataKey = weaponInstance.data.key,
+			.dataKey = weaponInstance.stats.data->key,
 			.level = weaponInstance.stats.sheet.level,
 			.ascension = weaponInstance.stats.sheet.ascension,
 			.refinement = weaponInstance.stats.sheet.refinement,

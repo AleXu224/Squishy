@@ -1,14 +1,15 @@
 #pragma once
 
+#include "observer.hpp"
 #include "stats/weapon.hpp"
-#include "weapon/data.hpp"
-
+#include "weapon/key.hpp"
 
 namespace Weapon {
 	struct Instance {
-		const InstanceKey instanceKey;
+		InstanceKey instanceKey;
 		Stats::Weapon stats;
-		const Weapon::Data &data;
+
+		squi::VoidObservable updateEvent{};
 
 		Instance(const Weapon::DataKey &dataKey, const Weapon::InstanceKey &instanceKey);
 	};

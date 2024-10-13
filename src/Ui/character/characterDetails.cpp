@@ -216,10 +216,10 @@ namespace {
 		auto weaponOpts = makeOpts(character.loadout.weapon.options);
 
 		w.addChild(DetailsSkill<Modifiers::Weapon::displayStats>{
-			.name = character.loadout.weapon.data.name,
+			.name = character.loadout.weapon.data->name,
 			.characterKey = characterKey,
 			.ctx = ctx,
-			.nodes = character.loadout.weapon.data.data.nodes,
+			.nodes = character.loadout.weapon.data->data.nodes,
 			.maxPreModifierIndex = 2,
 			.maxPostModifierIndex = 1,
 			.options = weaponOpts,

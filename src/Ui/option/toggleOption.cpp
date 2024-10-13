@@ -53,7 +53,7 @@ struct ToggleBox {
 							readyEvent.notify();
 						},
 					},
-					.icon = 0xE73E,
+					.icon = 0xe5ca,
 					.color{0.f, 0.f, 0.f, 1.0f},
 				},
 			},

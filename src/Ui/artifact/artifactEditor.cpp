@@ -1,10 +1,11 @@
 #include "artifactEditor.hpp"
 
+#include "Ui/utils/editorItem.hpp"
 #include "artifact/sets.hpp"
+#include "dialog.hpp"
 #include "stats/artifact.hpp"
 
 #include "align.hpp"
-#include "box.hpp"
 #include "column.hpp"
 #include "container.hpp"
 #include "dropdownButton.hpp"
@@ -20,35 +21,6 @@
 
 using namespace squi;
 
-struct ArtifactEditorItem {
-	// Args
-	squi::Widget::Args widget{};
-	std::string_view name;
-	Child child;
-
-	operator squi::Child() const {
-		return Stack{
-			.widget = widget.withDefaultHeight(Size::Shrink),
-			.children{
-				Container{
-					.widget{
-						.width = Size::Shrink,
-						.height = 32.f,
-					},
-					.child = Align{
-						.xAlign = 0.f,
-						.child = Text{.text = name},
-					},
-				},
-				Align{
-					.xAlign = 1.f,
-					.yAlign = 0.f,
-					.child = child,
-				},
-			},
-		};
-	}
-};
 struct ArtifactEditorSubstat {
 	// Args
 	squi::Widget::Args widget{};
@@ -95,14 +67,13 @@ UI::ArtifactEditor::operator squi::Child() const {
 	Observable<Stat> mainStatChangeEvent{};
 
 	// Level
-	Child levelSelector = ArtifactEditorItem{
+	Child levelSelector = EditorItem{
 		.name = "Level",
 		.child = NumberBox{
 			.value = static_cast<float>(storage->artifact.level),
 			.min = 0.f,
 			.max = 20.f,
 			.onChange = [storage](float newVal) {
-				std::println("{}", newVal);
 				storage->artifact.level = std::floor(newVal);
 			},
 			.validator = [](float val) {
@@ -143,14 +114,14 @@ UI::ArtifactEditor::operator squi::Child() const {
 		.items = setItemsProvider(),
 		.textUpdater = setTextUpdater,
 	};
-	Child setSelector = ArtifactEditorItem{
+	Child setSelector = UI::EditorItem{
 		.name = "Set",
 		.child = setButton,
 	};
 
 	// Slot
 	decltype(DropdownButton::textUpdater) slotTextUpdater{};
-	Child slotSelector = ArtifactEditorItem{
+	Child slotSelector = UI::EditorItem{
 		.name = "Slot",
 		.child = DropdownButton{
 			.widget{
@@ -196,7 +167,7 @@ UI::ArtifactEditor::operator squi::Child() const {
 		}
 		return ret;
 	};
-	Child mainStatSelector = ArtifactEditorItem{
+	Child mainStatSelector = UI::EditorItem{
 		.name = "Main Stat",
 		.child = DropdownButton{
 			.widget{
@@ -332,114 +303,51 @@ UI::ArtifactEditor::operator squi::Child() const {
 	auto subStat3 = createSubStat(2);
 	auto subStat4 = createSubStat(3);
 
-	Child content = Box{
-		.color{1.f, 1.f, 1.f, 0.0538f},
-		.borderColor{0.f, 0.f, 0.f, 0.1f},
-		.borderWidth{0.f, 0.f, 1.f, 0.f},
-		.borderRadius{7.f, 7.f, 0.f, 0.f},
-		.borderPosition = squi::Box::BorderPosition::outset,
-		.child = Column{
-			.widget{
-				.padding = 24.f,
-			},
-			.spacing = 16.f,
-			.children{
-				Container{
-					.child = Text{
-						.text = "Edit artifact",
-						.fontSize = 24.f,
-						.font = FontStore::defaultFontBold,
-					},
-				},
-				levelSelector,
-				setSelector,
-				slotSelector,
-				mainStatSelector,
-				subStat1,
-				subStat2,
-				subStat3,
-				subStat4,
-			},
-		},
-	};
-
-	Child buttonFooter = Box{
-		.widget{
-			.padding = 24.f,
-		},
-		.color{0x00000000},
-		.borderRadius{0.f, 0.f, 7.f, 7.f},
-		.child = Row{
-			.spacing = 8.f,
-			.children{
-				Button{
-					.widget{.width = Size::Expand},
-					.text = "Save",
-					.style = ButtonStyle::Accent(),
-					.onClick = [closeEvent, onSubmit = onSubmit, setButton = std::weak_ptr(setButton), storage](GestureDetector::Event event) {
-						// FIXME: return the new artifact
-						if (storage->artifact.set.key == 0) {
-							event.widget.addOverlay(TeachingTip{
-								.target = setButton,
-								.message = "You must specify a set",
-							});
-							return;
-						}
-						closeEvent.notify();
-						if (onSubmit) onSubmit(storage->artifact);
-					},
-				},
-				Button{
-					.widget{.width = Size::Expand},
-					.text = "Cancel",
-					.style = ButtonStyle::Standard(),
-					.onClick = [closeEvent](GestureDetector::Event) {
-						closeEvent.notify();
-					},
-				},
-			},
-		},
-	};
-
-	return Stack{
-		.widget{
-			.onInit = [closeEvent](Widget &w) {
-				w.customState.add(closeEvent.observe([&w]() {
-					w.deleteLater();
-				}));
-			},
-		},
+	auto content = Column{
+		.spacing = 16.f,
 		.children{
-			GestureDetector{
-				.onClick = [closeEvent](GestureDetector::Event) {
-					closeEvent.notify();
-				},
-				.child = Box{
-					.color{0.f, 0.f, 0.f, 0.4f},
-				},
-			},
-			Align{
-				.child = Box{
-					.widget{
-						.height = Size::Shrink,
-						.sizeConstraints{
-							.maxWidth = 450.f,
-						},
-						.padding = 1.f,
-					},
-					.color = 0x202020FF,
-					.borderColor{0.46f, 0.46f, 0.46f, 0.4f},
-					.borderWidth{1.f},
-					.borderRadius{8.f},
-					.borderPosition = squi::Box::BorderPosition::outset,
-					.child = Column{
-						.children{
-							content,
-							buttonFooter,
-						},
-					},
-				},
+			levelSelector,
+			setSelector,
+			slotSelector,
+			mainStatSelector,
+			subStat1,
+			subStat2,
+			subStat3,
+			subStat4,
+		},
+	};
+
+	Children buttonFooter{
+		Button{
+			.widget{.width = Size::Expand},
+			.text = "Save",
+			.style = ButtonStyle::Accent(),
+			.onClick = [closeEvent, onSubmit = onSubmit, setButton = std::weak_ptr(setButton), storage](GestureDetector::Event event) {
+				if (storage->artifact.set.key == 0) {
+					event.widget.addOverlay(TeachingTip{
+						.target = setButton,
+						.message = "You must specify a set",
+					});
+					return;
+				}
+				closeEvent.notify();
+				if (onSubmit) onSubmit(storage->artifact);
 			},
 		},
+		Button{
+			.widget{.width = Size::Expand},
+			.text = "Cancel",
+			.style = ButtonStyle::Standard(),
+			.onClick = [closeEvent](GestureDetector::Event) {
+				closeEvent.notify();
+			},
+		},
+	};
+
+	return Dialog{
+		.closeEvent = closeEvent,
+		.title = "Edit artifact",
+		.content = content,
+		.buttons = buttonFooter,
 	};
 }

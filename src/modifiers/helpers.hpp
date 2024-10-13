@@ -9,6 +9,7 @@
 #include "misc/skillStat.hpp"
 #include "stats/stat.hpp"
 #include "utility"
+#include <functional>
 
 
 namespace Modifiers {

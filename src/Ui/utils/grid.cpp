@@ -35,12 +35,14 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 
 	float maxWidth = 0.f;
 	float maxHeight = 0.f;
+	float totalHorizontalSpacing = (static_cast<float>(columns) - 1.f) * spacing;
+	totalHorizontalSpacing = std::max(totalHorizontalSpacing, 0.f);
 	auto newMax = vec2{
-		(maxSize.x - static_cast<float>(columns) * spacing) / static_cast<float>(columns),
+		(maxSize.x - totalHorizontalSpacing) / static_cast<float>(columns),
 		maxSize.y,
 	};
 	auto newMin = vec2{
-		std::max((minSize.y - static_cast<float>(columns) * spacing) / static_cast<float>(columns), 0.f),
+		std::max((minSize.y - totalHorizontalSpacing) / static_cast<float>(columns), 0.f),
 		0.f,
 	};
 	for (auto &child: children) {
@@ -60,6 +62,8 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 
 	size_t rows = (children.size() / columns) + (children.size() % columns == 0 ? 0 : 1);
 	rows = std::max(rows, static_cast<size_t>(1));
+	float totalVerticalSpacing = (static_cast<float>(rows) - 1.f) * spacing;
+	totalVerticalSpacing = std::max(totalVerticalSpacing, 0.f);
 
 	if (final) {
 		this->columns = columns;
@@ -67,8 +71,8 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 	}
 
 	return {
-		(maxWidth * static_cast<float>(columns)) + (static_cast<float>(columns - 1) * spacing),
-		(maxHeight * static_cast<float>(rows)) + (static_cast<float>(rows - 1) * spacing)
+		(maxWidth * static_cast<float>(columns)) + totalHorizontalSpacing,
+		(maxHeight * static_cast<float>(rows)) + totalVerticalSpacing
 	};
 }
 

@@ -6,10 +6,10 @@
 
 
 constexpr auto getWeaponAtk = [](const Stats::Weapon &stats) {
-	return stats.base.getAtkAt(stats.sheet.level, stats.sheet.ascension);
+	return stats.data->baseStats.getAtkAt(stats.sheet.level, stats.sheet.ascension);
 };
 constexpr auto getWeaponSubstat = [](const Stats::Weapon &stats) {
-	return stats.base.getSubstatAt(stats.sheet.level);
+	return stats.data->baseStats.getSubstatAt(stats.sheet.level);
 };
 
 Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {

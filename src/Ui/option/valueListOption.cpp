@@ -53,7 +53,7 @@ UI::ValueListOption::operator squi::Child() const {
 				readyEvent.notify();
 			},
 		},
-		.icon = 0xE972,
+		.icon = 0xe313,
 	};
 
 	auto buttonContent = Row{

@@ -4,7 +4,4 @@
 
 Weapon::Instance::Instance(const Weapon::DataKey &dataKey, const Weapon::InstanceKey &instanceKey)
 	: instanceKey(instanceKey),
-	  stats(Weapon::list.at(dataKey)),
-	  data(Weapon::list.at(dataKey)) {
-	data.getOpts(stats.options);
-}
+	  stats(Weapon::list.at(dataKey)) {}

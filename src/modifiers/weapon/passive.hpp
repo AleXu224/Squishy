@@ -16,7 +16,7 @@ namespace Modifiers::Weapon::Passive {
 		template<StatMember stat, SheetMemberIdentifier member>
 		struct Frm {
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				const auto &mod = stat.resolve(std::invoke(location, context.target.weapon.data.data.mods));
+				const auto &mod = stat.resolve(std::invoke(location, context.target.weapon.data->data.mods));
 				if (!mod.hasValue()) return "";
 				return mod.print(context);
 			}
@@ -24,7 +24,7 @@ namespace Modifiers::Weapon::Passive {
 			using Ret = RetTypeMember<stat>;
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-				const auto &mod = stat.resolve(std::invoke(location, context.target.weapon.data.data.mods));
+				const auto &mod = stat.resolve(std::invoke(location, context.target.weapon.data->data.mods));
 				if (!mod.hasValue()) return Ret{};
 				return mod.eval(context);
 			}

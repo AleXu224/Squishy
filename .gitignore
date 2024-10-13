@@ -35,6 +35,8 @@
 /.idea/
 /.vscode/
 /build/
+/build-clang/
+/build-gcc/
 /build-linux/
 /build-linux-gcc/
 /.cache/
