@@ -6,6 +6,7 @@
 #include "button.hpp"
 #include "fontIcon.hpp"
 #include "image.hpp"
+#include "misc/weaponType.hpp"
 #include "modal.hpp"
 #include "observer.hpp"
 
@@ -13,8 +14,10 @@
 #include "scrollableFrame.hpp"
 #include "stack.hpp"
 #include "text.hpp"
-#include "textBox.hpp"
 #include "weapon/weapons.hpp"
+#include "widgets/liteFilter.hpp"
+
+#include "ranges"
 
 using namespace squi;
 
@@ -91,51 +94,96 @@ struct WeaponSelectorWeaponCard {
 };
 
 UI::WeaponSelector::operator Child() const {
-	VoidObservable closeEvent{};
+	auto storage = std::make_shared<Storage>();
+	if (type.has_value()) {
+		for (const auto &weaponType: Misc::weaponTypes) {
+			storage->weaponTypes[weaponType] = false;
+		}
+		storage->weaponTypes[type.value()] = true;
+	} else {
+		for (const auto &weaponType: Misc::weaponTypes) {
+			storage->weaponTypes[weaponType] = true;
+		}
+	}
 
+	VoidObservable closeEvent{};
+	VoidObservable filterUpdateEvent{};
+
+	auto typeFilter = LiteFilter{
+		.multiSelect = true,
+		.items = [&]() {
+			std::vector<LiteFilter::Item> ret{};
+			ret.reserve(Misc::weaponTypes.size());
+
+			for (const auto &weaponType: Misc::weaponTypes) {
+				ret.emplace_back(LiteFilter::Item{
+					.name = Utils::Stringify(weaponType),
+					.onUpdate = [weaponType, storage, filterUpdateEvent](bool active) {
+						auto &status = storage->weaponTypes.at(weaponType);
+						if (status != active) {
+							status = active;
+							filterUpdateEvent.notify();
+						}
+					},
+				});
+			}
+
+			return ret;
+		}(),
+	};
+
+	auto makeWeaponList = [storage, closeEvent = closeEvent, onSelect = onSelect]() {
+		Children ret{};
+
+		for (const auto &[_, weapon]: Weapon::list | std::views::filter([&](auto &&iter) {
+										  const auto &[_, weapon] = iter;
+										  return storage->weaponTypes.at(weapon.baseStats.type);
+									  })) {
+			ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
+		}
+
+		return ret;
+	};
 	auto content = ScrollableFrame{
 		.children{
 			Grid{
 				.widget{
 					.height = Size::Shrink,
 					.margin = Margin(24.f, 0.f),
+					.onInit = [filterUpdateEvent, makeWeaponList](Widget &w) {
+						observe(w, filterUpdateEvent, [&w, makeWeaponList]() {
+							w.setChildren(makeWeaponList());
+						});
+					},
 				},
 				.spacing = 8.f,
 				.columnCount = Grid::MinSize{200.f},
-				.children = [&]() {
-					Children ret{};
-
-					for (const auto &[_, weapon]: Weapon::list) {
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-					}
-
-					return ret;
-				}(),
+				.children = makeWeaponList(),
 			},
 		},
 	};
 
-	auto header = Stack{
+	auto header = Column{
 		.widget{
 			.height = Size::Shrink,
 			.margin = Margin(24.f, 0.f),
 		},
+		.spacing = 16.f,
 		.children{
-			Align{
-				.xAlign = 0.f,
-				.child = Text{.text = "Select weapon", .fontSize = 28.f, .font = FontStore::defaultFontBold},
+			Stack{
+				.children{
+					Align{
+						.xAlign = 0.f,
+						.child = Text{.text = "Select weapon", .fontSize = 28.f, .font = FontStore::defaultFontBold},
+					},
+					Align{
+						.xAlign = 1.f,
+						// FIXME: implement searching
+						// .child = TextBox{},
+					},
+				},
 			},
-			Align{
-				.xAlign = 1.f,
-				// FIXME: implement searching
-				.child = TextBox{},
-			},
+			type.has_value() ? nullptr : Child(typeFilter),
 		},
 	};
 

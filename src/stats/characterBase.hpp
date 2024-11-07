@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Talents.hpp"
 #include "array"
 #include "curves.hpp"
 #include "misc/element.hpp"
+#include "misc/weaponType.hpp"
 #include "stat.hpp"
-#include "Talents.hpp"
+
 
 namespace Stats {
 	struct CharacterBase {
@@ -15,6 +17,7 @@ namespace Stats {
 		const ConstellationTalent c3Talent;
 		const ConstellationTalent c5Talent;
 		const Misc::Element element;
+		const Misc::WeaponType weaponType;
 		const Curves::CharacterGrow hpCurve;
 		const Curves::CharacterGrow atkCurve;
 		const Curves::CharacterGrow defCurve;
@@ -24,15 +27,15 @@ namespace Stats {
 		const std::array<float, 7> ascensionStatUpgrade;
 
 		[[nodiscard]] constexpr float getHpAt(unsigned short level, unsigned short ascension) const {
-			return baseHp * Curves::Character(hpCurve).at(level - 1) + hpUpgrade.at(ascension);
+			return (baseHp * Curves::Character(hpCurve).at(level - 1)) + hpUpgrade.at(ascension);
 		}
 
 		[[nodiscard]] constexpr float getAtkAt(unsigned short level, unsigned short ascension) const {
-			return baseAtk * Curves::Character(atkCurve).at(level - 1) + atkUpgrade.at(ascension);
+			return (baseAtk * Curves::Character(atkCurve).at(level - 1)) + atkUpgrade.at(ascension);
 		}
 
 		[[nodiscard]] constexpr float getDefAt(unsigned short level, unsigned short ascension) const {
-			return baseDef * Curves::Character(defCurve).at(level - 1) + defUpgrade.at(ascension);
+			return (baseDef * Curves::Character(defCurve).at(level - 1)) + defUpgrade.at(ascension);
 		}
 
 		[[nodiscard]] constexpr float getAscensionStatAt(unsigned short ascension) const {

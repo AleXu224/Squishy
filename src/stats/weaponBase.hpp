@@ -1,21 +1,13 @@
 #pragma once
 
-#include "cstdint"
 #include "curves.hpp"
+#include "misc/weaponType.hpp"
 #include "stats/stat.hpp"
 
 
-enum class WeaponType : uint8_t {
-	sword,
-	claymore,
-	polearm,
-	catalyst,
-	bow,
-};
-
 namespace Stats {
 	struct WeaponBase {
-		const WeaponType type;
+		const Misc::WeaponType type;
 		const float baseAtk;
 		const StatValue substat;
 		const Curves::WeaponGrow atkCurve;

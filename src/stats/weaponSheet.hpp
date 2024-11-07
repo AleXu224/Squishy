@@ -11,7 +11,7 @@ namespace Stats {
 	struct WeaponSheet {
 		uint8_t level{1};
 		uint8_t ascension{0};
-		uint8_t refinement{0};
+		uint8_t refinement{1};
 
 		[[nodiscard]] float getBaseAtk();
 		[[nodiscard]] float getSubstat();

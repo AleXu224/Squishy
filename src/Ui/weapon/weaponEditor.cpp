@@ -14,6 +14,8 @@
 #include "observer.hpp"
 #include "row.hpp"
 #include "text.hpp"
+#include "weapon/weapons.hpp"
+#include "weaponSelector.hpp"
 #include <algorithm>
 
 using namespace squi;
@@ -25,10 +27,32 @@ UI::WeaponEditor::operator Child() const {
 	Observable<uint8_t> levelUpdateEvent{};
 	Observable<uint8_t> ascensionUpdateEvent{};
 	Observable<uint8_t> refinementUpdateEvent{};
+	Observable<Weapon::DataKey> weaponUpdateEvent{};
 
 	// Weapon
-	// FIXME: add this
-	auto weaponSelector = nullptr;
+	auto weaponSelector = UI::EditorItem{
+		.name = "Weapon",
+		.child = Button{
+			.widget{
+				.onInit = [weaponUpdateEvent](Widget &w) {
+					observe(w, weaponUpdateEvent, [&w](Weapon::DataKey key) {
+						w.customState.get<Observable<std::string>>("updateText").notify(Weapon::list.at(key).name);
+					});
+				},
+			},
+			.text = storage->weapon.stats.data->name,
+			.style = ButtonStyle::Standard(),
+			.onClick = [weaponUpdateEvent, storage](GestureDetector::Event event) {
+				event.widget.addOverlay(WeaponSelector{
+					.type = storage->weapon.stats.data->baseStats.type,
+					.onSelect = [weaponUpdateEvent, storage](Weapon::DataKey key) {
+						storage->weapon.stats.data = &Weapon::list.at(key);
+						weaponUpdateEvent.notify(key);
+					},
+				});
+			},
+		},
+	};
 
 	// Level
 	auto levelSelector = NumberBox{
@@ -65,6 +89,7 @@ UI::WeaponEditor::operator Child() const {
 		}
 		return ret;
 	};
+	auto ascensionSelectorText = fmt::format("{}", Misc::ascensions.at(storage->weapon.stats.sheet.ascension).maxLevel);
 	auto ascensionSelector = DropdownButton{
 		.widget{
 			.onInit = [ascensionUpdateEvent, ascensionTextUpdater, storage, levelUpdateEvent, ascensionItemUpdater, ascensionItemFactory](Widget &w) {
@@ -89,7 +114,7 @@ UI::WeaponEditor::operator Child() const {
 			},
 		},
 		.style = ButtonStyle::Standard(),
-		.text = fmt::format("{}", Misc::ascensions.at(storage->weapon.stats.sheet.ascension).maxLevel),
+		.text = ascensionSelectorText,
 		.disabled = ascensionItemFactory().size() <= 1,
 		.items = ascensionItemFactory(),
 		.textUpdater = ascensionTextUpdater,
