@@ -190,14 +190,6 @@ UI::WeaponEditor::operator Child() const {
 			.text = "Save",
 			.style = ButtonStyle::Accent(),
 			.onClick = [closeEvent, storage, onSubmit = onSubmit](GestureDetector::Event) {
-				// FIXME: return the new artifact
-				// if (storage->artifact.set.key == 0) {
-				// 	event.widget.addOverlay(TeachingTip{
-				// 		.target = setButton,
-				// 		.message = "You must specify a set",
-				// 	});
-				// 	return;
-				// }
 				closeEvent.notify();
 				if (onSubmit) onSubmit(storage->weapon);
 			},

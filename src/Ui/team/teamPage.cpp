@@ -1,46 +1,52 @@
 #include "teamPage.hpp"
 
-#include "Ui/character/characterDetails.hpp"
-
-#include "character/data.hpp"
-#include "image.hpp"
-#include "navigationView.hpp"
+#include "Ui/utils/grid.hpp"
+#include "navigator.hpp"
+#include "scrollableFrame.hpp"
 #include "store.hpp"
-#include "wrapper.hpp"
+#include "teamCard.hpp"
+#include <GLFW/glfw3.h>
 
 
 using namespace squi;
 
+namespace {
+	Children makeTeams(const Navigator::Controller &controller) {
+		Children ret;
+		for (auto &[teamKey, team]: ::Store::teams) {
+			ret.emplace_back(UI::TeamCard{
+				.teamKey = teamKey,
+				.controller = controller,
+			});
+		}
+		return ret;
+	}
+}// namespace
+
 UI::TeamPage::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
-	return NavigationView{
-		.expanded = false,
-		.backAction = [controller = controller]() {
-			controller.pop();
-		},
-		.pages = [teamKey = teamKey]() {
-			std::vector<NavigationView::Page> pages{};
-			auto &team = ::Store::teams.at(teamKey);
-			for (auto &character: team.stats.characters) {
-				if (character) {
-					pages.emplace_back(NavigationView::Page{
-						.name = character->loadout.character.data.name,
-						.icon = Image{
-							.widget{
-								.width = 16.f,
-								.height = 16.f,
-							},
-							.fit = squi::Image::Fit::contain,
-							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->loadout.character.data.name)),
+	Navigator::Controller controller{};
+
+	return Navigator{
+		.controller = controller,
+		.child = ScrollableFrame{
+			.children{
+				Grid{
+					.widget{
+						.height = Size::Shrink,
+						.padding = Padding{8.f},
+						.onInit = [controller](Widget &w) {
+							observe(w, Store::teamListUpdateEvent, [&w, controller]() {
+								w.setChildren(makeTeams(controller));
+							});
+							w.setChildren(makeTeams(controller));
 						},
-						.content = CharacterDetails{
-							.characterKey = character->instanceKey,
-						},
-					});
+					},
+					.spacing = 2.f,
+					.columnCount = Grid::MinSize{.value = 300.f},
 				}
-			}
-			return pages;
-		}(),
+			},
+		},
 	};
 }

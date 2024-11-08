@@ -2,7 +2,10 @@
 
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/skillHeader.hpp"
+#include "button.hpp"
 #include "character/data.hpp"
+#include "teamDetails.hpp"
+#include "teamEditor.hpp"
 
 #include "box.hpp"
 #include "column.hpp"
@@ -39,15 +42,24 @@ struct TeamAvatar {
 
 struct TeamContents {
 	// Args
-	Team::InstanceKey teamKey;
+	Team::InstanceKey teamKey{};
+	squi::Navigator::Controller controller;
 
 	operator squi::Child() const {
 		auto &team = ::Store::teams.at(teamKey);
 
 		return Column{
 			.children{
-				UI::SkillHeader{
-					.name = team.name,
+				GestureDetector{
+					.onClick = [controller = controller, teamKey = teamKey](GestureDetector::Event) {
+						controller.push(UI::TeamDetails{
+							.teamKey = teamKey,
+							.controller = controller,
+						});
+					},
+					.child = UI::SkillHeader{
+						.name = team.name,
+					},
 				},
 				Row{
 					.widget{
@@ -64,6 +76,36 @@ struct TeamContents {
 						TeamAvatar{.character = team.stats.characters.at(3)},
 					},
 				},
+				Row{
+					.widget{
+						.height = Size::Shrink,
+						.padding = 4.f,
+					},
+					.spacing = 4.f,
+					.children{
+						Button{
+							.text = "Edit",
+							.style = ButtonStyle::Standard(),
+							.onClick = [teamKey = teamKey](GestureDetector::Event event) {
+								event.widget.addOverlay(UI::TeamEditor{
+									.instance = Store::teams.at(teamKey),
+									.onSubmit = [](const Team::Instance &team) {
+										Store::teams.at(team.instanceKey) = team;
+										Store::teamListUpdateEvent.notify();
+									},
+								});
+							},
+						},
+						Button{
+							.text = "Delete",
+							.style = ButtonStyle::Standard(),
+							.onClick = [teamKey = teamKey](GestureDetector::Event) {
+								Store::teams.erase(teamKey);
+								Store::teamListUpdateEvent.notify();
+							},
+						},
+					},
+				},
 			},
 		};
 	}
@@ -73,14 +115,15 @@ UI::TeamCard::operator squi::Child() const {
 	return Card{
 		.widget{
 			.padding = Padding{1.f},
-			.onInit = [teamKey = teamKey](Widget &w) {
-				w.customState.add(::Store::teams.at(teamKey).updateEvent.observe([teamKey, &w]() {
-					w.setChildren({TeamContents{.teamKey = teamKey}});
+			.onInit = [controller = controller, teamKey = teamKey](Widget &w) {
+				w.customState.add(::Store::teams.at(teamKey).updateEvent.observe([controller, teamKey, &w]() {
+					w.setChildren({TeamContents{.teamKey = teamKey, .controller = controller}});
 				}));
 			},
 		},
 		.child = TeamContents{
 			.teamKey = teamKey,
+			.controller = controller,
 		},
 	};
 }
