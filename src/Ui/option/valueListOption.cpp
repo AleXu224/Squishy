@@ -79,9 +79,9 @@ UI::ValueListOption::operator squi::Child() const {
 			.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
 				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newVal) {
 					if (newVal.has_value()) {
-						w.customState.get<ButtonStyle>("style") = ButtonStyle::Accent();
+						Button::State::style.of(w) = ButtonStyle::Accent();
 					} else {
-						w.customState.get<ButtonStyle>("style") = ButtonStyle::Standard();
+						Button::State::style.of(w) = ButtonStyle::Standard();
 					}
 				}));
 				w.customState.add(readyEvent.observe([valueChangedEvent, &option]() {

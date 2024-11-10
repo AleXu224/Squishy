@@ -1,5 +1,6 @@
 #pragma once
 
+#include "array"
 #include "cstdint"
 #include "utility"
 #include "utils/stringify.hpp"
@@ -16,7 +17,17 @@ namespace Misc {
 		geo,
 		physical,
 	};
-}
+
+	static constexpr auto characterElements = std::array{
+		Misc::Element::pyro,
+		Misc::Element::hydro,
+		Misc::Element::cryo,
+		Misc::Element::electro,
+		Misc::Element::dendro,
+		Misc::Element::anemo,
+		Misc::Element::geo,
+	};
+}// namespace Misc
 
 namespace Utils {
 	template<>

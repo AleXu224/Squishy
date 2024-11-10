@@ -9,7 +9,7 @@
 namespace Team {
 	struct Instance {
 		Team::InstanceKey instanceKey;
-		std::string name;
+		std::string name{};
 		squi::VoidObservable updateEvent{};
 
 		Stats::Team stats{};
