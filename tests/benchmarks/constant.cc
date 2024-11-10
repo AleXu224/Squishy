@@ -23,20 +23,18 @@ TEST_CASE("Constant", "[Bench]") {
 		return boolConstant.eval(ctx);
 	};
 
-	constexpr auto stat = Formula::CharacterStat(Stat::hp);
+	constexpr auto stat = Formula::Stat(::Stat::hp);
 	BENCHMARK("Stat") {
 		return stat.eval(ctx);
 	};
 
-	using T = decltype(Stats::CharacterSheet::postMods);
-	constexpr auto statPtr = Formula::StatPtr(&Stats::CharacterSheet::postMods, &T::hp);
+	const auto &formulaTotalHp = Modifiers::total.hp;
 	BENCHMARK("StatPtr") {
-		return statPtr.eval(ctx);
+		return formulaTotalHp.eval(ctx);
 	};
-	
-	using T = decltype(Stats::CharacterSheet::postMods);
-	constexpr auto skillPtr = Formula::SkillPtr(&Stats::CharacterSheet::postMods, &T::normal, &T::_SkillValue::DMG);
+
+	const auto &formulaSkillDMG = Modifiers::total.skill.DMG;
 	BENCHMARK("skillPtr") {
-		return skillPtr.eval(ctx);
+		return formulaSkillDMG.eval(ctx);
 	};
 }

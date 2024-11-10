@@ -13,6 +13,7 @@ inline Character::Data testCharacter{
 		.c3Talent = ConstellationTalent::burst,
 		.c5Talent = ConstellationTalent::skill,
 		.element = Misc::Element::electro,
+		.weaponType = Misc::WeaponType::polearm,
 		.hpCurve = Curves::CharacterGrow::HP_S5,
 		.atkCurve = Curves::CharacterGrow::ATTACK_S5,
 		.defCurve = Curves::CharacterGrow::HP_S5,
