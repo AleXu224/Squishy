@@ -20,13 +20,15 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 		})
 	);
 
-	this->stats.fromStat(base.substat.stat).modifiers.at(0) = Formula::Prefix(
-		"Weapon Base",
-		Formula::Custom(
-			[](const Formula::Context &context) {
-				return getWeaponSubstat(context.source.weapon);
-			},
-			Utils::isPercentage(base.substat.stat)
-		)
-	);
+	if (base.subStat.has_value()) {
+		this->stats.fromStat(base.subStat.value().stat.stat).modifiers.at(0) = Formula::Prefix(
+			"Weapon Base",
+			Formula::Custom(
+				[](const Formula::Context &context) {
+					return getWeaponSubstat(context.source.weapon);
+				},
+				Utils::isPercentage(base.subStat.value().stat.stat)
+			)
+		);
+	}
 }

@@ -1,5 +1,4 @@
 #include "weaponCard.hpp"
-#include "Ui/rarityToColor.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/weapon/weaponEditor.hpp"
@@ -8,6 +7,7 @@
 #include "button.hpp"
 #include "column.hpp"
 #include "image.hpp"
+#include "misc/rarityToColor.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "store.hpp"
@@ -32,7 +32,7 @@ struct WeaponHeader {
 			.widget{
 				.height = 128.f,
 			},
-			.color = Utils::rarityToColor.at(Rarity::fiveStar),
+			.color = Misc::rarityToColor.at(weapon.stats.data->baseStats.rarity),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
 			.child = Stack{
 				.children{
@@ -40,7 +40,7 @@ struct WeaponHeader {
 						.xAlign = 1.f,
 						.child = Image{
 							.fit = squi::Image::Fit::contain,
-							.image = ImageProvider::fromFile(std::format("assets/Weapons/{}/icon_ascended.png", weapon.stats.data->name)),
+							.image = ImageProvider::fromFile(std::format("assets/Weapons/{}/icon{}.png", weapon.stats.data->name, weapon.stats.sheet.ascension >= 2 ? "_ascended" : "")),
 						},
 					},
 					Align{
@@ -95,13 +95,15 @@ struct WeaponCardContent {
 							.value = weapon.stats.data->baseStats.getAtkAt(weapon.stats.sheet.level, weapon.stats.sheet.ascension),
 						},
 					});
-					w.addChild(UI::StatDisplay{
-						.isTransparent = true,
-						.stat{
-							.stat = weapon.stats.data->baseStats.substat.stat,
-							.value = weapon.stats.data->baseStats.getSubstatAt(weapon.stats.sheet.level),
-						},
-					});
+					if (weapon.stats.data->baseStats.subStat.has_value()) {
+						w.addChild(UI::StatDisplay{
+							.isTransparent = true,
+							.stat{
+								.stat = weapon.stats.data->baseStats.subStat.value().stat.stat,
+								.value = weapon.stats.data->baseStats.getSubstatAt(weapon.stats.sheet.level),
+							},
+						});
+					}
 				},
 			},
 		};

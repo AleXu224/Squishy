@@ -37,7 +37,7 @@ namespace Utils {
 			case Misc::WeaponType::catalyst:
 				return "Catalyst";
 			case Misc::WeaponType::bow:
-				return "bow";
+				return "Bow";
 		}
 
 		std::unreachable();

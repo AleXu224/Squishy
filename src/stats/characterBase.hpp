@@ -14,6 +14,7 @@ namespace Stats {
 		const float baseAtk;
 		const float baseDef;
 		const Stat ascensionStat;
+		const uint8_t rarity;
 		const ConstellationTalent c3Talent;
 		const ConstellationTalent c5Talent;
 		const Misc::Element element;

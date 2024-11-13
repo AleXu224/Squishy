@@ -11,6 +11,8 @@ namespace Weapon {
 	using IsActive = Formula::impl_IsActive<Stats::WeaponSheet>;
 	using GetFloat = Formula::impl_GetFloat<Stats::WeaponSheet>;
 
+	using SubStat = Stats::WeaponBase::SubStat;
+
 	using Modifiers::total;
 	using Modifiers::totalEnemy;
 	using Modifiers::totalTalents;

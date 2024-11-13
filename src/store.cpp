@@ -34,6 +34,7 @@ void Store::deserializeOptions(const std::vector<Serialization::Save::OptionType
 		std::visit(
 			Utils::overloaded{
 				[&](const Serialization::Save::BooleanOption &opt) {
+					if (!targetMap.contains(opt.hash)) return;
 					std::visit(
 						Utils::overloaded{
 							[&](Option::Boolean &val) {
@@ -47,6 +48,7 @@ void Store::deserializeOptions(const std::vector<Serialization::Save::OptionType
 					);
 				},
 				[&](const Serialization::Save::ValueListOption &opt) {
+					if (!targetMap.contains(opt.hash)) return;
 					std::visit(
 						Utils::overloaded{
 							[](const Option::Boolean &val) {

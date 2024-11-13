@@ -46,7 +46,14 @@ UI::WeaponEditor::operator Child() const {
 				event.widget.addOverlay(WeaponSelector{
 					.type = storage->weapon.stats.data->baseStats.type,
 					.onSelect = [weaponUpdateEvent, storage](Weapon::DataKey key) {
-						storage->weapon.stats.data = &Weapon::list.at(key);
+						auto level = storage->weapon.stats.sheet.level;
+						auto ascension = storage->weapon.stats.sheet.ascension;
+						auto refinement = storage->weapon.stats.sheet.refinement;
+						
+						storage->weapon = Weapon::Instance(key, storage->weapon.instanceKey);
+						storage->weapon.stats.sheet.level = level;
+						storage->weapon.stats.sheet.ascension = ascension;
+						storage->weapon.stats.sheet.refinement = refinement;
 						weaponUpdateEvent.notify(key);
 					},
 				});
@@ -58,10 +65,17 @@ UI::WeaponEditor::operator Child() const {
 	auto levelSelector = NumberBox{
 		.widget{
 			.width = 40.f,
+			.onInit = [weaponUpdateEvent](Widget &w) {
+				observe(w, weaponUpdateEvent, [&w](Weapon::DataKey key) {
+					auto rarity = Weapon::list.at(key).baseStats.rarity;
+					auto maxLvl = Misc::ascensions.at(Misc::maxAscensionByRarity.at(rarity)).maxLevel;
+					NumberBox::State::max.of(w) << maxLvl;
+				});
+			},
 		},
 		.value = static_cast<float>(storage->weapon.stats.sheet.level),
 		.min = 1.f,
-		.max = 90.f,
+		.max = static_cast<float>(Misc::ascensions.at(Misc::maxAscensionByRarity.at(storage->weapon.stats.data->baseStats.rarity)).maxLevel),
 		.onChange = [storage, levelUpdateEvent](float newVal) {
 			storage->weapon.stats.sheet.level = std::floor(newVal);
 			levelUpdateEvent.notify(storage->weapon.stats.sheet.level);
@@ -79,7 +93,8 @@ UI::WeaponEditor::operator Child() const {
 	decltype(DropdownButton::itemsUpdater) ascensionItemUpdater{};
 	auto ascensionItemFactory = [storage, ascensionUpdateEvent]() {
 		std::vector<ContextMenu::Item> ret{};
-		for (const auto &ascension: Misc::ascensionsAtLvl(storage->weapon.stats.sheet.level)) {
+		auto rarity = storage->weapon.stats.data->baseStats.rarity;
+		for (const auto &ascension: Misc::ascensionsAtLvl(storage->weapon.stats.sheet.level, rarity)) {
 			ret.emplace_back(ContextMenu::Item{
 				.text = fmt::format("{}", ascension.maxLevel),
 				.content = [ascension, ascensionUpdateEvent]() {
@@ -94,7 +109,8 @@ UI::WeaponEditor::operator Child() const {
 		.widget{
 			.onInit = [ascensionUpdateEvent, ascensionTextUpdater, storage, levelUpdateEvent, ascensionItemUpdater, ascensionItemFactory](Widget &w) {
 				w.customState.add("levelUpdateEvent", levelUpdateEvent.observe([storage, ascensionItemUpdater, ascensionItemFactory, ascensionUpdateEvent, &w](uint8_t level) {
-					auto availableAscensions = Misc::ascensionsAtLvl(level);
+					auto rarity = storage->weapon.stats.data->baseStats.rarity;
+					auto availableAscensions = Misc::ascensionsAtLvl(level, rarity);
 					if (availableAscensions.empty()) {
 						std::println("Got bad lvl {}", level);
 						return;
@@ -147,10 +163,19 @@ UI::WeaponEditor::operator Child() const {
 	// Ascension
 	decltype(DropdownButton::textUpdater) refinementTextUpdater{};
 	auto refinementSelector = UI::EditorItem{
+		.widget{
+			.onInit = [weaponUpdateEvent, storage](Widget &w) {
+				observe(w, weaponUpdateEvent, [&w](Weapon::DataKey key) {
+					auto rarity = Weapon::list.at(key).baseStats.rarity;
+					w.flags.visible = (rarity > 2);
+				});
+				w.flags.visible = (storage->weapon.stats.data->baseStats.rarity > 2);
+			},
+		},
 		.name = "Refinement",
 		.child = DropdownButton{
 			.widget{
-				.onInit = [refinementUpdateEvent, storage, refinementTextUpdater](Widget &w) {
+				.onInit = [refinementUpdateEvent, storage, refinementTextUpdater, weaponUpdateEvent](Widget &w) {
 					w.customState.add(refinementUpdateEvent.observe([storage, refinementTextUpdater](uint8_t newRefinement) {
 						storage->weapon.stats.sheet.refinement = newRefinement;
 						refinementTextUpdater.notify(fmt::format("{}", newRefinement));

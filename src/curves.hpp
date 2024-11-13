@@ -4,7 +4,7 @@
 #include "utility"
 
 namespace Curves {
-	enum class CharacterGrow {
+	enum class CharacterGrow : uint8_t {
 		ATTACK_S4,
 		ATTACK_S5,
 		HP_S4,
@@ -24,7 +24,7 @@ namespace Curves {
 		std::unreachable();
 	}
 
-	enum class WeaponGrow {
+	enum class WeaponGrow : uint8_t {
 		ATTACK_101,
 		ATTACK_102,
 		ATTACK_103,

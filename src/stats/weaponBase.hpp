@@ -3,15 +3,20 @@
 #include "curves.hpp"
 #include "misc/weaponType.hpp"
 #include "stats/stat.hpp"
+#include <optional>
 
 
 namespace Stats {
 	struct WeaponBase {
+		struct SubStat {
+			const StatValue stat;
+			const Curves::WeaponGrow curve;
+		};
 		const Misc::WeaponType type;
+		const uint8_t rarity;
 		const float baseAtk;
-		const StatValue substat;
 		const Curves::WeaponGrow atkCurve;
-		const Curves::WeaponGrow substatCurve;
+		std::optional<SubStat> subStat;
 		const std::array<float, 7> ascensionUpgrade;
 
 		[[nodiscard]] float getAtkAt(unsigned short level, unsigned short ascension) const {
@@ -19,7 +24,9 @@ namespace Stats {
 		}
 
 		[[nodiscard]] float getSubstatAt(unsigned short level) const {
-			return substat.value * Curves::Weapon(substatCurve).at(level - 1);
+			if (!subStat.has_value()) return 0.f;
+			const auto &substat = subStat.value();
+			return substat.stat.value * Curves::Weapon(substat.curve).at(level - 1);
 		}
 	};
 }// namespace Stats

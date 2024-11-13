@@ -1,7 +1,6 @@
 #include "artifactCard.hpp"
 
 #include "Ui/artifact/artifactEditor.hpp"
-#include "Ui/rarityToColor.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "align.hpp"
@@ -11,10 +10,12 @@
 #include "column.hpp"
 #include "gestureDetector.hpp"
 #include "image.hpp"
+#include "misc/rarityToColor.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "store.hpp"
 #include "text.hpp"
+
 
 #include "ranges"
 
@@ -25,6 +26,7 @@ struct ArtifactHeader {
 	Artifact::SetKey set;
 	Artifact::Slot slot;
 	StatValue mainStat;
+	uint8_t rarity;
 
 	struct Storage {
 		// Data
@@ -62,7 +64,7 @@ struct ArtifactHeader {
 			.widget{
 				.height = 64.f,
 			},
-			.color = Utils::rarityToColor.at(Rarity::fiveStar),
+			.color = Misc::rarityToColor.at(rarity),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
 			.child = Stack{
 				.children{
@@ -87,6 +89,7 @@ struct ArtifactCardContent {
 				.stat = artifact.mainStat,
 				.value = Stats::Values::mainStat.at(artifact.mainStat).at(artifact.level),
 			},
+			.rarity = artifact.rarity,
 		};
 		auto subStats = Column{
 			.widget{

@@ -3,6 +3,7 @@
 #include "cstdint"
 #include "ranges"
 #include <array>
+#include <unordered_map>
 #include <vector>
 
 namespace Misc {
@@ -13,17 +14,26 @@ namespace Misc {
 	};
 
 	static constexpr auto ascensions = std::array{
-		Ascension{0, 0, 20},
-		Ascension{1, 20, 40},
-		Ascension{2, 40, 50},
-		Ascension{3, 50, 60},
-		Ascension{4, 60, 70},
-		Ascension{5, 70, 80},
-		Ascension{6, 80, 90},
+		Ascension{.ascension = 0, .minLevel = 0, .maxLevel = 20},
+		Ascension{.ascension = 1, .minLevel = 20, .maxLevel = 40},
+		Ascension{.ascension = 2, .minLevel = 40, .maxLevel = 50},
+		Ascension{.ascension = 3, .minLevel = 50, .maxLevel = 60},
+		Ascension{.ascension = 4, .minLevel = 60, .maxLevel = 70},
+		Ascension{.ascension = 5, .minLevel = 70, .maxLevel = 80},
+		Ascension{.ascension = 6, .minLevel = 80, .maxLevel = 90},
 	};
 
-	static inline auto ascensionsAtLvl(uint8_t lvl) {
+	static inline auto maxAscensionByRarity = std::unordered_map<uint8_t, uint8_t>{
+		{1, 4},
+		{2, 4},
+		{3, 4},
+		{4, 6},
+		{5, 6},
+	};
+
+	static inline auto ascensionsAtLvl(uint8_t lvl, uint8_t rarity) {
 		return ascensions
+			 | std::views::take(maxAscensionByRarity.at(rarity) + 1)
 			 | std::views::filter([&](const Ascension &ascension) {
 				   return ascension.minLevel <= lvl && lvl <= ascension.maxLevel;
 			   })

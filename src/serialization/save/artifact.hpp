@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Rarity.hpp"
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "cereal/cereal.hpp"
@@ -33,7 +32,7 @@ namespace Serialization::Save {
 		::Stat mainStat = Stat::hp;
 		std::array<std::optional<ArtifactSubStat>, 4> subStats{};
 		uint8_t level{};
-		::Rarity rarity = Rarity::fiveStar;
+		uint8_t rarity = 5;
 		::Character::InstanceKey equippedCharacter{};
 
 		template<class Archive>

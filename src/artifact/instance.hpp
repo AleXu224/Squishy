@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Rarity.hpp"
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "character/key.hpp"
@@ -24,7 +23,7 @@ namespace Artifact {
 		Stat mainStat{};
 		std::array<std::optional<StatValue>, 4> subStats;
 		Level level{};
-		Rarity rarity{};
+		uint8_t rarity{};
 		Character::InstanceKey equippedCharacter{};
 
 		Stats::Sheet<float> stats{};
