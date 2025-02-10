@@ -9,9 +9,9 @@
 #include "Ui/utils/trueFalse.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
-#include "characterOptions.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
+#include "rebuilder.hpp"
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
@@ -29,16 +29,16 @@ template<auto sheet = int{}>
 struct DetailsSkill {
 	// Args
 	std::string_view name;
+	std::string_view subtitle{};
 	Character::InstanceKey characterKey{};
 	const Formula::Context &ctx;
 	const std::vector<Node::Types> &nodes;
-	size_t maxPreModifierIndex = 0;
-	size_t maxPostModifierIndex = 0;
 	std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 
 	operator squi::Child() const {
 		return UI::DisplayCard{
 			.title = name,
+			.subtitle = subtitle,
 			.children = [&]() -> Children {
 				Children ret{};
 
@@ -97,15 +97,15 @@ struct DetailsSkill {
 					}
 				}
 
-				if (!options.has_value()) return ret;
-				if (options->empty()) return ret;
+				if (!options.has_value() || options->empty())
+					return ret;
 
 				ret.emplace_back(Box{
 					.widget{
 						.height = Size::Shrink,
 						.padding = Padding{4.f},
 					},
-					.color{1.f, 1.f, 1.f, 0.1f},
+					.color{1.f, 1.f, 1.f, 0.05f},
 					.borderRadius{0.f, 0.f, 7.f, 7.f},
 					.child = Column{
 						.spacing = 4.f,
@@ -144,7 +144,28 @@ struct DetailsSkill {
 };
 
 namespace {
-	void initializeList(Character::InstanceKey characterKey, Team::InstanceKey teamKey, Enemy::Key enemyKey, Widget &w) {
+	using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
+	MakeOptsRet makeOpts(std::unordered_map<uint32_t, Option::Types> &opts) {
+		MakeOptsRet ret{};
+		for (auto &[key, value]: opts) {
+			ret.insert({key, std::ref(value)});
+		}
+		return ret;
+	}
+	MakeOptsRet makeArtifactOpts(const Option::ArtifactList &opts, Option::ArtifactMap &map) {
+		MakeOptsRet ret{};
+		for (const auto &opt: opts) {
+			std::visit(
+				[&](auto &&val) {
+					ret.insert({val.key, map.at(val.key)});
+				},
+				opt
+			);
+		}
+		return ret;
+	}
+
+	Child makeMainContent(Character::InstanceKey characterKey, Team::InstanceKey teamKey, Enemy::Key enemyKey) {
 		auto &character = ::Store::characters.at(characterKey);
 		auto &team = ::Store::teams.at(teamKey);
 		auto &enemy = ::Store::enemies.at(enemyKey);
@@ -155,9 +176,61 @@ namespace {
 			.enemy = enemy.stats,
 		};
 
-		w.addChild(UI::CharacterStats{.ctx = ctx});
-		w.addChild(UI::CharacterOptions{.characterKey = characterKey});
-		w.addChild(UI::CharacterTransformativeReactions{.ctx = ctx});
+		auto transformativeReactions = UI::CharacterTransformativeReactions{.ctx = ctx};
+
+		auto characterStats = UI::CharacterStats{
+			.ctx = ctx,
+			.characterKey = characterKey,
+		};
+
+		auto weaponOpts = makeOpts(character.loadout.weapon.options);
+
+		auto weaponStats = DetailsSkill<Modifiers::Weapon::displayStats>{
+			.name = character.loadout.weapon.data->name,
+			.subtitle = "Weapon",
+			.characterKey = characterKey,
+			.ctx = ctx,
+			.nodes = character.loadout.weapon.data->data.nodes,
+			.options = weaponOpts,
+		};
+
+		std::optional<MakeOptsRet> artifactOpts1;
+		if (character.loadout.artifact.bonus1.has_value())
+			artifactOpts1 = makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.artifact.options);
+
+		std::optional<MakeOptsRet> artifactOpts2;
+		if (character.loadout.artifact.bonus2.has_value())
+			artifactOpts2 = makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.artifact.options);
+
+		Child artifactStats1 = character.loadout.artifact.bonus1.has_value()
+								 ? DetailsSkill<Modifiers::Artifact::display1>{
+									   .name = character.loadout.artifact.bonus1->setPtr.name,
+									   .subtitle = "Artifact",
+									   .characterKey = characterKey,
+									   .ctx = ctx,
+									   .nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
+									   .options = artifactOpts1,
+								   }
+								 : Child{};
+
+		Child artifactStats2 = character.loadout.artifact.bonus2.has_value()
+								 ? DetailsSkill<Modifiers::Artifact::display2>{
+									   .name = character.loadout.artifact.bonus2->setPtr.name,
+									   .subtitle = "Artifact",
+									   .characterKey = characterKey,
+									   .ctx = ctx,
+									   .nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
+									   .options = artifactOpts2,
+								   }
+								 : Child{};
+
+		Children mainContent{
+			characterStats,
+			transformativeReactions,
+			weaponStats,
+			artifactStats1,
+			artifactStats2,
+		};
 
 		std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
@@ -195,7 +268,7 @@ namespace {
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
-			w.addChild(DetailsSkill{
+			mainContent.emplace_back(DetailsSkill<0>{
 				.name = name,
 				.characterKey = characterKey,
 				.ctx = ctx,
@@ -204,95 +277,45 @@ namespace {
 			});
 		}
 
-		using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
-		auto makeOpts = [](std::unordered_map<uint32_t, Option::Types> &opts) {
-			MakeOptsRet ret{};
-			for (auto &[key, value]: opts) {
-				ret.insert({key, std::ref(value)});
-			}
-			return ret;
+		return UI::Masonry{
+			.widget{
+				.height = Size::Shrink,
+				.padding = 8.f,
+			},
+			.spacing = 4.f,
+			.columnCount = UI::Masonry::MinSize{256.f},
+			.children = mainContent,
 		};
-
-		auto weaponOpts = makeOpts(character.loadout.weapon.options);
-
-		w.addChild(DetailsSkill<Modifiers::Weapon::displayStats>{
-			.name = character.loadout.weapon.data->name,
-			.characterKey = characterKey,
-			.ctx = ctx,
-			.nodes = character.loadout.weapon.data->data.nodes,
-			.maxPreModifierIndex = 2,
-			.maxPostModifierIndex = 1,
-			.options = weaponOpts,
-		});
-
-		auto makeArtifactOpts = [](const Option::ArtifactList &opts, Option::ArtifactMap &map) {
-			MakeOptsRet ret{};
-			for (const auto &opt: opts) {
-				std::visit([&](auto &&val) {
-					ret.insert({val.key, map.at(val.key)});
-				},
-						   opt);
-			}
-			return ret;
-		};
-
-		std::optional<MakeOptsRet> artifactOpts1 = [&]() -> std::optional<MakeOptsRet> {
-			if (character.loadout.artifact.bonus1.has_value())
-				return makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.artifact.options);
-
-			return std::nullopt;
-		}();
-		std::optional<MakeOptsRet> artifactOpts2 = [&]() -> std::optional<MakeOptsRet> {
-			if (character.loadout.artifact.bonus2.has_value())
-				return makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.artifact.options);
-
-			return std::nullopt;
-		}();
-		if (character.loadout.artifact.bonus1.has_value()) {
-			w.addChild(DetailsSkill<Modifiers::Artifact::display1>{
-				.name = character.loadout.artifact.bonus1->setPtr.name,
-				.characterKey = characterKey,
-				.ctx = ctx,
-				.nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
-				.maxPreModifierIndex = 1,
-				.maxPostModifierIndex = 1,
-				.options = artifactOpts1,
-			});
-		}
-		if (character.loadout.artifact.bonus1.has_value()) {
-			w.addChild(DetailsSkill<Modifiers::Artifact::display2>{
-				.name = character.loadout.artifact.bonus2->setPtr.name,
-				.characterKey = characterKey,
-				.ctx = ctx,
-				.nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
-				.maxPreModifierIndex = 1,
-				.maxPostModifierIndex = 1,
-				.options = artifactOpts2,
-			});
-		}
 	}
 }// namespace
 
 UI::CharacterDetails::operator squi::Child() const {
+	// TODO: make each item rebuild individually
 	return ScrollableFrame{
 		.children{
-			Masonry{
-				.widget{
-					.height = Size::Shrink,
-					.padding = Padding{8.f},
-					.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
-						w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
-							if (auto w = wPtr.lock()) {
-								w->setChildren({});
-								initializeList(characterKey, teamKey, enemyKey, *w);
-							}
-						}));
-						initializeList(characterKey, teamKey, enemyKey, w);
-					},
-				},
-				.spacing = 4.f,
-				.columnCount = Masonry::MinSize{256.f},
-			}
+			Rebuilder{
+				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
+				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey),
+			},
 		},
 	};
+	// return ScrollableFrame{
+	// 	.children{Grid{
+	// 		.widget{
+	// 			.height = Size::Shrink,
+	// 			.padding = Padding{8.f},
+	// 			.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
+	// 				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
+	// 					if (auto w = wPtr.lock()) {
+	// 						w->setChildren({});
+	// 						initializeList(characterKey, teamKey, enemyKey, *w);
+	// 					}
+	// 				}));
+	// 				initializeList(characterKey, teamKey, enemyKey, w);
+	// 			},
+	// 		},
+	// 		.spacing = 4.f,
+	// 		.columnCount = Grid::MinSize{256.f},
+	// 	}},
+	// };
 }

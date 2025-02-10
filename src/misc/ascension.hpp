@@ -11,16 +11,17 @@ namespace Misc {
 		uint8_t ascension;
 		uint8_t minLevel;
 		uint8_t maxLevel;
+		uint8_t maxTalent;
 	};
 
 	static constexpr auto ascensions = std::array{
-		Ascension{.ascension = 0, .minLevel = 0, .maxLevel = 20},
-		Ascension{.ascension = 1, .minLevel = 20, .maxLevel = 40},
-		Ascension{.ascension = 2, .minLevel = 40, .maxLevel = 50},
-		Ascension{.ascension = 3, .minLevel = 50, .maxLevel = 60},
-		Ascension{.ascension = 4, .minLevel = 60, .maxLevel = 70},
-		Ascension{.ascension = 5, .minLevel = 70, .maxLevel = 80},
-		Ascension{.ascension = 6, .minLevel = 80, .maxLevel = 90},
+		Ascension{.ascension = 0, .minLevel = 0, .maxLevel = 20, .maxTalent = 1},
+		Ascension{.ascension = 1, .minLevel = 20, .maxLevel = 40, .maxTalent = 1},
+		Ascension{.ascension = 2, .minLevel = 40, .maxLevel = 50, .maxTalent = 2},
+		Ascension{.ascension = 3, .minLevel = 50, .maxLevel = 60, .maxTalent = 4},
+		Ascension{.ascension = 4, .minLevel = 60, .maxLevel = 70, .maxTalent = 6},
+		Ascension{.ascension = 5, .minLevel = 70, .maxLevel = 80, .maxTalent = 8},
+		Ascension{.ascension = 6, .minLevel = 80, .maxLevel = 90, .maxTalent = 10},
 	};
 
 	static inline auto maxAscensionByRarity = std::unordered_map<uint8_t, uint8_t>{

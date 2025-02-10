@@ -61,10 +61,10 @@ struct WeaponHeader {
 									.text = std::format("Lvl {}", weapon.stats.sheet.level),
 									.fontSize = 20.f,
 								},
-								Text{
-									.text = std::format("Refinement {}", weapon.stats.sheet.refinement),
-									.fontSize = 20.f,
-								},
+								weapon.stats.data->baseStats.rarity <= 2 ? Child() : Text{
+																						 .text = std::format("Refinement {}", weapon.stats.sheet.refinement),
+																						 .fontSize = 20.f,
+																					 },
 							},
 						},
 					},

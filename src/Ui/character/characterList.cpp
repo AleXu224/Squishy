@@ -5,7 +5,6 @@
 #include "character/characters.hpp"
 #include "characterCard.hpp"
 #include "characterDataSelector.hpp"
-#include "characterPage.hpp"
 #include "gestureDetector.hpp"
 #include "navigator.hpp"
 #include "row.hpp"
@@ -21,16 +20,9 @@ namespace {
 	[[nodiscard]] auto makeCharacters(const Navigator::Controller &controller) {
 		Children ret;
 		for (auto &[_, character]: ::Store::characters) {
-			ret.emplace_back(GestureDetector{
-				.onClick = [controller, characterKey = character.instanceKey](GestureDetector::Event) {
-					controller.push(UI::CharacterPage{
-						.characterKey = characterKey,
-						.controller = controller,
-					});
-				},
-				.child = UI::CharacterCard{
-					.characterKey = character.instanceKey,
-				},
+			ret.emplace_back(UI::CharacterCard{
+				.characterKey = character.instanceKey,
+				.controller = controller,
 			});
 		}
 		return ret;

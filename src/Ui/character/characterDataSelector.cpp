@@ -23,7 +23,7 @@
 
 using namespace squi;
 
-struct CharacterSelectorCharacterCard {
+struct CharacterDataSelectorCharacterCard {
 	// Args
 	squi::Widget::Args widget{};
 	const Character::Data &character;
@@ -159,7 +159,7 @@ UI::CharacterDataSelector::operator squi::Child() const {
 											 const auto &[_, character] = iter;
 											 return storage->characterElements.at(character.baseStats.element) && storage->characterWeapon.at(character.baseStats.weaponType);
 										 })) {
-			ret.emplace_back(CharacterSelectorCharacterCard{.character = character, .closeEvent = closeEvent, .notifySelection = onSelect});
+			ret.emplace_back(CharacterDataSelectorCharacterCard{.character = character, .closeEvent = closeEvent, .notifySelection = onSelect});
 		}
 
 		return ret;

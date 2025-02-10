@@ -3,7 +3,10 @@
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/trueFalse.hpp"
+#include "button.hpp"
 #include "character/characters.hpp"
+#include "characterEditor.hpp"
+#include "characterPage.hpp"
 #include "formula/stat.hpp"
 #include "store.hpp"
 
@@ -51,7 +54,7 @@ struct CharacterCardBanner {
 									.fontSize = 24.f,
 								},
 								Text{
-									.text = std::format("Lvl {}", character.loadout.character.sheet.level),
+									.text = std::format("Lvl {} C{}", character.loadout.character.sheet.level, character.loadout.character.sheet.constellation),
 								},
 							},
 						},
@@ -65,12 +68,21 @@ struct CharacterCardBanner {
 struct Contents {
 	// Args
 	Character::InstanceKey characterKey;
+	squi::Navigator::Controller controller;
 
 	operator squi::Child() const {
 		return Column{
 			.children{
-				CharacterCardBanner{
-					.characterKey = characterKey,
+				GestureDetector{
+					.onClick = [controller = controller, characterKey = characterKey](GestureDetector::Event) {
+						controller.push(UI::CharacterPage{
+							.characterKey = characterKey,
+							.controller = controller,
+						});
+					},
+					.child = CharacterCardBanner{
+						.characterKey = characterKey,
+					},
 				},
 				Column{
 					.widget{
@@ -100,6 +112,40 @@ struct Contents {
 						},
 					},
 				},
+				Row{
+					.widget{
+						.height = Size::Shrink,
+						.padding = 4.f,
+					},
+					.spacing = 4.f,
+					.children{
+						Button{
+							.text = "Edit",
+							.style = ButtonStyle::Standard(),
+							.onClick = [characterKey = characterKey](GestureDetector::Event event) {
+								auto &character = ::Store::characters.at(characterKey);
+								event.widget.addOverlay(UI::CharacterEditor{
+									.character = character,
+									.onSubmit = [](const Character::Instance &character) {
+										auto &instance = Store::characters.at(character.instanceKey);
+										instance.loadout.character.sheet = character.loadout.character.sheet;
+										instance.updateEvent.notify();
+									},
+								});
+							},
+						},
+						Button{
+							.text = "Delete",
+							.style = ButtonStyle::Standard(),
+							.onClick = [characterKey = characterKey](GestureDetector::Event) {
+								auto &character = Store::characters.at(characterKey);
+								character.loadout.artifact.equipped.unequipAll();
+								Store::characters.erase(characterKey);
+								Store::characterListUpdateEvent.notify();
+							},
+						},
+					},
+				}
 			},
 		};
 	}
@@ -111,14 +157,20 @@ UI::CharacterCard::operator squi::Child() const {
 	return Card{
 		.widget{
 			.padding = Padding{1.f},
-			.onInit = [characterKey = characterKey](Widget &w) {
-				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([characterKey, &w]() {
-					w.setChildren({Contents{.characterKey = characterKey}});
+			.onInit = [characterKey = characterKey, controller = controller](Widget &w) {
+				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([characterKey, &w, controller]() {
+					w.setChildren({
+						Contents{
+							.characterKey = characterKey,
+							.controller = controller,
+						},
+					});
 				}));
 			},
 		},
 		.child = Contents{
 			.characterKey = characterKey,
+			.controller = controller,
 		},
 	};
 }

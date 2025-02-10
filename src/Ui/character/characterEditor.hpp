@@ -1,19 +1,19 @@
 #pragma once
 
-#include "character/key.hpp"
-#include "navigator.hpp"
 #include "widget.hpp"
 
+#include "character/instance.hpp"
 
 namespace UI {
-	struct CharacterCard {
+	struct CharacterEditor {
 		// Args
 		squi::Widget::Args widget{};
-		Character::InstanceKey characterKey{};
-		squi::Navigator::Controller controller;
+		Character::Instance character;
+		std::function<void(Character::Instance)> onSubmit{};
 
 		struct Storage {
 			// Data
+			Character::Instance character;
 		};
 
 		operator squi::Child() const;

@@ -1,38 +1,15 @@
 #pragma once
 
-#include "cereal/cereal.hpp"
 #include "cstdint"
 #include "functional"
-
+#include "utils/key.hpp"
 
 namespace Character {
-	struct InstanceKey {
-		uint32_t key;
-
-		bool operator==(const InstanceKey &other) const {
-			return key == other.key;
-		}
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key)
-			);
-		}
+	struct InstanceKey : public Utils::GenericKey<InstanceKey> {
+		using Utils::GenericKey<InstanceKey>::GenericKey;
 	};
-	struct DataKey {
-		uint32_t key;
-
-		bool operator==(const DataKey &other) const {
-			return key == other.key;
-		}
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key)
-			);
-		}
+	struct DataKey : public Utils::GenericKey<DataKey> {
+		using Utils::GenericKey<DataKey>::GenericKey;
 	};
 }// namespace Character
 

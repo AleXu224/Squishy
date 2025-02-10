@@ -58,6 +58,8 @@ namespace Stats {
 				}
 				std::unreachable();
 			}
+
+			void unequipAll();
 		};
 
 		Slotted equipped{};

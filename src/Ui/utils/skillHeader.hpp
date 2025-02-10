@@ -7,6 +7,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		std::string_view name;
+		std::string_view subtitle{};
 
 		struct Storage {
 			// Data

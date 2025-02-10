@@ -9,6 +9,7 @@
 #include "column.hpp"
 #include "fontIcon.hpp"
 #include "image.hpp"
+#include "misc/ascension.hpp"
 #include "misc/element.hpp"
 #include "modal.hpp"
 #include "row.hpp"
@@ -52,6 +53,9 @@ struct CharacterSelectorCharacterCard {
 					.text = characterData.name,
 					.fontSize = 14.f,
 					.lineWrap = true,
+				},
+				Text{
+					.text = fmt::format("Lvl {}/{}", character.loadout.character.sheet.level, Misc::ascensions.at(character.loadout.character.sheet.ascension).maxLevel),
 				},
 				stars,
 			},

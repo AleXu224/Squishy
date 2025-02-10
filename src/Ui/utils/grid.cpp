@@ -1,6 +1,7 @@
 #include "grid.hpp"
 
 #include "ranges"
+#include <numeric>
 
 using namespace squi;
 
@@ -33,8 +34,8 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 
 	auto columns = computeColumnCount(shouldShrink.width ? 0.f : maxSize.x);
 
+	std::vector<float> maxHeights{};
 	float maxWidth = 0.f;
-	float maxHeight = 0.f;
 	float totalHorizontalSpacing = (static_cast<float>(columns) - 1.f) * spacing;
 	totalHorizontalSpacing = std::max(totalHorizontalSpacing, 0.f);
 	auto newMax = vec2{
@@ -45,19 +46,26 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 		std::max((minSize.y - totalHorizontalSpacing) / static_cast<float>(columns), 0.f),
 		0.f,
 	};
-	for (auto &child: children) {
-		auto size = child->layout(newMax, newMin, {true, true}, false);
-		maxWidth = std::max(maxWidth, size.x);
-		maxHeight = std::max(maxHeight, size.y);
+	for (const auto &chunk: children | std::views::chunk(columns)) {
+		float maxHeight = 0.f;
+		for (const auto &child: chunk) {
+			auto size = child->layout(newMax, newMin, {false, true}, false);
+			maxWidth = std::max(maxWidth, size.x);
+			maxHeight = std::max(maxHeight, size.y);
+		}
+		maxHeights.emplace_back(maxHeight);
 	}
 
-	maxSize = {maxWidth, maxHeight};
+	maxSize = {maxWidth, 0.f};
 	minSize = {0.f};
 	if (!shouldShrink.width) {
 		maxSize.x = std::max(maxSize.x, newMax.x);
 	}
-	for (auto &child: children) {
-		child->layout(maxSize, minSize, {false, false}, final);
+	for (const auto &[chunk, maxHeight]: std::views::zip(children | std::views::chunk(columns), maxHeights)) {
+		maxSize.y = maxHeight;
+		for (const auto &child: chunk) {
+			child->layout(maxSize, minSize, {false, false}, final);
+		}
 	}
 
 	size_t rows = (children.size() / columns) + (children.size() % columns == 0 ? 0 : 1);
@@ -67,12 +75,12 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 
 	if (final) {
 		this->columns = columns;
-		this->rowHeight = maxHeight;
+		this->rowHeights = maxHeights;
 	}
 
 	return {
 		(maxWidth * static_cast<float>(columns)) + totalHorizontalSpacing,
-		(maxHeight * static_cast<float>(rows)) + totalVerticalSpacing
+		std::accumulate(maxHeights.begin(), maxHeights.end(), 0) + totalVerticalSpacing
 	};
 }
 
@@ -81,12 +89,12 @@ void UI::Grid::Impl::arrangeChildren(squi::vec2 &pos) {
 	auto &children = getChildren();
 
 	float yCursor = 0.f;
-	for (auto childrenChunk: children | std::views::chunk(columns)) {
+	for (auto [childrenChunk, maxHeight]: std::views::zip(children | std::views::chunk(columns), rowHeights)) {
 		float xCursor = 0.f;
 		for (auto &child: childrenChunk) {
 			child->arrange(newPos + vec2{xCursor, yCursor});
 			xCursor += child->getSize().x + spacing;
 		}
-		yCursor += rowHeight + spacing;
+		yCursor += maxHeight + spacing;
 	}
 }

@@ -5,19 +5,76 @@
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 
+#include "align.hpp"
+#include "button.hpp"
+#include "characterEditor.hpp"
 #include "formula/stat.hpp"
+#include "store.hpp"
 
+#include "image.hpp"
+#include "row.hpp"
+#include "stack.hpp"
 #include "stats/loadout.hpp"
+#include "text.hpp"
 
 using namespace squi;
 UI::CharacterStats::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return UI::DisplayCard{
-		.title = "Stats",
+		.title = ctx.target.character.data.name,
 		.children = [&]() {
 			const auto &loadout = ctx.source;
 			Children ret{};
+			ret.emplace_back(Stack{
+				.widget{
+					.height = Size::Wrap,
+				},
+				.children{
+					Image{
+						.fit = Image::Fit::contain,
+						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.target.character.data.name)),
+					},
+					Align{
+						.xAlign = 0.f,
+						.yAlign = 1.f,
+						.child = Row{
+							.widget{
+								.width = Size::Shrink,
+								.height = Size::Shrink,
+								.margin = 8.f,
+							},
+							.spacing = 4.f,
+							.children{
+								Box{
+									.widget{
+										.width = Size::Shrink,
+										.height = Size::Shrink,
+										.padding = 4.f,
+									},
+									.borderRadius = 4.f,
+									.child = Text{
+										.text = std::format("Lvl {}", loadout.character.sheet.level),
+										.color = Color::css(0x0, 1.f),
+									},
+								},
+								Box{
+									.widget{
+										.width = Size::Shrink,
+										.height = Size::Shrink,
+										.padding = 4.f,
+									},
+									.borderRadius = 4.f,
+									.child = Text{
+										.text = std::format("C{}", loadout.character.sheet.constellation),
+										.color = Color::css(0x0, 1.f),
+									},
+								},
+							},
+						},
+					},
+				},
+			});
 			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(loadout.character.base.element)}};
 
 			Children ret2{};
@@ -48,5 +105,24 @@ UI::CharacterStats::operator squi::Child() const {
 			});
 			return ret;
 		}(),
+		.footer{
+			Button{
+				.widget{
+					.width = Size::Expand,
+				},
+				.text = "Edit",
+				.onClick = [characterKey = characterKey](GestureDetector::Event event) {
+					auto &character = ::Store::characters.at(characterKey);
+					event.widget.addOverlay(UI::CharacterEditor{
+						.character = character,
+						.onSubmit = [](const Character::Instance &character) {
+							auto &instance = Store::characters.at(character.instanceKey);
+							instance.loadout.character.sheet = character.loadout.character.sheet;
+							instance.updateEvent.notify();
+						},
+					});
+				},
+			},
+		},
 	};
 }
