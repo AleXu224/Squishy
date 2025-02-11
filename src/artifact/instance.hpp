@@ -46,6 +46,9 @@ namespace Artifact {
 				}
 			}
 		}
+
+		void unequip();
+		void equipOn(Character::InstanceKey characterKey);
 	};
 }// namespace Artifact
 

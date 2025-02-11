@@ -8,6 +8,7 @@
 #include "characterEditor.hpp"
 #include "characterPage.hpp"
 #include "formula/stat.hpp"
+#include "rebuilder.hpp"
 #include "store.hpp"
 
 #include "column.hpp"
@@ -157,20 +158,15 @@ UI::CharacterCard::operator squi::Child() const {
 	return Card{
 		.widget{
 			.padding = Padding{1.f},
-			.onInit = [characterKey = characterKey, controller = controller](Widget &w) {
-				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([characterKey, &w, controller]() {
-					w.setChildren({
-						Contents{
-							.characterKey = characterKey,
-							.controller = controller,
-						},
-					});
-				}));
-			},
 		},
-		.child = Contents{
-			.characterKey = characterKey,
-			.controller = controller,
+		.child = Rebuilder{
+			.rebuildEvent = ::Store::characters.at(characterKey).updateEvent,
+			.buildFunc = [characterKey = characterKey, controller = controller]() {
+				return Contents{
+					.characterKey = characterKey,
+					.controller = controller,
+				};
+			},
 		},
 	};
 }

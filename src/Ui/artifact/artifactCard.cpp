@@ -1,12 +1,14 @@
 #include "artifactCard.hpp"
 
 #include "Ui/artifact/artifactEditor.hpp"
+#include "Ui/character/characterSelector.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "align.hpp"
 #include "artifact/sets.hpp"
 #include "box.hpp"
 #include "button.hpp"
+#include "character/data.hpp"
 #include "column.hpp"
 #include "gestureDetector.hpp"
 #include "image.hpp"
@@ -108,6 +110,22 @@ struct ArtifactCardContent {
 				},
 			},
 		};
+
+		auto equippedButton = Button{
+			.widget{
+				.width = Size::Expand,
+			},
+			.text = artifact.equippedCharacter ? Store::characters.at(artifact.equippedCharacter).loadout.character.data.name : "Unequipped",
+			.style = artifact.equippedCharacter ? ButtonStyle::Accent() : ButtonStyle::Standard(),
+			.onClick = [&artifact = artifact](GestureDetector::Event event) {
+				event.widget.addOverlay(UI::CharacterSelector{
+					.onSelect = [&artifact](Character::InstanceKey instanceKey) {
+						artifact.equipOn(instanceKey);
+					},
+				});
+			},
+		};
+
 		auto footer = Row{
 			.widget{
 				.height = Size::Shrink,
@@ -115,6 +133,7 @@ struct ArtifactCardContent {
 			},
 			.spacing = 4.f,
 			.children{
+				equippedButton,
 				Button{
 					.text = "Edit",
 					.style = ButtonStyle::Standard(),
