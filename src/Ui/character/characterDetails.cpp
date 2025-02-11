@@ -15,7 +15,9 @@
 #include "store.hpp"
 #include "utils/overloaded.hpp"
 
+#include "formula/requires.hpp"
 #include "formula/stat.hpp"
+
 
 #include "modifiers/artifact/displayStats.hpp"
 #include "modifiers/weapon/displayStats.hpp"
@@ -34,8 +36,11 @@ struct DetailsSkill {
 	const Formula::Context &ctx;
 	const std::vector<Node::Types> &nodes;
 	std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
+	Formula::BoolNode displayCondition = Formula::ConstantBool(true);
 
 	operator squi::Child() const {
+		if (!displayCondition.eval(ctx)) return nullptr;
+
 		return UI::DisplayCard{
 			.title = name,
 			.subtitle = subtitle,
@@ -250,21 +255,22 @@ namespace {
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {
 			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
 		}
-		const std::vector<std::string_view> names = {
-			"Normal attack",
-			"Charged attack",
-			"Plunge attack",
-			"Elemental skill",
-			"Elemental burst",
-			"Passive 1",
-			"Passive 2",
-			"Constellation 1",
-			"Constellation 2",
-			"Constellation 4",
-			"Constellation 6",
+		const std::vector<std::pair<std::string_view, Formula::BoolNode>> namesAndConditions = {
+			{"Normal attack", Formula::ConstantBool(true)},
+			{"Charged attack", Formula::ConstantBool(true)},
+			{"Plunge attack", Formula::ConstantBool(true)},
+			{"Elemental skill", Formula::ConstantBool(true)},
+			{"Elemental burst", Formula::ConstantBool(true)},
+			{"Passive 1", Requirement::passive1},
+			{"Passive 2", Requirement::passive2},
+			{"Constellation 1", Requirement::constellation1},
+			{"Constellation 2", Requirement::constellation2},
+			{"Constellation 4", Requirement::constellation4},
+			{"Constellation 6", Requirement::constellation6},
 		};
 
-		for (const auto &[nodeWrapper, options, name]: std::views::zip(nodes, characterOpts, names)) {
+		for (const auto &[nodeWrapper, options, nameAndCondition]: std::views::zip(nodes, characterOpts, namesAndConditions)) {
+			auto &[name, condition] = nameAndCondition;
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
@@ -274,6 +280,7 @@ namespace {
 				.ctx = ctx,
 				.nodes = nodes,
 				.options = options,
+				.displayCondition = condition,
 			});
 		}
 
