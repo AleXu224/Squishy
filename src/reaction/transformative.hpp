@@ -41,7 +41,7 @@ namespace Reaction {
 			};
 			static constexpr auto superconduct = Reaction::Transformative<Modifiers::total.superconduct, std::array<Misc::Element, 2>>{
 				.name = "Superconduct",
-				.multiplier = 0.5f,
+				.multiplier = 1.5f,
 				.damageElement = Misc::Element::cryo,
 				.triggers = std::array{
 					Misc::Element::cryo,
@@ -82,7 +82,7 @@ namespace Reaction {
 			};
 			static constexpr auto electroCharged = Reaction::Transformative<Modifiers::total.electroCharged, std::array<Misc::Element, 2>>{
 				.name = "Electro-Charged",
-				.multiplier = 1.2f,
+				.multiplier = 2.f,
 				.damageElement = Misc::Element::electro,
 				.triggers = std::array{
 					Misc::Element::electro,
@@ -91,7 +91,7 @@ namespace Reaction {
 			};
 			static constexpr auto shattered = Reaction::Transformative<Modifiers::total.shattered, std::array<Misc::Element, 8>>{
 				.name = "Shattered",
-				.multiplier = 1.5f,
+				.multiplier = 3.f,
 				.damageElement = Misc::Element::physical,
 				.triggers = std::array{
 					Misc::Element::pyro,
@@ -106,7 +106,7 @@ namespace Reaction {
 			};
 			static constexpr auto overloaded = Reaction::Transformative<Modifiers::total.overloaded, std::array<Misc::Element, 2>>{
 				.name = "Overloaded",
-				.multiplier = 2.0f,
+				.multiplier = 2.75f,
 				.damageElement = Misc::Element::pyro,
 				.triggers = std::array{
 					Misc::Element::pyro,
