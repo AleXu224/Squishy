@@ -306,23 +306,4 @@ UI::CharacterDetails::operator squi::Child() const {
 			},
 		},
 	};
-	// return ScrollableFrame{
-	// 	.children{Grid{
-	// 		.widget{
-	// 			.height = Size::Shrink,
-	// 			.padding = Padding{8.f},
-	// 			.onInit = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](Widget &w) {
-	// 				w.customState.add(::Store::characters.at(characterKey).updateEvent.observe([wPtr = w.weak_from_this(), characterKey, teamKey, enemyKey]() {
-	// 					if (auto w = wPtr.lock()) {
-	// 						w->setChildren({});
-	// 						initializeList(characterKey, teamKey, enemyKey, *w);
-	// 					}
-	// 				}));
-	// 				initializeList(characterKey, teamKey, enemyKey, w);
-	// 			},
-	// 		},
-	// 		.spacing = 4.f,
-	// 		.columnCount = Grid::MinSize{256.f},
-	// 	}},
-	// };
 }
