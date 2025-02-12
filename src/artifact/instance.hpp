@@ -23,7 +23,7 @@ namespace Artifact {
 		Stat mainStat{};
 		std::array<std::optional<StatValue>, 4> subStats;
 		Level level{};
-		uint8_t rarity{};
+		uint8_t rarity = 5;
 		Character::InstanceKey equippedCharacter{};
 
 		Stats::Sheet<float> stats{};

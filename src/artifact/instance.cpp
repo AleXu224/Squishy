@@ -10,23 +10,32 @@ void Artifact::Instance::unequip() {
 
 	equippedCharacter.clear();
 
-    character.getArtifactStats();
+	character.getArtifactStats();
 
-    character.updateEvent.notify();
-    this->updateEvent.notify();
+	character.updateEvent.notify();
+	this->updateEvent.notify();
 }
 
 void Artifact::Instance::equipOn(Character::InstanceKey characterKey) {
-	unequip();
-
 	if (!characterKey) return;
 
 	auto &character = Store::characters.at(characterKey);
-	character.loadout.artifact.equipped.fromSlot(this->slot) = this->key;
+	auto &slot = character.loadout.artifact.equipped.fromSlot(this->slot);
+	if (slot) {
+		auto &artifact = Store::artifacts.at(slot.value());
+		if (this->equippedCharacter) {
+			auto otherCharacter = this->equippedCharacter;
+			unequip();
+			artifact.equipOn(otherCharacter);
+		} else {
+			artifact.unequip();
+		}
+	}
+	slot = this->key;
 	this->equippedCharacter = characterKey;
 
-    character.getArtifactStats();
+	character.getArtifactStats();
 
-    character.updateEvent.notify();
+	character.updateEvent.notify();
 	this->updateEvent.notify();
 }
