@@ -10,6 +10,7 @@ inline Character::Data testCharacter{
 		.baseAtk = 24.7646,
 		.baseDef = 66.88994,
 		.ascensionStat = Stat::cd,
+		.rarity = 5,
 		.c3Talent = ConstellationTalent::burst,
 		.c5Talent = ConstellationTalent::skill,
 		.element = Misc::Element::electro,

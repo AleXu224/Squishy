@@ -7,16 +7,17 @@ inline Weapon::Data testWeapon{
 	.name = "Test Weapon",
 	.baseStats{
 		.type = Misc::WeaponType::polearm,
+		.rarity = 5,
 		.baseAtk = 44.3358,
-		.substat{
-			.stat = Stat::cr,
-			.value = 0.096,
-		},
 		.atkCurve = Curves::WeaponGrow::ATTACK_304,
-		.substatCurve = Curves::WeaponGrow::CRITICAL_301,
-		.ascensionUpgrade{
-			0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7
-		}
+		.subStat = Weapon::SubStat{
+			.stat{
+				.stat = Stat::cr,
+				.value = 0.096,
+			},
+			.curve = Curves::WeaponGrow::CRITICAL_301,
+		},
+		.ascensionUpgrade{0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7}
 	},
 	.setup = []() {
 		return Weapon::Data::Setup{};
