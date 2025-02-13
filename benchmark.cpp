@@ -48,7 +48,6 @@ namespace {
 					StatValue{.stat = Stat::er, .value = 0.123f},
 				},
 				.level = 20,
-				.rarity = Rarity::fiveStar,
 				.equippedCharacter = characterKey,
 			},
 		});
@@ -66,7 +65,6 @@ namespace {
 					StatValue{.stat = Stat::cr, .value = 0.132f},
 				},
 				.level = 20,
-				.rarity = Rarity::fiveStar,
 				.equippedCharacter = characterKey,
 			},
 		});
@@ -84,7 +82,6 @@ namespace {
 					StatValue{.stat = Stat::def_, .value = 0.139f},
 				},
 				.level = 20,
-				.rarity = Rarity::fiveStar,
 				.equippedCharacter = characterKey,
 			},
 		});
@@ -102,7 +99,6 @@ namespace {
 					StatValue{.stat = Stat::cd, .value = 0.124f},
 				},
 				.level = 20,
-				.rarity = Rarity::fiveStar,
 				.equippedCharacter = characterKey,
 			},
 		});
@@ -120,7 +116,6 @@ namespace {
 					StatValue{.stat = Stat::em, .value = 47.f},
 				},
 				.level = 20,
-				.rarity = Rarity::fiveStar,
 				.equippedCharacter = characterKey,
 			},
 		});
