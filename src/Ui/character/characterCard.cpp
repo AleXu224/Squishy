@@ -156,9 +156,7 @@ UI::CharacterCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
+		.widget = widget.withDefaultPadding(1.f),
 		.child = Rebuilder{
 			.rebuildEvent = ::Store::characters.at(characterKey).updateEvent,
 			.buildFunc = [characterKey = characterKey, controller = controller]() {
