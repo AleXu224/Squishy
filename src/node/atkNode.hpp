@@ -18,8 +18,8 @@ namespace Node {
 		Utils::JankyOptional<Misc::Element> element{};
 		Misc::AttackSource source{};
 
-		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
-			return "";
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
 		}
 
 		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
@@ -61,8 +61,8 @@ namespace Node {
 	struct _NodeSkill {
 		Misc::AttackSource source{};
 
-		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
-			return "";
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

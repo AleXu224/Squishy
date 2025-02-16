@@ -4,6 +4,7 @@
 #include "utility"
 #include "utils/isPercentage.hpp"
 #include "utils/stringify.hpp"
+#include <vector>
 
 
 namespace Misc {
@@ -14,7 +15,15 @@ namespace Misc {
 		critRate,
 		critDMG,
 	};
-}
+
+	static inline std::vector<SkillStat> skillStats{
+		SkillStat::DMG,
+		SkillStat::additiveDMG,
+		SkillStat::multiplicativeDMG,
+		SkillStat::critRate,
+		SkillStat::critDMG,
+	};
+}// namespace Misc
 
 namespace Utils {
 	template<>

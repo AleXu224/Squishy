@@ -85,6 +85,35 @@ namespace Stats {
 		}
 	};
 
+	const inline std::vector simple{
+		std::vector{
+			Stat::hp,
+			Stat::hp_,
+			Stat::baseHp,
+			Stat::atk,
+			Stat::atk_,
+			Stat::baseAtk,
+			Stat::additionalAtk,
+			Stat::def,
+			Stat::def_,
+			Stat::baseDef,
+			Stat::er,
+			Stat::em,
+			Stat::cr,
+			Stat::cd,
+			Stat::hb,
+			Stat::pyroDmg,
+			Stat::hydroDmg,
+			Stat::cryoDmg,
+			Stat::electroDmg,
+			Stat::dendroDmg,
+			Stat::anemoDmg,
+			Stat::geoDmg,
+			Stat::physicalDmg,
+			Stat::allDmg,
+		}
+	};
+
 	[[maybe_unused]] constexpr Stat fromElement(const Misc::Element &element) {
 		switch (element) {
 			case Misc::Element::pyro:
