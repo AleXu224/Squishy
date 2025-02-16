@@ -3,7 +3,7 @@ import { Weapon } from "./weaponType.d.ts";
 import { camelCase } from "https://deno.land/x/case@2.2.0/mod.ts";
 
 if (Deno.args[0] == undefined) {
-	console.error("Usage: weaponGenerator.ts <hakushin url>\neg: deno run .\\scripts\\weaponGenerator.ts https://api.hakush.in/gi/data/en/weapon/13101.json");
+	console.error("Usage: weaponGenerator.ts <weapon id>\neg: deno run .\\scripts\\weaponGenerator.ts 13101");
 	Deno.exit(1);
 }
 
@@ -15,7 +15,7 @@ try {
 	Deno.exit(1);
 }
 
-const response = await fetch(Deno.args[0]);
+const response = await fetch(`https://api.hakush.in/gi/data/en/weapon/${Deno.args[0]}.json`);
 if (!response.ok) {
 	console.error(`Response failed with code ${response.status}, "${response.statusText}"`);
 }
@@ -49,7 +49,7 @@ const stat = new Map<string, string>([
 ]);
 
 const data = {
-	key: /[0-9]+(?=\.json)/g.exec(Deno.args[0])?.[0],
+	key: Deno.args[0],
 	name: contents.Name,
 	type: weaponType.get(contents.WeaponType),
 	growCurve: contents.WeaponProp[0].type.replace("GROW_CURVE_", ""),
@@ -62,12 +62,12 @@ const data = {
 };
 
 const subStatStr = `.subStat = SubStat{
-				.stat{
-					.stat = Stat::${data.subStat},
-					.value = ${data.subStatValue?.toFixed(3)},
-				},
-				.curve = Curves::WeaponGrow::${data.subStatCurve},
-			},`;
+			.stat{
+				.stat = Stat::${data.subStat},
+				.value = ${data.subStatValue?.toFixed(3)},
+			},
+			.curve = Curves::WeaponGrow::${data.subStatCurve},
+		},`;
 
 const ascensionUpgrade = new Float32Array(7);
 
