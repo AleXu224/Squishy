@@ -1,8 +1,8 @@
 #pragma once
 
+#include "helpers.hpp"
 #include "type_traits"
 #include <utility>
-#include "helpers.hpp"
 
 namespace Modifiers {
 	template<class T>

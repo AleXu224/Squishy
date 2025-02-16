@@ -3,6 +3,7 @@
 #include "cstdint"
 #include "string"
 #include "utils/stringify.hpp"
+#include <vector>
 
 namespace Misc {
 	enum class DamageElement : uint8_t {
@@ -16,7 +17,19 @@ namespace Misc {
 		physical,
 		all,
 	};
-}
+
+	static inline std::vector<DamageElement> damageElements{
+		DamageElement::pyro,
+		DamageElement::hydro,
+		DamageElement::cryo,
+		DamageElement::electro,
+		DamageElement::dendro,
+		DamageElement::anemo,
+		DamageElement::geo,
+		DamageElement::physical,
+		DamageElement::all,
+	};
+}// namespace Misc
 
 namespace Utils {
 	template<>

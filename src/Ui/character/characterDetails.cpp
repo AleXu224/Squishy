@@ -1,152 +1,24 @@
 #include "characterDetails.hpp"
 
-#include "Ui/option/toggleOption.hpp"
-#include "Ui/option/valueListOption.hpp"
-#include "Ui/utils/displayCard.hpp"
+#include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/utils/masonry.hpp"
-#include "Ui/utils/skillEntry.hpp"
-#include "Ui/utils/tooltip.hpp"
-#include "Ui/utils/trueFalse.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
+#include "ranges"
 #include "rebuilder.hpp"
 #include "store.hpp"
-#include "utils/overloaded.hpp"
 
 #include "formula/requires.hpp"
-#include "formula/stat.hpp"
-
+#include "formula/stat.hpp"// IWYU pragma: keep
 
 #include "modifiers/artifact/displayStats.hpp"
 #include "modifiers/weapon/displayStats.hpp"
 
-#include "box.hpp"
 #include "scrollableFrame.hpp"
 
 using namespace squi;
-
-template<auto sheet = int{}>
-struct DetailsSkill {
-	// Args
-	std::string_view name;
-	std::string_view subtitle{};
-	Character::InstanceKey characterKey{};
-	const Formula::Context &ctx;
-	const std::vector<Node::Types> &nodes;
-	std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
-	Formula::BoolNode displayCondition = Formula::ConstantBool(true);
-
-	operator squi::Child() const {
-		if (!displayCondition.eval(ctx)) return nullptr;
-
-		return UI::DisplayCard{
-			.title = name,
-			.subtitle = subtitle,
-			.children = [&]() -> Children {
-				Children ret{};
-
-				if (!nodes.empty()) {
-					Children ret2{};
-					for (const auto &[node, transparent]: std::views::zip(nodes, Utils::trueFalse)) {
-						ret2.emplace_back(UI::Tooltip{
-							.message = node.formula.print(ctx),
-							.child = UI::SkillEntry{
-								.isTransparent = transparent,
-								.name = node.name,
-								.value = node.formula.eval(ctx),
-								.color = Node::getColor(node.data, ctx),
-								.isPercentage = Node::isPercentage(node.data),
-							},
-						});
-					}
-					ret.emplace_back(Column{
-						.widget{
-							.padding = Padding{4.f},
-						},
-						.children = ret2,
-					});
-				}
-
-				if constexpr (!std::is_same_v<decltype(sheet), int>) {
-					Children ret3{};
-
-					bool transparent = true;
-					for (const auto &stat: Stats::all) {
-						auto message = Formula::EvalStat(sheet, stat, [&](auto &&stat) {
-							return stat.print(ctx, Formula::Step::none);
-						});
-						auto value = Formula::EvalStat(sheet, stat, [&](auto &&stat) {
-							return stat.eval(ctx);
-						});
-
-						if (value == 0.f) continue;
-						ret3.emplace_back(UI::Tooltip{
-							.message = message,
-							.child = UI::SkillEntry{
-								.isTransparent = transparent = !transparent,
-								.name = Utils::Stringify(stat),
-								.value = value,
-								.color = Color(0xFFFFFFFF),
-								.isPercentage = Utils::isPercentage(stat),
-							},
-						});
-					}
-
-					if (!ret3.empty()) {
-						ret.emplace_back(Column{
-							.widget{.padding = 4.f},
-							.children = ret3,
-						});
-					}
-				}
-
-				if (!options.has_value() || options->empty())
-					return ret;
-
-				ret.emplace_back(Box{
-					.widget{
-						.height = Size::Shrink,
-						.padding = Padding{4.f},
-					},
-					.color{1.f, 1.f, 1.f, 0.05f},
-					.borderRadius{0.f, 0.f, 7.f, 7.f},
-					.child = Column{
-						.spacing = 4.f,
-						.children = [&]() {
-							Children ret{};
-
-							for (const auto &option: options.value()) {
-								std::visit(
-									Utils::overloaded{
-										[&](Option::Boolean &opt) {
-											ret.emplace_back(UI::ToggleOption{
-												.option = opt,
-												.characterKey = characterKey,
-											});
-										},
-										[&](Option::ValueList &opt) {
-											ret.emplace_back(UI::ValueListOption{
-												.option = opt,
-												.characterKey = characterKey,
-											});
-										},
-									},
-									option.second.get()
-								);
-							}
-
-							return ret;
-						}(),
-					},
-				});
-
-				return ret;
-			}(),
-		};
-	}
-};
 
 namespace {
 	using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
@@ -190,13 +62,15 @@ namespace {
 
 		auto weaponOpts = makeOpts(character.loadout.weapon.options);
 
-		auto weaponStats = DetailsSkill<Modifiers::Weapon::displayStats>{
+
+		auto weaponStats = UI::DetailsSkill{
 			.name = character.loadout.weapon.data->name,
 			.subtitle = "Weapon",
 			.characterKey = characterKey,
 			.ctx = ctx,
 			.nodes = character.loadout.weapon.data->data.nodes,
 			.options = weaponOpts,
+			.modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Weapon::displayStats>>(),
 		};
 
 		std::optional<MakeOptsRet> artifactOpts1;
@@ -208,24 +82,26 @@ namespace {
 			artifactOpts2 = makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.artifact.options);
 
 		Child artifactStats1 = character.loadout.artifact.bonus1.has_value()
-								 ? DetailsSkill<Modifiers::Artifact::display1>{
+								 ? UI::DetailsSkill{
 									   .name = character.loadout.artifact.bonus1->setPtr.name,
 									   .subtitle = "Artifact",
 									   .characterKey = characterKey,
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
 									   .options = artifactOpts1,
+									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Artifact::display1>>(),
 								   }
 								 : Child{};
 
 		Child artifactStats2 = character.loadout.artifact.bonus2.has_value()
-								 ? DetailsSkill<Modifiers::Artifact::display2>{
+								 ? UI::DetailsSkill{
 									   .name = character.loadout.artifact.bonus2->setPtr.name,
 									   .subtitle = "Artifact",
 									   .characterKey = characterKey,
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
 									   .options = artifactOpts2,
+									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Artifact::display2>>(),
 								   }
 								 : Child{};
 
@@ -274,7 +150,7 @@ namespace {
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
-			mainContent.emplace_back(DetailsSkill<0>{
+			mainContent.emplace_back(UI::DetailsSkill{
 				.name = name,
 				.characterKey = characterKey,
 				.ctx = ctx,

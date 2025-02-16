@@ -5,6 +5,7 @@
 #include "modifiers/helpers.hpp"// IWYU pragma: keep
 #include "modifiers/statFactory.hpp"
 #include "modifiers/talentFactory.hpp"
+#include "stats/loadout.hpp"
 #include "stats/sheet.hpp"
 
 
