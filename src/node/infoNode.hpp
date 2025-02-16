@@ -2,19 +2,19 @@
 
 #include "Ui/elementToColor.hpp"
 #include "color.hpp"
+#include "formula/node.hpp"
 #include "nodeData.hpp"
 #include "string_view"
 
 
 namespace Node {
-	template<class Frm>
 	struct Info {
 		std::string_view name;
 		squi::Color color = Utils::elementToColor(Misc::Element::physical);
 		bool isPercentage = false;
-		Frm formula;
+		Formula::FloatNode formula;
 
-		Frm _formula = formula;
+		Formula::FloatNode _formula = formula;
 
 		Data _data = InfoData{
 			.isPercentage = isPercentage,

@@ -31,25 +31,23 @@ namespace Modifiers::Artifact::Set {
 		template<StatMember stat>
 		struct Frm {
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				return std::invoke(location2, context.target.artifact)
-					.transform([&](const Stats::ArtifactBonus &val) {
-						const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
-						if (!mod.hasValue()) return std::string();
-						return mod.print(context);
-					})
-					.value_or(std::string());
+				const auto &bonus = std::invoke(location2, context.target.artifact);
+				if (!bonus) return std::string();
+				const auto &val = bonus.value();
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				if (!mod.hasValue()) return std::string();
+				return mod.print(context);
 			}
 
 			using Ret = RetTypeMember<stat>;
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-				return std::invoke(location2, context.target.artifact)
-					.transform([&](const Stats::ArtifactBonus &val) {
-						const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
-						if (!mod.hasValue()) return Ret{};
-						return mod.eval(context);
-					})
-					.value_or(Ret{});
+				const auto &bonus = std::invoke(location2, context.target.artifact);
+				if (!bonus) return Ret{};
+				const auto &val = bonus.value();
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				if (!mod.hasValue()) return Ret{};
+				return mod.eval(context);
 			}
 		};
 	};

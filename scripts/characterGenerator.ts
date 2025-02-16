@@ -77,8 +77,8 @@ function skillContentsGenerator(skill: Skill, source: string): string {
 					Node::Atk{
 						.name = "${name}",
 						.source = Misc::AttackSource::${source},
-						.formula = Multiplier(total.atk, LevelableTalent::${source}, {${Object.entries(skill.Promote).map(([_, value]) => value.Param[parseInt(index) - 1].toFixed(4)).join(", ")}})
-					}`;
+						.formula = Multiplier(total.atk, LevelableTalent::${source}, {${Object.entries(skill.Promote).map(([_, value]) => value.Param[parseInt(index) - 1].toFixed(4)).join(", ")}}),
+					},`;
         }
     }
 
@@ -99,7 +99,7 @@ const retSource: string = `#include "${pascalCase(data.name)}.hpp"
 #include "character/setup.hpp"
 
 const Character::Data Character::Datas::${camelCase(data.name)}{
-	.key{10000071},
+	.key{${data.key}},
 	.name{"${data.name}"},
 	.baseStats{
 		.baseHp = ${contents.BaseHP.toFixed(3)},

@@ -20,7 +20,22 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 		.children = [&]() -> Children {
 			Children ret;
 			const auto &loadout = ctx.target;
-			auto reactions = Reaction::List::Transformative::getMembers();
+			// auto reactions = Reaction::List::Transformative::getMembers();
+
+			auto reactions = std::tuple{
+				&Reaction::List::Transformative::burning,
+				&Reaction::List::Transformative::superconduct,
+				&Reaction::List::Transformative::pyroSwirl,
+				&Reaction::List::Transformative::hydroSwirl,
+				&Reaction::List::Transformative::electroSwirl,
+				&Reaction::List::Transformative::cryoSwirl,
+				&Reaction::List::Transformative::electroCharged,
+				&Reaction::List::Transformative::shattered,
+				&Reaction::List::Transformative::overloaded,
+				&Reaction::List::Transformative::bloom,
+				&Reaction::List::Transformative::burgeon,
+				&Reaction::List::Transformative::hyperbloom,
+			};
 
 			std::vector elements{loadout.character.data.baseStats.element};
 

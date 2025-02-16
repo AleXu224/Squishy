@@ -5,7 +5,6 @@
 #include "modifiers/total/total.hpp"
 #include "reaction/levelMultiplier.hpp"
 #include "stats/loadout.hpp"
-#include "formula/operators.hpp"
 
 
 namespace Formula {
@@ -47,6 +46,19 @@ namespace Formula {
 
 		[[nodiscard]] static float eval(const Context &context) {
 			return Reaction::CharacterLevelMultiplier.at(context.source.character.sheet.level);
+		}
+	};
+
+	struct TalentValue {
+		LevelableTalent talent;
+		std::array<float, 15> values;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{:.1f}", eval(context));
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			return _getMultiplier(talent, values, context);
 		}
 	};
 }// namespace Formula

@@ -138,23 +138,6 @@ namespace Reaction {
 					Misc::Element::electro,
 				},
 			};
-
-			[[nodiscard]] static consteval auto getMembers() {
-				return std::tuple{
-					&Reaction::List::Transformative::burning,
-					&Reaction::List::Transformative::superconduct,
-					&Reaction::List::Transformative::pyroSwirl,
-					&Reaction::List::Transformative::hydroSwirl,
-					&Reaction::List::Transformative::electroSwirl,
-					&Reaction::List::Transformative::cryoSwirl,
-					&Reaction::List::Transformative::electroCharged,
-					&Reaction::List::Transformative::shattered,
-					&Reaction::List::Transformative::overloaded,
-					&Reaction::List::Transformative::bloom,
-					&Reaction::List::Transformative::burgeon,
-					&Reaction::List::Transformative::hyperbloom,
-				};
-			}
 		};
 	}// namespace List
 }// namespace Reaction

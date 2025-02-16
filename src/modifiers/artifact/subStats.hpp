@@ -19,10 +19,8 @@ namespace Modifiers::Artifact {
 		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
 			float total = 0.f;
 			for (const auto &artifact: context.target.artifact.sheet.equippedArtifacts) {
-				total += artifact.transform([&](Stats::Sheet<float> *sheet) {
-									 return stat.resolve(*sheet);
-								 })
-							 .value_or(0.f);
+				if (!artifact.has_value()) continue;
+				total += stat.resolve(*artifact.value());
 			}
 			return total;
 		}
