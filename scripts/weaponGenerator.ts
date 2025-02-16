@@ -82,31 +82,38 @@ for (const val of ascensionUpgrade) {
 }
 
 
-const ret: string = `#pragma once
+const retHeader: string = `#pragma once
 
-#include "weapon/setup.hpp"
+#include "weapon/data.hpp"
 
 namespace Weapon::Datas {
-	const inline Weapon::Data ${camelCase(data.name)}{
-		.key{${data.key}},
-		.name = "${data.name}",
-		.baseStats{
-			.type = ${data.type},
-			.rarity = ${contents.Rarity},
-			.baseAtk = ${contents.StatsModifier.ATK.Base.toFixed(3)},
-			.atkCurve = Curves::WeaponGrow::${data.growCurve},
-			${data.hasSubstat ? subStatStr : ".subStat{},"}
-			.ascensionUpgrade{${ascensionUpgradeStr.join(", ")}}
-		},
-		.opts{},
-		.setup = []() {
-			return Data::Setup{};
-		},
-	};
+	const extern Weapon::Data ${camelCase(data.name)};
 }// namespace Weapon::Datas
 `;
 
-console.log(ret);
+const retSource: string = `#include "${pascalCase(data.name)}.hpp"
+
+#include "weapon/setup.hpp"
+
+const Weapon::Data Weapon::Datas::${camelCase(data.name)}{
+	.key{${data.key}},
+	.name = "${data.name}",
+	.baseStats{
+		.type = ${data.type},
+		.rarity = ${contents.Rarity},
+		.baseAtk = ${contents.StatsModifier.ATK.Base.toFixed(3)},
+		.atkCurve = Curves::WeaponGrow::${data.growCurve},
+		${data.hasSubstat ? subStatStr : ".subStat{},"}
+		.ascensionUpgrade{${ascensionUpgradeStr.join(", ")}}
+	},
+	.opts{},
+	.setup = []() {
+		return Data::Setup{};
+	},
+};
+`;
+
+console.log(retHeader);
 
 console.log(data.icon);
 console.log(data.iconAwaken);
@@ -125,4 +132,5 @@ if (!iconResponseAwaken.ok) {
 }
 Deno.writeFileSync(`./assets/Weapons/${data.name}/icon_ascended.webp`, await iconResponseAwaken.bytes());
 
-Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(ret));
+Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(retHeader));
+Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.name)}.cpp`, new TextEncoder().encode(retSource));

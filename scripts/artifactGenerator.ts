@@ -31,32 +31,39 @@ const data = {
 	iconSands: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_5.webp`,
 };
 
-const ret: string = `#pragma once
+const retHeader: string = `#pragma once
 
 #include "artifact/setup.hpp"
 
 namespace Artifact::Sets {
-	const inline Artifact::Set ${camelCase(data.name)}{
-		.key{${data.key}},
-		.name = "${data.name}",
-		.setup = []() -> Set::Setup {
-			return Set::Setup{
-				.twoPc{
-					.mods{
-						.preMod{},
-					},
-				},
-				.fourPc{
-					.opts{},
-					.mods{},
-				},
-			};
-		},
-	};
+	const extern Artifact::Set ${camelCase(data.name)};
 }// namespace Artifact::Sets
 `;
 
-console.log(ret);
+const retSource: string = `#include "${pascalCase(data.name)}.hpp"
+
+#include "artifact/setup.hpp"
+
+const Artifact::Set Artifact::Sets::${camelCase(data.name)}{
+	.key{${data.key}},
+	.name = "${data.name}",
+	.setup = []() -> Set::Setup {
+		return Set::Setup{
+			.twoPc{
+				.mods{
+					.preMod{},
+				},
+			},
+			.fourPc{
+				.opts{},
+				.mods{},
+			},
+		};
+	},
+};
+`;
+
+console.log(retHeader);
 
 console.log(data.iconGoblet);
 console.log(data.iconPlume);
@@ -96,4 +103,5 @@ if (!iconResponseSands.ok) {
 }
 Deno.writeFileSync(`./assets/Artifacts/${data.name}/Sands.webp`, await iconResponseSands.bytes());
 
-Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(ret));
+Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(retHeader));
+Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.name)}.cpp`, new TextEncoder().encode(retSource));
