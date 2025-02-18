@@ -31,7 +31,7 @@ namespace Formula {
 	};
 
 	template<class T>
-	concept FormulaLike = FloatFormula<T> || BoolFormula<T> || IntFormula<T>;
+	concept FormulaLike = FloatFormula<T> || BoolFormula<T> || IntFormula<T> || ElementFormula<T>;
 	template<class T>
 	concept ArithmeticFormula = FloatFormula<T> || IntFormula<T>;
 }// namespace Formula

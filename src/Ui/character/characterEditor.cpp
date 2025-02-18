@@ -136,7 +136,7 @@ UI::CharacterEditor::operator Child() const {
 			.text = fmt::format("Constellation {}", storage->character.loadout.character.sheet.constellation),
 			.items = [storage, constellationUpdateEvent]() {
 				std::vector<ContextMenu::Item> ret{};
-				for (const auto &constellation: std::views::iota(0, 6)) {
+				for (const auto &constellation: std::views::iota(0, 7)) {
 					ret.emplace_back(ContextMenu::Item{
 						.text = fmt::format("Constellation {}", constellation),
 						.content = [constellation, constellationUpdateEvent]() {

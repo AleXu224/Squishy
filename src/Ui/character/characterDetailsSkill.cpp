@@ -73,6 +73,7 @@ UI::DetailsSkill::operator squi::Child() const {
 										});
 									},
 									[&](Option::ValueList &opt) {
+										if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
 										ret.emplace_back(UI::ValueListOption{
 											.option = opt,
 											.characterKey = characterKey,

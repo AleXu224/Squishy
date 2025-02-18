@@ -22,6 +22,10 @@ namespace Option {
 		return static_cast<float>(std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue));
 	}
 
+	inline uint32_t getInt(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
+		return std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue);
+	}
+
 	struct CharacterList {
 		const std::vector<Types> normal{};
 		const std::vector<Types> charged{};

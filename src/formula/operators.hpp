@@ -68,6 +68,14 @@ namespace Formula::Operators {
 	[[nodiscard]] constexpr auto operator==(float param1, T param2) {
 		return Formula::Equal(Formula::Constant(param1), param2);
 	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator==(T param1, uint32_t param2) {
+		return Formula::Equal(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator==(uint32_t param1, T param2) {
+		return Formula::Equal(Formula::ConstantInt(param1), param2);
+	}
 	template<Formula::BoolFormula T>
 	[[nodiscard]] constexpr auto operator==(T param1, bool param2) {
 		return Formula::Equal(param1, Formula::ConstantBool(param2));

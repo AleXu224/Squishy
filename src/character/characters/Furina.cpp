@@ -29,6 +29,7 @@ const Character::Data Character::Datas::furina{
 			Option::ValueList{
 				.key = "furinaFanfare",
 				.prefix = "Fanfare",
+				.displayCondition = character.constellation == 0,
 				.values = std::views::iota(1)
 						| std::views::transform([](auto &&val) {
 							  return val * 50.f;
@@ -36,11 +37,90 @@ const Character::Data Character::Datas::furina{
 						| std::views::take(6)
 						| std::ranges::to<std::vector<uint32_t>>(),
 			},
+			Option::ValueList{
+				.key = "furinaFanfareC1",
+				.prefix = "Fanfare",
+				.displayCondition = Requirement::constellation1,
+				.values = std::views::iota(3)
+						| std::views::transform([](auto &&val) {
+							  return val * 50.f;
+						  })
+						| std::views::take(6)
+						| std::ranges::to<std::vector<uint32_t>>(),
+			},
+		},
+		.constellation2{
+			Option::ValueList{
+				.key = "furinaAboveFanfareC2",
+				.prefix = "Fanfare above limit",
+				.values = std::views::iota(1)
+						| std::views::transform([](auto &&val) {
+							  return val * 50.f;
+						  })
+						| std::views::take(8)
+						| std::ranges::to<std::vector<uint32_t>>(),
+			},
+		},
+		.constellation6{
+			Option::Boolean{
+				.key = "furinaCenterOfAttention",
+				.name = "Center of Attention active",
+			},
 		},
 	},
 	.setup = []() -> Data::Setup {
+		auto fanfareDmgRatio = TalentValue(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
+		auto fanfareIncHealRatio = TalentValue(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
+
+		auto fanfareStacks = IfElse{
+			.requirement = character.constellation == 0,
+			.trueVal = GetInt("furinaFanfare"),
+			.elseVal = GetInt("furinaFanfareC1"),
+		};
+
+		auto a4Points = Requires(
+			Requirement::passive2,
+			total.hp / ConstantFlat(1000.f)
+		);
+		auto a4DmgIncrease = Clamp(a4Points * 0.007f, 0.f, 0.28f);
+
+		auto c2FanfareAboveLimit = Requires(
+			Requirement::constellation2,
+			GetFloat("furinaAboveFanfareC2")
+		);
+		auto c2HpIncrease = Clamp(c2FanfareAboveLimit * Constant(0.0035f), 0.f, 1.4f);
+
+		auto c6Active = IsActive("furinaCenterOfAttention");
+		auto c6Infusion = IfElse{
+			Requirement::constellation6 && c6Active,
+			Infusion{Misc::Element::hydro},
+			NoInfusion{},
+		};
+		auto c6DmgIncrease = Requires(
+			Requirement::constellation6 && c6Active,
+			0.18f * total.hp
+		);
+		auto c6Healing = Requires(
+			Requirement::constellation6,
+			0.04 * total.hp
+		);
+
 		return Data::Setup{
-			.mods{},
+			.mods{
+				.preMod{
+					.hp_ = c2HpIncrease,
+					.normal{.additiveDMG = c6DmgIncrease},
+					.charged{.additiveDMG = c6DmgIncrease},
+					.plunge{.additiveDMG = c6DmgIncrease},
+				},
+				.teamPreMod{
+					.incHb = fanfareStacks * fanfareIncHealRatio,
+					.all{
+						.DMG = fanfareStacks * fanfareDmgRatio,
+					},
+				},
+				.infusion = c6Infusion,
+			},
 			.nodes{
 				.normal{
 					Node::Atk{
@@ -77,13 +157,8 @@ const Character::Data Character::Datas::furina{
 				.charged{
 					Node::Atk{
 						.name = "Charged Attack DMG",
-						.source = Misc::AttackSource::skill,
+						.source = Misc::AttackSource::charged,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {0.7422, 0.8026, 0.8630, 0.9493, 1.0097, 1.0788, 1.1737, 1.2686, 1.3635, 1.4671, 1.5707, 1.6742, 1.7778, 1.8813, 1.9849}),
-					},
-					Node::Atk{
-						.name = "Charged Attack Stamina Cost",
-						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.atk, LevelableTalent::normal, {20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000}),
 					},
 				},
 				.plunge{
@@ -116,17 +191,26 @@ const Character::Data Character::Datas::furina{
 					Node::Atk{
 						.name = "Gentilhomme Usher DMG",
 						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0596, 0.0641, 0.0685, 0.0745, 0.0790, 0.0834, 0.0894, 0.0954, 0.1013, 0.1073, 0.1132, 0.1192, 0.1267, 0.1341, 0.1416}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0596, 0.0641, 0.0685, 0.0745, 0.0790, 0.0834, 0.0894, 0.0954, 0.1013, 0.1073, 0.1132, 0.1192, 0.1267, 0.1341, 0.1416}),
+						.modifier = Modifier{
+							.DMG = a4DmgIncrease,
+						},
 					},
 					Node::Atk{
 						.name = "Surintendante Chevalmarin DMG",
 						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0323, 0.0347, 0.0372, 0.0404, 0.0428, 0.0452, 0.0485, 0.0517, 0.0549, 0.0582, 0.0614, 0.0646, 0.0687, 0.0727, 0.0768}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0323, 0.0347, 0.0372, 0.0404, 0.0428, 0.0452, 0.0485, 0.0517, 0.0549, 0.0582, 0.0614, 0.0646, 0.0687, 0.0727, 0.0768}),
+						.modifier = Modifier{
+							.DMG = a4DmgIncrease,
+						},
 					},
 					Node::Atk{
 						.name = "Mademoiselle Crabaletta DMG",
 						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0829, 0.0891, 0.0953, 0.1036, 0.1098, 0.1160, 0.1243, 0.1326, 0.1409, 0.1492, 0.1575, 0.1658, 0.1761, 0.1865, 0.1968}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0829, 0.0891, 0.0953, 0.1036, 0.1098, 0.1160, 0.1243, 0.1326, 0.1409, 0.1492, 0.1575, 0.1658, 0.1761, 0.1865, 0.1968}),
+						.modifier = Modifier{
+							.DMG = a4DmgIncrease,
+						},
 					},
 					Node::Info{
 						.name = "Gentilhomme Usher HP Consumption",
@@ -145,8 +229,7 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Heal{
 						.name = "Singer of Many Waters Healing",
-						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0480, 0.0516, 0.0552, 0.0600, 0.0636, 0.0672, 0.0720, 0.0768, 0.0816, 0.0864, 0.0912, 0.0960, 0.1020, 0.1080, 0.1140})
-								 + TalentValue(LevelableTalent::skill, {462.2253, 508.4543, 558.5356, 612.4694, 670.2556, 731.8942, 797.3852, 866.7286, 939.9245, 1016.9728, 1097.8734, 1182.6265, 1271.2321, 1363.6899, 1460.0002}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0480, 0.0516, 0.0552, 0.0600, 0.0636, 0.0672, 0.0720, 0.0768, 0.0816, 0.0864, 0.0912, 0.0960, 0.1020, 0.1080, 0.1140}) + TalentValue(LevelableTalent::skill, {462.2253, 508.4543, 558.5356, 612.4694, 670.2556, 731.8942, 797.3852, 866.7286, 939.9245, 1016.9728, 1097.8734, 1182.6265, 1271.2321, 1363.6899, 1460.0002}),
 					},
 					Node::Info{
 						.name = "CD",
@@ -170,12 +253,12 @@ const Character::Data Character::Datas::furina{
 					Node::Info{
 						.name = "Fanfare to DMG Increase Conversion Ratio",
 						.isPercentage = true,
-						.formula = TalentValue(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035}),
+						.formula = fanfareDmgRatio,
 					},
 					Node::Info{
 						.name = "Fanfare to Incoming Healing Bonus Conversion Ratio",
 						.isPercentage = true,
-						.formula = TalentValue(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015}),
+						.formula = fanfareIncHealRatio,
 					},
 					Node::Info{
 						.name = "CD",
@@ -184,6 +267,32 @@ const Character::Data Character::Datas::furina{
 					Node::Info{
 						.name = "Energy Cost",
 						.formula = TalentValue(LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
+					},
+				},
+				.passive1{
+					Node::Heal{
+						.name = "Endless Waltz healing",
+						.formula = total.hp * 0.02f,
+					},
+				},
+				.passive2{
+					Node::Info{
+						.name = "Salon Members' DMG Increase",
+						.isPercentage = true,
+						.formula = a4DmgIncrease,
+					},
+				},
+				.constellation2{
+					Node::Info{
+						.name = "HP Increase",
+						.isPercentage = true,
+						.formula = c2HpIncrease,
+					},
+				},
+				.constellation6{
+					Node::Heal{
+						.name = "Ousia Healing",
+						.formula = c6Healing,
 					},
 				},
 			},

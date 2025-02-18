@@ -11,6 +11,13 @@
 namespace Character {
 	using IsActive = Formula::impl_IsActive<Stats::CharacterSheet>;
 	using GetFloat = Formula::impl_GetFloat<Stats::CharacterSheet>;
+	using GetInt = Formula::impl_GetInt<Stats::CharacterSheet>;
+
+	static constexpr struct Character {
+		static constexpr Formula::CharacterLevel level{};
+		static constexpr Formula::CharacterConstellation constellation{};
+		static constexpr Formula::CharacterAscension ascension{};
+	} character{};
 
 	using Modifiers::total;
 	using Modifiers::totalEnemy;

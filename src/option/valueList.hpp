@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formula/node.hpp"
 #include "string_view"
 #include "utils/hashedString.hpp"
 #include <cstdint>
@@ -12,6 +13,7 @@ namespace Option {
 		Utils::HashedString key;
 		std::string_view prefix;
 		std::optional<size_t> currentIndex = std::nullopt;
+		std::optional<Formula::BoolNode> displayCondition = std::nullopt;
 		std::vector<uint32_t> values;
 
 		[[nodiscard]] std::optional<uint32_t> getValue() const {
