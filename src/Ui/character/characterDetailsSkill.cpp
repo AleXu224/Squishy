@@ -67,6 +67,7 @@ UI::DetailsSkill::operator squi::Child() const {
 							std::visit(
 								Utils::overloaded{
 									[&](Option::Boolean &opt) {
+										if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
 										ret.emplace_back(UI::ToggleOption{
 											.option = opt,
 											.characterKey = characterKey,

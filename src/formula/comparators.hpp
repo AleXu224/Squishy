@@ -43,7 +43,7 @@ namespace Formula {
 		}
 	};
 
-	template<FloatFormula T, FloatFormula V>
+	template<ArithmeticFormula T, ArithmeticFormula V>
 	struct Less {
 		T val1;
 		V val2;
@@ -55,7 +55,7 @@ namespace Formula {
 			return val1.eval(context) < val2.eval(context);
 		}
 	};
-	template<FloatFormula T, FloatFormula V>
+	template<ArithmeticFormula T, ArithmeticFormula V>
 	struct LessEqual {
 		T val1;
 		V val2;
@@ -67,7 +67,7 @@ namespace Formula {
 			return val1.eval(context) <= val2.eval(context);
 		}
 	};
-	template<FloatFormula T, FloatFormula V>
+	template<ArithmeticFormula T, ArithmeticFormula V>
 	struct Greater {
 		T val1;
 		V val2;
@@ -79,7 +79,7 @@ namespace Formula {
 			return val1.eval(context) > val2.eval(context);
 		}
 	};
-	template<FloatFormula T, FloatFormula V>
+	template<ArithmeticFormula T, ArithmeticFormula V>
 	struct GreaterEqual {
 		T val1;
 		V val2;
