@@ -20,7 +20,9 @@ namespace Node {
 		squi::Color color;
 	};
 
-	using Data = std::variant<AtkData, InfoData>;
+	struct HealData {};
+
+	using Data = std::variant<AtkData, InfoData, HealData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
@@ -30,6 +32,9 @@ namespace Node {
 				},
 				[](const InfoData &info) {
 					return info.isPercentage;
+				},
+				[](const HealData &) {
+					return false;
 				},
 			},
 			data

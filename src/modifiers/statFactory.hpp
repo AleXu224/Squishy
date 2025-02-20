@@ -33,6 +33,7 @@ namespace Modifiers {
 		static constexpr auto cr = &TT::cr;
 		static constexpr auto cd = &TT::cd;
 		static constexpr auto hb = &TT::hb;
+		static constexpr auto incHb = &TT::incHb;
 
 		static constexpr auto pyro = Skill<&TT::pyro>();
 		static constexpr auto hydro = Skill<&TT::hydro>();
@@ -92,6 +93,7 @@ namespace Modifiers {
 		static constexpr auto cr = Modifiers::SheetMemberIdentifier(::Stat::cr);
 		static constexpr auto cd = Modifiers::SheetMemberIdentifier(::Stat::cd);
 		static constexpr auto hb = Modifiers::SheetMemberIdentifier(::Stat::hb);
+		static constexpr auto incHb = Modifiers::SheetMemberIdentifier(::Stat::incHb);
 
 		static constexpr auto pyro = Skill<Misc::DamageElement::pyro>();
 		static constexpr auto hydro = Skill<Misc::DamageElement::hydro>();
@@ -152,6 +154,7 @@ namespace Modifiers {
 		static constexpr Formula<Params.cr...> cr{};
 		static constexpr Formula<Params.cd...> cd{};
 		static constexpr Formula<Params.hb...> hb{};
+		static constexpr Formula<Params.incHb...> incHb{};
 
 		static constexpr _SkillValue<Params.pyro...> pyro{};
 		static constexpr _SkillValue<Params.hydro...> hydro{};

@@ -68,6 +68,14 @@ namespace Formula::Operators {
 	[[nodiscard]] constexpr auto operator==(float param1, T param2) {
 		return Formula::Equal(Formula::Constant(param1), param2);
 	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator==(T param1, uint32_t param2) {
+		return Formula::Equal(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator==(uint32_t param1, T param2) {
+		return Formula::Equal(Formula::ConstantInt(param1), param2);
+	}
 	template<Formula::BoolFormula T>
 	[[nodiscard]] constexpr auto operator==(T param1, bool param2) {
 		return Formula::Equal(param1, Formula::ConstantBool(param2));
@@ -89,6 +97,14 @@ namespace Formula::Operators {
 	template<Formula::FloatFormula T>
 	[[nodiscard]] constexpr auto operator!=(float param1, T param2) {
 		return Formula::NotEqual(Formula::Constant(param1), param2);
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator!=(T param1, uint32_t param2) {
+		return Formula::NotEqual(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator!=(uint32_t param1, T param2) {
+		return Formula::NotEqual(Formula::ConstantInt(param1), param2);
 	}
 	template<Formula::BoolFormula T>
 	[[nodiscard]] constexpr auto operator!=(T param1, bool param2) {
@@ -118,6 +134,14 @@ namespace Formula::Operators {
 	[[nodiscard]] constexpr auto operator<(float param1, T param2) {
 		return Formula::Less(Formula::Constant(param1), param2);
 	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator<(T param1, uint32_t param2) {
+		return Formula::Less(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator<(uint32_t param1, T param2) {
+		return Formula::Less(Formula::ConstantInt(param1), param2);
+	}
 
 	// Less Equal
 	template<Formula::FloatFormula T, Formula::FloatFormula U>
@@ -131,6 +155,14 @@ namespace Formula::Operators {
 	template<Formula::FloatFormula T>
 	[[nodiscard]] constexpr auto operator<=(float param1, T param2) {
 		return Formula::LessEqual(Formula::Constant(param1), param2);
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator<=(T param1, uint32_t param2) {
+		return Formula::LessEqual(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator<=(uint32_t param1, T param2) {
+		return Formula::LessEqual(Formula::ConstantInt(param1), param2);
 	}
 
 	// Greater
@@ -146,6 +178,14 @@ namespace Formula::Operators {
 	[[nodiscard]] constexpr auto operator>(float param1, T param2) {
 		return Formula::Greater(Formula::Constant(param1), param2);
 	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator>(T param1, uint32_t param2) {
+		return Formula::Greater(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator>(uint32_t param1, T param2) {
+		return Formula::Greater(Formula::ConstantInt(param1), param2);
+	}
 
 	// Greater Equal
 	template<Formula::FloatFormula T, Formula::FloatFormula U>
@@ -159,6 +199,14 @@ namespace Formula::Operators {
 	template<Formula::FloatFormula T>
 	[[nodiscard]] constexpr auto operator>=(float param1, T param2) {
 		return GreaterEqual(Formula::Constant(param1), param2);
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator>=(T param1, uint32_t param2) {
+		return GreaterEqual(param1, Formula::ConstantInt(param2));
+	}
+	template<Formula::IntFormula T>
+	[[nodiscard]] constexpr auto operator>=(uint32_t param1, T param2) {
+		return GreaterEqual(Formula::ConstantInt(param1), param2);
 	}
 
 	// And

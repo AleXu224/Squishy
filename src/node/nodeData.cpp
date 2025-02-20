@@ -12,6 +12,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const InfoData &info) {
 				return info.color;
 			},
+			[&](const HealData &) {
+				return Utils::elementToColor(Misc::Element::dendro);
+			},
 		},
 		data
 	);

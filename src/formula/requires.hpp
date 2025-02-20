@@ -25,6 +25,29 @@ namespace Formula {
 			return RetType{};
 		}
 	};
+
+	template<BoolFormula T, FormulaLike V, FormulaLike U>
+	struct IfElse {
+		T requirement;
+		V trueVal;
+		U elseVal;
+
+		using RetType = decltype(std::declval<V>().eval(std::declval<const Context &>()));
+		using RetType2 = decltype(std::declval<U>().eval(std::declval<const Context &>()));
+		static_assert(std::is_same_v<RetType, RetType2>, "Both formulas need to return the same type");
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			auto cond = requirement.eval(context);
+			return fmt::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
+		}
+
+		[[nodiscard]] RetType eval(const Context &context) const {
+			if (requirement.eval(context))
+				return trueVal.eval(context);
+
+			return elseVal.eval(context);
+		}
+	};
 }// namespace Formula
 
 namespace Requirement {

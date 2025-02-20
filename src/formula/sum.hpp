@@ -32,7 +32,7 @@ namespace Formula {
 			if (prevStep == Step::multiplication || prevStep == Step::division) {
 				return fmt::format("({} + {})", p1, p2);
 			}
-			return fmt::format("{} +{}", p1, p2);
+			return fmt::format("{} + {}", p1, p2);
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {
