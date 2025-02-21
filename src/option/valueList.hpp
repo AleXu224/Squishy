@@ -12,6 +12,7 @@ namespace Option {
 	struct ValueList {
 		Utils::HashedString key;
 		std::string_view prefix;
+		bool teamBuff = false;
 		std::optional<size_t> currentIndex = std::nullopt;
 		std::optional<Formula::BoolNode> displayCondition = std::nullopt;
 		std::vector<uint32_t> values;

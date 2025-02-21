@@ -27,6 +27,13 @@ namespace {
 				for (const auto &optPtr: Option::CharacterList::getMembers()) {
 					auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
 					for (auto &optionData: optList) {
+						bool isTeamBuff = std::visit(
+							[](auto &&opt) {
+								return opt.teamBuff;
+							},
+							optionData
+						);
+						if (!isTeamBuff) continue;
 						std::visit(
 							Utils::overloaded{
 								[&](Option::Boolean &opt) {

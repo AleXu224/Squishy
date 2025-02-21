@@ -29,6 +29,7 @@ const Character::Data Character::Datas::furina{
 			Option::ValueList{
 				.key = "furinaFanfare",
 				.prefix = "Fanfare",
+				.teamBuff = true,
 				.displayCondition = character.constellation == 0,
 				.values = std::views::iota(1)
 						| std::views::transform([](auto &&val) {
@@ -40,6 +41,7 @@ const Character::Data Character::Datas::furina{
 			Option::ValueList{
 				.key = "furinaFanfareC1",
 				.prefix = "Fanfare",
+				.teamBuff = true,
 				.displayCondition = Requirement::constellation1,
 				.values = std::views::iota(3)
 						| std::views::transform([](auto &&val) {
