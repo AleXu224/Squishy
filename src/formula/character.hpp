@@ -10,7 +10,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline uint32_t eval(const Context &context) const {
-			return context.target.character.sheet.level;
+			return context.source.character.sheet.level;
 		}
 	};
 
@@ -20,7 +20,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline uint32_t eval(const Context &context) const {
-			return context.target.character.sheet.constellation;
+			return context.source.character.sheet.constellation;
 		}
 	};
 
@@ -30,7 +30,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline uint32_t eval(const Context &context) const {
-			return context.target.character.sheet.ascension;
+			return context.source.character.sheet.ascension;
 		}
 	};
 }// namespace Formula

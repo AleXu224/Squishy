@@ -31,7 +31,7 @@ namespace Modifiers::Artifact::Set {
 		template<StatMember stat>
 		struct Frm {
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				const auto &bonus = std::invoke(location2, context.target.artifact);
+				const auto &bonus = std::invoke(location2, context.source.artifact);
 				if (!bonus) return std::string();
 				const auto &val = bonus.value();
 				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
@@ -42,7 +42,7 @@ namespace Modifiers::Artifact::Set {
 			using Ret = RetTypeMember<stat>;
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-				const auto &bonus = std::invoke(location2, context.target.artifact);
+				const auto &bonus = std::invoke(location2, context.source.artifact);
 				if (!bonus) return Ret{};
 				const auto &val = bonus.value();
 				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));

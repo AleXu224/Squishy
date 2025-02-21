@@ -17,7 +17,7 @@ namespace Modifiers::Character {
 		}
 
 		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
-			return stat.resolve(context.target.character.sheet.stats).get(context);
+			return stat.resolve(context.source.character.sheet.stats).get(context);
 		}
 	};
 
@@ -29,7 +29,7 @@ namespace Modifiers::Character {
 		}
 
 		[[nodiscard]] constexpr uint32_t eval(const Formula::Context &context) const {
-			return stat.resolve(context.target.character.sheet.talents).get(context);
+			return stat.resolve(context.source.character.sheet.talents).get(context);
 		}
 	};
 

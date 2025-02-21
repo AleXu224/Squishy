@@ -27,6 +27,9 @@ namespace UI {
 							.subtitle = subtitle,
 						},
 						squi::Column{
+							.widget{
+								.height = squi::Size::Shrink,
+							},
 							.children = children,
 						},
 						footer.empty()
@@ -41,6 +44,7 @@ namespace UI {
 									  .widget{
 										  .height = squi::Size::Shrink,
 									  },
+									  .spacing = 4.f,
 									  .children = footer,
 								  },
 							  },

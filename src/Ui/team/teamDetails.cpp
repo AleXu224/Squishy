@@ -6,6 +6,7 @@
 #include "image.hpp"
 #include "navigationView.hpp"
 #include "store.hpp"
+#include "teamBuffs.hpp"
 #include "wrapper.hpp"
 
 
@@ -21,6 +22,13 @@ UI::TeamDetails::operator squi::Child() const {
 		},
 		.pages = [teamKey = teamKey]() {
 			std::vector<NavigationView::Page> pages{};
+			pages.emplace_back(NavigationView::Page{
+				.name = "Team Buffs",
+				.icon = 0xe7ef,
+				.content = TeamBuffs{
+					.instanceKey = teamKey,
+				},
+			});
 			auto &team = ::Store::teams.at(teamKey);
 			for (auto &character: team.stats.characters) {
 				if (character) {

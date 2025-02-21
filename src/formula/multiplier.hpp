@@ -49,16 +49,7 @@ namespace Formula {
 		}
 	};
 
-	struct TalentValue {
-		LevelableTalent talent;
-		std::array<float, 15> values;
-
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{:.1f}", eval(context));
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			return _getMultiplier(talent, values, context);
-		}
-	};
+	[[nodiscard]] consteval auto Multiplier(LevelableTalent talent, const std::array<float, 15> &values) {
+		return MultiplierValue(talent, values);
+	}
 }// namespace Formula

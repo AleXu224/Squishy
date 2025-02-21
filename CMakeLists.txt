@@ -25,7 +25,7 @@ add_dependencies(squishy_lib Assets)
 
 if (MSVC)
     # target_compile_options(squishy_lib PUBLIC /fsanitize=address)
-    target_compile_options(squishy_lib PUBLIC /std:c++latest)
+    target_compile_options(squishy_lib PUBLIC /std:c++latest /bigobj)
     target_compile_definitions(squishy_lib PUBLIC _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()
     target_compile_options(squishy_lib PUBLIC -Wall -Wextra -Wno-unused-parameter -Werror)

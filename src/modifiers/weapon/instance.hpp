@@ -16,7 +16,7 @@ namespace Modifiers::Weapon {
 		}
 
 		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
-			return stat.resolve(context.target.weapon.sheet.stats).get(context);
+			return stat.resolve(context.source.weapon.sheet.stats).get(context);
 		}
 	};
 

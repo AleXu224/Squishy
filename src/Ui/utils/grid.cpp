@@ -79,7 +79,7 @@ squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize
 	}
 
 	return {
-		(maxWidth * static_cast<float>(columns)) + totalHorizontalSpacing,
+		(maxWidth * static_cast<float>(std::min(columns, children.size()))) + totalHorizontalSpacing,
 		std::accumulate(maxHeights.begin(), maxHeights.end(), 0) + totalVerticalSpacing
 	};
 }

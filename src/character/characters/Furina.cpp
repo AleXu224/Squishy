@@ -75,8 +75,8 @@ const Character::Data Character::Datas::furina{
 		},
 	},
 	.setup = []() -> Data::Setup {
-		auto fanfareDmgRatio = TalentValue(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
-		auto fanfareIncHealRatio = TalentValue(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
+		auto fanfareDmgRatio = Multiplier(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
+		auto fanfareIncHealRatio = Multiplier(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
 
 		auto fanfareStacks = IfElse{
 			.requirement = character.constellation == 0,
@@ -158,7 +158,7 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Spiritbreath Thorn/Surging Blade DMG Interval",
-						.formula = TalentValue(LevelableTalent::normal, {6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000}),
+						.formula = Multiplier(LevelableTalent::normal, {6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000}),
 					},
 				},
 				.charged{
@@ -193,7 +193,7 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Duration",
-						.formula = TalentValue(LevelableTalent::skill, {30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000}),
+						.formula = Multiplier(LevelableTalent::skill, {30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000, 30.0000}),
 					},
 					Node::Atk{
 						.name = "Gentilhomme Usher DMG",
@@ -222,25 +222,25 @@ const Character::Data Character::Datas::furina{
 					Node::Info{
 						.name = "Gentilhomme Usher HP Consumption",
 						.isPercentage = true,
-						.formula = TalentValue(LevelableTalent::skill, {0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240}),
+						.formula = Multiplier(LevelableTalent::skill, {0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240}),
 					},
 					Node::Info{
 						.name = "Surintendante Chevalmarin HP Consumption",
 						.isPercentage = true,
-						.formula = TalentValue(LevelableTalent::skill, {0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160}),
+						.formula = Multiplier(LevelableTalent::skill, {0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160}),
 					},
 					Node::Info{
 						.name = "Mademoiselle Crabaletta HP Consumption",
 						.isPercentage = true,
-						.formula = TalentValue(LevelableTalent::skill, {0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360}),
+						.formula = Multiplier(LevelableTalent::skill, {0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360}),
 					},
 					Node::Heal{
 						.name = "Singer of Many Waters Healing",
-						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0480, 0.0516, 0.0552, 0.0600, 0.0636, 0.0672, 0.0720, 0.0768, 0.0816, 0.0864, 0.0912, 0.0960, 0.1020, 0.1080, 0.1140}) + TalentValue(LevelableTalent::skill, {462.2253, 508.4543, 558.5356, 612.4694, 670.2556, 731.8942, 797.3852, 866.7286, 939.9245, 1016.9728, 1097.8734, 1182.6265, 1271.2321, 1363.6899, 1460.0002}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0480, 0.0516, 0.0552, 0.0600, 0.0636, 0.0672, 0.0720, 0.0768, 0.0816, 0.0864, 0.0912, 0.0960, 0.1020, 0.1080, 0.1140}) + Multiplier(LevelableTalent::skill, {462.2253, 508.4543, 558.5356, 612.4694, 670.2556, 731.8942, 797.3852, 866.7286, 939.9245, 1016.9728, 1097.8734, 1182.6265, 1271.2321, 1363.6899, 1460.0002}),
 					},
 					Node::Info{
 						.name = "CD",
-						.formula = TalentValue(LevelableTalent::skill, {20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000}),
+						.formula = Multiplier(LevelableTalent::skill, {20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000}),
 					},
 				},
 				.burst{
@@ -251,11 +251,11 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Duration",
-						.formula = TalentValue(LevelableTalent::burst, {18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000}),
+						.formula = Multiplier(LevelableTalent::burst, {18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000}),
 					},
 					Node::Info{
 						.name = "Maximum Fanfare",
-						.formula = TalentValue(LevelableTalent::burst, {300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000}),
+						.formula = Multiplier(LevelableTalent::burst, {300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000, 300.0000}),
 					},
 					Node::Info{
 						.name = "Fanfare to DMG Increase Conversion Ratio",
@@ -269,11 +269,11 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "CD",
-						.formula = TalentValue(LevelableTalent::burst, {15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000}),
+						.formula = Multiplier(LevelableTalent::burst, {15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000}),
 					},
 					Node::Info{
 						.name = "Energy Cost",
-						.formula = TalentValue(LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
+						.formula = Multiplier(LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
 					},
 				},
 				.passive1{

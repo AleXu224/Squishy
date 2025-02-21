@@ -49,10 +49,10 @@ namespace Node {
 				case Misc::AttackSource::normal:
 				case Misc::AttackSource::charged:
 				case Misc::AttackSource::plunge:
-					return switchElement(element.value_or(context.target.character.sheet.infusion.eval(context).value_or(Misc::Element::physical)), context);
+					return switchElement(element.value_or(context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical)), context);
 				case Misc::AttackSource::skill:
 				case Misc::AttackSource::burst:
-					return switchElement(element.value_or(context.target.character.base.element), context);
+					return switchElement(element.value_or(context.source.character.base.element), context);
 			}
 			std::unreachable();
 		}
