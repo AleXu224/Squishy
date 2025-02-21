@@ -26,7 +26,7 @@
 
 	return Formula::Context{
 		.source = Store::characters.at({0}).loadout,
-		.target = Store::characters.at({0}).loadout,
+		.active = Store::characters.at({0}).loadout,
 		.team = Store::teams.at({0}).stats,
 		.enemy = Store::enemies.at(0).stats,
 	};
