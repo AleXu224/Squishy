@@ -19,7 +19,7 @@ namespace {
 
 				Formula::Context ctx{
 					.source = character.loadout,
-					.target = character.loadout,
+					.active = character.loadout,
 					.team = team.stats,
 					.enemy = Store::enemies.at(0).stats,
 				};

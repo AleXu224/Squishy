@@ -95,7 +95,7 @@ struct Contents {
 							placeholderTeam.stats.characters.at(0) = &character;
 							Formula::Context ctx{
 								.source = character.loadout,
-								.target = character.loadout,
+								.active = character.loadout,
 								.team = placeholderTeam.stats,
 								.enemy = ::Store::enemies.at(0).stats,
 							};

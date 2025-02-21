@@ -22,7 +22,7 @@ UI::CharacterStats::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return UI::DisplayCard{
-		.title = ctx.target.character.data.name,
+		.title = ctx.active.character.data.name,
 		.children = [&]() {
 			const auto &loadout = ctx.source;
 			Children ret{};
@@ -33,7 +33,7 @@ UI::CharacterStats::operator squi::Child() const {
 				.children{
 					Image{
 						.fit = Image::Fit::contain,
-						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.target.character.data.name)),
+						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.active.character.data.name)),
 					},
 					Align{
 						.xAlign = 0.f,

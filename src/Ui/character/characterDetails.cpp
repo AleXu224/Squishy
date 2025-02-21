@@ -48,7 +48,7 @@ namespace {
 		auto &enemy = ::Store::enemies.at(enemyKey);
 		Formula::Context ctx{
 			.source = character.loadout,
-			.target = character.loadout,
+			.active = character.loadout,
 			.team = team.stats,
 			.enemy = enemy.stats,
 		};

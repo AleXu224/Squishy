@@ -17,7 +17,7 @@ namespace Stats {
 namespace Formula {
 	struct Context {
 		const Stats::Loadout &source;
-		const Stats::Loadout &target;
+		const Stats::Loadout &active;
 		const Stats::Team &team;
 		const Stats::Enemy &enemy;
 		const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction{};
@@ -25,7 +25,7 @@ namespace Formula {
 		[[nodiscard]] Context withSource(const Stats::Loadout &newSource) const {
 			return {
 				.source = newSource,
-				.target = target,
+				.active = active,
 				.team = team,
 				.enemy = enemy,
 			};

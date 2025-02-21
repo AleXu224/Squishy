@@ -19,7 +19,7 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 		.title = "Transformative Reactions",
 		.children = [&]() -> Children {
 			Children ret;
-			const auto &loadout = ctx.target;
+			const auto &loadout = ctx.active;
 			// auto reactions = Reaction::List::Transformative::getMembers();
 
 			auto reactions = std::tuple{
