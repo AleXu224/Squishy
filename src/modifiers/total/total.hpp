@@ -21,9 +21,9 @@ namespace Modifiers {
 		}
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
-	struct DisplayTotalFrm {
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).print(context, prevStep);
+	struct TotalActiveFrm {
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
 		}
 
 		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
@@ -32,6 +32,21 @@ namespace Modifiers {
 				 + artifactSetStat.eval(context)
 				 + teamPostStat.eval(context)
 				 + preModStat.eval(context);
+		}
+	};
+	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
+	struct DisplayTotalFrm {
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
+			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).print(context, prevStep);
+		}
+
+		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
+			auto newContext = context.withSource(context.active);
+			return characterKitStat.eval(newContext)
+				 + weaponPassiveStat.eval(newContext)
+				 + artifactSetStat.eval(newContext)
+				 + teamPostStat.eval(newContext)
+				 + preModStat.eval(newContext);
 		}
 	};
 	template<auto characterKitTalent, auto characterInstanceTalent, auto weaponPassiveTalent, auto artifactSetTalent, auto teamTalent>
@@ -50,6 +65,7 @@ namespace Modifiers {
 	};
 
 	static constexpr StatFactory<TotalFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> total;
+	static constexpr StatFactory<TotalActiveFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> totalActive;
 	static constexpr StatFactory<DisplayTotalFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> displayTotal;
 	static constexpr TalentFactory<TotalTalentsFrm, Character::Kit::talents, Character::instanceTalents, Weapon::Passive::talents, Artifact::Set::talents, Team::talents> totalTalents;
 	static constexpr auto totalEnemy = Team::enemy;

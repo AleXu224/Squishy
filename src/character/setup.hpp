@@ -20,6 +20,7 @@ namespace Character {
 	} character{};
 
 	using Modifiers::total;
+	using Modifiers::totalActive;
 	using Modifiers::totalEnemy;
 	using Modifiers::totalTalents;
 };// namespace Character
