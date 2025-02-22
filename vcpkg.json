@@ -10,7 +10,12 @@
     "catch2",
     "utfcpp",
     "glm",
-    "sail",
+    {
+      "name": "sail",
+      "features": [
+        "webp"
+      ]
+    },
     "benchmark",
     "fmt",
     "cereal"
