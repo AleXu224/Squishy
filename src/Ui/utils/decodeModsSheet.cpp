@@ -83,13 +83,20 @@ squi::Children UI::decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Conte
 
 	bool transparent;
 
-	ret.append_range(decodeSheet("", transparent, sheet.preMod, ctx));
-	ret.append_range(decodeSheet("", transparent, sheet.postMod, ctx));
-	ret.append_range(decodeSheet("Team ", transparent, sheet.teamPreMod, ctx));
-	ret.append_range(decodeSheet("Team ", transparent, sheet.teamPostMod, ctx));
-	ret.append_range(decodeEnemySheet("", transparent, sheet.enemy, ctx));
-	ret.append_range(decodeTalentsSheet("", transparent, sheet.talents, ctx));
-	ret.append_range(decodeTalentsSheet("Team ", transparent, sheet.teamTalents, ctx));
+	auto preMod = decodeSheet("", transparent, sheet.preMod, ctx);
+	ret.insert(ret.end(), preMod.begin(), preMod.end());
+	auto postMod = decodeSheet("", transparent, sheet.postMod, ctx);
+	ret.insert(ret.end(), postMod.begin(), postMod.end());
+	auto teamPreMod = decodeSheet("Team ", transparent, sheet.teamPreMod, ctx);
+	ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
+	auto teamPostMod = decodeSheet("Team ", transparent, sheet.teamPostMod, ctx);
+	ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
+	auto enemy = decodeEnemySheet("", transparent, sheet.enemy, ctx);
+	ret.insert(ret.end(), enemy.begin(), enemy.end());
+	auto talents = decodeTalentsSheet("", transparent, sheet.talents, ctx);
+	ret.insert(ret.end(), talents.begin(), talents.end());
+	auto teamTalents = decodeTalentsSheet("Team ", transparent, sheet.teamTalents, ctx);
+	ret.insert(ret.end(), teamTalents.begin(), teamTalents.end());
 
 	return ret;
 }
@@ -101,13 +108,20 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 
 	std::visit(
 		[&](auto &&opt) {
-			ret.append_range(decodeSheet("", transparent, opt.mods.preMod, ctx));
-			ret.append_range(decodeSheet("", transparent, opt.mods.postMod, ctx));
-			ret.append_range(decodeSheet("Team ", transparent, opt.mods.teamPreMod, ctx));
-			ret.append_range(decodeSheet("Team ", transparent, opt.mods.teamPostMod, ctx));
-			ret.append_range(decodeEnemySheet("", transparent, opt.mods.enemy, ctx));
-			ret.append_range(decodeTalentsSheet("", transparent, opt.mods.talents, ctx));
-			ret.append_range(decodeTalentsSheet("Team ", transparent, opt.mods.teamTalents, ctx));
+			auto preMod = decodeSheet("", transparent, opt.mods.preMod, ctx);
+			ret.insert(ret.end(), preMod.begin(), preMod.end());
+			auto postMod = decodeSheet("", transparent, opt.mods.postMod, ctx);
+			ret.insert(ret.end(), postMod.begin(), postMod.end());
+			auto teamPreMod = decodeSheet("Team ", transparent, opt.mods.teamPreMod, ctx);
+			ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
+			auto teamPostMod = decodeSheet("Team ", transparent, opt.mods.teamPostMod, ctx);
+			ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
+			auto enemy = decodeEnemySheet("", transparent, opt.mods.enemy, ctx);
+			ret.insert(ret.end(), enemy.begin(), enemy.end());
+			auto talents = decodeTalentsSheet("", transparent, opt.mods.talents, ctx);
+			ret.insert(ret.end(), talents.begin(), talents.end());
+			auto teamTalents = decodeTalentsSheet("Team ", transparent, opt.mods.teamTalents, ctx);
+			ret.insert(ret.end(), teamTalents.begin(), teamTalents.end());
 
 			for (const Node::Types &node: opt.nodes) {
 				auto value = node.formula.eval(ctx);
