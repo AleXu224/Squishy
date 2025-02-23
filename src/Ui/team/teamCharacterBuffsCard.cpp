@@ -6,6 +6,7 @@
 #include "character/data.hpp"
 #include "rebuilder.hpp"
 #include "store.hpp"
+#include "weapon/data.hpp"
 
 
 using namespace squi;
@@ -24,6 +25,77 @@ namespace {
 					.enemy = Store::enemies.at(0).stats,
 				};
 
+				auto parseOption = [&](Option::Types &option) {
+					std::visit(
+						Utils::overloaded{
+							[&](Option::Boolean &opt) {
+								if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
+								ret.emplace_back(UI::ToggleOption{
+									.option = opt,
+									.characterKey = character.instanceKey,
+									.ctx = ctx,
+								});
+							},
+							[&](Option::ValueList &opt) {
+								if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
+								ret.emplace_back(UI::ValueListOption{
+									.option = opt,
+									.characterKey = character.instanceKey,
+									.ctx = ctx,
+								});
+							},
+						},
+						option
+					);
+				};
+				auto isTeamBuff = [](const Option::Types &option) {
+					return std::visit(
+						[](auto &&opt) {
+							return opt.teamBuff;
+						},
+						option
+					);
+				};
+
+				for (auto &opt: character.loadout.weapon.data->data.opts) {
+					if (!isTeamBuff(opt)) continue;
+					parseOption(character.loadout.weapon.options.at(
+						std::visit(
+							[](auto &&opt) {
+								return opt.key.hash;
+							},
+							opt
+						)
+					));
+				}
+
+				if (character.loadout.artifact.bonus1.has_value()) {
+					for (auto &opt: character.loadout.artifact.bonus1->bonusPtr.opts) {
+						if (!isTeamBuff(opt)) continue;
+						parseOption(character.loadout.artifact.options.at(
+							std::visit(
+								[](auto &&opt) {
+									return opt.key.hash;
+								},
+								opt
+							)
+						));
+					}
+				}
+				if (character.loadout.artifact.bonus2.has_value()) {
+					for (auto &opt: character.loadout.artifact.bonus2->bonusPtr.opts) {
+						if (!isTeamBuff(opt)) continue;
+						parseOption(character.loadout.artifact.options.at(
+							std::visit(
+								[](auto &&opt) {
+									return opt.key.hash;
+								},
+								opt
+							)
+						));
+					}
+				}
+
 				for (const auto &[optPtr, condition]: Option::CharacterList::getMembersAndConditions()) {
 					if (!condition.eval(ctx)) continue;
 					auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
@@ -35,34 +107,14 @@ namespace {
 							optionData
 						);
 						if (!isTeamBuff) continue;
-						std::visit(
-							Utils::overloaded{
-								[&](Option::Boolean &opt) {
-									if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
-									ret.emplace_back(UI::ToggleOption{
-										.option = opt,
-										.characterKey = character.instanceKey,
-										.ctx = ctx,
-									});
+						parseOption(character.loadout.character.options.at(
+							std::visit(
+								[](auto &&opt) {
+									return opt.key.hash;
 								},
-								[&](Option::ValueList &opt) {
-									if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
-									ret.emplace_back(UI::ValueListOption{
-										.option = opt,
-										.characterKey = character.instanceKey,
-										.ctx = ctx,
-									});
-								},
-							},
-							character.loadout.character.options.at(
-								std::visit(
-									[](auto &&opt) {
-										return opt.key.hash;
-									},
-									optionData
-								)
+								optionData
 							)
-						);
+						));
 					}
 				}
 

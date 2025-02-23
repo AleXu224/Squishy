@@ -53,6 +53,7 @@ const Weapon::Data Weapon::Datas::splendorOfTranquilWaters{
 				Option::ValueList{
 					.key = "splendorOfTranquiWatersOthersHpChanged",
 					.prefix = "Party members' HP increases or decreases",
+					.teamBuff = true,
 					.values{1, 2},
 					.mods{
 						.preMod{

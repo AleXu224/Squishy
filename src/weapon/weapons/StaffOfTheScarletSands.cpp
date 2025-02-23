@@ -34,6 +34,7 @@ const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 				Option::ValueList{
 					.key = "eHits",
 					.prefix = "Elemental Skill hits",
+					.teamBuff = true,
 					.values{1, 2, 3},
 					.mods{
 						.preMod{
