@@ -91,7 +91,7 @@ squi::Children UI::decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Conte
 	ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
 	auto teamPostMod = decodeSheet("Team ", transparent, sheet.teamPostMod, ctx);
 	ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
-	auto enemy = decodeEnemySheet("", transparent, sheet.enemy, ctx);
+	auto enemy = decodeEnemySheet("Enemy ", transparent, sheet.enemy, ctx);
 	ret.insert(ret.end(), enemy.begin(), enemy.end());
 	auto talents = decodeTalentsSheet("", transparent, sheet.talents, ctx);
 	ret.insert(ret.end(), talents.begin(), talents.end());
@@ -116,7 +116,7 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
 			auto teamPostMod = decodeSheet("Team ", transparent, opt.mods.teamPostMod, ctx);
 			ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
-			auto enemy = decodeEnemySheet("", transparent, opt.mods.enemy, ctx);
+			auto enemy = decodeEnemySheet("Enemy ", transparent, opt.mods.enemy, ctx);
 			ret.insert(ret.end(), enemy.begin(), enemy.end());
 			auto talents = decodeTalentsSheet("", transparent, opt.mods.talents, ctx);
 			ret.insert(ret.end(), talents.begin(), talents.end());
