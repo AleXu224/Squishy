@@ -41,4 +41,49 @@ namespace Formula {
 			return ret;
 		}
 	};
+
+
+	struct SameElementCount {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Team same element count {}", eval(context));
+		}
+
+		[[nodiscard]] uint32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &character: context.team.characters) {
+				if (!character || &character->loadout == &context.source) continue;
+				if (character->loadout.character.base.element == context.source.character.base.element) ret++;
+			}
+
+			return ret;
+		}
+	};
+
+	struct OtherElementCount {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Team other element count {}", eval(context));
+		}
+
+		[[nodiscard]] uint32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &character: context.team.characters) {
+				if (!character || &character->loadout == &context.source) continue;
+				if (character->loadout.character.base.element != context.source.character.base.element) ret++;
+			}
+
+			return ret;
+		}
+	};
+
+	struct IsCharacterElement {
+		Misc::Element element;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.source.character.base.element == element;
+		}
+	};
 }// namespace Formula

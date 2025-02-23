@@ -81,6 +81,28 @@ for (const val of ascensionUpgrade) {
 	ascensionUpgradeStr.push(val.toFixed(1));
 }
 
+const refinementParams: Float32Array[] = [];
+for (const [key, value] of Object.entries(contents.Refinement)) {
+	for (const [valKey, val] of Object.entries(value.ParamList)) {
+		if (refinementParams[parseInt(valKey)] === undefined) refinementParams[parseInt(valKey)] = new Float32Array(5);
+		refinementParams[parseInt(valKey)][parseInt(key) - 1] = val;
+	}
+}
+
+const refinementParamsStr: string[] = [];
+
+let count = 1;
+for (const refinementParam of refinementParams) {
+	const ret: string[] = [];
+	let total: number = 0;
+	for (const entry of refinementParam) {
+		ret.push(entry.toFixed(4));
+		total += entry;
+	}
+	if (total == 0) continue;
+	refinementParamsStr.push(`\n\t\tauto multiplier${count++} = WeaponMultiplier(false, {${ret.join(", ")}});`);
+}
+
 
 const retHeader: string = `#pragma once
 
@@ -106,13 +128,14 @@ const Weapon::Data Weapon::Datas::${camelCase(data.name)}{
 		${data.hasSubstat ? subStatStr : ".subStat{},"}
 		.ascensionUpgrade{${ascensionUpgradeStr.join(", ")}}
 	},
-	.setup = []() {
+	.setup = []() {${refinementParamsStr.join("")}
 		return Data::Setup{};
 	},
 };
 `;
 
 console.log(retHeader);
+console.log(retSource);
 
 console.log(data.icon);
 console.log(data.iconAwaken);

@@ -20,10 +20,13 @@ const Weapon::Data Weapon::Datas::splendorOfTranquilWaters{
 		.ascensionUpgrade{0.0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7}
 	},
 	.setup = []() {
+		auto multiplier1 = WeaponMultiplier(true, {0.0800, 0.1000, 0.1200, 0.1400, 0.1600});
+		auto multiplier4 = WeaponMultiplier(false, {0.1400, 0.1750, 0.2100, 0.2450, 0.2800});
+
 		auto hpChangedCount = GetInt("splendorOfTranquiWatersHpChanged");
 		auto hpOthersChangedCount = GetInt("splendorOfTranquiWatersOthersHpChanged");
-		auto skillDmgIncrease = hpChangedCount * 0.08f;
-		auto hpIncrease = hpOthersChangedCount * 0.14f;
+		auto skillDmgIncrease = hpChangedCount * multiplier1;
+		auto hpIncrease = hpOthersChangedCount * multiplier4;
 
 		return Data::Setup{
 			.mods{
