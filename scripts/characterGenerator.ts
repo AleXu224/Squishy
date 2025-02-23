@@ -119,10 +119,10 @@ const Character::Data Character::Datas::${camelCase(data.name)}{
 		.defUpgrade = {${strGenerator(ascensionUpgradeDef).join(", ")}},
 		.ascensionStatUpgrade = {${strGenerator(ascensionUpgradeAscensionStat).join(", ")}},
 	},
-	.opts{},
 	.setup = []() -> Data::Setup {
 		return Data::Setup{
 			.mods{},
+			.opts{},
 			.nodes{
 				.normal{${skillContentsGenerator(contents.Skills[0], "normal")}
 				},

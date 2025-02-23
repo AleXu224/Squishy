@@ -106,7 +106,6 @@ const Weapon::Data Weapon::Datas::${camelCase(data.name)}{
 		${data.hasSubstat ? subStatStr : ".subStat{},"}
 		.ascensionUpgrade{${ascensionUpgradeStr.join(", ")}}
 	},
-	.opts{},
 	.setup = []() {
 		return Data::Setup{};
 	},
