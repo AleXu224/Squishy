@@ -1,6 +1,8 @@
 #include "toggleOption.hpp"
+#include "Ui/utils/decodeModsSheet.hpp"
 #include "align.hpp"
 #include "button.hpp"
+#include "column.hpp"
 #include "fontIcon.hpp"
 #include "observer.hpp"
 #include "row.hpp"
@@ -68,33 +70,53 @@ UI::ToggleOption::operator squi::Child() const {
 	Observable<bool> switchEvent{};
 	CountObserver readyEvent{2};
 
-	return Button{
-		.widget{
-			.width = Size::Expand,
-			.onInit = [readyEvent, switchEvent, storage](Widget &w) {
-				w.customState.add(readyEvent.observe([storage, switchEvent]() {
-					switchEvent.notify(storage->active);
-				}));
-			},
-		},
-		.style = ButtonStyle::Subtle(),
-		.onClick = [storage, switchEvent, &option = option, characterKey = characterKey](GestureDetector::Event) {
-			storage->active = !storage->active;
-			option.active = storage->active;
-			switchEvent.notify(storage->active);
-			::Store::characters.at(characterKey).updateEvent.notify();
-		},
-		.child = Row{
-			.alignment = squi::Row::Alignment::center,
-			.spacing = 8.f,
+	auto mods = decodeOption(option, ctx);
+	auto hasMods = !mods.empty();
+
+	return Box{
+		.color = hasMods ? Color::css(0x0, 0.3f) : Color::transparent,
+		.borderRadius = 4.f,
+		.child = Column{
 			.children{
-				ToggleBox{
-					.switchEvent = switchEvent,
-					.readyEvent = readyEvent,
+				Button{
+					.widget{
+						.width = Size::Expand,
+						.onInit = [readyEvent, switchEvent, storage](Widget &w) {
+							w.customState.add(readyEvent.observe([storage, switchEvent]() {
+								switchEvent.notify(storage->active);
+							}));
+						},
+					},
+					.style = ButtonStyle::Subtle(),
+					.onClick = [storage, switchEvent, &option = option, characterKey = characterKey](GestureDetector::Event) {
+						storage->active = !storage->active;
+						option.active = storage->active;
+						switchEvent.notify(storage->active);
+						::Store::characters.at(characterKey).updateEvent.notify();
+					},
+					.child = Row{
+						.alignment = squi::Row::Alignment::center,
+						.spacing = 8.f,
+						.children{
+							ToggleBox{
+								.switchEvent = switchEvent,
+								.readyEvent = readyEvent,
+							},
+							Text{
+								.text = option.name,
+								.lineWrap = true,
+							},
+						},
+					},
 				},
-				Text{
-					.text = option.name,
-					.lineWrap = true,
+				Column{
+					.widget{
+						.padding = 4.f,
+						.onInit = [hasMods](Widget &w) {
+							w.flags.visible = hasMods;
+						},
+					},
+					.children = mods,
 				},
 			},
 		},

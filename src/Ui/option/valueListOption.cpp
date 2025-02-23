@@ -2,12 +2,15 @@
 
 #include "align.hpp"
 #include "button.hpp"
+#include "column.hpp"
 #include "container.hpp"
 #include "contextMenu.hpp"
 #include "fontIcon.hpp"
 #include "row.hpp"
 #include "store.hpp"
 #include "text.hpp"
+
+#include "Ui/utils/decodeModsSheet.hpp"
 
 #include "ranges"
 #include "vector"
@@ -69,61 +72,85 @@ UI::ValueListOption::operator squi::Child() const {
 		},
 	};
 
-	return Button{
-		.widget{
-			.width = Size::Expand,
-			.height = Size::Shrink,
-			.sizeConstraints{
-				.minHeight = 32.f,
+	auto mods = decodeOption(option, ctx);
+	auto borderRadiusFunc = [hasMods = !mods.empty()](ButtonStyle style) {
+		if (hasMods) style.borderRadius = style.borderRadius.withBottom(0.f);
+		return style;
+	};
+
+	return Column{
+		.children{
+			Button{
+				.widget{
+					.width = Size::Expand,
+					.height = Size::Shrink,
+					.sizeConstraints{
+						.minHeight = 32.f,
+					},
+					.onInit = [readyEvent, valueChangedEvent, &option = option, borderRadiusFunc](Widget &w) {
+						w.customState.add(valueChangedEvent.observe([&w, borderRadiusFunc](std::optional<uint32_t> newVal) {
+							auto style = ButtonStyle::Standard();
+
+							if (newVal.has_value()) style = ButtonStyle::Accent();
+							Button::State::style.of(w) = borderRadiusFunc(style);
+						}));
+						w.customState.add(readyEvent.observe([valueChangedEvent, &option]() {
+							valueChangedEvent.notify(option.getValue());
+						}));
+					},
+				},
+				.style = option.getValue().has_value() ? borderRadiusFunc(ButtonStyle::Accent()) : borderRadiusFunc(ButtonStyle::Standard()),
+				.onClick = [valueChangedEvent, &option = option, characterKey = characterKey](GestureDetector::Event event) {
+					event.widget.addOverlay(ContextMenu{
+						.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
+						.items = [&]() {
+							std::vector<ContextMenu::Item> ret{
+								ContextMenu::Item{
+									.text = "Not Active",
+									.content = [valueChangedEvent, &option, characterKey]() {
+										option.currentIndex = std::nullopt;
+										valueChangedEvent.notify(option.getValue());
+										::Store::characters.at(characterKey).updateEvent.notify();
+									},
+								},
+								ContextMenu::Item{
+									.text{},
+									.content = ContextMenu::Item::Divider{},
+								},
+							};
+
+							for (const auto &[index, item]: std::views::enumerate(option.values)) {
+								ret.emplace_back(ContextMenu::Item{
+									.text = std::format("{}", item),
+									.content = [index, valueChangedEvent, &option, characterKey]() {
+										option.currentIndex = index;
+										valueChangedEvent.notify(option.getValue());
+										::Store::characters.at(characterKey).updateEvent.notify();
+									},
+								});
+							}
+
+							return ret;
+						}(),
+					});
+				},
+				.child = buttonContent,
 			},
-			.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
-				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newVal) {
-					if (newVal.has_value()) {
-						Button::State::style.of(w) = ButtonStyle::Accent();
-					} else {
-						Button::State::style.of(w) = ButtonStyle::Standard();
-					}
-				}));
-				w.customState.add(readyEvent.observe([valueChangedEvent, &option]() {
-					valueChangedEvent.notify(option.getValue());
-				}));
+			Box{
+				.widget{
+					.onInit = [mods](Widget &w) {
+						w.flags.visible = !mods.empty();
+					},
+				},
+				.color = Color::css(0x0, 0.3f),
+				.borderRadius = BorderRadius::Bottom(4.f),
+				.child = Column{
+					.widget{
+						.padding = 4.f,
+					},
+					.children = decodeModsSheet(option.mods, ctx),
+				},
 			},
 		},
-		.style = option.getValue().has_value() ? ButtonStyle::Accent() : ButtonStyle::Standard(),
-		.onClick = [valueChangedEvent, &option = option, characterKey = characterKey](GestureDetector::Event event) {
-			event.widget.addOverlay(ContextMenu{
-				.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
-				.items = [&]() {
-					std::vector<ContextMenu::Item> ret{
-						ContextMenu::Item{
-							.text = "Not Active",
-							.content = [valueChangedEvent, &option, characterKey]() {
-								option.currentIndex = std::nullopt;
-								valueChangedEvent.notify(option.getValue());
-								::Store::characters.at(characterKey).updateEvent.notify();
-							},
-						},
-						ContextMenu::Item{
-							.text{},
-							.content = ContextMenu::Item::Divider{},
-						},
-					};
-
-					for (const auto &[index, item]: std::views::enumerate(option.values)) {
-						ret.emplace_back(ContextMenu::Item{
-							.text = std::format("{}", item),
-							.content = [index, valueChangedEvent, &option, characterKey]() {
-								option.currentIndex = index;
-								valueChangedEvent.notify(option.getValue());
-								::Store::characters.at(characterKey).updateEvent.notify();
-							},
-						});
-					}
-
-					return ret;
-				}(),
-			});
-		},
-		.child = buttonContent,
 	};
 }

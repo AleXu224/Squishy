@@ -15,7 +15,17 @@ namespace Option {
 	using TypesMap = std::unordered_map<uint32_t, Types>;
 
 	inline bool getBool(const TypesMap &options, const Utils::HashedString &key) {
-		return std::get<Option::Boolean>(options.at(key.hash)).active;
+		return std::visit(
+			Utils::overloaded{
+				[](const Option::Boolean &option) {
+					return option.active;
+				},
+				[](const Option::ValueList &option) {
+					return option.currentIndex.has_value();
+				},
+			},
+			options.at(key.hash)
+		);
 	}
 
 	inline float getFloat(const TypesMap &options, const Utils::HashedString &key, float defaultValue = 0.f) {
@@ -39,9 +49,11 @@ namespace Option {
 		const std::vector<Types> constellation4{};
 		const std::vector<Types> constellation6{};
 
-		[[nodiscard]] static auto getMembers() {
+		[[nodiscard]] static inline auto getMembers() {
 			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};
 		}
+
+		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 11> getMembersAndConditions();
 	};
 
 	using WeaponList = std::vector<Types>;

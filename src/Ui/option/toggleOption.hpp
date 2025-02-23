@@ -12,6 +12,7 @@ namespace UI {
 		squi::Widget::Args widget{};
 		Option::Boolean &option;
 		Character::InstanceKey characterKey{};
+		const Formula::Context &ctx;
 
 		struct Storage {
 			// Data

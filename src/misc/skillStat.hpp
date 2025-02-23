@@ -42,13 +42,13 @@ namespace Utils {
 			case Misc::SkillStat::DMG:
 				return "DMG";
 			case Misc::SkillStat::additiveDMG:
-				return "additiveDMG";
+				return "Additional DMG";
 			case Misc::SkillStat::multiplicativeDMG:
-				return "multiplicativeDMG";
+				return "Multiplicative DMG";
 			case Misc::SkillStat::critRate:
-				return "critRate";
+				return "Crit Rate";
 			case Misc::SkillStat::critDMG:
-				return "critDMG";
+				return "Crit DMG";
 		}
 		std::unreachable();
 	}

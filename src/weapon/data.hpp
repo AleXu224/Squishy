@@ -12,13 +12,13 @@ namespace Weapon {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
+			const Option::WeaponList opts{};
 			Node::WeaponList nodes{};
 		};
 
 		const DataKey key;
 		const std::string name;
 		const Stats::WeaponBase baseStats;
-		const Option::WeaponList opts{};
 		const std::function<Setup(void)> setup;
 
 		const Setup data = [](const std::function<Setup(void)> &setup) {
@@ -28,7 +28,7 @@ namespace Weapon {
 		void getOpts(Option::WeaponMap &options) const {
 			Option::mapOptions(
 				options,
-				opts
+				data.opts
 			);
 		}
 	};

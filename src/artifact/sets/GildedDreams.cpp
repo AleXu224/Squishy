@@ -6,6 +6,9 @@ const Artifact::Set Artifact::Sets::gildedDreams{
 	.key{15026},
 	.name = "Gilded Dreams",
 	.setup = []() -> Set::Setup {
+		auto sameElementAtk = 0.14f * GetFloat("gildedSameElement");
+		auto otherElementEm = ConstantFlat(50.f) * GetFloat("gildedOtherElement");
+
 		return Set::Setup{
 			.twoPc{
 				.mods{
@@ -20,17 +23,19 @@ const Artifact::Set Artifact::Sets::gildedDreams{
 						.key = "gildedSameElement",
 						.prefix = "Characters with the same Elemental Type",
 						.values = {1, 2, 3},
+						.mods{.preMod{.atk_ = sameElementAtk}},
 					},
 					Option::ValueList{
 						.key = "gildedOtherElement",
 						.prefix = "Characters with a different Elemental Type",
 						.values = {1, 2, 3},
+						.mods{.preMod{.em = otherElementEm}},
 					},
 				},
 				.mods{
 					.preMod{
-						.atk_ = 0.14f * GetFloat("gildedSameElement"),
-						.em = ConstantFlat(50.f) * GetFloat("gildedOtherElement"),
+						.atk_ = sameElementAtk,
+						.em = otherElementEm,
 					},
 				},
 			},

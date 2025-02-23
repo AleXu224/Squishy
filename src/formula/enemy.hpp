@@ -4,7 +4,6 @@
 #include "fmt/core.h"
 #include "formulaContext.hpp"
 #include "modifiers/total/total.hpp"
-#include "stats/enemy.hpp"
 #include "stats/loadout.hpp"
 #include "step.hpp"
 
@@ -27,8 +26,8 @@ namespace Formula {
 
 		[[nodiscard]] static float eval(const Context &context) {
 			const auto characterLevel = static_cast<float>(context.source.character.sheet.level);
-			const auto enemyLevel = context.enemy.sheet.level.get(context);
-			const auto k = (1.f - context.enemy.sheet.DEFReduction.get(context)) * (1.f - context.enemy.sheet.DEFReduction.get(context));
+			const auto enemyLevel = Modifiers::totalEnemy.level.eval(context);
+			const auto k = (1.f - Modifiers::totalEnemy.DEFReduction.eval(context)) * (1.f - Modifiers::totalEnemy.DEFReduction.eval(context));
 
 			return (characterLevel + 100.f) / (k * (enemyLevel + 100.f) + (characterLevel + 100.f));
 		}
@@ -44,7 +43,7 @@ namespace Formula {
 
 		[[nodiscard]] float eval(const Context &context) const {
 			const auto attackElement = getElement(attackSource, element, context);
-			const auto &RES = context.enemy.sheet.resistance.fromElement(attackElement).get(context);
+			auto RES = Stats::fromEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement).eval(context);
 
 			if (RES < 0.f) return 1.f - (RES / 2.f);
 			if (RES < 0.75f) return 1.f - RES;

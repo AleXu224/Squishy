@@ -24,8 +24,9 @@ namespace {
 					.enemy = Store::enemies.at(0).stats,
 				};
 
-				for (const auto &optPtr: Option::CharacterList::getMembers()) {
-					auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
+				for (const auto &[optPtr, condition]: Option::CharacterList::getMembersAndConditions()) {
+					if (!condition.eval(ctx)) continue;
+					auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
 					for (auto &optionData: optList) {
 						bool isTeamBuff = std::visit(
 							[](auto &&opt) {
@@ -41,6 +42,7 @@ namespace {
 									ret.emplace_back(UI::ToggleOption{
 										.option = opt,
 										.characterKey = character.instanceKey,
+										.ctx = ctx,
 									});
 								},
 								[&](Option::ValueList &opt) {
@@ -48,6 +50,7 @@ namespace {
 									ret.emplace_back(UI::ValueListOption{
 										.option = opt,
 										.characterKey = character.instanceKey,
+										.ctx = ctx,
 									});
 								},
 							},

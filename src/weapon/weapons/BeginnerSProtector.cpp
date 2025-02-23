@@ -13,7 +13,6 @@ const Weapon::Data Weapon::Datas::beginnerSProtector{
 		.subStat{},
 		.ascensionUpgrade{0.0, 11.7, 23.3, 35.0, 46.7, 0.0, 0.0}
 	},
-	.opts{},
 	.setup = []() {
 		return Data::Setup{};
 	},

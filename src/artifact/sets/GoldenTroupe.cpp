@@ -6,6 +6,11 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 	.key{15032},
 	.name = "Golden Troupe",
 	.setup = []() -> Set::Setup {
+		auto fourPcOffFieldDmg = Requires(
+			IsActive("goldenTroupeOffField"),
+			Constant(0.25f)
+		);
+
 		return Set::Setup{
 			.twoPc{
 				.mods{
@@ -21,16 +26,14 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 					Option::Boolean{
 						.key = "goldenTroupeOffField",
 						.name = "Character is off field",
+						.mods{.preMod{.skill{.DMG = fourPcOffFieldDmg}}},
 					},
 				},
 				.mods{
 					.preMod{
 						.skill{
 							.DMG = Constant(0.25f)
-								 + Requires(
-									   IsActive("goldenTroupeOffField"),
-									   Constant(0.25f)
-								 ),
+								 + fourPcOffFieldDmg,
 						},
 					},
 				},

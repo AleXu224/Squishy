@@ -1,22 +1,44 @@
 #pragma once
 
+#include "character/instance.hpp"
 #include "formulaContext.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
 #include "stats/loadout.hpp"
+#include "stats/team.hpp"
 
 
 namespace Formula {
 	[[nodiscard]] constexpr auto getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Formula::Context &context) {
+		if (element.has_value()) return element.value();
 		switch (attackSource) {
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::charged:
+				if (context.source.character.base.weaponType == Misc::WeaponType::bow) return context.source.character.base.element;
 			case Misc::AttackSource::plunge:
-				return element.value_or(context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical));
+				if (context.source.character.base.weaponType == Misc::WeaponType::catalyst) return context.source.character.base.element;
+				return context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical);
 			case Misc::AttackSource::skill:
 			case Misc::AttackSource::burst:
-				return element.value_or(context.source.character.base.element);
+				return context.source.character.base.element;
 		}
 		std::unreachable();
 	}
+
+	struct ElementCount {
+		::Misc::Element element;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
+		}
+
+		[[nodiscard]] uint32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &character: context.team.characters) {
+				if (!character) continue;
+				if (character->loadout.character.base.element == element) ret++;
+			}
+			return ret;
+		}
+	};
 }// namespace Formula

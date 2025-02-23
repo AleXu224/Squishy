@@ -34,29 +34,11 @@ namespace Stats {
 				};
 			}
 
-			[[nodiscard]] constexpr auto &fromElement(this auto &&self, const Misc::Element &element) {
-				switch (element) {
-					case Misc::Element::pyro:
-						return self.pyro;
-					case Misc::Element::hydro:
-						return self.hydro;
-					case Misc::Element::cryo:
-						return self.cryo;
-					case Misc::Element::electro:
-						return self.electro;
-					case Misc::Element::dendro:
-						return self.dendro;
-					case Misc::Element::anemo:
-						return self.anemo;
-					case Misc::Element::geo:
-						return self.geo;
-					case Misc::Element::physical:
-						return self.physical;
-				}
-				std::unreachable();
+			[[nodiscard]] constexpr auto fromElement(this auto &&self, const Misc::Element &element) {
+				return fromEnemyResElement<decltype(self), _Value>(self, element);
 			}
 
-			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue:: *) {
+			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue::*) {
 				return true;
 			}
 		};
@@ -87,7 +69,7 @@ namespace Stats {
 				};
 			}
 
-			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue:: *member) {
+			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue::*member) {
 				if (member == &_SkillValue::DMG) return true;
 				if (member == &_SkillValue::additiveDMG) return false;
 				if (member == &_SkillValue::multiplicativeDMG) return true;

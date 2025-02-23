@@ -12,13 +12,13 @@ namespace Character {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
+			const Option::CharacterList opts{};
 			Node::CharacterList nodes{};
 		};
 
 		const DataKey key;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
-		const Option::CharacterList opts{};
 		const std::function<Setup(void)> setup;
 
 		const Setup data = [](const std::function<Setup(void)> &setup) {
@@ -28,7 +28,7 @@ namespace Character {
 		void getOpts(Option::CharacterMap &options) const {
 			Option::mapOptions(
 				options,
-				opts
+				data.opts
 			);
 		}
 	};

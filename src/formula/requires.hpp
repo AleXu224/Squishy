@@ -13,9 +13,10 @@ namespace Formula {
 
 		using RetType = decltype(std::declval<V>().eval(std::declval<const Context &>()));
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
-			return fmt::format("{}", cond ? fmt::format("{} ({})", requirement.print(context, Step::none), ret.print(context, Step::none)) : "");
+			return fmt::format("{}", cond ? ret.print(context, prevStep) : "");
+			// return fmt::format("{}", cond ? fmt::format("{} ({})", requirement.print(context, Step::none), ret.print(context, Step::none)) : "");
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -36,9 +37,10 @@ namespace Formula {
 		using RetType2 = decltype(std::declval<U>().eval(std::declval<const Context &>()));
 		static_assert(std::is_same_v<RetType, RetType2>, "Both formulas need to return the same type");
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
-			return fmt::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
+			return fmt::format("{}", cond ? trueVal.print(context, prevStep) : elseVal.print(context, prevStep));
+			// return fmt::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

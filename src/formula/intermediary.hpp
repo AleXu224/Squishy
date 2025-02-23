@@ -34,4 +34,7 @@ namespace Formula {
 	concept FormulaLike = FloatFormula<T> || BoolFormula<T> || IntFormula<T> || ElementFormula<T>;
 	template<class T>
 	concept ArithmeticFormula = FloatFormula<T> || IntFormula<T>;
+
+	template<class T>
+	using FormulaType = decltype(std::declval<T>().eval(std::declval<const Context &>()));
 }// namespace Formula

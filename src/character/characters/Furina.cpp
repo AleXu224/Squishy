@@ -24,58 +24,6 @@ const Character::Data Character::Datas::furina{
 		.defUpgrade = {0.000, 46.426, 79.414, 123.397, 156.384, 189.371, 222.359},
 		.ascensionStatUpgrade = {0.000, 0.000, 0.048, 0.096, 0.096, 0.144, 0.192},
 	},
-	.opts{
-		.burst{
-			Option::ValueList{
-				.key = "furinaFanfare",
-				.prefix = "Fanfare",
-				.teamBuff = true,
-				.displayCondition = character.constellation == 0,
-				.values = std::views::iota(1)
-						| std::views::transform([](auto &&val) {
-							  return val * 50.f;
-						  })
-						| std::views::take(6)
-						| std::ranges::to<std::vector<uint32_t>>(),
-			},
-			Option::ValueList{
-				.key = "furinaFanfareC1",
-				.prefix = "Fanfare",
-				.teamBuff = true,
-				.displayCondition = Requirement::constellation1,
-				.values = std::views::iota(3)
-						| std::views::transform([](auto &&val) {
-							  return val * 50.f;
-						  })
-						| std::views::take(6)
-						| std::ranges::to<std::vector<uint32_t>>(),
-			},
-		},
-		.constellation2{
-			Option::ValueList{
-				.key = "furinaAboveFanfareC2",
-				.prefix = "Fanfare above limit",
-				.displayCondition = GetInt("furinaFanfareC1") > 0,
-				.values = std::views::iota(1)
-						| std::views::transform([](auto &&val) {
-							  return val * 50.f;
-						  })
-						| std::views::take(8)
-						| std::ranges::to<std::vector<uint32_t>>(),
-			},
-		},
-		.constellation6{
-			Option::Boolean{
-				.key = "furinaCenterOfAttention",
-				.name = "Center of Attention active",
-			},
-			Option::Boolean{
-				.key = "furinaC6Pneuma",
-				.name = "Pneuma Aligned",
-				.displayCondition = IsActive("furinaCenterOfAttention"),
-			},
-		},
-	},
 	.setup = []() -> Data::Setup {
 		auto fanfareDmgRatio = Multiplier(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
 		auto fanfareIncHealRatio = Multiplier(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
@@ -129,6 +77,86 @@ const Character::Data Character::Datas::furina{
 					},
 				},
 				.infusion = c6Infusion,
+			},
+			.opts{
+				.burst{
+					Option::ValueList{
+						.key = "furinaFanfare",
+						.prefix = "Fanfare",
+						.teamBuff = true,
+						.displayCondition = character.constellation == 0,
+						.values = std::views::iota(1)
+								| std::views::transform([](auto &&val) {
+									  return val * 50.f;
+								  })
+								| std::views::take(6)
+								| std::ranges::to<std::vector<uint32_t>>(),
+						.mods{
+							.teamPreMod{
+								.incHb = fanfareStacks * fanfareIncHealRatio,
+								.all{
+									.DMG = fanfareStacks * fanfareDmgRatio,
+								},
+							},
+						},
+					},
+					Option::ValueList{
+						.key = "furinaFanfareC1",
+						.prefix = "Fanfare",
+						.teamBuff = true,
+						.displayCondition = Requirement::constellation1,
+						.values = std::views::iota(3)
+								| std::views::transform([](auto &&val) {
+									  return val * 50.f;
+								  })
+								| std::views::take(6)
+								| std::ranges::to<std::vector<uint32_t>>(),
+						.mods{
+							.teamPreMod{
+								.incHb = fanfareStacks * fanfareIncHealRatio,
+								.all{
+									.DMG = fanfareStacks * fanfareDmgRatio,
+								},
+							},
+						},
+					},
+				},
+				.constellation2{
+					Option::ValueList{
+						.key = "furinaAboveFanfareC2",
+						.prefix = "Fanfare above limit",
+						.displayCondition = GetInt("furinaFanfareC1") > 0,
+						.values = std::views::iota(1)
+								| std::views::transform([](auto &&val) {
+									  return val * 50.f;
+								  })
+								| std::views::take(8)
+								| std::ranges::to<std::vector<uint32_t>>(),
+						.mods{
+							.preMod{
+								.hp_ = c2HpIncrease,
+							},
+						},
+					},
+				},
+				.constellation6{
+					Option::Boolean{
+						.key = "furinaCenterOfAttention",
+						.name = "Center of Attention active",
+						.mods{
+							.preMod{
+								.normal{.additiveDMG = c6DmgIncrease},
+								.charged{.additiveDMG = c6DmgIncrease},
+								.plunge{.additiveDMG = c6DmgIncrease},
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "furinaC6Pneuma",
+						.name = "Pneuma Aligned",
+						.displayCondition = IsActive("furinaCenterOfAttention"),
+					},
+				},
 			},
 			.nodes{
 				.normal{

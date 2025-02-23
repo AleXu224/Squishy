@@ -121,6 +121,22 @@ namespace Stats {
 		std::unreachable();
 	}
 
+	template<class T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromSkillStat(T &sheet, Misc::SkillStat skillStat) {
+		switch (skillStat) {
+			case Misc::SkillStat::DMG:
+				return sheet.DMG;
+			case Misc::SkillStat::additiveDMG:
+				return sheet.additiveDMG;
+			case Misc::SkillStat::multiplicativeDMG:
+				return sheet.multiplicativeDMG;
+			case Misc::SkillStat::critRate:
+				return sheet.critRate;
+			case Misc::SkillStat::critDMG:
+				return sheet.critDMG;
+		}
+	}
+
 	template<auto Skill, class RetType = Formula::FloatNode>
 	[[nodiscard]] constexpr RetType fromSkillStat(Misc::SkillStat skillStat) {
 		switch (skillStat) {
@@ -243,6 +259,38 @@ namespace Stats {
 		}
 	}
 
+	template<SheetLike T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromReaction(T &sheet, Misc::Reaction reaction, Misc::SkillStat skillStat) {
+		switch (reaction) {
+			case Misc::Reaction::vape:
+				return fromSkillStat(sheet.vape, skillStat);
+			case Misc::Reaction::melt:
+				return fromSkillStat(sheet.melt, skillStat);
+			case Misc::Reaction::aggravate:
+				return fromSkillStat(sheet.aggravate, skillStat);
+			case Misc::Reaction::spread:
+				return fromSkillStat(sheet.spread, skillStat);
+			case Misc::Reaction::burning:
+				return fromSkillStat(sheet.burning, skillStat);
+			case Misc::Reaction::superconduct:
+				return fromSkillStat(sheet.superconduct, skillStat);
+			case Misc::Reaction::swirl:
+				return fromSkillStat(sheet.swirl, skillStat);
+			case Misc::Reaction::electroCharged:
+				return fromSkillStat(sheet.electroCharged, skillStat);
+			case Misc::Reaction::shattered:
+				return fromSkillStat(sheet.shattered, skillStat);
+			case Misc::Reaction::overloaded:
+				return fromSkillStat(sheet.overloaded, skillStat);
+			case Misc::Reaction::bloom:
+				return fromSkillStat(sheet.bloom, skillStat);
+			case Misc::Reaction::burgeon:
+				return fromSkillStat(sheet.burgeon, skillStat);
+			case Misc::Reaction::hyperbloom:
+				return fromSkillStat(sheet.hyperbloom, skillStat);
+		}
+	}
+
 	template<auto Sheet, Misc::AttackSource attackSource>
 	[[nodiscard]] constexpr auto fromAttackSource() {
 		if constexpr (attackSource == Misc::AttackSource::normal) return Sheet.normal;
@@ -268,6 +316,22 @@ namespace Stats {
 		}
 	}
 
+	template<SheetLike T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromAttackSource(T &sheet, Misc::AttackSource attackSource, Misc::SkillStat skillStat) {
+		switch (attackSource) {
+			case Misc::AttackSource::normal:
+				return fromSkillStat(sheet.normal, skillStat);
+			case Misc::AttackSource::charged:
+				return fromSkillStat(sheet.charged, skillStat);
+			case Misc::AttackSource::plunge:
+				return fromSkillStat(sheet.plunge, skillStat);
+			case Misc::AttackSource::skill:
+				return fromSkillStat(sheet.skill, skillStat);
+			case Misc::AttackSource::burst:
+				return fromSkillStat(sheet.burst, skillStat);
+		}
+	}
+
 	template<auto Sheet, Misc::Element element>
 	[[nodiscard]] constexpr auto fromElement() {
 		if constexpr (element == Misc::Element::pyro) return Sheet.pyro;
@@ -278,6 +342,30 @@ namespace Stats {
 		if constexpr (element == Misc::Element::anemo) return Sheet.anemo;
 		if constexpr (element == Misc::Element::geo) return Sheet.geo;
 		if constexpr (element == Misc::Element::physical) return Sheet.physical;
+	}
+
+	template<SheetLike T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromDamageElement(T &sheet, Misc::DamageElement element, Misc::SkillStat skillStat) {
+		switch (element) {
+			case Misc::DamageElement::pyro:
+				return fromSkillStat(sheet.pyro, skillStat);
+			case Misc::DamageElement::hydro:
+				return fromSkillStat(sheet.hydro, skillStat);
+			case Misc::DamageElement::cryo:
+				return fromSkillStat(sheet.cryo, skillStat);
+			case Misc::DamageElement::electro:
+				return fromSkillStat(sheet.electro, skillStat);
+			case Misc::DamageElement::dendro:
+				return fromSkillStat(sheet.dendro, skillStat);
+			case Misc::DamageElement::anemo:
+				return fromSkillStat(sheet.anemo, skillStat);
+			case Misc::DamageElement::geo:
+				return fromSkillStat(sheet.geo, skillStat);
+			case Misc::DamageElement::physical:
+				return fromSkillStat(sheet.physical, skillStat);
+			case Misc::DamageElement::all:
+				return fromSkillStat(sheet.all, skillStat);
+		}
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
@@ -311,5 +399,49 @@ namespace Stats {
 		if constexpr (skillStat == Misc::SkillStat::multiplicativeDMG) return Skill.multiplicativeDMG;
 		if constexpr (skillStat == Misc::SkillStat::critRate) return Skill.critRate;
 		if constexpr (skillStat == Misc::SkillStat::critDMG) return Skill.critDMG;
+	}
+
+	template<class T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromEnemyResElement(T &sheet, Misc::Element element) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return sheet.pyro;
+			case Misc::Element::hydro:
+				return sheet.hydro;
+			case Misc::Element::cryo:
+				return sheet.cryo;
+			case Misc::Element::electro:
+				return sheet.electro;
+			case Misc::Element::dendro:
+				return sheet.dendro;
+			case Misc::Element::anemo:
+				return sheet.anemo;
+			case Misc::Element::geo:
+				return sheet.geo;
+			case Misc::Element::physical:
+				return sheet.physical;
+		}
+	}
+
+	template<auto Sheet, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromEnemyResElement(Misc::Element element) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return Sheet.pyro;
+			case Misc::Element::hydro:
+				return Sheet.hydro;
+			case Misc::Element::cryo:
+				return Sheet.cryo;
+			case Misc::Element::electro:
+				return Sheet.electro;
+			case Misc::Element::dendro:
+				return Sheet.dendro;
+			case Misc::Element::anemo:
+				return Sheet.anemo;
+			case Misc::Element::geo:
+				return Sheet.geo;
+			case Misc::Element::physical:
+				return Sheet.physical;
+		}
 	}
 }// namespace Stats

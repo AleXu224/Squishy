@@ -23,50 +23,74 @@ const Character::Data Character::Datas::cyno{
 		.defUpgrade = {0, 57.3534, 98.1045, 152.4393, 193.1904, 233.9415, 274.6926},
 		.ascensionStatUpgrade = {0, 0, 0.096, 0.192, 0.192, 0.288, 0.384},
 	},
-	.opts{
-		.burst{
-			Option::Boolean{
-				.key = "burstActive",
-				.name = "Burst Active",
-			},
-		},
-		.passive1{
-			Option::Boolean{
-				.key = "endseerStance",
-				.name = "During Endseer stance",
-			},
-		},
-		.constellation2{
-			Option::ValueList{
-				.key = "c2Hits",
-				.prefix = "Normal Attack Hits",
-				.values{1, 2, 3, 4, 5},
-			},
-		},
-	},
 	.setup = []() -> Data::Setup {
-		constexpr auto a1SkillBonus = Modifier{
-			.DMG = Requires(
-				Requirement::passive1 && IsActive("endseerStance"),
-				Constant(0.35f)
-			),
+		auto burstEmBonus = Requires(
+			IsActive("burstActive"),
+			ConstantFlat(100.f)
+		);
+
+		auto a1Skill = Requires(
+			Requirement::passive1 && IsActive("endseerStance"),
+			Constant(0.35f)
+		);
+		auto a1SkillMod = Modifier{
+			.DMG = a1Skill
 		};
 
-		constexpr auto a4BurstBonus = Requires(Requirement::passive2, total.em * 1.5f);
-		constexpr auto a4BoltBbonus = Requires(Requirement::passive2, total.em * 2.5f);
-		constexpr auto a4BurstModifier = Modifier{
+		auto a4BurstBonus = Requires(Requirement::passive2, total.em * 1.5f);
+		auto a4BoltBbonus = Requires(Requirement::passive2, total.em * 2.5f);
+		auto a4BurstModifier = Modifier{
 			.additiveDMG = a4BurstBonus,
 		};
+
+		auto c2ElectroDmg = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f);
 
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.em = Requires(
-						IsActive("burstActive"),
-						ConstantFlat(100.f)
-					),
+					.em = burstEmBonus,
 					.electro{
-						.DMG = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f),
+						.DMG = c2ElectroDmg,
+					},
+				},
+			},
+			.opts{
+				.burst{
+					Option::Boolean{
+						.key = "burstActive",
+						.name = "Burst Active",
+						.mods{
+							.preMod{
+								.em = burstEmBonus,
+							},
+						},
+					},
+				},
+				.passive1{
+					Option::Boolean{
+						.key = "endseerStance",
+						.name = "During Endseer stance",
+						.nodes{
+							Node::Info{
+								.name = "Chasmic Soulfarer DMG Increase",
+								.isPercentage = true,
+								.formula = a1Skill,
+							},
+						},
+					},
+				},
+				.constellation2{
+					Option::ValueList{
+						.key = "c2Hits",
+						.prefix = "Normal Attack Hits",
+						.values{1, 2, 3, 4, 5},
+						.mods{
+							.preMod{
+								.electro{
+									.DMG = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f),
+								},
+							},
+						},
 					},
 				},
 			},
@@ -122,13 +146,13 @@ const Character::Data Character::Datas::cyno{
 						.name = "Skill DMG",
 						.source = Misc::AttackSource::skill,
 						.formula = Multiplier(total.atk, LevelableTalent::skill, {1.304, 1.4018, 1.4996, 1.63, 1.7278, 1.8256, 1.956, 2.0864, 2.2168, 2.3472, 2.4776, 2.608, 2.771, 2.934, 3.097}),
-						.modifier = a1SkillBonus,
+						.modifier = a1SkillMod,
 					},
 					Node::Atk{
 						.name = "Mortuary Rite DMG",
 						.source = Misc::AttackSource::skill,
 						.formula = Multiplier(total.atk, LevelableTalent::skill, {1.568, 1.6856, 1.8032, 1.96, 2.0776, 2.1952, 2.352, 2.5088, 2.6656, 2.8224, 2.9792, 3.136, 3.332, 3.528, 3.724}),
-						.modifier = a1SkillBonus,
+						.modifier = a1SkillMod,
 					},
 				},
 				.burst{

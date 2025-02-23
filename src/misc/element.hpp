@@ -27,6 +27,17 @@ namespace Misc {
 		Misc::Element::anemo,
 		Misc::Element::geo,
 	};
+
+	static constexpr auto elements = std::array{
+		Misc::Element::pyro,
+		Misc::Element::hydro,
+		Misc::Element::cryo,
+		Misc::Element::electro,
+		Misc::Element::dendro,
+		Misc::Element::anemo,
+		Misc::Element::geo,
+		Misc::Element::physical,
+	};
 }// namespace Misc
 
 namespace Utils {

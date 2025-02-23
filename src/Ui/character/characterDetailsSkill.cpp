@@ -71,6 +71,7 @@ UI::DetailsSkill::operator squi::Child() const {
 										ret.emplace_back(UI::ToggleOption{
 											.option = opt,
 											.characterKey = characterKey,
+											.ctx = ctx,
 										});
 									},
 									[&](Option::ValueList &opt) {
@@ -78,6 +79,7 @@ UI::DetailsSkill::operator squi::Child() const {
 										ret.emplace_back(UI::ValueListOption{
 											.option = opt,
 											.characterKey = characterKey,
+											.ctx = ctx,
 										});
 									},
 								},

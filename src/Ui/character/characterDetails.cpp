@@ -115,7 +115,7 @@ namespace {
 
 		std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
-			const auto &optList = std::invoke(optPtr, character.loadout.character.data.opts);
+			const auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
 			std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
 			for (const auto &opt: optList) {
 				std::visit(

@@ -105,15 +105,6 @@ namespace Stats {
 			Stat::cd,
 			Stat::hb,
 			Stat::incHb,
-			Stat::pyroDmg,
-			Stat::hydroDmg,
-			Stat::cryoDmg,
-			Stat::electroDmg,
-			Stat::dendroDmg,
-			Stat::anemoDmg,
-			Stat::geoDmg,
-			Stat::physicalDmg,
-			Stat::allDmg,
 		}
 	};
 

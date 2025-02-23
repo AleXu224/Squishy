@@ -2,9 +2,11 @@
 
 #include "comparators.hpp"
 #include "constant.hpp"
+#include "difference.hpp"
 #include "fraction.hpp"
 #include "product.hpp"
 #include "sum.hpp"
+
 
 namespace Formula::Operators {
 	// Sum
@@ -21,6 +23,22 @@ namespace Formula::Operators {
 	template<Formula::ArithmeticFormula T>
 	[[nodiscard]] constexpr auto operator+(const T &param1, const float &param2) {
 		return Formula::Sum(param1, Formula::Constant(param2));
+	}
+
+	// Difference
+	template<Formula::ArithmeticFormula T, Formula::ArithmeticFormula U>
+	[[nodiscard]] constexpr auto operator-(const T &param1, const U &param2) {
+		return Formula::Difference(param1, param2);
+	}
+
+	template<Formula::ArithmeticFormula T>
+	[[nodiscard]] constexpr auto operator-(const float &param1, const T &param2) {
+		return Formula::Difference(Formula::Constant(param1), param2);
+	}
+
+	template<Formula::ArithmeticFormula T>
+	[[nodiscard]] constexpr auto operator-(const T &param1, const float &param2) {
+		return Formula::Difference(param1, Formula::Constant(param2));
 	}
 
 	// Product
