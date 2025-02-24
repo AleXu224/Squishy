@@ -42,6 +42,23 @@ namespace Formula {
 		}
 	};
 
+	struct ElementCountOthers {
+		::Misc::Element element;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
+		}
+
+		[[nodiscard]] uint32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &character: context.team.characters) {
+				if (!character || &character->loadout == &context.source) continue;
+				if (character->loadout.character.base.element == element) ret++;
+			}
+			return ret;
+		}
+	};
+
 
 	struct SameElementCount {
 		[[nodiscard]] std::string print(const Context &context, Step) const {

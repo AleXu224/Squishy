@@ -344,6 +344,28 @@ namespace Stats {
 		if constexpr (element == Misc::Element::physical) return Sheet.physical;
 	}
 
+	template<SheetLike T>
+	[[nodiscard]] constexpr auto &fromElement(T &sheet, Misc::Element element) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return sheet.pyro;
+			case Misc::Element::hydro:
+				return sheet.hydro;
+			case Misc::Element::cryo:
+				return sheet.cryo;
+			case Misc::Element::electro:
+				return sheet.electro;
+			case Misc::Element::dendro:
+				return sheet.dendro;
+			case Misc::Element::anemo:
+				return sheet.anemo;
+			case Misc::Element::geo:
+				return sheet.geo;
+			case Misc::Element::physical:
+				return sheet.physical;
+		}
+	}
+
 	template<SheetLike T, class RetType = Formula::FloatNode>
 	[[nodiscard]] constexpr RetType fromDamageElement(T &sheet, Misc::DamageElement element, Misc::SkillStat skillStat) {
 		switch (element) {
