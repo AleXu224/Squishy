@@ -44,6 +44,7 @@ namespace Modifiers {
 		static constexpr auto geo = Skill<&TT::geo>();
 		static constexpr auto physical = Skill<&TT::physical>();
 		static constexpr auto all = Skill<&TT::all>();
+		static constexpr auto allElemental = Skill<&TT::allElemental>();
 
 		static constexpr auto normal = Skill<&TT::normal>();
 		static constexpr auto charged = Skill<&TT::charged>();
@@ -104,6 +105,7 @@ namespace Modifiers {
 		static constexpr auto geo = Skill<Misc::DamageElement::geo>();
 		static constexpr auto physical = Skill<Misc::DamageElement::physical>();
 		static constexpr auto all = Skill<Misc::DamageElement::all>();
+		static constexpr auto allElemental = Skill<Misc::DamageElement::allElemental>();
 
 		static constexpr auto normal = Skill<Misc::AttackSource::normal>();
 		static constexpr auto charged = Skill<Misc::AttackSource::charged>();
@@ -165,6 +167,7 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.geo...> geo{};
 		static constexpr _SkillValue<Params.physical...> physical{};
 		static constexpr _SkillValue<Params.all...> all{};
+		static constexpr _SkillValue<Params.allElemental...> allElemental{};
 
 		static constexpr _SkillValue<Params.normal...> normal{};
 		static constexpr _SkillValue<Params.charged...> charged{};

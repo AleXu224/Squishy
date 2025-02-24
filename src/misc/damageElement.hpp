@@ -16,6 +16,7 @@ namespace Misc {
 		geo,
 		physical,
 		all,
+		allElemental,
 	};
 
 	static inline std::vector<DamageElement> damageElements{
@@ -27,7 +28,7 @@ namespace Misc {
 		DamageElement::anemo,
 		DamageElement::geo,
 		DamageElement::physical,
-		DamageElement::all,
+		DamageElement::allElemental,
 	};
 }// namespace Misc
 
@@ -53,6 +54,8 @@ namespace Utils {
 				return "Physical";
 			case Misc::DamageElement::all:
 				return "All";
+			case Misc::DamageElement::allElemental:
+				return "All Elemental";
 		}
 		std::unreachable();
 	}

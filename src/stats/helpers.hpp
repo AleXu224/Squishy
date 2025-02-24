@@ -387,6 +387,8 @@ namespace Stats {
 				return fromSkillStat(sheet.physical, skillStat);
 			case Misc::DamageElement::all:
 				return fromSkillStat(sheet.all, skillStat);
+			case Misc::DamageElement::allElemental:
+				return fromSkillStat(sheet.allElemental, skillStat);
 		}
 	}
 
@@ -411,6 +413,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.physical, RetType>(skillStat);
 			case Misc::DamageElement::all:
 				return fromSkillStat<Sheet.all, RetType>(skillStat);
+			case Misc::DamageElement::allElemental:
+				return fromSkillStat<Sheet.allElemental, RetType>(skillStat);
 		}
 	}
 

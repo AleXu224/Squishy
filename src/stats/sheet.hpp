@@ -104,6 +104,7 @@ namespace Stats {
 		_SkillValue geo{};
 		_SkillValue physical{};
 		_SkillValue all{};
+		_SkillValue allElemental{};
 
 		_SkillValue normal{};
 		_SkillValue charged{};
