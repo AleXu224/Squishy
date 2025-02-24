@@ -19,6 +19,8 @@ namespace Character {
 		static constexpr Formula::CharacterAscension ascension{};
 	} character{};
 
+	using EntryType = Utils::EntryType;
+
 	using Modifiers::preMods;
 	using Modifiers::total;
 	using Modifiers::totalActive;

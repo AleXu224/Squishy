@@ -251,17 +251,17 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Gentilhomme Usher HP Consumption",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = Multiplier(LevelableTalent::skill, {0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240, 0.0240}),
 					},
 					Node::Info{
 						.name = "Surintendante Chevalmarin HP Consumption",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = Multiplier(LevelableTalent::skill, {0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160, 0.0160}),
 					},
 					Node::Info{
 						.name = "Mademoiselle Crabaletta HP Consumption",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = Multiplier(LevelableTalent::skill, {0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360, 0.0360}),
 					},
 					Node::Heal{
@@ -270,6 +270,7 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "CD",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::skill, {20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000, 20.0000}),
 					},
 				},
@@ -281,6 +282,7 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Duration",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::burst, {18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000}),
 					},
 					Node::Info{
@@ -289,16 +291,17 @@ const Character::Data Character::Datas::furina{
 					},
 					Node::Info{
 						.name = "Fanfare to DMG Increase Conversion Ratio",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = fanfareDmgRatio,
 					},
 					Node::Info{
 						.name = "Fanfare to Incoming Healing Bonus Conversion Ratio",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = fanfareIncHealRatio,
 					},
 					Node::Info{
 						.name = "CD",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::burst, {15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000}),
 					},
 					Node::Info{
@@ -315,14 +318,14 @@ const Character::Data Character::Datas::furina{
 				.passive2{
 					Node::Info{
 						.name = "Salon Members' DMG Increase",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = a4DmgIncrease,
 					},
 				},
 				.constellation2{
 					Node::Info{
 						.name = "HP Increase",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = c2HpIncrease,
 					},
 				},

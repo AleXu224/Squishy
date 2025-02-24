@@ -75,6 +75,30 @@ namespace Formula {
 		}
 	};
 
+	struct PHECCount {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Team other element count {}", eval(context));
+		}
+
+		[[nodiscard]] uint32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &character: context.team.characters) {
+				if (!character || &character->loadout == &context.source) continue;
+				switch (character->loadout.character.base.element) {
+					case Misc::Element::pyro:
+					case Misc::Element::hydro:
+					case Misc::Element::electro:
+					case Misc::Element::cryo:
+						ret++;
+					default:
+						continue;
+				}
+			}
+
+			return ret;
+		}
+	};
+
 	struct IsCharacterElement {
 		Misc::Element element;
 
@@ -84,6 +108,18 @@ namespace Formula {
 
 		[[nodiscard]] bool eval(const Context &context) const {
 			return context.source.character.base.element == element;
+		}
+	};
+
+	struct IsActiveCharacterElement {
+		Misc::Element element;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.active.character.base.element == element;
 		}
 	};
 }// namespace Formula

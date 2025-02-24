@@ -212,28 +212,34 @@ const Character::Data Character::Datas::nahida{
 					},
 					Node::Info{
 						.name = "Tri-Karma Purification Trigger Interval",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::skill, {2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000, 2.5000}),
 					},
 					Node::Info{
 						.name = "Seed of Skandha Duration",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::skill, {25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000, 25.0000}),
 					},
 					Node::Info{
 						.name = "Press CD",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::skill, {5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000, 5.0000}),
 					},
 					Node::Info{
 						.name = "Hold CD",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::skill, {6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000, 6.0000}),
 					},
 				},
 				.burst{
 					Node::Info{
 						.name = "Base Duration",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::burst, {15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000, 15.0000}),
 					},
 					Node::Info{
 						.name = "CD",
+						.type = EntryType::seconds,
 						.formula = Multiplier(LevelableTalent::burst, {13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000, 13.5000}),
 					},
 					Node::Info{
@@ -244,12 +250,12 @@ const Character::Data Character::Datas::nahida{
 				.passive2{
 					Node::Info{
 						.name = "Tri-Karma Purification Crit Rate",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = a4TriKarmaCr,
 					},
 					Node::Info{
 						.name = "Tri-Karma Purification DMG Increase",
-						.isPercentage = true,
+						.type = EntryType::multiplier,
 						.formula = a4TriKarmaDmg,
 					},
 				},

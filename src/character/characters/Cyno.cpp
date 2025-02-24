@@ -73,7 +73,7 @@ const Character::Data Character::Datas::cyno{
 						.nodes{
 							Node::Info{
 								.name = "Chasmic Soulfarer DMG Increase",
-								.isPercentage = true,
+								.type = EntryType::multiplier,
 								.formula = a1Skill,
 							},
 						},

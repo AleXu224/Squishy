@@ -4,6 +4,7 @@
 #include "formula/formulaContext.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
+#include "utils/entryType.hpp"
 #include "utils/optional.hpp"
 #include "utils/overloaded.hpp"
 #include "variant"
@@ -16,7 +17,7 @@ namespace Node {
 	};
 
 	struct InfoData {
-		bool isPercentage = false;
+		Utils::EntryType type;
 		squi::Color color;
 	};
 
@@ -31,7 +32,7 @@ namespace Node {
 					return false;
 				},
 				[](const InfoData &info) {
-					return info.isPercentage;
+					return info.type == Utils::EntryType::multiplier;
 				},
 				[](const HealData &) {
 					return false;

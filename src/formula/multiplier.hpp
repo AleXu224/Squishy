@@ -5,7 +5,7 @@
 #include "modifiers/total/total.hpp"
 #include "reaction/levelMultiplier.hpp"
 #include "stats/loadout.hpp"
-
+#include "utils/entryType.hpp"
 
 namespace Formula {
 	using namespace Formula::Operators;
@@ -24,10 +24,12 @@ namespace Formula {
 	struct MultiplierValue {
 		LevelableTalent talent;
 		std::array<float, 15> values;
+		Utils::EntryType type = Utils::EntryType::multiplier;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getMultiplier(talent, values, context);
-			return fmt::format("{:.1f}%", multiplier * 100.f);
+			return Utils::printEntryType(multiplier, type);
+			std::unreachable();
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -50,6 +52,10 @@ namespace Formula {
 	};
 
 	[[nodiscard]] consteval auto Multiplier(LevelableTalent talent, const std::array<float, 15> &values) {
-		return MultiplierValue(talent, values);
+		return MultiplierValue(talent, values, Utils::EntryType::points);
+	}
+
+	[[nodiscard]] consteval auto Multiplier(Utils::EntryType type, LevelableTalent talent, const std::array<float, 15> &values) {
+		return MultiplierValue(talent, values, type);
 	}
 }// namespace Formula

@@ -5,19 +5,19 @@
 #include "formula/node.hpp"
 #include "nodeData.hpp"
 #include "string_view"
-
+#include "utils/entryType.hpp"
 
 namespace Node {
 	struct Info {
 		std::string_view name;
 		squi::Color color = Utils::elementToColor(Misc::Element::physical);
-		bool isPercentage = false;
+		Utils::EntryType type = Utils::EntryType::points;
 		Formula::FloatNode formula;
 
 		Formula::FloatNode _formula = formula;
 
 		Data _data = InfoData{
-			.isPercentage = isPercentage,
+			.type = type,
 			.color = color,
 		};
 	};
