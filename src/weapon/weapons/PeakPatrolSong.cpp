@@ -40,7 +40,6 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 					.dendro{.DMG = elemBuff},
 					.anemo{.DMG = elemBuff},
 					.geo{.DMG = elemBuff},
-					.physical{.DMG = elemBuff},
 				},
 				.teamPreMod{
 					.pyro{.DMG = teamElemBuff},
@@ -50,7 +49,6 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 					.dendro{.DMG = teamElemBuff},
 					.anemo{.DMG = teamElemBuff},
 					.geo{.DMG = teamElemBuff},
-					.physical{.DMG = teamElemBuff},
 				},
 			},
 			.opts{
@@ -69,7 +67,6 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 							.dendro{.DMG = elemBuff},
 							.anemo{.DMG = elemBuff},
 							.geo{.DMG = elemBuff},
-							.physical{.DMG = elemBuff},
 						},
 						.teamPreMod{
 							.pyro{.DMG = teamElemBuff},
@@ -79,7 +76,6 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 							.dendro{.DMG = teamElemBuff},
 							.anemo{.DMG = teamElemBuff},
 							.geo{.DMG = teamElemBuff},
-							.physical{.DMG = teamElemBuff},
 						},
 					},
 				},
