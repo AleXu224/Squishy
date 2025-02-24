@@ -1,5 +1,5 @@
 #include "teamBuffs.hpp"
-#include "Ui/utils/grid.hpp"
+#include "Ui/utils/masonry.hpp"
 #include "rebuilder.hpp"
 #include "scrollableFrame.hpp"
 
@@ -23,13 +23,13 @@ namespace {
 			});
 		}
 
-		return UI::Grid{
+		return UI::Masonry{
 			.widget{
 				.width = Size::Wrap,
 				.padding = 8.f,
 			},
 			.spacing = 4.f,
-			.columnCount = UI::Grid::MinSize{250.f},
+			.columnCount = UI::Masonry::MinSize{250.f},
 			.children = teamCharacters,
 		};
 	}

@@ -95,7 +95,7 @@ squi::vec2 UI::Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minS
 	}
 
 	return {
-		(maxSize.x * static_cast<float>(columns)) + (static_cast<float>(columns - 1) * spacing),
+		(maxSize.x * static_cast<float>(std::min(columns, children.size()))) + (static_cast<float>(columns - 1) * spacing),
 		getHighest(columnSizes),
 	};
 }
