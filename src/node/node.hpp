@@ -1,6 +1,7 @@
 #pragma once
 
 #include "array"
+#include "entry.hpp"
 #include "formula/node.hpp"
 #include "nodeData.hpp"
 #include "string_view"
@@ -46,6 +47,33 @@ namespace Node {
 				&CharacterList::constellation4,
 				&CharacterList::constellation6,
 			};
+		}
+
+		[[nodiscard]] const auto &fromEntry(CharacterSlot entry) const {
+			switch (entry) {
+				case CharacterSlot::normal:
+					return normal;
+				case CharacterSlot::charged:
+					return charged;
+				case CharacterSlot::plunge:
+					return plunge;
+				case CharacterSlot::skill:
+					return skill;
+				case CharacterSlot::burst:
+					return burst;
+				case CharacterSlot::passive1:
+					return passive1;
+				case CharacterSlot::passive2:
+					return passive2;
+				case CharacterSlot::constellation1:
+					return constellation1;
+				case CharacterSlot::constellation2:
+					return constellation2;
+				case CharacterSlot::constellation4:
+					return constellation4;
+				case CharacterSlot::constellation6:
+					return constellation6;
+			}
 		}
 	};
 
