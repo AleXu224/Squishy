@@ -1,6 +1,7 @@
 #include "characterDetails.hpp"
 
 #include "Ui/character/characterDetailsSkill.hpp"
+#include "Ui/combo/combos.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
@@ -9,6 +10,7 @@
 #include "ranges"
 #include "rebuilder.hpp"
 #include "store.hpp"
+
 
 #include "formula/requires.hpp"
 #include "formula/stat.hpp"// IWYU pragma: keep
@@ -54,6 +56,8 @@ namespace {
 		};
 
 		auto transformativeReactions = UI::CharacterTransformativeReactions{.ctx = ctx};
+
+		auto combos = UI::Combos{};
 
 		auto characterStats = UI::CharacterStats{
 			.ctx = ctx,
@@ -108,6 +112,7 @@ namespace {
 		Children mainContent{
 			characterStats,
 			transformativeReactions,
+			combos,
 			weaponStats,
 			artifactStats1,
 			artifactStats2,
