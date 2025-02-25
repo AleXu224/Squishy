@@ -14,38 +14,6 @@
 namespace Node {
 	using namespace Formula::Operators;
 	template<Misc::SkillStat skillStat>
-	struct _NodeAllElemental {
-		Utils::JankyOptional<Misc::Element> element{};
-		Misc::AttackSource source{};
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
-		}
-
-		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
-			switch (element) {
-				case Misc::Element::physical:
-					return 0.f;
-				default:
-					return Stats::fromSkillStat<Modifiers::total.allElemental, skillStat>().eval(context);
-			}
-			std::unreachable();
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			switch (source) {
-				case Misc::AttackSource::normal:
-				case Misc::AttackSource::charged:
-				case Misc::AttackSource::plunge:
-					return switchElement(element.value_or(context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical)), context);
-				case Misc::AttackSource::skill:
-				case Misc::AttackSource::burst:
-					return switchElement(element.value_or(context.source.character.base.element), context);
-			}
-			std::unreachable();
-		}
-	};
-	template<Misc::SkillStat skillStat>
 	struct _NodeElement {
 		Utils::JankyOptional<Misc::Element> element{};
 		Misc::AttackSource source{};
@@ -120,11 +88,10 @@ namespace Node {
 		auto formula
 	) {
 		auto allStats = Stats::fromSkillStat<Modifiers::total.all, skillStat>();
-		auto allElemental = _NodeAllElemental<skillStat>(attackElement, atkSource);
 		auto elementStats = _NodeElement<skillStat>(attackElement, atkSource);
 		auto skillStats = _NodeSkill<skillStat>(atkSource);
 
-		return allStats + allElemental + elementStats + skillStats + formula;
+		return allStats + elementStats + skillStats + formula;
 	}
 
 	template<class Frm, class T = decltype(Formula::Modifier{})>

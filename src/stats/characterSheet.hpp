@@ -15,7 +15,7 @@ namespace Stats {
 		uint8_t ascension{0};
 
 		// Ascension and base
-		Stats::Sheet<Stats::Value<float, 1>> stats{
+		Stats::Sheet<Stats::Value<float, 2>> stats{
 			.er{.constant = 1.f},
 			.cr{.constant = 0.05f},
 			.cd{.constant = 0.5f},
