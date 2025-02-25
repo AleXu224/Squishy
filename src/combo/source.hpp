@@ -1,14 +1,16 @@
 #pragma once
 
 #include "artifact/key.hpp"
+#include "artifact/sets.hpp"
 #include "artifact/slot.hpp"
+#include "character/characters.hpp"
 #include "character/data.hpp"
 #include "character/key.hpp"
-#include "formula/node.hpp"
 #include "node/entry.hpp"
-#include "stats/loadout.hpp"
 #include "variant"
+#include "weapon/data.hpp"
 #include "weapon/key.hpp"
+#include "weapon/weapons.hpp"
 
 
 namespace Combo::Source {
@@ -18,19 +20,27 @@ namespace Combo::Source {
 		size_t index;
 
 		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
-			return context.source.character.data.data.nodes.fromEntry(slot).at(index);
+			return ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 		}
 	};
 
 	struct Weapon {
 		::Weapon::DataKey key;
 		size_t index;
+
+		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
+			return ::Weapon::list.at(key).data.nodes.at(index);
+		}
 	};
 
 	struct Artifact {
 		::Artifact::SetKey key;
 		::Artifact::SetSlot slot;
 		size_t index;
+
+		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
+			return ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
+		}
 	};
 
 	using Types = std::variant<Character, Weapon, Artifact>;

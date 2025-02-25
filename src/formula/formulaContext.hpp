@@ -28,6 +28,17 @@ namespace Formula {
 				.active = active,
 				.team = team,
 				.enemy = enemy,
+				.reaction = reaction,
+			};
+		}
+
+		[[nodiscard]] Context withReaction(const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> &newReaction) const {
+			return {
+				.source = source,
+				.active = active,
+				.team = team,
+				.enemy = enemy,
+				.reaction = newReaction,
 			};
 		}
 	};
