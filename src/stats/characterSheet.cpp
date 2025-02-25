@@ -44,6 +44,20 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 		)
 	);
 
+	for (const auto &element: Misc::characterElements) {
+		for (const auto &stat: Misc::skillStats) {
+			this->stats.fromElement(element).fromSkillStat(stat).modifiers.at(1) = Formula::Prefix(
+				"All Elemental",
+				Formula::Custom(
+					[stat](const Formula::Context &context) {
+						return fromSkillStat<Modifiers::total.allElemental>(stat).eval(context);
+					},
+					true
+				)
+			);
+		}
+	}
+
 	// Constellation talents
 	this->talents.fromTalent(stats.character.base.c3Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation3, Formula::ConstantInt(3));
 	this->talents.fromTalent(stats.character.base.c5Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));

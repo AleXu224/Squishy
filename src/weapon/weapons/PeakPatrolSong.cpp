@@ -20,9 +20,9 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 		.ascensionUpgrade{0.0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7}
 	},
 	.setup = []() {
-		auto multiplier1 = WeaponMultiplier(false, {0.0800, 0.1000, 0.1200, 0.1400, 0.1600});
-		auto multiplier4 = WeaponMultiplier(false, {0.1000, 0.1250, 0.1500, 0.1750, 0.2000});
-		auto multiplier5 = WeaponMultiplier(false, {0.0800, 0.1000, 0.1200, 0.1400, 0.1600});
+		auto multiplier1 = WeaponMultiplier(true, {0.0800, 0.1000, 0.1200, 0.1400, 0.1600});
+		auto multiplier4 = WeaponMultiplier(true, {0.1000, 0.1250, 0.1500, 0.1750, 0.2000});
+		auto multiplier5 = WeaponMultiplier(true, {0.0800, 0.1000, 0.1200, 0.1400, 0.1600});
 
 		auto stacks = GetInt("peakPatrolOdeToFlowers");
 		auto defBuff = multiplier1 * stacks;
@@ -33,22 +33,10 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 			.mods{
 				.preMod{
 					.def_ = defBuff,
-					.pyro{.DMG = elemBuff},
-					.hydro{.DMG = elemBuff},
-					.cryo{.DMG = elemBuff},
-					.electro{.DMG = elemBuff},
-					.dendro{.DMG = elemBuff},
-					.anemo{.DMG = elemBuff},
-					.geo{.DMG = elemBuff},
+					.allElemental{.DMG = elemBuff},
 				},
 				.teamPreMod{
-					.pyro{.DMG = teamElemBuff},
-					.hydro{.DMG = teamElemBuff},
-					.cryo{.DMG = teamElemBuff},
-					.electro{.DMG = teamElemBuff},
-					.dendro{.DMG = teamElemBuff},
-					.anemo{.DMG = teamElemBuff},
-					.geo{.DMG = teamElemBuff},
+					.allElemental{.DMG = teamElemBuff},
 				},
 			},
 			.opts{
@@ -60,22 +48,10 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 					.mods{
 						.preMod{
 							.def_ = defBuff,
-							.pyro{.DMG = elemBuff},
-							.hydro{.DMG = elemBuff},
-							.cryo{.DMG = elemBuff},
-							.electro{.DMG = elemBuff},
-							.dendro{.DMG = elemBuff},
-							.anemo{.DMG = elemBuff},
-							.geo{.DMG = elemBuff},
+							.allElemental{.DMG = elemBuff},
 						},
 						.teamPreMod{
-							.pyro{.DMG = teamElemBuff},
-							.hydro{.DMG = teamElemBuff},
-							.cryo{.DMG = teamElemBuff},
-							.electro{.DMG = teamElemBuff},
-							.dendro{.DMG = teamElemBuff},
-							.anemo{.DMG = teamElemBuff},
-							.geo{.DMG = teamElemBuff},
+							.allElemental{.DMG = teamElemBuff},
 						},
 					},
 				},

@@ -77,6 +77,21 @@ namespace Stats {
 				if (member == &_SkillValue::critDMG) return true;
 				return false;
 			}
+
+			[[nodiscard]] auto &fromSkillStat(Misc::SkillStat stat) {
+				switch (stat) {
+					case Misc::SkillStat::DMG:
+						return DMG;
+					case Misc::SkillStat::additiveDMG:
+						return additiveDMG;
+					case Misc::SkillStat::multiplicativeDMG:
+						return multiplicativeDMG;
+					case Misc::SkillStat::critRate:
+						return critRate;
+					case Misc::SkillStat::critDMG:
+						return critDMG;
+				}
+			}
 		};
 		_Value hp{};
 		_Value hp_{};
@@ -104,6 +119,7 @@ namespace Stats {
 		_SkillValue geo{};
 		_SkillValue physical{};
 		_SkillValue all{};
+		_SkillValue allElemental{};
 
 		_SkillValue normal{};
 		_SkillValue charged{};
