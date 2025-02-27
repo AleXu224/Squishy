@@ -1,16 +1,16 @@
 #pragma once
 
-#include "character/key.hpp"
-#include "formula/formulaContext.hpp"
 #include "widget.hpp"
 
+#include "combo/source.hpp"
+#include "functional"
 
 namespace UI {
-	struct ComboList {
+	struct NodePicker {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
-		Formula::Context ctx;
+		std::function<void(Combo::Source::Types)> onSelect;
 
 		struct Storage {
 			// Data

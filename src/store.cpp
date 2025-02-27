@@ -67,6 +67,106 @@ void Store::deserializeOptions(const std::vector<Serialization::Save::OptionType
 	}
 }
 
+auto serializeCombos(const std::list<Combo::Combo> &combos) {
+	std::vector<Serialization::Save::Combo> ret;
+
+	for (const auto &combo: combos) {
+		std::vector<Serialization::Save::ComboEntry> comboEntries;
+
+		for (const auto &entry: combo.entries) {
+			comboEntries.emplace_back(Serialization::Save::ComboEntry{
+				.multiplier = entry.multiplier,
+				.reaction = entry.reaction,
+				.source = [&]() -> Serialization::Save::ComboSourceTypes {
+					Serialization::Save::ComboSourceTypes ret;
+
+					return std::visit(
+						Utils::overloaded{
+							[](const Combo::Source::Character &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::CharacterCombo{
+									.key = source.key,
+									.slot = source.slot,
+									.index = source.index,
+								};
+							},
+							[](const Combo::Source::Weapon &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::WeaponCombo{
+									.key = source.key,
+									.index = source.index,
+								};
+							},
+							[](const Combo::Source::Artifact &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::ArtifactCombo{
+									.key = source.key,
+									.slot = source.slot,
+									.index = source.index,
+								};
+							},
+						},
+						entry.source
+					);
+
+					return ret;
+				}(),
+			});
+		}
+
+		ret.emplace_back(Serialization::Save::Combo{
+			.name = combo.name,
+			.entries = comboEntries,
+		});
+	}
+
+	return ret;
+}
+
+std::list<Combo::Combo> deserializeCombo(const std::vector<Serialization::Save::Combo> &combos) {
+	std::list<Combo::Combo> ret;
+
+	for (const auto &combo: combos) {
+		std::list<Combo::Entry> entries;
+
+		for (const auto &entry: combo.entries) {
+			entries.emplace_back(Combo::Entry{
+				.multiplier = entry.multiplier,
+				.reaction = entry.reaction,
+				.source = std::visit(
+					Utils::overloaded{
+						[](const Serialization::Save::CharacterCombo &source) -> Combo::Source::Types {
+							return Combo::Source::Character{
+								.key = source.key,
+								.slot = source.slot,
+								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::WeaponCombo &source) -> Combo::Source::Types {
+							return Combo::Source::Weapon{
+								.key = source.key,
+								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::ArtifactCombo &source) -> Combo::Source::Types {
+							return Combo::Source::Artifact{
+								.key = source.key,
+								.slot = source.slot,
+								.index = source.index,
+							};
+						},
+					},
+					entry.source
+				),
+			});
+		}
+
+		ret.emplace_back(Combo::Combo{
+			.name = combo.name,
+			.entries = entries,
+		});
+	}
+
+	return ret;
+}
+
 Serialization::Save::Save Store::save() {
 	std::vector<Serialization::Save::Artifact> retArtifacts{};
 	retArtifacts.reserve(::Store::artifacts.size());
@@ -128,6 +228,7 @@ Serialization::Save::Save Store::save() {
 			.options = serializeOptions(characterInstance.loadout.character.options),
 			// std::vector<ArtifactOptions> artifactOptions;
 			.artifactOptions = serializeOptions(characterInstance.loadout.artifact.options),
+			.combos = serializeCombos(characterInstance.combos),
 		});
 	}
 
@@ -221,6 +322,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		charInstance.loadout.artifact.equipped.circlet = character.artifactCirclet;
 		deserializeOptions(character.options, charInstance.loadout.character.options);
 		deserializeOptions(character.artifactOptions, charInstance.loadout.artifact.options);
+		charInstance.combos = deserializeCombo(character.combos);
 
 		charInstance.getArtifactStats();
 	}

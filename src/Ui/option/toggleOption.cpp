@@ -32,10 +32,10 @@ struct ToggleBox {
 					w.customState.add(switchEvent.observe([&w](bool active) {
 						auto &box = w.as<Box::Impl>();
 						if (active) {
-							box.setBorderWidth(glm::vec4{0.f});
+							box.setBorderWidth(0.f);
 							box.setColor(Color{0x60CDFFFF});
 						} else {
-							box.setBorderWidth(glm::vec4{1.f});
+							box.setBorderWidth(1.f);
 							box.setColor(Color{0.f, 0.f, 0.f, 0.1f});
 						}
 					}));

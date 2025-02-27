@@ -19,7 +19,7 @@ namespace Combo::Source {
 		Node::CharacterSlot slot;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
+		[[nodiscard]] const Node::Instance &resolve() const {
 			return ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 		}
 	};
@@ -28,7 +28,7 @@ namespace Combo::Source {
 		::Weapon::DataKey key;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
+		[[nodiscard]] const Node::Instance &resolve() const {
 			return ::Weapon::list.at(key).data.nodes.at(index);
 		}
 	};
@@ -38,7 +38,7 @@ namespace Combo::Source {
 		::Artifact::SetSlot slot;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve(const Formula::Context &context) const {
+		[[nodiscard]] const Node::Instance &resolve() const {
 			return ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
 		}
 	};

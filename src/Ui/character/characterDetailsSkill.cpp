@@ -19,7 +19,6 @@ UI::DetailsSkill::operator squi::Child() const {
 		if (!nodes.empty()) {
 			Children ret2{};
 			for (const auto &node: nodes) {
-				// FIXME: transparent is gonna be off if one of the nodes is missing
 				if (node.formula.eval(ctx) == 0.f) continue;
 				ret2.emplace_back(UI::Tooltip{
 					.message = node.formula.print(ctx),

@@ -20,6 +20,7 @@ namespace Reaction {
 		// The final element applied that will trigger this reaction
 		Misc::Element trigger{};
 		Misc::Reaction reaction{};
+		Misc::NodeReaction nodeReaction{};
 		decltype(makeAmplifyingFormula(std::declval<float>(), std::declval<Misc::Reaction>())) formula = makeAmplifyingFormula(multiplier, reaction);
 	};
 
@@ -30,24 +31,28 @@ namespace Reaction {
 				.multiplier = 2.f,
 				.trigger = Misc::Element::hydro,
 				.reaction = Misc::Reaction::vape,
+				.nodeReaction = Misc::NodeReaction::forwardVape,
 			};
 			static constexpr auto reverseVape = Reaction::Amplifying{
 				.name = "Reverse Vape",
 				.multiplier = 1.5f,
 				.trigger = Misc::Element::pyro,
 				.reaction = Misc::Reaction::vape,
+				.nodeReaction = Misc::NodeReaction::reverseVape,
 			};
 			static constexpr auto forwardMelt = Reaction::Amplifying{
 				.name = "Forward Melt",
 				.multiplier = 2.f,
 				.trigger = Misc::Element::pyro,
 				.reaction = Misc::Reaction::melt,
+				.nodeReaction = Misc::NodeReaction::forwardMelt,
 			};
 			static constexpr auto reverseMelt = Reaction::Amplifying{
 				.name = "Reverse Melt",
 				.multiplier = 1.5f,
 				.trigger = Misc::Element::cryo,
 				.reaction = Misc::Reaction::melt,
+				.nodeReaction = Misc::NodeReaction::reverseMelt,
 			};
 		};
 	}// namespace List

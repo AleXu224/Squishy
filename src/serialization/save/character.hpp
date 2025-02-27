@@ -4,6 +4,7 @@
 #include "cereal/cereal.hpp"
 #include "cereal/types/vector.hpp"// IWYU pragma: export
 #include "character/key.hpp"
+#include "combo.hpp"
 #include "option.hpp"
 #include "weapon/key.hpp"
 
@@ -26,6 +27,7 @@ namespace Serialization::Save {
 		std::optional<::Artifact::InstanceKey> artifactCirclet;
 		std::vector<Serialization::Save::OptionTypes> options;
 		std::vector<Serialization::Save::OptionTypes> artifactOptions;
+		std::vector<Serialization::Save::Combo> combos;
 
 		template<class Archive>
 		void serialize(Archive &ar) {
@@ -45,7 +47,8 @@ namespace Serialization::Save {
 				CEREAL_NVP(artifactGoblet),
 				CEREAL_NVP(artifactCirclet),
 				CEREAL_NVP(options),
-				CEREAL_NVP(artifactOptions)
+				CEREAL_NVP(artifactOptions),
+				CEREAL_NVP(combos)
 			);
 		}
 	};

@@ -1,11 +1,15 @@
 #pragma once
 
 #include "entry.hpp"
-#include "vector"
+#include "list"
+#include "observer.hpp"
+
 
 
 namespace Combo {
 	struct Combo {
-		std::vector<Entry> entries;
+		std::string name;
+		squi::VoidObservable updateEvent{};
+		std::list<Entry> entries{};
 	};
 }// namespace Combo

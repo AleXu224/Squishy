@@ -6,7 +6,7 @@
 
 
 namespace UI {
-	struct ComboList {
+	struct ComboDisplay {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;

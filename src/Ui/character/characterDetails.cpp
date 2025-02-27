@@ -1,7 +1,7 @@
 #include "characterDetails.hpp"
 
 #include "Ui/character/characterDetailsSkill.hpp"
-#include "Ui/combo/combos.hpp"
+#include "Ui/combo/comboDisplay.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
@@ -57,7 +57,10 @@ namespace {
 
 		auto transformativeReactions = UI::CharacterTransformativeReactions{.ctx = ctx};
 
-		auto combos = UI::Combos{};
+		auto combos = UI::ComboDisplay{
+			.characterKey = characterKey,
+			.ctx = ctx,
+		};
 
 		auto characterStats = UI::CharacterStats{
 			.ctx = ctx,
