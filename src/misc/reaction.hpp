@@ -24,20 +24,43 @@ namespace Misc {
 		hyperbloom,
 	};
 
-	static inline std::vector<Reaction> reactions{
-		Reaction::vape,
-		Reaction::melt,
-		Reaction::aggravate,
-		Reaction::spread,
-		Reaction::burning,
-		Reaction::superconduct,
-		Reaction::swirl,
-		Reaction::electroCharged,
-		Reaction::shattered,
-		Reaction::overloaded,
-		Reaction::bloom,
-		Reaction::burgeon,
-		Reaction::hyperbloom,
+	enum class NodeReaction : uint8_t {
+		none,
+
+		forwardVape,
+		forwardMelt,
+		reverseVape,
+		reverseMelt,
+
+		aggravate,
+		spread,
+	};
+
+	static inline std::vector<Reaction>
+		reactions{
+			Reaction::vape,
+			Reaction::melt,
+			Reaction::aggravate,
+			Reaction::spread,
+			Reaction::burning,
+			Reaction::superconduct,
+			Reaction::swirl,
+			Reaction::electroCharged,
+			Reaction::shattered,
+			Reaction::overloaded,
+			Reaction::bloom,
+			Reaction::burgeon,
+			Reaction::hyperbloom,
+		};
+
+	static inline std::vector<NodeReaction> nodeReactions{
+		NodeReaction::none,
+		NodeReaction::forwardVape,
+		NodeReaction::forwardMelt,
+		NodeReaction::reverseVape,
+		NodeReaction::reverseMelt,
+		NodeReaction::aggravate,
+		NodeReaction::spread,
 	};
 }// namespace Misc
 

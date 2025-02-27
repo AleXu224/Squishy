@@ -20,6 +20,11 @@ namespace Store {
 	inline std::unordered_map<Weapon::InstanceKey, Weapon::Instance> weapons{};
 	inline std::unordered_map<Artifact::InstanceKey, Artifact::Instance> artifacts{};
 
+	static inline Team::Instance defaultTeam{
+		.instanceKey{std::numeric_limits<uint32_t>::max()},
+		.name = "Default team",
+	};
+
 	inline uint32_t lastArtifactId = 1;
 	inline uint32_t lastWeaponId = 1;
 	inline uint32_t lastCharacterId = 1;

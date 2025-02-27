@@ -19,4 +19,14 @@ namespace Artifact {
 		Slot::goblet,
 		Slot::circlet,
 	};
+
+	enum class SetSlot : uint8_t {
+		twoPiece,
+		fourPiece,
+	};
+
+	static inline std::vector<SetSlot> setSlots{
+		SetSlot::twoPiece,
+		SetSlot::fourPiece,
+	};
 }// namespace Artifact

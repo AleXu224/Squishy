@@ -20,6 +20,7 @@ namespace Reaction {
 		float multiplier{};
 		Misc::Element trigger{};
 		Misc::Reaction reaction{};
+		Misc::NodeReaction nodeReaction{};
 		decltype(makeAdditiveFormula(std::declval<float>(), std::declval<Misc::Reaction>())) formula = makeAdditiveFormula(multiplier, reaction);
 	};
 
@@ -30,12 +31,14 @@ namespace Reaction {
 				.multiplier = 1.15f,
 				.trigger = Misc::Element::electro,
 				.reaction = Misc::Reaction::aggravate,
+				.nodeReaction = Misc::NodeReaction::aggravate,
 			};
 			static constexpr auto spread = Reaction::Additive{
 				.name = "Spread",
 				.multiplier = 1.25f,
 				.trigger = Misc::Element::dendro,
 				.reaction = Misc::Reaction::spread,
+				.nodeReaction = Misc::NodeReaction::spread,
 			};
 		};
 	}// namespace List

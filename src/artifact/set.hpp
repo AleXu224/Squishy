@@ -1,6 +1,7 @@
 #pragma once
 
 #include "artifact/key.hpp"
+#include "artifact/slot.hpp"
 #include "functional"
 #include "option/option.hpp"
 #include "setBonus.hpp"
@@ -10,6 +11,17 @@ namespace Artifact {
 		struct Setup {
 			SetBonus twoPc;
 			SetBonus fourPc;
+
+			[[nodiscard]] const SetBonus &fromSetSlot(SetSlot slot) const {
+				switch (slot) {
+					case Artifact::SetSlot::twoPiece:
+						return twoPc;
+					case Artifact::SetSlot::fourPiece:
+						return fourPc;
+				}
+
+				std::unreachable();
+			}
 		};
 
 		SetKey key{};

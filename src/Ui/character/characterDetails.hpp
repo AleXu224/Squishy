@@ -12,7 +12,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey{};
-		Team::InstanceKey teamKey{};
+		std::optional<Team::InstanceKey> teamKey{};
 		Enemy::Key enemyKey{};
 
 		operator squi::Child() const;
