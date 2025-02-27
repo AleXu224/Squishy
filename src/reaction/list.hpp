@@ -15,7 +15,7 @@ namespace Reaction::List {
 		&Reaction::List::Amplifying::reverseMelt,
 	};
 
-	[[nodiscard]] std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> fromNodeReaction(Misc::NodeReaction reaction) {
+	[[nodiscard]] static inline std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> fromNodeReaction(Misc::NodeReaction reaction) {
 		switch (reaction) {
 			case Misc::NodeReaction::none:
 				return &Reaction::List::none;

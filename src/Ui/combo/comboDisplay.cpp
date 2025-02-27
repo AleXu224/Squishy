@@ -1,7 +1,14 @@
 #include "comboDisplay.hpp"
+#include "Ui/elementToColor.hpp"
 #include "Ui/utils/displayCard.hpp"
+#include "Ui/utils/skillEntry.hpp"
+#include "Ui/utils/trueFalse.hpp"
 #include "button.hpp"
 #include "comboList.hpp"
+#include "ranges"
+#include "rebuilder.hpp"
+#include "store.hpp"
+
 
 using namespace squi;
 
@@ -10,9 +17,24 @@ UI::ComboDisplay::operator squi::Child() const {
 
 	return DisplayCard{
 		.title = "Combos",
-		.children = [](){
+		.children = [characterKey = characterKey, ctx = ctx]() {
 			Children ret;
 
+			auto &character = ::Store::characters.at(characterKey);
+
+			for (const auto &[combo, transparent]: std::views::zip(character.combos, Utils::trueFalse)) {
+				ret.emplace_back(Rebuilder{
+					.rebuildEvent = combo.updateEvent,
+					.buildFunc = [transparent, &combo, ctx]() {
+						return SkillEntry{
+							.isTransparent = transparent,
+							.name = combo.name,
+							.value = combo.eval(ctx),
+							.color = Utils::elementToColor(Misc::Element::physical),
+						};
+					},
+				});
+			}
 
 			return ret;
 		}(),

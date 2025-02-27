@@ -18,7 +18,8 @@ namespace {
 			.children = [&]() {
 				Children ret;
 
-				auto &combos = ::Store::characters.at(characterKey).combos;
+				auto &character = ::Store::characters.at(characterKey);
+				auto &combos = character.combos;
 
 				for (auto &combo: combos) {
 					ret.emplace_back(Expander{
@@ -26,6 +27,7 @@ namespace {
 						.actions{
 							Button{
 								.text = "Edit combo",
+								.style = ButtonStyle::Standard(),
 								.onClick = [&combo, characterKey, ctx, combosModifiedEvent](GestureDetector::Event event) {
 									event.widget.addOverlay(UI::ComboEditor{
 										.combo = combo,
@@ -33,9 +35,20 @@ namespace {
 										.ctx = ctx,
 										.onSave = [&combo, combosModifiedEvent](Combo::Combo newCombo) {
 											combo = newCombo;
+											combo.updateEvent.notify();
 											combosModifiedEvent.notify();
 										},
 									});
+								},
+							},
+							Button{
+								.text = "Delete",
+								.onClick = [&combos, &combo, combosModifiedEvent, &character](auto) {
+									combos.remove_if([&combo](const Combo::Combo &comboComp) {
+										return &comboComp == &combo;
+									});
+									combosModifiedEvent.notify();
+									character.updateEvent.notify();
 								},
 							},
 						},
@@ -58,6 +71,7 @@ UI::ComboList::operator squi::Child() const {
 		.closeEvent = closeEvent,
 		.title = "Combo list",
 		.content = Column{
+			.spacing = 8.f,
 			.children{
 				Button{
 					.text = "Add combo",

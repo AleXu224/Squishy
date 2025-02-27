@@ -44,6 +44,7 @@ UI::TeamDetails::operator squi::Child() const {
 						},
 						.content = CharacterDetails{
 							.characterKey = character->instanceKey,
+							.teamKey = teamKey,
 						},
 					});
 				}

@@ -10,6 +10,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
+		const Formula::Context &ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 
 		struct Storage {

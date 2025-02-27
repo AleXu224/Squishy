@@ -9,6 +9,7 @@
 #include "reaction/list.hpp"
 #include "rebuilder.hpp"
 #include "row.hpp"
+#include "textBox.hpp"
 
 
 using namespace squi;
@@ -137,6 +138,14 @@ UI::ComboEditor::operator squi::Child() const {
 		.content = Column{
 			.spacing = 4.f,
 			.children{
+				TextBox{
+					.text = storage->combo.name,
+					.controller{
+						.onChange = [storage](std::string_view newText) {
+							storage->combo.name = newText;
+						},
+					},
+				},
 				Rebuilder{
 					.rebuildEvent = nodeListChangedEvent,
 					.buildFunc = std::bind(comboEditorEntries, storage, ctx, nodeListChangedEvent),
@@ -145,9 +154,10 @@ UI::ComboEditor::operator squi::Child() const {
 					.children{
 						Button{
 							.text = "Add node",
-							.onClick = [characterKey = characterKey, storage, nodeListChangedEvent](GestureDetector::Event event) {
+							.onClick = [characterKey = characterKey, storage, nodeListChangedEvent, ctx = ctx](GestureDetector::Event event) {
 								event.widget.addOverlay(NodePicker{
 									.characterKey = characterKey,
+									.ctx = ctx,
 									.onSelect = [storage, nodeListChangedEvent](Combo::Source::Types source) {
 										storage->combo.entries.emplace_back(Combo::Entry{
 											.multiplier = 1.f,
