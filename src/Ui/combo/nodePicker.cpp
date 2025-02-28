@@ -1,12 +1,10 @@
 #include "nodePicker.hpp"
-#include "Ui/elementToColor.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
 #include "container.hpp"
 #include "dialog.hpp"
-#include "formula/element.hpp"
 #include "node/node.hpp"
 #include "ranges"
 #include "stats/loadout.hpp"
@@ -48,27 +46,7 @@ namespace {
 					.child = Text{
 						.text = node.name,
 						.lineWrap = true,
-						.color = [&]() {
-							Color ret;
-
-							std::visit(
-								Utils::overloaded{
-									[&](const Node::AtkData &data) {
-										auto element = Formula::getElement(data.source, data.element, ctx);
-										ret = Utils::elementToColor(element);
-									},
-									[&](const Node::HealData &data) {
-										ret = Utils::elementToColor(Misc::Element::dendro);
-									},
-									[&](const Node::InfoData &data) {
-										ret = data.color;
-									},
-								},
-								node.data
-							);
-
-							return ret;
-						}(),
+						.color = Node::getColor(node.data, ctx),
 					},
 				},
 			};

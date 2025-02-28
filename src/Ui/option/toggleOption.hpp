@@ -3,6 +3,7 @@
 #include "widget.hpp"
 
 #include "character/key.hpp"
+#include "team/key.hpp"
 #include "option/boolean.hpp"
 
 
@@ -11,7 +12,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		Option::Boolean &option;
-		Character::InstanceKey characterKey{};
+		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
 		const Formula::Context &ctx;
 
 		struct Storage {

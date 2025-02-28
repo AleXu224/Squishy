@@ -1,6 +1,7 @@
 #pragma once
 
 #include "character/key.hpp"
+#include "team/key.hpp"
 
 #include "formula/constant.hpp"
 #include "formula/formulaContext.hpp"
@@ -72,7 +73,7 @@ namespace UI {
 		// Args
 		std::string_view name;
 		std::string_view subtitle{};
-		Character::InstanceKey characterKey{};
+		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
 		const Formula::Context &ctx;
 		const std::vector<Node::Types> &nodes;
 		std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;

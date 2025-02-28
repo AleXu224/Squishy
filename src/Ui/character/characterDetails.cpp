@@ -69,11 +69,13 @@ namespace {
 
 		auto weaponOpts = makeOpts(character.loadout.weapon.options);
 
+		std::variant<Character::InstanceKey, Team::InstanceKey> keyParam = characterKey;
+		if (teamKey.has_value()) keyParam = teamKey.value();
 
 		auto weaponStats = UI::DetailsSkill{
 			.name = character.loadout.weapon.data->name,
 			.subtitle = "Weapon",
-			.characterKey = characterKey,
+			.instanceKey = keyParam,
 			.ctx = ctx,
 			.nodes = character.loadout.weapon.data->data.nodes,
 			.options = weaponOpts,
@@ -92,7 +94,7 @@ namespace {
 								 ? UI::DetailsSkill{
 									   .name = character.loadout.artifact.bonus1->setPtr.name,
 									   .subtitle = "Artifact",
-									   .characterKey = characterKey,
+									   .instanceKey = keyParam,
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
 									   .options = artifactOpts1,
@@ -104,7 +106,7 @@ namespace {
 								 ? UI::DetailsSkill{
 									   .name = character.loadout.artifact.bonus2->setPtr.name,
 									   .subtitle = "Artifact",
-									   .characterKey = characterKey,
+									   .instanceKey = keyParam,
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
 									   .options = artifactOpts2,
@@ -160,7 +162,7 @@ namespace {
 
 			mainContent.emplace_back(UI::DetailsSkill{
 				.name = name,
-				.characterKey = characterKey,
+				.instanceKey = keyParam,
 				.ctx = ctx,
 				.nodes = nodes,
 				.options = options,

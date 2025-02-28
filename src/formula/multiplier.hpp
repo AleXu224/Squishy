@@ -29,7 +29,6 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getMultiplier(talent, values, context);
 			return Utils::printEntryType(multiplier, type);
-			std::unreachable();
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

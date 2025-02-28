@@ -9,6 +9,7 @@
 #include "reaction/list.hpp"
 #include "rebuilder.hpp"
 #include "row.hpp"
+#include "text.hpp"
 #include "textBox.hpp"
 
 
@@ -112,7 +113,10 @@ namespace {
 			};
 
 			ret.emplace_back(Expander{
-				.heading = node.name,
+				.heading = Text{
+					.text = node.name,
+					.color = Node::getColor(node.data, ctx),
+				},
 				.actions{
 					reactionSelector,
 					deleteButton,

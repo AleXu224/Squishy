@@ -28,6 +28,7 @@ namespace Misc {
 		DamageElement::anemo,
 		DamageElement::geo,
 		DamageElement::physical,
+		DamageElement::all,
 		DamageElement::allElemental,
 	};
 }// namespace Misc

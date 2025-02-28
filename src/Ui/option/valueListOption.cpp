@@ -100,17 +100,31 @@ UI::ValueListOption::operator squi::Child() const {
 					},
 				},
 				.style = option.getValue().has_value() ? borderRadiusFunc(ButtonStyle::Accent()) : borderRadiusFunc(ButtonStyle::Standard()),
-				.onClick = [valueChangedEvent, &option = option, characterKey = characterKey](GestureDetector::Event event) {
+				.onClick = [valueChangedEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event event) {
 					event.widget.addOverlay(ContextMenu{
 						.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
 						.items = [&]() {
 							std::vector<ContextMenu::Item> ret{
 								ContextMenu::Item{
 									.text = "Not Active",
-									.content = [valueChangedEvent, &option, characterKey]() {
+									.content = [valueChangedEvent, &option, instanceKey]() {
 										option.currentIndex = std::nullopt;
 										valueChangedEvent.notify(option.getValue());
-										::Store::characters.at(characterKey).updateEvent.notify();
+										std::visit(
+											Utils::overloaded{
+												[](const Character::InstanceKey &key) {
+													::Store::characters.at(key).updateEvent.notify();
+												},
+												[](const Team::InstanceKey &key) {
+													auto &team = ::Store::teams.at(key);
+													for (const auto &character: team.stats.characters) {
+														if (!character) continue;
+														character->updateEvent.notify();
+													}
+												},
+											},
+											instanceKey
+										);
 									},
 								},
 								ContextMenu::Item{
@@ -122,10 +136,24 @@ UI::ValueListOption::operator squi::Child() const {
 							for (const auto &[index, item]: std::views::enumerate(option.values)) {
 								ret.emplace_back(ContextMenu::Item{
 									.text = std::format("{}", item),
-									.content = [index, valueChangedEvent, &option, characterKey]() {
+									.content = [index, valueChangedEvent, &option, instanceKey]() {
 										option.currentIndex = index;
 										valueChangedEvent.notify(option.getValue());
-										::Store::characters.at(characterKey).updateEvent.notify();
+										std::visit(
+											Utils::overloaded{
+												[](const Character::InstanceKey &key) {
+													::Store::characters.at(key).updateEvent.notify();
+												},
+												[](const Team::InstanceKey &key) {
+													auto &team = ::Store::teams.at(key);
+													for (const auto &character: team.stats.characters) {
+														if (!character) continue;
+														character->updateEvent.notify();
+													}
+												},
+											},
+											instanceKey
+										);
 									},
 								});
 							}

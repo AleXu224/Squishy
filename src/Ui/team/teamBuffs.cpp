@@ -42,6 +42,13 @@ UI::TeamBuffs::operator squi::Child() const {
 			Rebuilder{
 				.widget{.width = Size::Wrap},
 				.rebuildEvent = Store::teams.at(instanceKey).updateEvent,
+				.onRebuild = [instanceKey = instanceKey]() {
+					auto &team = Store::teams.at(instanceKey);
+					for (const auto &character: team.stats.characters) {
+						if (!character) continue;
+						character->updateEvent.notify();
+					}
+				},
 				.buildFunc = std::bind(makeContent, instanceKey),
 			},
 		},

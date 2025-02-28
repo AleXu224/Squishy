@@ -25,8 +25,8 @@ const Character::Data Character::Datas::furina{
 		.ascensionStatUpgrade = {0.000, 0.000, 0.048, 0.096, 0.096, 0.144, 0.192},
 	},
 	.setup = []() -> Data::Setup {
-		auto fanfareDmgRatio = Multiplier(LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
-		auto fanfareIncHealRatio = Multiplier(LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
+		auto fanfareDmgRatio = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
+		auto fanfareIncHealRatio = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
 
 		auto fanfareStacks = IfElse{
 			.requirement = character.constellation == 0,
@@ -41,7 +41,7 @@ const Character::Data Character::Datas::furina{
 		auto a4DmgIncrease = Clamp(a4Points * 0.007f, 0.f, 0.28f);
 
 		auto c2FanfareAboveLimit = Requires(
-			Requirement::constellation2 && GetInt("furinaFanfareC1") > 0,
+			Requirement::constellation2 && GetInt("furinaFanfareC1") >= 400,
 			GetFloat("furinaAboveFanfareC2")
 		);
 		auto c2HpIncrease = Clamp(c2FanfareAboveLimit * Constant(0.0035f), 0.f, 1.4f);
@@ -125,7 +125,7 @@ const Character::Data Character::Datas::furina{
 					Option::ValueList{
 						.key = "furinaAboveFanfareC2",
 						.prefix = "Fanfare above limit",
-						.displayCondition = GetInt("furinaFanfareC1") > 0,
+						.displayCondition = GetInt("furinaFanfareC1") >= 400,
 						.values = std::views::iota(1)
 								| std::views::transform([](auto &&val) {
 									  return val * 50.f;
@@ -160,6 +160,10 @@ const Character::Data Character::Datas::furina{
 			},
 			.nodes{
 				.normal{
+					Node::Info{
+						.name = "TT",
+						.formula = fanfareStacks * fanfareDmgRatio,
+					},
 					Node::Atk{
 						.name = "1-Hit DMG",
 						.source = Misc::AttackSource::normal,

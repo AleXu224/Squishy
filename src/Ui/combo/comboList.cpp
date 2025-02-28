@@ -15,6 +15,7 @@ using namespace squi;
 namespace {
 	[[nodiscard]] Child comboListBuilder(const Character::InstanceKey &characterKey, const Formula::Context &ctx, VoidObservable combosModifiedEvent) {
 		return Column{
+			.spacing = 4.f,
 			.children = [&]() {
 				Children ret;
 

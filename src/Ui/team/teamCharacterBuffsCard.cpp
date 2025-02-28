@@ -32,7 +32,7 @@ namespace {
 								if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
 								ret.emplace_back(UI::ToggleOption{
 									.option = opt,
-									.characterKey = character.instanceKey,
+									.instanceKey = team.instanceKey,
 									.ctx = ctx,
 								});
 							},
@@ -40,7 +40,7 @@ namespace {
 								if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
 								ret.emplace_back(UI::ValueListOption{
 									.option = opt,
-									.characterKey = character.instanceKey,
+									.instanceKey = team.instanceKey,
 									.ctx = ctx,
 								});
 							},

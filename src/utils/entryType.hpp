@@ -14,7 +14,7 @@ namespace Utils {
 	[[nodiscard]] static inline std::string printEntryType(float value, EntryType type) {
 		switch (type) {
 			case EntryType::multiplier:
-				return Formula::Percentage({}, value, false);
+				return Formula::Percentage({}, value, true);
 			case EntryType::seconds:
 				return std::format("{:.1f}s", value);
 			case EntryType::points:

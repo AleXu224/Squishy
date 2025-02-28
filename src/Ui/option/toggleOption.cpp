@@ -88,11 +88,25 @@ UI::ToggleOption::operator squi::Child() const {
 						},
 					},
 					.style = ButtonStyle::Subtle(),
-					.onClick = [storage, switchEvent, &option = option, characterKey = characterKey](GestureDetector::Event) {
+					.onClick = [storage, switchEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event) {
 						storage->active = !storage->active;
 						option.active = storage->active;
 						switchEvent.notify(storage->active);
-						::Store::characters.at(characterKey).updateEvent.notify();
+						std::visit(
+							Utils::overloaded{
+								[](const Character::InstanceKey &key) {
+									::Store::characters.at(key).updateEvent.notify();
+								},
+								[](const Team::InstanceKey &key) {
+									auto &team = ::Store::teams.at(key);
+									for (const auto &character: team.stats.characters) {
+										if (!character) continue;
+										character->updateEvent.notify();
+									}
+								},
+							},
+							instanceKey
+						);
 					},
 					.child = Row{
 						.alignment = squi::Row::Alignment::center,
