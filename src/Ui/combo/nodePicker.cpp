@@ -94,6 +94,7 @@ UI::NodePicker::operator squi::Child() const {
 					Children entryRet{};
 					const auto &nodeList = character.loadout.character.data.data.nodes.fromEntry(entry);
 					for (const auto &[index, node]: nodeList | std::views::enumerate) {
+						if (!Node::getOptimizable(node.data)) continue;
 						entryRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = Combo::Source::Character{
@@ -117,6 +118,7 @@ UI::NodePicker::operator squi::Child() const {
 
 				Children weaponRet{};
 				for (const auto &[index, node]: character.loadout.weapon.data->data.nodes | std::views::enumerate) {
+					if (!Node::getOptimizable(node.data)) continue;
 					weaponRet.emplace_back(NodePickerEntry{
 						.node = node,
 						.source = Combo::Source::Weapon{

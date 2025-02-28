@@ -251,11 +251,13 @@ const Character::Data Character::Datas::nahida{
 					Node::Info{
 						.name = "Tri-Karma Purification Crit Rate",
 						.type = EntryType::multiplier,
+						.optimizable = true,
 						.formula = a4TriKarmaCr,
 					},
 					Node::Info{
 						.name = "Tri-Karma Purification DMG Increase",
 						.type = EntryType::multiplier,
+						.optimizable = true,
 						.formula = a4TriKarmaDmg,
 					},
 				},

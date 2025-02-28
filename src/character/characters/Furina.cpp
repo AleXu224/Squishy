@@ -160,10 +160,6 @@ const Character::Data Character::Datas::furina{
 			},
 			.nodes{
 				.normal{
-					Node::Info{
-						.name = "TT",
-						.formula = fanfareStacks * fanfareDmgRatio,
-					},
 					Node::Atk{
 						.name = "1-Hit DMG",
 						.source = Misc::AttackSource::normal,
@@ -323,6 +319,7 @@ const Character::Data Character::Datas::furina{
 					Node::Info{
 						.name = "Salon Members' DMG Increase",
 						.type = EntryType::multiplier,
+						.optimizable = true,
 						.formula = a4DmgIncrease,
 					},
 				},

@@ -74,6 +74,7 @@ const Character::Data Character::Datas::cyno{
 							Node::Info{
 								.name = "Chasmic Soulfarer DMG Increase",
 								.type = EntryType::multiplier,
+								.optimizable = true,
 								.formula = a1Skill,
 							},
 						},
@@ -205,10 +206,12 @@ const Character::Data Character::Datas::cyno{
 				.passive2{
 					Node::Info{
 						.name = "Pactsworn Pathclearer's Normal Attack DMG Increase",
+						.optimizable = true,
 						.formula = a4BurstBonus,
 					},
 					Node::Info{
 						.name = "Duststalker Bolt DMG Increase",
+						.optimizable = true,
 						.formula = a4BoltBbonus,
 					},
 				},

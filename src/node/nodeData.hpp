@@ -19,6 +19,7 @@ namespace Node {
 	struct InfoData {
 		Utils::EntryType type;
 		squi::Color color;
+		bool optimizable;
 	};
 
 	struct HealData {};
@@ -43,4 +44,5 @@ namespace Node {
 	}
 
 	[[nodiscard]] squi::Color getColor(const Data &data, const Formula::Context &ctx);
+	[[nodiscard]] bool getOptimizable(const Data &data);
 }// namespace Node

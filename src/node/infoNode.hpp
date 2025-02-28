@@ -12,6 +12,7 @@ namespace Node {
 		std::string_view name;
 		squi::Color color = Utils::elementToColor(Misc::Element::physical);
 		Utils::EntryType type = Utils::EntryType::points;
+		bool optimizable = false;
 		Formula::FloatNode formula;
 
 		Formula::FloatNode _formula = formula;
@@ -19,6 +20,7 @@ namespace Node {
 		Data _data = InfoData{
 			.type = type,
 			.color = color,
+			.optimizable = optimizable,
 		};
 	};
 }// namespace Node

@@ -19,3 +19,19 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 		data
 	);
 }
+bool Node::getOptimizable(const Data &data) {
+	return std::visit(
+		Utils::overloaded{
+			[&](const AtkData &node) {
+				return true;
+			},
+			[&](const InfoData &info) {
+				return info.optimizable;
+			},
+			[&](const HealData &) {
+				return true;
+			},
+		},
+		data
+	);
+}
