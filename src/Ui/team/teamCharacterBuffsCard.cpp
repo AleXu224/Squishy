@@ -1,4 +1,5 @@
 #include "teamCharacterBuffsCard.hpp"
+#include "Ui/character/characterCardBanner.hpp"
 #include "Ui/option/toggleOption.hpp"
 #include "Ui/option/valueListOption.hpp"
 #include "Ui/utils/displayCard.hpp"
@@ -15,6 +16,11 @@ namespace {
 	Child teamCharacterBuffsCardBuildFunc(Character::Instance &character, Team::Instance &team) {
 		return UI::DisplayCard{
 			.title = character.loadout.character.data.name,
+			.children{
+				UI::CharacterCardBanner{
+					.characterKey = character.instanceKey,
+				},
+			},
 			.footer = [&character = character, &team = team]() {
 				Children ret{};
 
