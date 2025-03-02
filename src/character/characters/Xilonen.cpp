@@ -4,6 +4,7 @@
 
 const Character::Data Character::Datas::xilonen{
 	.key{10000103},
+	.goodKey{"Xilonen"},
 	.name{"Xilonen"},
 	.baseStats{
 		.baseHp = 965.713,

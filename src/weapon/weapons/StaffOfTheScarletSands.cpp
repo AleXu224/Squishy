@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 	.key{13511},
+	.goodKey = "StaffOfTheScarletSands",
 	.name = "Staff of the Scarlet Sands",
 	.baseStats{
 		.type = Misc::WeaponType::polearm,

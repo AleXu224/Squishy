@@ -130,31 +130,29 @@ std::list<Combo::Combo> deserializeCombo(const std::vector<Serialization::Save::
 			entries.emplace_back(Combo::Entry{
 				.multiplier = entry.multiplier,
 				.reaction = entry.reaction,
-				.source = std::visit(
-					Utils::overloaded{
-						[](const Serialization::Save::CharacterCombo &source) -> Combo::Source::Types {
-							return Combo::Source::Character{
-								.key = source.key,
-								.slot = source.slot,
-								.index = source.index,
-							};
-						},
-						[](const Serialization::Save::WeaponCombo &source) -> Combo::Source::Types {
-							return Combo::Source::Weapon{
-								.key = source.key,
-								.index = source.index,
-							};
-						},
-						[](const Serialization::Save::ArtifactCombo &source) -> Combo::Source::Types {
-							return Combo::Source::Artifact{
-								.key = source.key,
-								.slot = source.slot,
-								.index = source.index,
-							};
-						},
-					},
-					entry.source
-				),
+				.source = std::visit(Utils::overloaded{
+										 [](const Serialization::Save::CharacterCombo &source) -> Combo::Source::Types {
+											 return Combo::Source::Character{
+												 .key = source.key,
+												 .slot = source.slot,
+												 .index = source.index,
+											 };
+										 },
+										 [](const Serialization::Save::WeaponCombo &source) -> Combo::Source::Types {
+											 return Combo::Source::Weapon{
+												 .key = source.key,
+												 .index = source.index,
+											 };
+										 },
+										 [](const Serialization::Save::ArtifactCombo &source) -> Combo::Source::Types {
+											 return Combo::Source::Artifact{
+												 .key = source.key,
+												 .slot = source.slot,
+												 .index = source.index,
+											 };
+										 },
+									 },
+									 entry.source),
 			});
 		}
 
@@ -324,7 +322,7 @@ void Store::load(const Serialization::Save::Save &save) {
 		deserializeOptions(character.artifactOptions, charInstance.loadout.artifact.options);
 		charInstance.combos = deserializeCombo(character.combos);
 
-		charInstance.getArtifactStats();
+		charInstance.loadout.artifact.refreshStats();
 	}
 
 	uint32_t maxTeamKey = 1;

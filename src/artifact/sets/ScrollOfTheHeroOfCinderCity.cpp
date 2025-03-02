@@ -17,6 +17,7 @@ static inline auto scrollOfTheHeroStrings = []() {
 
 const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 	.key{15037},
+	.goodKey = "ScrollOfTheHeroOfCinderCity",
 	.name = "Scroll of the Hero of Cinder City",
 	.setup = []() -> Set::Setup {
 		auto anyOpt1 = IsActive(scrollOfTheHeroStrings.at(Misc::Element::pyro).at(0).c_str())

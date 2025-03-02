@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::beginnerSProtector{
 	.key{13101},
+	.goodKey = "BeginnersProtector",
 	.name = "Beginner's Protector",
 	.baseStats{
 		.type = Misc::WeaponType::polearm,

@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::splendorOfTranquilWaters{
 	.key{11513},
+	.goodKey = "SplendorOfTranquilWaters",
 	.name = "Splendor of Tranquil Waters",
 	.baseStats{
 		.type = Misc::WeaponType::sword,

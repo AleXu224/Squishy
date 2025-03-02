@@ -42,6 +42,17 @@ target_link_libraries(squishy_lib PUBLIC glt)
 find_package(cereal CONFIG REQUIRED)
 target_link_libraries(squishy_lib PRIVATE cereal::cereal)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  glaze
+  GIT_REPOSITORY https://github.com/stephenberry/glaze.git
+  GIT_TAG main
+  GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(glaze)
+target_link_libraries(squishy_lib PUBLIC glaze::glaze)
+
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
 

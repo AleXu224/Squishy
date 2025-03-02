@@ -10,7 +10,7 @@ void Artifact::Instance::unequip() {
 
 	equippedCharacter.clear();
 
-	character.getArtifactStats();
+	character.loadout.artifact.refreshStats();
 
 	character.updateEvent.notify();
 	this->updateEvent.notify();
@@ -34,7 +34,7 @@ void Artifact::Instance::equipOn(Character::InstanceKey characterKey) {
 	slot = this->key;
 	this->equippedCharacter = characterKey;
 
-	character.getArtifactStats();
+	character.loadout.artifact.refreshStats();
 
 	character.updateEvent.notify();
 	this->updateEvent.notify();

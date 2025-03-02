@@ -4,6 +4,7 @@
 
 const Artifact::Set Artifact::Sets::deepwoodMemories{
 	.key{15025},
+	.goodKey = "DeepwoodMemories",
 	.name = "Deepwood Memories",
 	.setup = []() -> Set::Setup {
 		auto enemyHit = IsActive("deepwoodEnemyHit");

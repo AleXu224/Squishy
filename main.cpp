@@ -10,7 +10,22 @@
 #include "window.hpp"
 #include <GLFW/glfw3.h>
 
+#include "glaze/glaze.hpp"
+#include "serialization/good/IGOOD.hpp"
+
 int main() {
+	auto file = std::ifstream("data.json");
+	if (file.is_open()) {
+		std::stringstream ss{};
+		ss << file.rdbuf();
+		Serialization::Good::IGOOD dst;
+		auto d = glz::read<glz::opts{.error_on_unknown_keys = false}>(dst, ss.str());
+		if (!d) {
+			std::println("{}", dst.format);
+		}
+	}
+
+
 	Weapon::initWeapons();
 	Character::initCharacters();
 	Artifact::initArtifacts();

@@ -4,6 +4,7 @@
 
 const Character::Data Character::Datas::cyno{
 	.key{10000071},
+	.goodKey = "Cyno",
 	.name{"Cyno"},
 	.baseStats{
 		.baseHp = 972.3864,

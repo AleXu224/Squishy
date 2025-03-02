@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::wasterGreatsword{
 	.key{12101},
+	.goodKey = "WasterGreatsword",
 	.name = "Waster Greatsword",
 	.baseStats{
 		.type = Misc::WeaponType::claymore,

@@ -9,5 +9,7 @@ namespace Stats {
         Stats::Character character;
         Stats::Weapon &weapon;
         Stats::Artifact artifact;
+
+        void init();
     };
 }

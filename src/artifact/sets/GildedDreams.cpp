@@ -4,6 +4,7 @@
 
 const Artifact::Set Artifact::Sets::gildedDreams{
 	.key{15026},
+	.goodKey = "GildedDreams",
 	.name = "Gilded Dreams",
 	.setup = []() -> Set::Setup {
 		auto sameElementAtk = 0.14f * GetFloat("gildedSameElement");

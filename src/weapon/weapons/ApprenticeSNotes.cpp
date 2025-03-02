@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::apprenticeSNotes{
 	.key{14101},
+	.goodKey = "ApprenticesNotes",
 	.name = "Apprentice's Notes",
 	.baseStats{
 		.type = Misc::WeaponType::catalyst,

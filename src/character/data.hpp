@@ -17,6 +17,7 @@ namespace Character {
 		};
 
 		const DataKey key;
+		const std::string_view goodKey;
 		const std::string_view name;
 		const Stats::CharacterBase baseStats;
 		const std::function<Setup(void)> setup;

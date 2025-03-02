@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::hunterSBow{
 	.key{15101},
+	.goodKey = "HuntersBow",
 	.name = "Hunter's Bow",
 	.baseStats{
 		.type = Misc::WeaponType::bow,

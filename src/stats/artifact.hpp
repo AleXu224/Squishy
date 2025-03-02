@@ -129,5 +129,7 @@ namespace Stats {
 			}
 			std::unreachable();
 		}
+
+		void refreshStats();
 	};
 }// namespace Stats

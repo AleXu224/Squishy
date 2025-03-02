@@ -2,7 +2,7 @@
 
 #include "fmt/core.h"
 #include "string"
-
+#include "typeinfo"// IWYU pragma: keep
 
 namespace Utils {
 	template<class T>

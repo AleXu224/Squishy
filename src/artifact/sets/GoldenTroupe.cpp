@@ -4,6 +4,7 @@
 
 const Artifact::Set Artifact::Sets::goldenTroupe{
 	.key{15032},
+	.goodKey = "GoldenTroupe",
 	.name = "Golden Troupe",
 	.setup = []() -> Set::Setup {
 		auto fourPcOffFieldDmg = Requires(
