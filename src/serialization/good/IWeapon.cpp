@@ -11,11 +11,19 @@ std::vector<Serialization::Good::IWeapon> Serialization::Good::IWeapon::fromInst
 				ret.emplace_back(character.loadout.character.data.goodKey);
 		}
 
+		// Add an empty string for unequipped weapons
+		if (ret.empty()) ret.emplace_back("");
+
 		return ret;
 	}();
 
 	std::vector<Serialization::Good::IWeapon> ret;
 
+	// Weapons works differently here compared to how they are in the GOOD format
+	// the GOOD format assumes a weapon can only be equipped in one place, while
+	// here they can be equipped by multiple characters at once
+	// Because of this we have to create multiple copies of this weapon for every
+	// instance of this weapon being equipped
 	for (const auto &goodKey: equippedCharacters) {
 		ret.emplace_back(Serialization::Good::IWeapon{
 			.key{weapon.stats.data->goodKey},
