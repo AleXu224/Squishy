@@ -1,24 +1,13 @@
 #pragma once
 
-#include "cereal/cereal.hpp"
 #include "cstdint"
 #include "functional"
+#include "utils/key.hpp"
 
 
 namespace Team {
-	struct InstanceKey {
-		uint32_t key;
-
-		bool operator==(const InstanceKey &other) const {
-			return key == other.key;
-		}
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key)
-			);
-		}
+	struct InstanceKey : public Utils::GenericKey<InstanceKey> {
+		using Utils::GenericKey<InstanceKey>::GenericKey;
 	};
 }// namespace Team
 

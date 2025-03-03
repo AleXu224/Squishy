@@ -35,6 +35,11 @@ namespace Store {
 	inline squi::VoidObservable characterListUpdateEvent{};
 	inline squi::VoidObservable teamListUpdateEvent{};
 
+	Character::Instance& createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon = {});
+	Weapon::Instance& createWeapon(Weapon::DataKey dataKey);
+	Artifact::Instance& createArtifact(Artifact::SetKey setKey);
+	Team::Instance& createTeam(std::string_view name = "");
+
 	[[nodiscard]] extern auto serializeOptions(auto &&options);
 
 	extern void deserializeOptions(const std::vector<Serialization::Save::OptionTypes> &options, auto &&targetMap);

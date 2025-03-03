@@ -21,7 +21,13 @@ namespace Serialization::Good {
 
 		ICharacter fromInstance(const Character::Instance &character);
 
-		std::expected<Character::Instance, std::string> toInstance() const;
+		std::expected<std::reference_wrapper<Character::Instance>, std::string> createInstance() const;
+
+		std::expected<std::reference_wrapper<const Character::Data>, std::string> getData() const;
+
+		std::expected<std::reference_wrapper<Character::Instance>, std::string> isAlreadyStored() const;
+
+		void writeToInstance(Character::Instance &) const;
 	};
 }// namespace Serialization::Good
 

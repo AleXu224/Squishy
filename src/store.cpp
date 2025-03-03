@@ -4,6 +4,41 @@
 #include "fstream"
 #include "ranges"
 #include "weapon/data.hpp"
+#include "weapon/defaultWeapons.hpp"
+
+Character::Instance &Store::createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon) {
+	auto &data = Character::list.at(dataKey);
+
+	if (!weapon) {
+		weapon = createWeapon(Weapon::defaultWeapons.at(data.baseStats.weaponType)).instanceKey;
+	}
+
+	++lastCharacterId;
+	auto entry = characters.emplace(lastCharacterId, Character::Instance(lastCharacterId, dataKey, weapon));
+
+	return entry.first->second;
+}
+
+Weapon::Instance &Store::createWeapon(Weapon::DataKey dataKey) {
+	++lastWeaponId;
+	auto entry = weapons.emplace(lastWeaponId, Weapon::Instance(dataKey, lastWeaponId));
+
+	return entry.first->second;
+}
+
+Artifact::Instance &Store::createArtifact(Artifact::SetKey setKey) {
+	++lastArtifactId;
+	auto entry = artifacts.emplace(lastArtifactId, Artifact::Instance{.key = lastArtifactId});
+
+	return entry.first->second;
+}
+
+Team::Instance &Store::createTeam(std::string_view name) {
+	++lastTeamId;
+	auto entry = teams.emplace(lastTeamId, Team::Instance{.instanceKey = lastTeamId});
+
+	return entry.first->second;
+}
 
 auto Store::serializeOptions(auto &&options) {
 	std::vector<Serialization::Save::OptionTypes> ret{};

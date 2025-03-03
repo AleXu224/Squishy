@@ -21,7 +21,7 @@ namespace Artifact {
 		SetKey set{};
 		Slot slot{};
 		Stat mainStat{};
-		std::array<std::optional<StatValue>, 4> subStats;
+		std::array<std::optional<StatValue>, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
 		Character::InstanceKey equippedCharacter{};
