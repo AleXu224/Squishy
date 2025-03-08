@@ -19,7 +19,7 @@ namespace Serialization::Good {
 			uint32_t burst;
 		} talent;
 
-		ICharacter fromInstance(const Character::Instance &character);
+		static ICharacter fromInstance(const Character::Instance &character);
 
 		std::expected<std::reference_wrapper<Character::Instance>, std::string> createInstance() const;
 

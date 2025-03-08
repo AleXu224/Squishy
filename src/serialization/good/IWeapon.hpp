@@ -15,7 +15,7 @@ namespace Serialization::Good {
 		std::string location;
 		bool lock = false;
 
-		std::vector<IWeapon> fromInstance(const Weapon::Instance &weapon);
+		static std::vector<IWeapon> fromInstance(const Weapon::Instance &weapon);
 
 		std::expected<std::reference_wrapper<Weapon::Instance>, std::string> createInstance() const;
 

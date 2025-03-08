@@ -39,8 +39,6 @@ target_link_libraries(squishy_lib PUBLIC fmt::fmt)
 add_subdirectory(glt)
 include_directories(glt/include)
 target_link_libraries(squishy_lib PUBLIC glt)
-find_package(cereal CONFIG REQUIRED)
-target_link_libraries(squishy_lib PRIVATE cereal::cereal)
 
 include(FetchContent)
 
