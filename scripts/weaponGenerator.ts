@@ -119,6 +119,7 @@ const retSource: string = `#include "${pascalCase(data.name)}.hpp"
 
 const Weapon::Data Weapon::Datas::${camelCase(data.name)}{
 	.key{${data.key}},
+	.goodKey{"${pascalCase(data.name.replaceAll("'", ""))}"},
 	.name = "${data.name}",
 	.baseStats{
 		.type = ${data.type},

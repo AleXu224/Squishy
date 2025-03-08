@@ -46,6 +46,7 @@ const retSource: string = `#include "${pascalCase(data.name)}.hpp"
 
 const Artifact::Set Artifact::Sets::${camelCase(data.name)}{
 	.key{${data.key}},
+	.goodKey{"${pascalCase(data.name.replaceAll("'", ""))}"},
 	.name = "${data.name}",
 	.setup = []() -> Set::Setup {
 		return Set::Setup{
@@ -64,6 +65,7 @@ const Artifact::Set Artifact::Sets::${camelCase(data.name)}{
 `;
 
 console.log(retHeader);
+console.log(retSource);
 
 console.log(data.iconGoblet);
 console.log(data.iconPlume);
