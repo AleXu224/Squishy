@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cereal/cereal.hpp"
-#include "cereal/types/variant.hpp"// IWYU pragma: export
 #include "misc/reaction.hpp"
 #include "variant"
 
@@ -9,8 +7,11 @@
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "character/key.hpp"
+#include "combo/combo.hpp"
 #include "node/entry.hpp"
 #include "weapon/key.hpp"
+
+#include "glaze/glaze.hpp"// IWYU pragma: keep
 
 
 namespace Serialization::Save {
@@ -18,43 +19,17 @@ namespace Serialization::Save {
 		::Character::DataKey key;
 		Node::CharacterSlot slot;
 		size_t index;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key),
-				CEREAL_NVP(slot),
-				CEREAL_NVP(index)
-			);
-		}
 	};
 
 	struct WeaponCombo {
 		::Weapon::DataKey key;
 		size_t index;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key),
-				CEREAL_NVP(index)
-			);
-		}
 	};
 
 	struct ArtifactCombo {
 		::Artifact::SetKey key;
 		::Artifact::SetSlot slot;
 		size_t index;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key),
-				CEREAL_NVP(slot),
-				CEREAL_NVP(index)
-			);
-		}
 	};
 
 	using ComboSourceTypes = std::variant<CharacterCombo, WeaponCombo, ArtifactCombo>;
@@ -63,27 +38,32 @@ namespace Serialization::Save {
 		float multiplier;
 		Misc::NodeReaction reaction;
 		ComboSourceTypes source;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(multiplier),
-				CEREAL_NVP(reaction),
-				CEREAL_NVP(source)
-			);
-		}
 	};
 
 	struct Combo {
 		std::string name;
 		std::vector<ComboEntry> entries;
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(name),
-				CEREAL_NVP(entries)
-			);
-		}
 	};
+
+	std::vector<Serialization::Save::Combo> comboFromInstance(const std::list<::Combo::Combo> &combos);
+	std::list<::Combo::Combo> comboToInstance(const std::vector<Serialization::Save::Combo> &combos);
 }// namespace Serialization::Save
+template<>
+struct glz::meta<Serialization::Save::CharacterCombo> {
+	using T = Serialization::Save::CharacterCombo;
+	static constexpr auto value = object(&T::key, &T::slot, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::WeaponCombo> {
+	using T = Serialization::Save::WeaponCombo;
+	static constexpr auto value = object(&T::key, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::ArtifactCombo> {
+	using T = Serialization::Save::ArtifactCombo;
+	static constexpr auto value = object(&T::key, &T::slot, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboSourceTypes> {
+	static constexpr std::string_view tag = "type";
+};

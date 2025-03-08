@@ -18,7 +18,5 @@ namespace Character {
 		squi::VoidObservable updateEvent{};
 
 		explicit Instance(const InstanceKey &instanceKey, const DataKey &dataKey, const Weapon::InstanceKey &weaponInstanceKey);
-
-		void getArtifactStats();
 	};
 }// namespace Character

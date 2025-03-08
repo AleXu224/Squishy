@@ -67,17 +67,17 @@ namespace {
 			.characterKey = characterKey,
 		};
 
-		auto weaponOpts = makeOpts(character.loadout.weapon.options);
+		auto weaponOpts = makeOpts(character.loadout.weapon->options);
 
 		std::variant<Character::InstanceKey, Team::InstanceKey> keyParam = characterKey;
 		if (teamKey.has_value()) keyParam = teamKey.value();
 
 		auto weaponStats = UI::DetailsSkill{
-			.name = character.loadout.weapon.data->name,
+			.name = character.loadout.weapon->data->name,
 			.subtitle = "Weapon",
 			.instanceKey = keyParam,
 			.ctx = ctx,
-			.nodes = character.loadout.weapon.data->data.nodes,
+			.nodes = character.loadout.weapon->data->data.nodes,
 			.options = weaponOpts,
 			.modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Weapon::displayStats>>(),
 		};

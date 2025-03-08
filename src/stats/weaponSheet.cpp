@@ -16,7 +16,7 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 	this->stats.baseAtk.modifiers.at(0) = Formula::Prefix(
 		"Weapon Base",
 		Formula::Custom([](const Formula::Context &context) {
-			return getWeaponAtk(context.source.weapon);
+			return getWeaponAtk(*context.source.weapon);
 		})
 	);
 
@@ -25,7 +25,7 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 			"Weapon Base",
 			Formula::Custom(
 				[](const Formula::Context &context) {
-					return getWeaponSubstat(context.source.weapon);
+					return getWeaponSubstat(*context.source.weapon);
 				},
 				Utils::isPercentage(base.subStat.value().stat.stat)
 			)

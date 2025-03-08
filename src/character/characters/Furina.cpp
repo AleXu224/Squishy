@@ -5,6 +5,7 @@
 
 const Character::Data Character::Datas::furina{
 	.key{10000089},
+	.goodKey{"Furina"},
 	.name{"Furina"},
 	.baseStats{
 		.baseHp = 1191.650,

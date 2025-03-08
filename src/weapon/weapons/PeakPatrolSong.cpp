@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::peakPatrolSong{
 	.key{11516},
+	.goodKey = "PeakPatrolSong",
 	.name = "Peak Patrol Song",
 	.baseStats{
 		.type = Misc::WeaponType::sword,

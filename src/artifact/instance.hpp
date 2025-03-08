@@ -21,7 +21,7 @@ namespace Artifact {
 		SetKey set{};
 		Slot slot{};
 		Stat mainStat{};
-		std::array<std::optional<StatValue>, 4> subStats;
+		std::array<std::optional<StatValue>, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
 		Character::InstanceKey equippedCharacter{};
@@ -36,7 +36,7 @@ namespace Artifact {
 			stats = Stats::Sheet<float>();
 
 			// Main stat
-			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(level);
+			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(rarity - 1).at(level);
 
 			// Sub stats
 			for (const auto &subStat: subStats) {

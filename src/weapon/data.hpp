@@ -17,6 +17,7 @@ namespace Weapon {
 		};
 
 		const DataKey key;
+		const std::string_view goodKey;
 		const std::string name;
 		const Stats::WeaponBase baseStats;
 		const std::function<Setup(void)> setup;

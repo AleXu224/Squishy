@@ -1,13 +1,9 @@
 #pragma once
 
-#include "cereal/cereal.hpp"
-#include "cereal/types/array.hpp"   // IWYU pragma: export
-#include "cereal/types/optional.hpp"// IWYU pragma: export
-#include "cereal/types/string.hpp"  // IWYU pragma: export
-
-
 #include "character/key.hpp"
+#include "team/instance.hpp"
 #include "team/key.hpp"
+
 
 #include "array"
 #include "optional"
@@ -19,13 +15,7 @@ namespace Serialization::Save {
 		std::string name;
 		std::array<std::optional<::Character::InstanceKey>, 4> characters;
 
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(instanceKey),
-				CEREAL_NVP(name),
-				CEREAL_NVP(characters)
-			);
-		}
+		static Team fromInstance(const ::Team::Instance &);
+		::Team::Instance toInstance() const;
 	};
 }// namespace Serialization::Save

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "cereal/cereal.hpp"
 #include "cstdint"
 
 namespace Utils {
@@ -13,13 +12,6 @@ namespace Utils {
 
 		bool operator==(const GenericKey &other) const {
 			return key == other.key;
-		}
-
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(key)
-			);
 		}
 
 		void clear() {

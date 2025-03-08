@@ -1,8 +1,7 @@
 #pragma once
 
 #include "artifact/key.hpp"
-#include "cereal/cereal.hpp"
-#include "cereal/types/vector.hpp"// IWYU pragma: export
+#include "character/instance.hpp"
 #include "character/key.hpp"
 #include "combo.hpp"
 #include "option.hpp"
@@ -29,27 +28,7 @@ namespace Serialization::Save {
 		std::vector<Serialization::Save::OptionTypes> artifactOptions;
 		std::vector<Serialization::Save::Combo> combos;
 
-		template<class Archive>
-		void serialize(Archive &ar) {
-			ar(
-				CEREAL_NVP(instanceKey),
-				CEREAL_NVP(dataKey),
-				CEREAL_NVP(weaponInstanceKey),
-				CEREAL_NVP(constellation),
-				CEREAL_NVP(level),
-				CEREAL_NVP(ascension),
-				CEREAL_NVP(normalLevel),
-				CEREAL_NVP(skillLevel),
-				CEREAL_NVP(burstLevel),
-				CEREAL_NVP(artifactFlower),
-				CEREAL_NVP(artifactPlume),
-				CEREAL_NVP(artifactSands),
-				CEREAL_NVP(artifactGoblet),
-				CEREAL_NVP(artifactCirclet),
-				CEREAL_NVP(options),
-				CEREAL_NVP(artifactOptions),
-				CEREAL_NVP(combos)
-			);
-		}
+		static Character fromInstance(const ::Character::Instance &);
+		::Character::Instance toInstance() const;
 	};
 }// namespace Serialization::Save

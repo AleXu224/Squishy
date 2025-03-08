@@ -4,6 +4,7 @@
 
 const Weapon::Data Weapon::Datas::aThousandFloatingDreams{
 	.key{14511},
+	.goodKey = "AThousandFloatingDreams",
 	.name = "A Thousand Floating Dreams",
 	.baseStats{
 		.type = Misc::WeaponType::catalyst,

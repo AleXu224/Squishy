@@ -1,8 +1,10 @@
 #include "characterSheet.hpp"
 
 #include "formula/formula.hpp"
+#include "formula/teamCharacter.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
+
 
 void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	using namespace Formula::Operators;
@@ -61,4 +63,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	// Constellation talents
 	this->talents.fromTalent(stats.character.base.c3Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation3, Formula::ConstantInt(3));
 	this->talents.fromTalent(stats.character.base.c5Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));
+
+	// Infusion
+	infusion = Formula::CharacterTeamInfusion(stats.character.data.data.mods.infusion);
+	teamInfusion = stats.character.data.data.mods.teamInfusion;
 }

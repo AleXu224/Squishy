@@ -25,6 +25,7 @@ namespace Artifact {
 		};
 
 		SetKey key{};
+		std::string_view goodKey;
 		std::string_view name;
 
 		std::function<Setup(void)> setup;

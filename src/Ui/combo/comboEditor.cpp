@@ -6,6 +6,7 @@
 #include "dialog.hpp"
 #include "dropdownButton.hpp"
 #include "expander.hpp"
+#include "numberBox.hpp"
 #include "reaction/list.hpp"
 #include "rebuilder.hpp"
 #include "row.hpp"
@@ -77,7 +78,7 @@ namespace {
 					});
 
 					for (const auto &reaction: ::Reaction::List::amplifyingList) {
-						if (reaction->trigger != element.value()) continue;
+						if (!element || reaction->trigger != element.value()) continue;
 						ret.emplace_back(ContextMenu::Item{
 							.text = std::string{reaction->name},
 							.content = [&entry, reaction, textUpdater]() {
@@ -87,7 +88,7 @@ namespace {
 						});
 					}
 					for (const auto &reaction: ::Reaction::List::additiveList) {
-						if (reaction->trigger != element.value()) continue;
+						if (!element || reaction->trigger != element.value()) continue;
 						ret.emplace_back(ContextMenu::Item{
 							.text = std::string{reaction->name},
 							.content = [&entry, reaction, textUpdater]() {
@@ -111,14 +112,22 @@ namespace {
 					nodeListChangedEvent.notify();
 				},
 			};
+			auto multiplierBox = NumberBox{
+				.widget{
+					.width = Size::Shrink,
+				},
+				.value = 1.f,
+			};
 
 			ret.emplace_back(Expander{
 				.heading = Text{
 					.text = node.name,
+					.lineWrap = true,
 					.color = Node::getColor(node.data, ctx),
 				},
 				.actions{
-					reactionSelector,
+					multiplierBox,
+					reactionSelector.items.size() <= 1 ? Child{} : reactionSelector,
 					deleteButton,
 				},
 			});

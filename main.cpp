@@ -16,7 +16,7 @@ int main() {
 	Artifact::initArtifacts();
 
 	auto fileSavePath = Utils::getStorageFolder().value() / "Squishy" / "save.sqsh";
-	::Store::loadFromFile(fileSavePath);
+	::Store::loadFromFile(fileSavePath.string());
 
 	auto enemy = Store::enemies.insert(
 		{
@@ -30,11 +30,6 @@ int main() {
 
 	enemy.first->second.stats.sheet.level.constant = 100.f;
 
-	Store::teams.insert({
-		{0},
-		Team::Instance{},
-	});
-
 	using namespace squi;
 	Window window{};
 	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");
@@ -42,5 +37,5 @@ int main() {
 
 	Window::run();
 
-	::Store::saveToFile(fileSavePath);
+	::Store::saveToFile(fileSavePath.string());
 }
