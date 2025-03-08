@@ -51,6 +51,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glaze)
 target_link_libraries(squishy_lib PUBLIC glaze::glaze)
 
+find_package(nfd CONFIG REQUIRED)
+target_link_libraries(squishy_lib PRIVATE nfd::nfd)
+
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
 

@@ -202,10 +202,7 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 	}
 	if (data.artifacts.has_value()) {
 		for (const auto &artifact: data.artifacts.value()) {
-			if (artifact.setKey == "ScrollOfTheHeroOfCinderCity") {
-				(void) 1;
-			}
-				auto storedArtifact = artifact.isAlreadyStored();
+			auto storedArtifact = artifact.isAlreadyStored();
 			if (!storedArtifact && !(storedArtifact = artifact.createInstance())) {
 				std::println("{}", storedArtifact.error());
 				continue;

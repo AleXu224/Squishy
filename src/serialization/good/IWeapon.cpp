@@ -67,7 +67,7 @@ void Serialization::Good::IWeapon::writeToInstance(Weapon::Instance &weapon) con
 	weapon.stats.sheet.refinement = refinement;
 
 	Character::InstanceKey equippedCharacter{};
-	for (auto [_, character]: ::Store::characters) {
+	for (const auto &[_, character]: ::Store::characters) {
 		if (character.loadout.character.data.goodKey == location) {
 			equippedCharacter = character.instanceKey;
 			break;

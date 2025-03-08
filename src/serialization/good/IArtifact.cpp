@@ -13,7 +13,11 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 		.level = artifact.level,
 		.rarity = artifact.rarity,
 		.mainStatKey = keyStat.at(artifact.mainStat),
-		.location{::Store::characters.at(artifact.equippedCharacter).loadout.character.data.goodKey},
+		.location{
+			artifact.equippedCharacter
+				? ::Store::characters.at(artifact.equippedCharacter).loadout.character.data.goodKey
+				: ""
+		},
 		.substats = [&]() {
 			auto ret = std::vector<ISubstat>(4);
 
@@ -55,7 +59,7 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 	auto setExp = getData();
 	if (!setExp) return std::unexpected(setExp.error());
 	const auto &set = setExp.value().get();
-	for (auto [_, artifact]: Store::artifacts) {
+	for (auto &[_, artifact]: Store::artifacts) {
 		if (set.goodKey != setKey) continue;
 		if (Serialization::Good::slotKey.at(slotKey) != artifact.slot) continue;
 		if (artifact.level > level) continue;

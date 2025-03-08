@@ -17,6 +17,7 @@
       ]
     },
     "benchmark",
-    "fmt"
+    "fmt",
+    "nativefiledialog-extended"
   ]
 }

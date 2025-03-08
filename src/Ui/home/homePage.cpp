@@ -2,6 +2,7 @@
 
 #include "Ui/artifact/artifactPage.hpp"
 #include "Ui/character/characterList.hpp"
+#include "Ui/settings/settingsPage.hpp"
 #include "Ui/team/teamPage.hpp"
 #include "Ui/utils/topnav.hpp"
 #include "Ui/weapon/weaponPage.hpp"
@@ -30,6 +31,10 @@ UI::homePage::operator squi::Child() const {
 			TopNav::Page{
 				.name{"Weapons"},
 				.content = WeaponPage{},
+			},
+			TopNav::Page{
+				.name{"Settings"},
+				.content = SettingsPage{},
 			},
 		},
 	};

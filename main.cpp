@@ -10,9 +10,6 @@
 #include "window.hpp"
 #include <GLFW/glfw3.h>
 
-#include "glaze/glaze.hpp"// IWYU pragma: keep
-#include "serialization/good/IGOOD.hpp"
-
 int main() {
 	Weapon::initWeapons();
 	Character::initCharacters();
@@ -20,18 +17,6 @@ int main() {
 
 	auto fileSavePath = Utils::getStorageFolder().value() / "Squishy" / "save.sqsh";
 	::Store::loadFromFile(fileSavePath.string());
-
-	// auto seriz = ::Store::saveToGOOD();
-	auto file = std::ifstream("data.json");
-	if (file.is_open()) {
-		std::stringstream ss{};
-		ss << file.rdbuf();
-		Serialization::Good::IGOOD dst;
-		auto d = glz::read<glz::opts{.error_on_unknown_keys = false}>(dst, ss.str());
-		if (!d) {
-			::Store::loadFromGOOD(dst);
-		}
-	}
 
 	auto enemy = Store::enemies.insert(
 		{

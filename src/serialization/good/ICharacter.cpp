@@ -9,9 +9,9 @@ Serialization::Good::ICharacter Serialization::Good::ICharacter::fromInstance(co
 		.constellation = character.loadout.character.sheet.constellation,
 		.ascension = character.loadout.character.sheet.ascension,
 		.talent{
-			.auto_ = character.loadout.character.sheet.talents.normal.constant,
-			.skill = character.loadout.character.sheet.talents.skill.constant,
-			.burst = character.loadout.character.sheet.talents.burst.constant,
+			.auto_ = character.loadout.character.sheet.talents.normal.constant + 1,
+			.skill = character.loadout.character.sheet.talents.skill.constant + 1,
+			.burst = character.loadout.character.sheet.talents.burst.constant + 1,
 		},
 	};
 }
@@ -48,7 +48,7 @@ void Serialization::Good::ICharacter::writeToInstance(Character::Instance &chara
 	character.loadout.character.sheet.level = level;
 	character.loadout.character.sheet.constellation = constellation;
 	character.loadout.character.sheet.ascension = ascension;
-	character.loadout.character.sheet.talents.normal.constant = talent.auto_;
-	character.loadout.character.sheet.talents.skill.constant = talent.skill;
-	character.loadout.character.sheet.talents.burst.constant = talent.burst;
+	character.loadout.character.sheet.talents.normal.constant = talent.auto_ - 1;
+	character.loadout.character.sheet.talents.skill.constant = talent.skill - 1;
+	character.loadout.character.sheet.talents.burst.constant = talent.burst - 1;
 }
