@@ -63,9 +63,9 @@ namespace {
 					);
 				};
 
-				for (auto &opt: character.loadout.weapon.data->data.opts) {
+				for (auto &opt: character.loadout.weapon->data->data.opts) {
 					if (!isTeamBuff(opt)) continue;
-					parseOption(character.loadout.weapon.options.at(
+					parseOption(character.loadout.weapon->options.at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;

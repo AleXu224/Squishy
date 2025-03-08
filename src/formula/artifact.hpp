@@ -9,6 +9,7 @@
 namespace Formula {
 	struct ArtifactMainStat {
 		::Stat stat;
+		uint8_t rarity;
 		uint8_t level;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
@@ -17,7 +18,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] float eval(const Context &) const {
-			return Stats::Values::mainStat.at(stat).at(level);
+			return Stats::Values::mainStat.at(stat).at(rarity - 1).at(level);
 		}
 	};
 

@@ -117,12 +117,12 @@ UI::NodePicker::operator squi::Child() const {
 				}
 
 				Children weaponRet{};
-				for (const auto &[index, node]: character.loadout.weapon.data->data.nodes | std::views::enumerate) {
+				for (const auto &[index, node]: character.loadout.weapon->data->data.nodes | std::views::enumerate) {
 					if (!Node::getOptimizable(node.data)) continue;
 					weaponRet.emplace_back(NodePickerEntry{
 						.node = node,
 						.source = Combo::Source::Weapon{
-							.key = character.loadout.weapon.data->key,
+							.key = character.loadout.weapon->data->key,
 							.index = static_cast<size_t>(index),
 						},
 						.ctx = ctx,
@@ -132,7 +132,7 @@ UI::NodePicker::operator squi::Child() const {
 				}
 				if (!weaponRet.empty()) {
 					ret.emplace_back(DisplayCard{
-						.title = character.loadout.weapon.data->name,
+						.title = character.loadout.weapon->data->name,
 						.children = weaponRet,
 					});
 				}

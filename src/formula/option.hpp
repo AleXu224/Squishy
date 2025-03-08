@@ -19,7 +19,7 @@ namespace Formula {
 				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
 					return &context.source.character.options;
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon.options;
+					return &context.source.weapon->options;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
 					return &context.source.artifact.options;
 			}();
@@ -41,7 +41,7 @@ namespace Formula {
 				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
 					return &context.source.character.options;
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon.options;
+					return &context.source.weapon->options;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
 					return &context.source.artifact.options;
 			}();
@@ -63,7 +63,7 @@ namespace Formula {
 				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
 					return &context.source.character.options;
 				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon.options;
+					return &context.source.weapon->options;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
 					return &context.source.artifact.options;
 			}();

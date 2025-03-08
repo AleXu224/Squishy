@@ -20,7 +20,7 @@ namespace Serialization::Good {
 		bool lock = false;
 		std::vector<ISubstat> substats;
 
-		static std::vector<IArtifact> fromInstance(const Artifact::Instance &weapon);
+		static IArtifact fromInstance(const Artifact::Instance &artifact);
 
 		std::expected<std::reference_wrapper<Artifact::Instance>, std::string> createInstance() const;
 

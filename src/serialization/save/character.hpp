@@ -1,6 +1,7 @@
 #pragma once
 
 #include "artifact/key.hpp"
+#include "character/instance.hpp"
 #include "character/key.hpp"
 #include "combo.hpp"
 #include "option.hpp"
@@ -26,5 +27,8 @@ namespace Serialization::Save {
 		std::vector<Serialization::Save::OptionTypes> options;
 		std::vector<Serialization::Save::OptionTypes> artifactOptions;
 		std::vector<Serialization::Save::Combo> combos;
+
+		static Character fromInstance(const ::Character::Instance &);
+		::Character::Instance toInstance() const;
 	};
 }// namespace Serialization::Save

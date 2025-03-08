@@ -36,7 +36,7 @@ namespace Artifact {
 			stats = Stats::Sheet<float>();
 
 			// Main stat
-			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(level);
+			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(rarity - 1).at(level);
 
 			// Sub stats
 			for (const auto &subStat: subStats) {

@@ -34,7 +34,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		};
 	}
 
-	return ::Artifact::Instance{
+	auto instance = ::Artifact::Instance{
 		.key = instanceKey,
 		.set = setKey,
 		.slot = slot,
@@ -44,4 +44,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		.rarity = rarity,
 		.equippedCharacter = equippedCharacter,
 	};
+	instance.updateStats();
+
+	return instance;
 }

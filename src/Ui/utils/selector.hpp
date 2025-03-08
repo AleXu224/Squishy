@@ -4,7 +4,7 @@
 #include "dropdownButton.hpp"
 #include "stats/loadout.hpp"
 #include "store.hpp"
-#include "widget.hpp"
+#include "widgetArgs.hpp"
 
 
 namespace UI {
@@ -133,7 +133,7 @@ namespace UI {
 			return LevelSelector<Stats::WeaponSheet>{
 				.titlePrefix = "Weapon Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::WeaponSheet & {
-					return Store::characters.at(characterKey).loadout.weapon.sheet;
+					return Store::characters.at(characterKey).loadout.weapon->sheet;
 				},
 				.characterKey = characterKey,
 			};
@@ -178,12 +178,12 @@ namespace UI {
 				.titlePrefix = "Refinement",
 				.valuePrefix = "Refinement",
 				.getter = [characterKey = characterKey]() {
-					auto &sheet = Store::characters.at(characterKey).loadout.weapon.sheet;
+					auto &sheet = Store::characters.at(characterKey).loadout.weapon->sheet;
 					return sheet.refinement;
 				},
 				.setter = [characterKey = characterKey](const Type &val) {
 					auto &character = Store::characters.at(characterKey);
-					auto &sheet = character.loadout.weapon.sheet;
+					auto &sheet = character.loadout.weapon->sheet;
 					sheet.refinement = val;
 					character.updateEvent.notify();
 				},

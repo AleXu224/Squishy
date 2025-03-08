@@ -2,7 +2,7 @@
 
 #include "character/instance.hpp"
 #include "cstdint"
-#include "glaze/glaze.hpp"// IWYU pragma: keep
+#include "expected"
 #include <string>
 
 
@@ -30,9 +30,3 @@ namespace Serialization::Good {
 		void writeToInstance(Character::Instance &) const;
 	};
 }// namespace Serialization::Good
-
-template<>
-struct glz::meta<Serialization::Good::ICharacter::Talent> {
-	using T = Serialization::Good::ICharacter::Talent;
-	static constexpr auto value = object("auto", &T::auto_, &T::skill, &T::burst);
-};

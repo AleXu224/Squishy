@@ -65,4 +65,13 @@ void Serialization::Good::IWeapon::writeToInstance(Weapon::Instance &weapon) con
 	weapon.stats.sheet.level = level;
 	weapon.stats.sheet.ascension = ascension;
 	weapon.stats.sheet.refinement = refinement;
+
+	Character::InstanceKey equippedCharacter{};
+	for (auto [_, character]: ::Store::characters) {
+		if (character.loadout.character.data.goodKey == location) {
+			equippedCharacter = character.instanceKey;
+			break;
+		}
+	}
+	if (equippedCharacter) weapon.equipOn(equippedCharacter);
 }

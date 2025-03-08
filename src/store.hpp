@@ -8,10 +8,7 @@
 #include "unordered_map"
 #include "weapon/instance.hpp"
 
-#include "serialization/save/save.hpp"
-
-#include "filesystem"
-
+#include "serialization/good/IGOOD.hpp"
 
 namespace Store {
 	inline std::unordered_map<Character::InstanceKey, Character::Instance> characters{};
@@ -35,20 +32,14 @@ namespace Store {
 	inline squi::VoidObservable characterListUpdateEvent{};
 	inline squi::VoidObservable teamListUpdateEvent{};
 
-	Character::Instance& createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon = {});
-	Weapon::Instance& createWeapon(Weapon::DataKey dataKey);
-	Artifact::Instance& createArtifact(Artifact::SetKey setKey);
-	Team::Instance& createTeam(std::string_view name = "");
+	Character::Instance &createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon = {});
+	Weapon::Instance &createWeapon(Weapon::DataKey dataKey);
+	Artifact::Instance &createArtifact(Artifact::SetKey setKey);
+	Team::Instance &createTeam(std::string_view name = "");
 
-	[[nodiscard]] extern auto serializeOptions(auto &&options);
+	extern void saveToFile(const std::string &path);
+	extern void loadFromFile(const std::string &path);
 
-	extern void deserializeOptions(const std::vector<Serialization::Save::OptionTypes> &options, auto &&targetMap);
-
-	[[nodiscard]] extern Serialization::Save::Save save();
-
-	extern void load(const Serialization::Save::Save &save);
-
-	extern void saveToFile(const std::filesystem::path &path);
-
-	extern void loadFromFile(const std::filesystem::path &path);
+	extern Serialization::Good::IGOOD saveToGOOD();
+	extern void loadFromGOOD(const Serialization::Good::IGOOD &);
 }// namespace Store

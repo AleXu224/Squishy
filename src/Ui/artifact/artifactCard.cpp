@@ -89,7 +89,7 @@ struct ArtifactCardContent {
 			.slot = artifact.slot,
 			.mainStat{
 				.stat = artifact.mainStat,
-				.value = Stats::Values::mainStat.at(artifact.mainStat).at(artifact.level),
+				.value = Stats::Values::mainStat.at(artifact.mainStat).at(artifact.rarity - 1).at(artifact.level),
 			},
 			.rarity = artifact.rarity,
 		};

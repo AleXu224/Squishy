@@ -9,7 +9,7 @@ Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dat
 	  weaponInstanceKey(weaponInstanceKey),
 	  loadout(Stats::Loadout{
 		  .character = Stats::Character(Character::list.at(dataKey)),
-		  .weapon = Store::weapons.at(weaponInstanceKey).stats,
+		  .weapon = &Store::weapons.at(weaponInstanceKey).stats,
 		  .artifact{},
 	  }) {
 	loadout.init();

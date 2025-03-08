@@ -13,14 +13,14 @@ export const propToStat = new Map<string, string>([
     ["FIGHT_PROP_HEAL_ADD", "hb"],
     ["FIGHT_PROP_CRITICAL_HURT", "cd"],
     ["FIGHT_PROP_CRITICAL", "cr"],
-    ["FIGHT_PROP_PHYSICAL_ADD_HURT", "physicalDmg,"],
-    ["FIGHT_PROP_GRASS_ADD_HURT", "dendroDmg,"],
-    ["FIGHT_PROP_ROCK_ADD_HURT", "geoDmg,"],
-    ["FIGHT_PROP_WIND_ADD_HURT", "anemoDmg,"],
-    ["FIGHT_PROP_WATER_ADD_HURT", "hydroDmg,"],
-    ["FIGHT_PROP_ICE_ADD_HURT", "cryoDmg,"],
-    ["FIGHT_PROP_ELEC_ADD_HURT", "electroDmg,"],
-    ["FIGHT_PROP_FIRE_ADD_HURT", "pyroDmg,"],
+    ["FIGHT_PROP_PHYSICAL_ADD_HURT", "physicalDmg"],
+    ["FIGHT_PROP_GRASS_ADD_HURT", "dendroDmg"],
+    ["FIGHT_PROP_ROCK_ADD_HURT", "geoDmg"],
+    ["FIGHT_PROP_WIND_ADD_HURT", "anemoDmg"],
+    ["FIGHT_PROP_WATER_ADD_HURT", "hydroDmg"],
+    ["FIGHT_PROP_ICE_ADD_HURT", "cryoDmg"],
+    ["FIGHT_PROP_ELEC_ADD_HURT", "electroDmg"],
+    ["FIGHT_PROP_FIRE_ADD_HURT", "pyroDmg"],
 ]);
 
 export const weaponType = new Map<string, string>([

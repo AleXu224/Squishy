@@ -6,6 +6,28 @@
 #include "store.hpp"
 
 
+Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(const Artifact::Instance &artifact) {
+	return {
+		.setKey{::Artifact::sets.at(artifact.set).goodKey},
+		.slotKey = Serialization::Good::keySlot.at(artifact.slot),
+		.level = artifact.level,
+		.rarity = artifact.rarity,
+		.mainStatKey = keyStat.at(artifact.mainStat),
+		.location{::Store::characters.at(artifact.equippedCharacter).loadout.character.data.goodKey},
+		.substats = [&]() {
+			auto ret = std::vector<ISubstat>(4);
+
+			for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, ret)) {
+				if (!subStat.has_value()) continue;
+				dataSubStat.key = keyStat.at(subStat->stat);
+				dataSubStat.value = subStat->value * (Utils::isPercentage(subStat->stat) ? 100.f : 1.f);
+			}
+
+			return ret;
+		}(),
+	};
+}
+
 std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serialization::Good::IArtifact::createInstance() const {
 	auto artifactData = getData();
 	if (!artifactData) return std::unexpected(artifactData.error());
@@ -41,7 +63,7 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 		if (statKey.at(mainStatKey) != artifact.mainStat) continue;
 		bool validSubstats = true;
 		for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {
-			if (statKey.empty()) {
+			if (dataSubStat.key.empty()) {
 				if (subStat.has_value()) {
 					validSubstats = false;
 					break;
@@ -79,15 +101,30 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 	}
 
 	for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {
-		if (statKey.empty()) continue;
+		if (dataSubStat.key.empty()) continue;
 		if (!statKey.contains(dataSubStat.key)) {
 			std::println("Warning: StatKey {} not found", dataSubStat.key);
 			continue;
 		}
 
+		auto stat = statKey.at(dataSubStat.key);
+
 		subStat = StatValue{
-			.stat = statKey.at(dataSubStat.key),
-			.value = dataSubStat.value,
+			.stat = stat,
+			.value = dataSubStat.value / (Utils::isPercentage(stat) ? 100.f : 1.f),
 		};
+	}
+
+	artifact.updateStats();
+
+	Character::InstanceKey equippedCharacter{};
+	for (auto &[_, character]: ::Store::characters) {
+		if (character.loadout.character.data.goodKey == location) {
+			equippedCharacter = character.instanceKey;
+			break;
+		}
+	}
+	if (equippedCharacter) {
+		artifact.equipOn(equippedCharacter);
 	}
 }

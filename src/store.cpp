@@ -1,10 +1,11 @@
 #include "store.hpp"
 
-#include "cereal/archives/json.hpp"
 #include "fstream"
-#include "ranges"
-#include "weapon/data.hpp"
 #include "weapon/defaultWeapons.hpp"
+
+#include "glaze/glaze.hpp"           // IWYU pragma: keep
+#include "serialization/save/key.hpp"// IWYU pragma: keep
+#include "serialization/save/save.hpp"
 
 Character::Instance &Store::createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon) {
 	auto &data = Character::list.at(dataKey);
@@ -28,7 +29,7 @@ Weapon::Instance &Store::createWeapon(Weapon::DataKey dataKey) {
 
 Artifact::Instance &Store::createArtifact(Artifact::SetKey setKey) {
 	++lastArtifactId;
-	auto entry = artifacts.emplace(lastArtifactId, Artifact::Instance{.key = lastArtifactId});
+	auto entry = artifacts.emplace(lastArtifactId, Artifact::Instance{.key = lastArtifactId, .set = setKey});
 
 	return entry.first->second;
 }
@@ -40,371 +41,177 @@ Team::Instance &Store::createTeam(std::string_view name) {
 	return entry.first->second;
 }
 
-auto Store::serializeOptions(auto &&options) {
-	std::vector<Serialization::Save::OptionTypes> ret{};
-	for (const auto &[key, option]: options) {
-		std::visit(
-			Utils::overloaded{
-				[&](const Option::Boolean &opt) {
-					ret.emplace_back(Serialization::Save::BooleanOption{
-						.hash = key,
-						.active = opt.active,
-					});
-				},
-				[&](const Option::ValueList &opt) {
-					ret.emplace_back(Serialization::Save::ValueListOption{
-						.hash = key,
-						.index = opt.currentIndex,
-					});
-				},
-			},
-			option
-		);
-	}
-	return ret;
-}
-
-void Store::deserializeOptions(const std::vector<Serialization::Save::OptionTypes> &options, auto &&targetMap) {
-	for (const auto &option: options) {
-		std::visit(
-			Utils::overloaded{
-				[&](const Serialization::Save::BooleanOption &opt) {
-					if (!targetMap.contains(opt.hash)) return;
-					std::visit(
-						Utils::overloaded{
-							[&](Option::Boolean &val) {
-								val.active = opt.active;
-							},
-							[](const Option::ValueList &val) {
-								std::println("Wrong opt selected while loading save {}", val.key.str);
-							},
-						},
-						targetMap.at(opt.hash)
-					);
-				},
-				[&](const Serialization::Save::ValueListOption &opt) {
-					if (!targetMap.contains(opt.hash)) return;
-					std::visit(
-						Utils::overloaded{
-							[](const Option::Boolean &val) {
-								std::println("Wrong opt selected while loading save {}", val.key.str);
-							},
-							[&](Option::ValueList &val) {
-								val.currentIndex = opt.index;
-							},
-						},
-						targetMap.at(opt.hash)
-					);
-				},
-			},
-			option
-		);
-	}
-}
-
-auto serializeCombos(const std::list<Combo::Combo> &combos) {
-	std::vector<Serialization::Save::Combo> ret;
-
-	for (const auto &combo: combos) {
-		std::vector<Serialization::Save::ComboEntry> comboEntries;
-
-		for (const auto &entry: combo.entries) {
-			comboEntries.emplace_back(Serialization::Save::ComboEntry{
-				.multiplier = entry.multiplier,
-				.reaction = entry.reaction,
-				.source = [&]() -> Serialization::Save::ComboSourceTypes {
-					Serialization::Save::ComboSourceTypes ret;
-
-					return std::visit(
-						Utils::overloaded{
-							[](const Combo::Source::Character &source) -> Serialization::Save::ComboSourceTypes {
-								return Serialization::Save::CharacterCombo{
-									.key = source.key,
-									.slot = source.slot,
-									.index = source.index,
-								};
-							},
-							[](const Combo::Source::Weapon &source) -> Serialization::Save::ComboSourceTypes {
-								return Serialization::Save::WeaponCombo{
-									.key = source.key,
-									.index = source.index,
-								};
-							},
-							[](const Combo::Source::Artifact &source) -> Serialization::Save::ComboSourceTypes {
-								return Serialization::Save::ArtifactCombo{
-									.key = source.key,
-									.slot = source.slot,
-									.index = source.index,
-								};
-							},
-						},
-						entry.source
-					);
-
-					return ret;
-				}(),
-			});
+namespace {
+	Serialization::Save::Save save() {
+		std::vector<Serialization::Save::Artifact> retArtifacts{};
+		retArtifacts.reserve(::Store::artifacts.size());
+		for (const auto &[_, artifactInstance]: ::Store::artifacts) {
+			retArtifacts.emplace_back(Serialization::Save::Artifact::fromInstance(artifactInstance));
 		}
 
-		ret.emplace_back(Serialization::Save::Combo{
-			.name = combo.name,
-			.entries = comboEntries,
-		});
-	}
-
-	return ret;
-}
-
-std::list<Combo::Combo> deserializeCombo(const std::vector<Serialization::Save::Combo> &combos) {
-	std::list<Combo::Combo> ret;
-
-	for (const auto &combo: combos) {
-		std::list<Combo::Entry> entries;
-
-		for (const auto &entry: combo.entries) {
-			entries.emplace_back(Combo::Entry{
-				.multiplier = entry.multiplier,
-				.reaction = entry.reaction,
-				.source = std::visit(Utils::overloaded{
-										 [](const Serialization::Save::CharacterCombo &source) -> Combo::Source::Types {
-											 return Combo::Source::Character{
-												 .key = source.key,
-												 .slot = source.slot,
-												 .index = source.index,
-											 };
-										 },
-										 [](const Serialization::Save::WeaponCombo &source) -> Combo::Source::Types {
-											 return Combo::Source::Weapon{
-												 .key = source.key,
-												 .index = source.index,
-											 };
-										 },
-										 [](const Serialization::Save::ArtifactCombo &source) -> Combo::Source::Types {
-											 return Combo::Source::Artifact{
-												 .key = source.key,
-												 .slot = source.slot,
-												 .index = source.index,
-											 };
-										 },
-									 },
-									 entry.source),
-			});
+		std::vector<Serialization::Save::Weapon> retWeapons{};
+		retWeapons.reserve(::Store::weapons.size());
+		for (const auto &[_, weaponInstance]: ::Store::weapons) {
+			retWeapons.emplace_back(Serialization::Save::Weapon::fromInstance(weaponInstance));
 		}
 
-		ret.emplace_back(Combo::Combo{
-			.name = combo.name,
-			.entries = entries,
-		});
+		std::vector<Serialization::Save::Character> retCharacters{};
+		retCharacters.reserve(::Store::characters.size());
+		for (const auto &[_, characterInstance]: ::Store::characters) {
+			retCharacters.emplace_back(Serialization::Save::Character::fromInstance(characterInstance));
+		}
+
+		std::vector<Serialization::Save::Team> retTeams{};
+		retTeams.reserve(::Store::teams.size());
+		for (const auto &[_, teamInstance]: ::Store::teams) {
+			retTeams.emplace_back(Serialization::Save::Team::fromInstance(teamInstance));
+		}
+
+		return Serialization::Save::Save{
+			.artifacts = retArtifacts,
+			.weapons = retWeapons,
+			.characters = retCharacters,
+			.teams = retTeams,
+		};
 	}
 
-	return ret;
-}
+	void load(const Serialization::Save::Save &save) {
+		::Store::artifacts.clear();
+		::Store::weapons.clear();
+		::Store::characters.clear();
+		::Store::teams.clear();
+		::Store::enemies.clear();
 
-Serialization::Save::Save Store::save() {
-	std::vector<Serialization::Save::Artifact> retArtifacts{};
-	retArtifacts.reserve(::Store::artifacts.size());
-	for (const auto &[artifactKey, artifactInstance]: ::Store::artifacts) {
-		retArtifacts.emplace_back(Serialization::Save::Artifact{
-			.instanceKey = artifactKey,
-			.setKey = artifactInstance.set,
-			.slot = artifactInstance.slot,
-			.mainStat = artifactInstance.mainStat,
-			.subStats = [&]() {
-				std::array<std::optional<Serialization::Save::ArtifactSubStat>, 4> ret{};
-				for (auto [retOpt, artOpt]: std::views::zip(ret, artifactInstance.subStats)) {
-					if (!artOpt.has_value()) continue;
-					retOpt = Serialization::Save::ArtifactSubStat{
-						.stat = artOpt->stat,
-						.value = artOpt->value,
-					};
-				}
-				return ret;
-			}(),
-			.level = artifactInstance.level,
-			.rarity = artifactInstance.rarity,
-			.equippedCharacter = artifactInstance.equippedCharacter,
-		});
+		uint32_t maxArtifactKey = 1;
+		for (const auto &artifact: save.artifacts) {
+			maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
+			::Store::artifacts.emplace(artifact.instanceKey, artifact.toInstance());
+		}
+
+		uint32_t maxWeaponKey = 1;
+		for (const auto &weapon: save.weapons) {
+			maxWeaponKey = std::max(maxWeaponKey, weapon.instanceKey.key);
+			::Store::weapons.emplace(weapon.instanceKey, weapon.toInstance());
+		}
+
+		uint32_t maxCharacterKey = 1;
+		for (const auto &character: save.characters) {
+			maxCharacterKey = std::max(maxCharacterKey, character.instanceKey.key);
+			::Store::characters.emplace(character.instanceKey, character.toInstance());
+		}
+
+		uint32_t maxTeamKey = 1;
+		for (const auto &team: save.teams) {
+			maxTeamKey = std::max(maxTeamKey, team.instanceKey.key);
+			::Store::teams.emplace(team.instanceKey, team.toInstance());
+		}
+
+		::Store::lastArtifactId = maxArtifactKey;
+		::Store::lastWeaponId = maxWeaponKey;
+		::Store::lastCharacterId = maxCharacterKey;
+		::Store::lastTeamId = maxTeamKey;
 	}
+}// namespace
 
-	std::vector<Serialization::Save::Weapon> retWeapons{};
-	retWeapons.reserve(::Store::weapons.size());
-	for (const auto &[weaponKey, weaponInstance]: ::Store::weapons) {
-		retWeapons.emplace_back(Serialization::Save::Weapon{
-			.instanceKey = weaponKey,
-			.dataKey = weaponInstance.stats.data->key,
-			.level = weaponInstance.stats.sheet.level,
-			.ascension = weaponInstance.stats.sheet.ascension,
-			.refinement = weaponInstance.stats.sheet.refinement,
-			.options = serializeOptions(weaponInstance.stats.options),
-		});
-	}
-
-	std::vector<Serialization::Save::Character> retCharacters{};
-	retCharacters.reserve(::Store::characters.size());
-	for (const auto &[characterKey, characterInstance]: ::Store::characters) {
-		retCharacters.emplace_back(Serialization::Save::Character{
-			.instanceKey = characterKey,
-			.dataKey = characterInstance.dataKey,
-			.weaponInstanceKey = characterInstance.weaponInstanceKey,
-			.constellation = characterInstance.loadout.character.sheet.constellation,
-			.level = characterInstance.loadout.character.sheet.level,
-			.ascension = characterInstance.loadout.character.sheet.ascension,
-			.normalLevel = characterInstance.loadout.character.sheet.talents.normal.constant,
-			.skillLevel = characterInstance.loadout.character.sheet.talents.skill.constant,
-			.burstLevel = characterInstance.loadout.character.sheet.talents.burst.constant,
-			.artifactFlower = characterInstance.loadout.artifact.equipped.flower,
-			.artifactPlume = characterInstance.loadout.artifact.equipped.plume,
-			.artifactSands = characterInstance.loadout.artifact.equipped.sands,
-			.artifactGoblet = characterInstance.loadout.artifact.equipped.goblet,
-			.artifactCirclet = characterInstance.loadout.artifact.equipped.circlet,
-			// std::vector<Serialization::Save::OptionTypes> options;
-			.options = serializeOptions(characterInstance.loadout.character.options),
-			// std::vector<ArtifactOptions> artifactOptions;
-			.artifactOptions = serializeOptions(characterInstance.loadout.artifact.options),
-			.combos = serializeCombos(characterInstance.combos),
-		});
-	}
-
-	std::vector<Serialization::Save::Team> retTeams{};
-	retTeams.reserve(::Store::teams.size());
-	for (const auto &[teamKey, teamInstance]: ::Store::teams) {
-		retTeams.emplace_back(Serialization::Save::Team{
-			.instanceKey = teamInstance.instanceKey,
-			.name = teamInstance.name,
-			.characters = [&]() {
-				std::array<std::optional<::Character::InstanceKey>, 4> ret{};
-				for (auto [retCharacter, storeCharacter]: std::views::zip(ret, teamInstance.stats.characters)) {
-					if (!storeCharacter) continue;
-					retCharacter = storeCharacter->instanceKey;
-				}
-				return ret;
-			}(),
-		});
-	}
-
-
-	return Serialization::Save::Save{
-		.artifacts = retArtifacts,
-		.weapons = retWeapons,
-		.characters = retCharacters,
-		.teams = retTeams,
-	};
-}
-
-void Store::load(const Serialization::Save::Save &save) {
-	::Store::artifacts.clear();
-	::Store::weapons.clear();
-	::Store::characters.clear();
-	::Store::teams.clear();
-	::Store::enemies.clear();
-
-	uint32_t maxArtifactKey = 1;
-	for (const auto &artifact: save.artifacts) {
-		maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
-		auto &artInstance = ::Store::artifacts.insert({
-														  artifact.instanceKey,
-														  ::Artifact::Instance{
-															  .key = artifact.instanceKey,
-															  .set = artifact.setKey,
-															  .slot = artifact.slot,
-															  .mainStat = artifact.mainStat,
-															  .subStats = [&]() {
-																  std::array<std::optional<StatValue>, 4> ret;
-																  for (auto [retOpt, saveOpt]: std::views::zip(ret, artifact.subStats)) {
-																	  if (!saveOpt.has_value()) continue;
-																	  retOpt = StatValue{
-																		  .stat = saveOpt->stat,
-																		  .value = saveOpt->value,
-																	  };
-																  }
-																  return ret;
-															  }(),
-															  .level = artifact.level,
-															  .rarity = artifact.rarity,
-															  .equippedCharacter = artifact.equippedCharacter,
-														  },
-													  })
-								.first->second;
-		artInstance.updateStats();
-	}
-
-	uint32_t maxWeaponKey = 1;
-	for (const auto &weapon: save.weapons) {
-		maxWeaponKey = std::max(maxWeaponKey, weapon.instanceKey.key);
-		auto &wepInstance = ::Store::weapons.insert({weapon.instanceKey, ::Weapon::Instance(weapon.dataKey, weapon.instanceKey)}).first->second;
-		wepInstance.stats.sheet.level = weapon.level;
-		wepInstance.stats.sheet.ascension = weapon.ascension;
-		wepInstance.stats.sheet.refinement = weapon.refinement;
-		deserializeOptions(weapon.options, wepInstance.stats.options);
-	}
-
-	uint32_t maxCharacterKey = 1;
-	for (const auto &character: save.characters) {
-		maxCharacterKey = std::max(maxCharacterKey, character.instanceKey.key);
-		auto &charInstance = ::Store::characters.insert({character.instanceKey, ::Character::Instance(character.instanceKey, character.dataKey, character.weaponInstanceKey)}).first->second;
-		charInstance.loadout.character.sheet.constellation = character.constellation;
-		charInstance.loadout.character.sheet.level = character.level;
-		charInstance.loadout.character.sheet.ascension = character.ascension;
-		charInstance.loadout.character.sheet.talents.normal.constant = character.normalLevel;
-		charInstance.loadout.character.sheet.talents.skill.constant = character.skillLevel;
-		charInstance.loadout.character.sheet.talents.burst.constant = character.burstLevel;
-		charInstance.loadout.artifact.equipped.flower = character.artifactFlower;
-		charInstance.loadout.artifact.equipped.plume = character.artifactPlume;
-		charInstance.loadout.artifact.equipped.sands = character.artifactSands;
-		charInstance.loadout.artifact.equipped.goblet = character.artifactGoblet;
-		charInstance.loadout.artifact.equipped.circlet = character.artifactCirclet;
-		deserializeOptions(character.options, charInstance.loadout.character.options);
-		deserializeOptions(character.artifactOptions, charInstance.loadout.artifact.options);
-		charInstance.combos = deserializeCombo(character.combos);
-
-		charInstance.loadout.artifact.refreshStats();
-	}
-
-	uint32_t maxTeamKey = 1;
-	for (const auto &team: save.teams) {
-		maxTeamKey = std::max(maxTeamKey, team.instanceKey.key);
-		auto &teamInstance = ::Store::teams.insert({team.instanceKey, ::Team::Instance{.instanceKey = team.instanceKey, .name = team.name}}).first->second;
-		teamInstance.stats.characters = [&]() {
-			std::array<::Character::Instance *, 4> ret{};
-			for (auto [retCharRef, saveChar]: std::views::zip(ret, team.characters)) {
-				if (!saveChar.has_value()) continue;
-				retCharRef = &::Store::characters.at(saveChar.value());
-			}
-			return ret;
-		}();
-	}
-
-	::Store::lastArtifactId = maxArtifactKey;
-	::Store::lastWeaponId = maxWeaponKey;
-	::Store::lastCharacterId = maxCharacterKey;
-	::Store::lastTeamId = maxTeamKey;
-}
-
-void Store::saveToFile(const std::filesystem::path &path) {
+void Store::saveToFile(const std::string &strpath) {
+	std::filesystem::path path = strpath;
 	if (!path.has_filename()) throw std::runtime_error("Path must point to a file");
 	std::filesystem::create_directory(path.parent_path());
 	auto file = std::ofstream(path, std::ofstream::binary);
 	{
 		// Using json at the moment for debugability
-		cereal::JSONOutputArchive out(file);
-		out(::Store::save());
+		std::string buff{};
+		auto d = glz::write<glz::opts{.prettify = true}>(save(), buff);
+		if (d) {
+			std::println("Failed saving");
+		}
+		file << buff;
 	}
 	file.close();
 }
 
-void Store::loadFromFile(const std::filesystem::path &path) {
+void Store::loadFromFile(const std::string &strpath) {
+	std::filesystem::path path = strpath;
 	if (!path.has_filename()) throw std::runtime_error("Path must point to a file");
 	auto file = std::ifstream(path, std::ofstream::binary);
 	if (!file.is_open()) return;
-	::Serialization::Save::Save saveData{};
-	try {
-		cereal::JSONInputArchive in(file);
-		in(saveData);
-	} catch (const std::runtime_error &err) {
-		std::println("Failed loading save file: {}", err.what());
+
+	std::stringstream ss{};
+	ss << file.rdbuf();
+	Serialization::Save::Save saveData;
+	auto d = glz::read<glz::opts{.error_on_unknown_keys = false}>(saveData, ss.str());
+	if (d) {
+		std::println("Failed loading save file");
 		return;
 	}
 	file.close();
 
-	::Store::load(saveData);
+	load(saveData);
+}
+
+extern Serialization::Good::IGOOD Store::saveToGOOD() {
+	Serialization::Good::IGOOD ret{};
+
+	std::vector<Serialization::Good::IArtifact> artifacts;
+	for (const auto &[_, artifact]: ::Store::artifacts) {
+		artifacts.emplace_back(Serialization::Good::IArtifact::fromInstance(artifact));
+	}
+
+	std::vector<Serialization::Good::IWeapon> weapons;
+	for (const auto &[_, weapon]: ::Store::weapons) {
+		auto weps = Serialization::Good::IWeapon::fromInstance(weapon);
+		weapons.insert(weapons.end(), weps.begin(), weps.end());
+	}
+
+	std::vector<Serialization::Good::ICharacter> characters;
+	for (const auto &[_, character]: ::Store::characters) {
+		characters.emplace_back(Serialization::Good::ICharacter::fromInstance(character));
+	}
+
+	ret.artifacts = artifacts;
+	ret.weapons = weapons;
+	ret.characters = characters;
+
+	return ret;
+}
+
+extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
+	if (data.characters.has_value()) {
+		for (const auto &character: data.characters.value()) {
+			auto storedCharacter = character.isAlreadyStored();
+			if (!storedCharacter) storedCharacter = character.createInstance();
+			if (!storedCharacter) {
+				std::println("{}", storedCharacter.error());
+				continue;
+			}
+
+			character.writeToInstance(storedCharacter.value());
+		}
+	}
+	if (data.weapons.has_value()) {
+		for (const auto &weapon: data.weapons.value()) {
+			auto storedWeapon = weapon.isAlreadyStored();
+			if (!storedWeapon) storedWeapon = weapon.createInstance();
+			if (!storedWeapon) {
+				std::println("{}", storedWeapon.error());
+				continue;
+			}
+
+			weapon.writeToInstance(storedWeapon.value());
+		}
+	}
+	if (data.artifacts.has_value()) {
+		for (const auto &artifact: data.artifacts.value()) {
+			if (artifact.setKey == "ScrollOfTheHeroOfCinderCity") {
+				(void) 1;
+			}
+				auto storedArtifact = artifact.isAlreadyStored();
+			if (!storedArtifact && !(storedArtifact = artifact.createInstance())) {
+				std::println("{}", storedArtifact.error());
+				continue;
+			}
+
+			artifact.writeToInstance(storedArtifact.value());
+		}
+	}
 }
