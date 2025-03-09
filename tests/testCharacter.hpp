@@ -4,6 +4,7 @@
 
 inline Character::Data testCharacter{
 	.key{1},
+	.goodKey{},
 	.name{"Test Character"},
 	.baseStats{
 		.baseHp = 972.3864,

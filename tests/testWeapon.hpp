@@ -4,6 +4,7 @@
 
 inline Weapon::Data testWeapon{
 	.key{2},
+	.goodKey{},
 	.name = "Test Weapon",
 	.baseStats{
 		.type = Misc::WeaponType::polearm,
