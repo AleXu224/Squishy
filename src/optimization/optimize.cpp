@@ -1,8 +1,13 @@
 #include "optimize.hpp"
 
 #include "artifactFilter.hpp"
+#include "store.hpp"
+
+#include "chrono"
 
 void Optimization::Optimization::optimize() const {
+	auto start_filterGen = std::chrono::high_resolution_clock::now();
+
 	std::vector<ArtifactFilter> filters{};
 
 	// 4pc filters
@@ -49,6 +54,62 @@ void Optimization::Optimization::optimize() const {
 			}
 		}
 	}
+	auto end_filterGen = std::chrono::high_resolution_clock::now();
+	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
 
-	std::println("{}", filters.size());
+	auto start_artifactDuplication = std::chrono::high_resolution_clock::now();
+	std::vector<Artifact::Instance> artifacts;
+	for (const auto &[_, artifact]: ::Store::artifacts) {
+		artifacts.emplace_back(artifact);
+	}
+	auto end_artifactDuplication = std::chrono::high_resolution_clock::now();
+	std::println("artifact duplication {}", std::chrono::duration_cast<std::chrono::microseconds>(end_artifactDuplication - start_artifactDuplication));
+
+	// auto rd = std::random_device{};
+	// auto gen = std::mt19937(rd());
+
+	auto prevLoadout = character.loadout.artifact.equipped;
+
+	float bestDmg = 0.f;
+	Stats::Artifact::Slotted bestLoadout;
+
+	auto start = std::chrono::high_resolution_clock::now();
+	for (const auto &filter: filters) {
+		auto filtered = filter.filter(artifacts);
+		for (auto [slotPtr, filtered]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
+			auto &slot = std::invoke(slotPtr, character.loadout.artifact.equipped);
+			if (!filtered.empty()) slot = filtered.front()->key;
+		}
+		character.loadout.artifact.refreshStats();
+
+		bestLoadout = character.loadout.artifact.equipped;
+
+		bool modified = true;
+		while (modified) {
+			modified = false;
+
+			for (auto [slotPtr, artifacts]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
+				auto &slot = std::invoke(slotPtr, character.loadout.artifact.equipped);
+				for (const auto &artifact: artifacts) {
+					slot = artifact->key;
+					character.loadout.artifact.refreshStats();
+					auto dmg = optimizedNode.eval(ctx);
+					if (dmg > bestDmg) {
+						bestDmg = dmg;
+						bestLoadout = character.loadout.artifact.equipped;
+						modified = true;
+					}
+				}
+				slot = std::invoke(slotPtr, bestLoadout);
+			}
+		}
+
+		std::println("Best dmg: {}", bestDmg);
+	}
+
+	character.loadout.artifact.equipped = prevLoadout;
+	character.loadout.artifact.refreshStats();
+
+	auto end = std::chrono::high_resolution_clock::now();
+	std::println("{} filters, {}", filters.size(), std::chrono::duration_cast<std::chrono::microseconds>(end - start));
 }

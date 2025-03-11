@@ -7,6 +7,7 @@ namespace Optimization {
 	struct Optimization {
 		Character::Instance &character;
 		Formula::Context ctx;
+		Formula::FloatNode optimizedNode;
 
 		void optimize() const;
 	};
