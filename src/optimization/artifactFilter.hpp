@@ -4,12 +4,39 @@
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "ranges"
+#include <algorithm>
 #include <optional>
 
 
 namespace Optimization {
+	struct ScoredArtifact {
+		Artifact::Instance *instance;
+		float maxScore = 0;
+
+		auto operator<=>(this auto &&self, const ScoredArtifact &other) {
+			return self.maxScore <=> other.maxScore;
+		}
+	};
+
 	struct FilteredArtifacts {
-		std::array<std::vector<Artifact::Instance *>, 5> entries{};
+		std::array<std::vector<ScoredArtifact>, 5> entries{};
+
+		FilteredArtifacts getTop() {
+			std::partial_sort(entries.at(0).begin(), entries.at(0).begin() + 5, entries.at(0).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(1).begin(), entries.at(1).begin() + 5, entries.at(1).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(2).begin(), entries.at(2).begin() + 5, entries.at(2).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(3).begin(), entries.at(3).begin() + 5, entries.at(3).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(4).begin(), entries.at(4).begin() + 5, entries.at(4).end(), std::greater<ScoredArtifact>{});
+			return {
+				.entries{
+					std::vector<ScoredArtifact>(entries.at(0).begin(), entries.at(0).begin() + 5),
+					std::vector<ScoredArtifact>(entries.at(1).begin(), entries.at(1).begin() + 5),
+					std::vector<ScoredArtifact>(entries.at(2).begin(), entries.at(2).begin() + 5),
+					std::vector<ScoredArtifact>(entries.at(3).begin(), entries.at(3).begin() + 5),
+					std::vector<ScoredArtifact>(entries.at(4).begin(), entries.at(4).begin() + 5),
+				},
+			};
+		}
 	};
 
 	struct ArtifactSlotFilter {

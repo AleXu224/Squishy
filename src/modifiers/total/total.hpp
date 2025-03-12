@@ -1,6 +1,7 @@
 #pragma once
 
 #include "formula/percentage.hpp"
+#include "modifiers/enemy/instance.hpp"
 #include "modifiers/total/premod.hpp"
 
 
@@ -63,10 +64,21 @@ namespace Modifiers {
 				 + teamTalent.eval(context);
 		}
 	};
+	template<auto teamStat, auto instanceStat, SheetMemberIdentifier name>
+	struct TotalEnemyFrm {
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
+		}
+
+		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
+			return teamStat.eval(context)
+				 + instanceStat.eval(context);
+		}
+	};
 
 	static constexpr StatFactory<TotalFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> total;
 	static constexpr StatFactory<TotalActiveFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> totalActive;
 	static constexpr StatFactory<DisplayTotalFrm, Character::Kit::postMods, Weapon::Passive::postMods, Artifact::Set::postMods, Team::postMods, preMods, StatNameFactory{}> displayTotal;
 	static constexpr TalentFactory<TotalTalentsFrm, Character::Kit::talents, Character::instanceTalents, Weapon::Passive::talents, Artifact::Set::talents, Team::talents> totalTalents;
-	static constexpr auto totalEnemy = Team::enemy;
+	static constexpr EnemyFactory<TotalEnemyFrm, Team::enemy, Enemy::instanceStats, EnemyNameFactory{}> totalEnemy;
 }// namespace Modifiers
