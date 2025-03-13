@@ -36,9 +36,10 @@ UI::SettingsPage::operator squi::Child() const {
 						.text = "Save",
 						.style = ButtonStyle::Standard(),
 						.onClick = [](GestureDetector::Event) {
+							NFD::Guard guard{};
 							NFD::UniquePath path{};
 							nfdu8filteritem_t filters[2] = {{"JSON File", "json"}};
-							auto res = NFD::SaveDialog(path, filters, 1, nullptr, "save");
+							auto res = NFD::SaveDialog(path, filters, 1, nullptr);
 							if (res == NFD_OKAY) {
 								auto file = std::ofstream(path.get());
 								if (!file) return;
@@ -67,6 +68,7 @@ UI::SettingsPage::operator squi::Child() const {
 						.text = "Load",
 						.style = ButtonStyle::Standard(),
 						.onClick = [](GestureDetector::Event) {
+							NFD::Guard guard{};
 							NFD::UniquePath path{};
 							nfdu8filteritem_t filters[2] = {{"JSON File", "json"}};
 							auto res = NFD::OpenDialog(path, filters, 1);
