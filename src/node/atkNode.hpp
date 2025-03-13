@@ -45,16 +45,7 @@ namespace Node {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			switch (source) {
-				case Misc::AttackSource::normal:
-				case Misc::AttackSource::charged:
-				case Misc::AttackSource::plunge:
-					return switchElement(element.value_or(context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical)), context);
-				case Misc::AttackSource::skill:
-				case Misc::AttackSource::burst:
-					return switchElement(element.value_or(context.source.character.base.element), context);
-			}
-			std::unreachable();
+			return switchElement(Formula::getElement(source, element, context), context);
 		}
 	};
 	template<Misc::SkillStat skillStat>

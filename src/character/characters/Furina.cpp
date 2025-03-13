@@ -29,6 +29,8 @@ const Character::Data Character::Datas::furina{
 		auto fanfareDmgRatio = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035});
 		auto fanfareIncHealRatio = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015});
 
+		auto salonMemberMult = GetFloat("furinaHpDrainableCount") * Constant(0.1f);
+
 		auto fanfareStacks = IfElse{
 			.requirement = character.constellation == 0,
 			.trueVal = GetInt("furinaFanfare"),
@@ -80,6 +82,20 @@ const Character::Data Character::Datas::furina{
 				.infusion = c6Infusion,
 			},
 			.opts{
+				.skill{
+					Option::ValueList{
+						.key = "furinaHpDrainableCount",
+						.prefix = "Number of characters over 50% HP",
+						.values{1, 2, 3, 4},
+						.nodes{
+							Node::Info{
+								.name = "Salon Members Mutliplier",
+								.type = Utils::EntryType::multiplier,
+								.formula = salonMemberMult,
+							},
+						},
+					},
+				},
 				.burst{
 					Option::ValueList{
 						.key = "furinaFanfare",
@@ -232,6 +248,7 @@ const Character::Data Character::Datas::furina{
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0596, 0.0641, 0.0685, 0.0745, 0.0790, 0.0834, 0.0894, 0.0954, 0.1013, 0.1073, 0.1132, 0.1192, 0.1267, 0.1341, 0.1416}),
 						.modifier = Modifier{
 							.DMG = a4DmgIncrease,
+							.multiplicativeDMG = salonMemberMult,
 						},
 					},
 					Node::Atk{
@@ -240,6 +257,7 @@ const Character::Data Character::Datas::furina{
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0323, 0.0347, 0.0372, 0.0404, 0.0428, 0.0452, 0.0485, 0.0517, 0.0549, 0.0582, 0.0614, 0.0646, 0.0687, 0.0727, 0.0768}),
 						.modifier = Modifier{
 							.DMG = a4DmgIncrease,
+							.multiplicativeDMG = salonMemberMult,
 						},
 					},
 					Node::Atk{
@@ -248,6 +266,7 @@ const Character::Data Character::Datas::furina{
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0829, 0.0891, 0.0953, 0.1036, 0.1098, 0.1160, 0.1243, 0.1326, 0.1409, 0.1492, 0.1575, 0.1658, 0.1761, 0.1865, 0.1968}),
 						.modifier = Modifier{
 							.DMG = a4DmgIncrease,
+							.multiplicativeDMG = salonMemberMult,
 						},
 					},
 					Node::Info{

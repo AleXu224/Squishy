@@ -176,7 +176,7 @@ UI::ValueListOption::operator squi::Child() const {
 					.widget{
 						.padding = 4.f,
 					},
-					.children = decodeModsSheet(option.mods, ctx),
+					.children = mods,
 				},
 			},
 		},
