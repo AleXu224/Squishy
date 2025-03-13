@@ -27,11 +27,11 @@ namespace Stats {
 		ArtifactSheet sheet{};
 
 		struct Slotted {
-			std::optional<::Artifact::InstanceKey> flower;
-			std::optional<::Artifact::InstanceKey> plume;
-			std::optional<::Artifact::InstanceKey> sands;
-			std::optional<::Artifact::InstanceKey> goblet;
-			std::optional<::Artifact::InstanceKey> circlet;
+			::Artifact::InstanceKey flower;
+			::Artifact::InstanceKey plume;
+			::Artifact::InstanceKey sands;
+			::Artifact::InstanceKey goblet;
+			::Artifact::InstanceKey circlet;
 
 			[[nodiscard]] static auto getMembers() {
 				return std::array{

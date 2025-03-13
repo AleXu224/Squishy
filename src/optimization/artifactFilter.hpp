@@ -21,19 +21,19 @@ namespace Optimization {
 	struct FilteredArtifacts {
 		std::array<std::vector<ScoredArtifact>, 5> entries{};
 
-		FilteredArtifacts getTop() {
-			std::partial_sort(entries.at(0).begin(), entries.at(0).begin() + 5, entries.at(0).end(), std::greater<ScoredArtifact>{});
-			std::partial_sort(entries.at(1).begin(), entries.at(1).begin() + 5, entries.at(1).end(), std::greater<ScoredArtifact>{});
-			std::partial_sort(entries.at(2).begin(), entries.at(2).begin() + 5, entries.at(2).end(), std::greater<ScoredArtifact>{});
-			std::partial_sort(entries.at(3).begin(), entries.at(3).begin() + 5, entries.at(3).end(), std::greater<ScoredArtifact>{});
-			std::partial_sort(entries.at(4).begin(), entries.at(4).begin() + 5, entries.at(4).end(), std::greater<ScoredArtifact>{});
+		FilteredArtifacts getTop(size_t count) {
+			std::partial_sort(entries.at(0).begin(), std::next(entries.at(0).begin(), std::min(count, entries.at(0).size())), entries.at(0).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(1).begin(), std::next(entries.at(1).begin(), std::min(count, entries.at(1).size())), entries.at(1).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(2).begin(), std::next(entries.at(2).begin(), std::min(count, entries.at(2).size())), entries.at(2).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(3).begin(), std::next(entries.at(3).begin(), std::min(count, entries.at(3).size())), entries.at(3).end(), std::greater<ScoredArtifact>{});
+			std::partial_sort(entries.at(4).begin(), std::next(entries.at(4).begin(), std::min(count, entries.at(4).size())), entries.at(4).end(), std::greater<ScoredArtifact>{});
 			return {
 				.entries{
-					std::vector<ScoredArtifact>(entries.at(0).begin(), entries.at(0).begin() + 5),
-					std::vector<ScoredArtifact>(entries.at(1).begin(), entries.at(1).begin() + 5),
-					std::vector<ScoredArtifact>(entries.at(2).begin(), entries.at(2).begin() + 5),
-					std::vector<ScoredArtifact>(entries.at(3).begin(), entries.at(3).begin() + 5),
-					std::vector<ScoredArtifact>(entries.at(4).begin(), entries.at(4).begin() + 5),
+					std::vector<ScoredArtifact>(entries.at(0).begin(), std::next(entries.at(0).begin(), std::min(count, entries.at(0).size()))),
+					std::vector<ScoredArtifact>(entries.at(1).begin(), std::next(entries.at(1).begin(), std::min(count, entries.at(1).size()))),
+					std::vector<ScoredArtifact>(entries.at(2).begin(), std::next(entries.at(2).begin(), std::min(count, entries.at(2).size()))),
+					std::vector<ScoredArtifact>(entries.at(3).begin(), std::next(entries.at(3).begin(), std::min(count, entries.at(3).size()))),
+					std::vector<ScoredArtifact>(entries.at(4).begin(), std::next(entries.at(4).begin(), std::min(count, entries.at(4).size()))),
 				},
 			};
 		}

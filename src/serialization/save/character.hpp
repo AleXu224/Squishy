@@ -19,11 +19,11 @@ namespace Serialization::Save {
 		uint32_t normalLevel;
 		uint32_t skillLevel;
 		uint32_t burstLevel;
-		std::optional<::Artifact::InstanceKey> artifactFlower;
-		std::optional<::Artifact::InstanceKey> artifactPlume;
-		std::optional<::Artifact::InstanceKey> artifactSands;
-		std::optional<::Artifact::InstanceKey> artifactGoblet;
-		std::optional<::Artifact::InstanceKey> artifactCirclet;
+		::Artifact::InstanceKey artifactFlower;
+		::Artifact::InstanceKey artifactPlume;
+		::Artifact::InstanceKey artifactSands;
+		::Artifact::InstanceKey artifactGoblet;
+		::Artifact::InstanceKey artifactCirclet;
 		std::vector<Serialization::Save::OptionTypes> options;
 		std::vector<Serialization::Save::OptionTypes> artifactOptions;
 		std::vector<Serialization::Save::Combo> combos;

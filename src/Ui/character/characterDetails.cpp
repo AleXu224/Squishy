@@ -208,7 +208,7 @@ UI::CharacterDetails::operator squi::Child() const {
 					Optimization::Optimization optimization{
 						.character = character,
 						.ctx = ctx,
-						.optimizedNode = character.loadout.character.data.data.nodes.normal.at(0).formula,
+						.optimizedNode = character.loadout.character.data.data.nodes.burst.at(0).formula,
 					};
 
 					optimization.optimize();

@@ -6,6 +6,7 @@
 #include "chrono"
 #include <random>
 
+
 void Optimization::Optimization::optimize() const {
 	auto start_filterGen = std::chrono::high_resolution_clock::now();
 
@@ -104,8 +105,9 @@ void Optimization::Optimization::optimize() const {
 				slot = std::invoke(slotPtr, bestLoadout);
 			}
 		}
-		auto topFiltered = filtered.getTop();
+		auto topFiltered = filtered.getTop(3);
 
+		// auto start_iteration = std::chrono::high_resolution_clock::now();
 		for (const auto &[flower, plume, sands, goblet, circlet]: std::views::cartesian_product(topFiltered.entries.at(0), topFiltered.entries.at(1), topFiltered.entries.at(2), topFiltered.entries.at(3), topFiltered.entries.at(4))) {
 			character.loadout.artifact.equipped.flower = flower.instance->key;
 			character.loadout.artifact.equipped.plume = plume.instance->key;
@@ -119,6 +121,8 @@ void Optimization::Optimization::optimize() const {
 				bestLoadout = character.loadout.artifact.equipped;
 			}
 		}
+		// auto end_iteration = std::chrono::high_resolution_clock::now();
+		// std::println("Iteration time: {}", (end_iteration - start_iteration).count() / (topFiltered.entries.at(0).size() * topFiltered.entries.at(1).size() * topFiltered.entries.at(2).size() * topFiltered.entries.at(3).size() * topFiltered.entries.at(4).size()));
 	}
 
 	character.loadout.artifact.equipped = prevLoadout;
@@ -126,7 +130,7 @@ void Optimization::Optimization::optimize() const {
 	std::println("Best dmg: {}", bestDmg);
 	for (const auto &ptr: Stats::Artifact::Slotted::getMembers()) {
 		auto &slot = std::invoke(ptr, bestLoadout);
-		auto &artifact = ::Store::artifacts.at(slot.value());
+		auto &artifact = ::Store::artifacts.at(slot);
 		std::println(
 			"{} {} {} {} {} ({} {} {} {})", artifact.key.key, Artifact::sets.at(artifact.set).name, Utils::Stringify(artifact.slot), Utils::Stringify(artifact.mainStat), artifact.level,
 			Utils::Stringify(artifact.subStats.at(0)->stat),
