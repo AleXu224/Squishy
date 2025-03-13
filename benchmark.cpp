@@ -120,7 +120,7 @@ namespace {
 			},
 		});
 
-		character.getArtifactStats();
+		character.loadout.artifact.refreshStats();
 
 		return character;
 	}

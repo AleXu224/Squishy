@@ -6,7 +6,7 @@ void Artifact::Instance::unequip() {
 	if (!equippedCharacter) return;
 
 	auto &character = Store::characters.at(equippedCharacter);
-	character.loadout.artifact.equipped.fromSlot(this->slot) = std::nullopt;
+	character.loadout.artifact.equipped.fromSlot(this->slot) = {};
 
 	equippedCharacter.clear();
 
@@ -22,7 +22,7 @@ void Artifact::Instance::equipOn(Character::InstanceKey characterKey) {
 	auto &character = Store::characters.at(characterKey);
 	auto &slot = character.loadout.artifact.equipped.fromSlot(this->slot);
 	if (slot) {
-		auto &artifact = Store::artifacts.at(slot.value());
+		auto &artifact = Store::artifacts.at(slot);
 		if (this->equippedCharacter) {
 			auto otherCharacter = this->equippedCharacter;
 			unequip();

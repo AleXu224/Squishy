@@ -161,7 +161,7 @@ struct ArtifactCardContent {
 						auto &artifact = Store::artifacts.at(key);
 						if (artifact.equippedCharacter.key) {
 							auto &character = Store::characters.at(artifact.equippedCharacter);
-							character.loadout.artifact.equipped.fromSlot(artifact.slot) = std::nullopt;
+							character.loadout.artifact.equipped.fromSlot(artifact.slot) = {};
 							character.loadout.artifact.refreshStats();
 						}
 

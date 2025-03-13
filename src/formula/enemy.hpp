@@ -27,7 +27,7 @@ namespace Formula {
 		[[nodiscard]] static float eval(const Context &context) {
 			const auto characterLevel = static_cast<float>(context.source.character.sheet.level);
 			const auto enemyLevel = Modifiers::totalEnemy.level.eval(context);
-			const auto k = (1.f - Modifiers::totalEnemy.DEFReduction.eval(context)) * (1.f - Modifiers::totalEnemy.DEFReduction.eval(context));
+			const auto k = (1.f - Modifiers::totalEnemy.DEFReduction.eval(context)) * (1.f - Modifiers::totalEnemy.DEFIgnored.eval(context));
 
 			return (characterLevel + 100.f) / (k * (enemyLevel + 100.f) + (characterLevel + 100.f));
 		}
