@@ -298,7 +298,7 @@ const Character::Data Character::Datas::furina{
 					Node::Atk{
 						.name = "Skill DMG",
 						.source = Misc::AttackSource::burst,
-						.formula = Multiplier(total.atk, LevelableTalent::burst, {0.1141, 0.1226, 0.1312, 0.1426, 0.1511, 0.1597, 0.1711, 0.1825, 0.1939, 0.2053, 0.2167, 0.2281, 0.2424, 0.2566, 0.2709}),
+						.formula = Multiplier(total.hp, LevelableTalent::burst, {0.1141, 0.1226, 0.1312, 0.1426, 0.1511, 0.1597, 0.1711, 0.1825, 0.1939, 0.2053, 0.2167, 0.2281, 0.2424, 0.2566, 0.2709}),
 					},
 					Node::Info{
 						.name = "Duration",
