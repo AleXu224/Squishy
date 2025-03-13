@@ -187,6 +187,7 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 
 			character.writeToInstance(storedCharacter.value());
 		}
+		characterListUpdateEvent.notify();
 	}
 	if (data.weapons.has_value()) {
 		for (const auto &weapon: data.weapons.value()) {
@@ -199,6 +200,7 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 
 			weapon.writeToInstance(storedWeapon.value());
 		}
+		weaponListUpdateEvent.notify();
 	}
 	if (data.artifacts.has_value()) {
 		for (const auto &artifact: data.artifacts.value()) {
@@ -210,5 +212,6 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 
 			artifact.writeToInstance(storedArtifact.value());
 		}
+		artifactListUpdateEvent.notify();
 	}
 }
