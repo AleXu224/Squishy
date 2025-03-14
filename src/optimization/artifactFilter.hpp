@@ -21,6 +21,14 @@ namespace Optimization {
 	struct FilteredArtifacts {
 		std::array<std::vector<ScoredArtifact>, 5> entries{};
 
+		size_t getCombCount() const {
+			return entries[0].size()
+				 * entries[1].size()
+				 * entries[2].size()
+				 * entries[3].size()
+				 * entries[4].size();
+		}
+
 		FilteredArtifacts getTop(size_t count) {
 			std::partial_sort(entries.at(0).begin(), std::next(entries.at(0).begin(), std::min(count, entries.at(0).size())), entries.at(0).end(), std::greater<ScoredArtifact>{});
 			std::partial_sort(entries.at(1).begin(), std::next(entries.at(1).begin(), std::min(count, entries.at(1).size())), entries.at(1).end(), std::greater<ScoredArtifact>{});
@@ -42,10 +50,12 @@ namespace Optimization {
 	struct ArtifactSlotFilter {
 		Artifact::Slot slot;
 		std::optional<Artifact::SetKey> set{};
+		std::optional<Artifact::SetKey> notSet{};
 
 		[[nodiscard]] bool eval(const Artifact::Instance &instance) const {
 			if (instance.slot != slot) return false;
 			if (set && instance.set != set) return false;
+			if (notSet && instance.set == notSet) return false;
 
 			return true;
 		}
