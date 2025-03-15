@@ -203,6 +203,10 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 		weaponListUpdateEvent.notify();
 	}
 	if (data.artifacts.has_value()) {
+		for (auto &&[key, artifact]: ::Store::artifacts) {
+			artifact.unequip();
+		}
+		::Store::artifacts.clear();
 		for (const auto &artifact: data.artifacts.value()) {
 			auto storedArtifact = artifact.isAlreadyStored();
 			if (!storedArtifact && !(storedArtifact = artifact.createInstance())) {
