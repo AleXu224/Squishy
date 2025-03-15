@@ -5,8 +5,8 @@
 
 #include "chrono"
 #include <execution>
+#include <mutex>
 #include <numeric>
-#include <random>
 
 
 namespace {
@@ -262,7 +262,6 @@ void Optimization::Optimization::optimize() const {
 			auto filtered = filter.filter(initialArtifacts);
 			for (auto [slotPtr, filtered]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
 				auto &slot = std::invoke(slotPtr, character.loadout.artifact.equipped);
-				std::uniform_int_distribution dist{0ull, filtered.size() - 1};
 				if (!filtered.empty()) slot = filtered.front()->key;
 			}
 			character.loadout.artifact.refreshStats();
