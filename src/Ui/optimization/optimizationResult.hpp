@@ -1,18 +1,17 @@
 #pragma once
 
 #include "character/key.hpp"
-#include "enemy/key.hpp"
-#include "team/key.hpp"
+#include "optimization/solution.hpp"
 #include "widget.hpp"
 
 
 namespace UI {
-	struct Optimization {
+	struct OptimizationResult {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
-		std::optional<Team::InstanceKey> teamKey{};
-		Enemy::Key enemyKey{};
+		::Optimization::Solution solution;
+		uint32_t entryIndex;
 
 		operator squi::Child() const;
 	};

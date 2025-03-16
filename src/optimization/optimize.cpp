@@ -3,157 +3,30 @@
 #include "artifactFilter.hpp"
 #include "store.hpp"
 
+#include "bnb.hpp"
 #include "chrono"
+#include "ranges"
+#include "solution.hpp"
 #include <execution>
-#include <mutex>
-#include <numeric>
 
 
-namespace {
-	struct Solution {
-		Stats::Artifact::Slotted artifacts;
-		float score;
-	};
-
-	struct Solutions {
-		std::mutex mtx;
-		std::array<Solution, 5> solutions{};
-		float maxScore = 0.f;
-		float minScore = 0.f;
-
-		void addSolution(const Stats::Artifact::Slotted &artifacts, float score) {
-			std::scoped_lock _{mtx};
-			if (score < minScore) return;
-
-			for (auto &solution: solutions) {
-				if (solution.score < score) std::swap(solution, solutions.back());
-			}
-			for (auto &solution: solutions) {
-				if (solution.score < score) {
-					solution = Solution{
-						.artifacts = artifacts,
-						.score = score,
-					};
-					break;
-				}
-			}
-			maxScore = solutions.front().score;
-			minScore = solutions.back().score;
-		}
-	};
-
-	// Combines all the artifacts of a slot into one unrealistically optimistic one to get the max potential
-	std::array<Stats::Sheet<float>, 5> getMaxStatsForSlots(auto &&artifacts) {
-		std::array<Stats::Sheet<float>, 5> statsForSlot{};
-
-		for (auto &&[slot, artifacts]: std::views::zip(statsForSlot, artifacts.entries)) {
-			for (const auto &artifact: artifacts) {
-				auto &mainStatSlot = slot.fromStat(artifact->mainStat);
-				auto &mainStatArtifact = artifact->stats.fromStat(artifact->mainStat);
-				mainStatSlot = std::max(mainStatSlot, mainStatArtifact);
-
-				for (const auto &subStat: artifact->subStats) {
-					if (!subStat.has_value()) continue;
-					auto &statSlot = slot.fromStat(subStat->stat);
-					auto &statArtifact = artifact->stats.fromStat(subStat->stat);
-					statSlot = std::max(statSlot, statArtifact);
-				}
-			}
-		}
-		return statsForSlot;
-	}
-
-	void bnb(Optimization::FilteredArtifacts &artifacts, Solutions &solutions, Character::Instance &character, const Formula::Context &ctx, const Formula::FloatNode &node) {
-		std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(artifacts);
-
-		// Check if this branch can possibly be good enough to be worth considering
-		character.loadout.artifact.sheet.equippedArtifacts[0] = &statsForSlot[0];
-		character.loadout.artifact.sheet.equippedArtifacts[1] = &statsForSlot[1];
-		character.loadout.artifact.sheet.equippedArtifacts[2] = &statsForSlot[2];
-		character.loadout.artifact.sheet.equippedArtifacts[3] = &statsForSlot[3];
-		character.loadout.artifact.sheet.equippedArtifacts[4] = &statsForSlot[4];
-		if (node.eval(ctx) <= solutions.minScore) return;
-
-		float maxVariance = 0;
-		size_t maxVarianceSlot = 0;
-
-		// Check the potential of each artifact
-		for (size_t i = 0; i < 5; i++) {
-			auto &artis = artifacts.entries[i];
-			float maxVal = 0;
-			float minVal = std::numeric_limits<float>::max();
-
-			artis.erase(
-				std::remove_if(artis.begin(), artis.end(), [&](Artifact::Instance *artifact) {
-					character.loadout.artifact.sheet.equippedArtifacts[i] = &artifact->stats;
-
-					auto val = node.eval(ctx);
-					if (val > solutions.minScore) {
-						maxVal = std::max(val, maxVal);
-						minVal = std::min(val, minVal);
-					}
-
-					return val <= solutions.minScore;
-				}),
-				artis.end()
-			);
-			character.loadout.artifact.sheet.equippedArtifacts[i] = &statsForSlot[i];
-
-			auto variance = maxVal - minVal;
-			if (variance > maxVariance) {
-				maxVariance = variance;
-				maxVarianceSlot = i;
-			}
-		}
-
-		// Bruteforce if the combination count is low enough
-		if (artifacts.getCombCount() <= 32) {
-			for (const auto &[flower, plume, sands, goblet, circlet]: std::views::cartesian_product(artifacts.entries.at(0), artifacts.entries.at(1), artifacts.entries.at(2), artifacts.entries.at(3), artifacts.entries.at(4))) {
-				character.loadout.artifact.equipped.flower = flower->key;
-				character.loadout.artifact.equipped.plume = plume->key;
-				character.loadout.artifact.equipped.sands = sands->key;
-				character.loadout.artifact.equipped.goblet = goblet->key;
-				character.loadout.artifact.equipped.circlet = circlet->key;
-				character.loadout.artifact.refreshStats();
-				auto dmg = node.eval(ctx);
-				solutions.addSolution(character.loadout.artifact.equipped, dmg);
-			}
-			return;
-		}
-
-		size_t biggestSlot = 0;
-		// size_t biggestSlotIndex = 0;
-		if (maxVariance == 0) {
-			for (size_t i = 0; i < 5; i++) {
-				auto size = artifacts.entries[i].size();
-				if (size > biggestSlot) {
-					biggestSlot = size;
-					maxVarianceSlot = i;
-				}
-			}
-		}
-
-		auto &chosenSplitSlot = artifacts.entries[maxVarianceSlot];
-		auto midPoint = std::midpoint(size_t(0), chosenSplitSlot.size());
-		auto copy1 = artifacts;
-		auto copy2 = artifacts;
-		auto &maxVarianceEntry = artifacts.entries[maxVarianceSlot];
-		copy1.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin(), maxVarianceEntry.begin() + midPoint);
-		copy2.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin() + midPoint, maxVarianceEntry.end());
-
-		bnb(copy1, solutions, character, ctx, node);
-		bnb(copy2, solutions, character, ctx, node);
-	}
-}// namespace
-
-void Optimization::Optimization::optimize() const {
+Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto start_filterGen = std::chrono::high_resolution_clock::now();
 
 	std::vector<ArtifactFilter> filters{};
 
 	// 4pc filters
-	for (const auto &[key, _]: Artifact::sets) {
+	for (const auto &key: enabledFourPiece) {
 		ArtifactFilter pattern{};
+		auto &set = Artifact::sets.at(key);
+		pattern.bonus1.emplace(Stats::ArtifactBonus{
+			.setPtr = set,
+			.bonusPtr = set.data.twoPc,
+		});
+		pattern.bonus2.emplace(Stats::ArtifactBonus{
+			.setPtr = set,
+			.bonusPtr = set.data.fourPc,
+		});
 		for (auto &entry: pattern.filters) {
 			entry.set = key;
 		}
@@ -168,36 +41,56 @@ void Optimization::Optimization::optimize() const {
 	}
 
 	// 2pc filters
-	for (auto it = Artifact::sets.begin(); it != Artifact::sets.end(); it++) {
-		auto key = it->first;
+	for (auto it = enabledTwoPiece.begin(); it != enabledTwoPiece.end(); it++) {
+		auto key = *it;
+		auto &set = Artifact::sets.at(key);
 		for (size_t i = 0; i < 5; i++) {
 			for (size_t j = i + 1; j < 5; j++) {
 				ArtifactFilter ret{};
+				ret.bonus1.emplace(Stats::ArtifactBonus{
+					.setPtr = set,
+					.bonusPtr = set.data.twoPc,
+				});
 				ret.filters.at(i).set = key;
 				ret.filters.at(j).set = key;
-				// auto retCopy = ret;
-				// std::vector<ArtifactSlotFilter *> otherSlots{};
-				// for (size_t k = 0; k < 5; k++) {
-				// 	if (k == i || k == j) continue;
-				// 	otherSlots.emplace_back(&retCopy.filters.at(k));
-				// 	retCopy.filters.at(k).notSet = key;
-				// }
-				// for (auto &slot: otherSlots) {
-				// 	slot->notSet = {};
-				// 	filters.emplace_back(retCopy);
-				// 	slot->notSet = key;
-				// }
-
-				// 2pc2pc
-				for (auto it2 = std::next(it); it2 != Artifact::sets.end(); it2++) {
-					auto key2 = it2->first;
-					if (key == key2) continue;
-
+				if (threeRainbow) {
+					auto retCopy = ret;
+					std::vector<ArtifactSlotFilter *> otherSlots{};
 					for (size_t k = 0; k < 5; k++) {
 						if (k == i || k == j) continue;
+						otherSlots.emplace_back(&retCopy.filters.at(k));
+						retCopy.filters.at(k).notSet = key;
+					}
+					for (auto &slot: otherSlots) {
+						slot->notSet = {};
+						filters.emplace_back(retCopy);
+						slot->notSet = key;
+					}
+				}
+
+				// 2pc2pc
+				for (auto it2 = std::next(it); it2 != enabledTwoPiece.end(); it2++) {
+					auto key2 = *it2;
+					if (key == key2) continue;
+					auto &set2 = Artifact::sets.at(key2);
+					ret.bonus2.emplace(Stats::ArtifactBonus{
+						.setPtr = set2,
+						.bonusPtr = set2.data.twoPc,
+					});
+					for (size_t k = 0; k < 5; k++) {
+						if (k == i || k == j) continue;
+						auto retSwapped = ret;
+						// Swap the positions
+						if (k < i) {
+							retSwapped.bonus2.emplace(retSwapped.bonus1.value());
+							retSwapped.bonus1.emplace(Stats::ArtifactBonus{
+								.setPtr = set2,
+								.bonusPtr = set2.data.twoPc,
+							});
+						}
 						for (size_t l = k + 1; l < 5; l++) {
 							if (l == i || l == j) continue;
-							auto ret2 = ret;
+							auto ret2 = retSwapped;
 							ret2.filters.at(k).set = key2;
 							ret2.filters.at(l).set = key2;
 
@@ -208,6 +101,10 @@ void Optimization::Optimization::optimize() const {
 			}
 		}
 	}
+	// Rainbow filter
+	if (fiveRainbow)
+		filters.emplace_back(ArtifactFilter{});
+
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
 	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
 
@@ -269,7 +166,7 @@ void Optimization::Optimization::optimize() const {
 			}
 			character.loadout.artifact.refreshStats();
 
-			bnb(filtered, solutions, character, ctx, optimizedNode);
+			bnb(filtered, solutions, character, ctx, optimizedNode, filter.bonus1, filter.bonus2);
 
 			combed++;
 			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), filterCount, (static_cast<float>(combed) / static_cast<float>(filterCount)) * 100.f);
@@ -297,4 +194,6 @@ void Optimization::Optimization::optimize() const {
 	auto end = std::chrono::high_resolution_clock::now();
 	std::println("------------------------------------------------");
 	std::println("Optimizing done: Best dmg {}, time taken {}", solutions.maxScore, std::chrono::duration_cast<std::chrono::milliseconds>(end - start));
+
+	return solutions;
 }

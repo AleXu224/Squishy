@@ -2,6 +2,7 @@
 
 #include "character/instance.hpp"
 #include "formula/formulaContext.hpp"
+#include "solution.hpp"
 
 namespace Optimization {
 	struct Optimization {
@@ -9,6 +10,11 @@ namespace Optimization {
 		Formula::Context ctx;
 		Formula::FloatNode optimizedNode;
 
-		void optimize() const;
+		bool threeRainbow = true;
+		bool fiveRainbow = true;
+		std::vector<Artifact::SetKey> enabledTwoPiece;
+		std::vector<Artifact::SetKey> enabledFourPiece;
+
+		Solutions optimize() const;
 	};
 }// namespace Optimization

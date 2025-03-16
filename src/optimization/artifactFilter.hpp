@@ -4,6 +4,7 @@
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
 #include "ranges"
+#include "stats/artifact.hpp"
 #include <optional>
 
 
@@ -42,6 +43,8 @@ namespace Optimization {
 			ArtifactSlotFilter{.slot = Artifact::Slot::goblet},
 			ArtifactSlotFilter{.slot = Artifact::Slot::circlet},
 		};
+		std::optional<Stats::ArtifactBonus> bonus1;
+		std::optional<Stats::ArtifactBonus> bonus2;
 
 		FilteredArtifacts filter(std::vector<Artifact::Instance> &artifacts) const {
 			FilteredArtifacts ret{};
@@ -64,4 +67,25 @@ namespace Optimization {
 			return ret;
 		}
 	};
+
+	// Combines all the artifacts of a slot into one unrealistically optimistic one to get the max potential
+	static inline std::array<Stats::Sheet<float>, 5> getMaxStatsForSlots(auto &&artifacts) {
+		std::array<Stats::Sheet<float>, 5> statsForSlot{};
+
+		for (auto &&[slot, artifacts]: std::views::zip(statsForSlot, artifacts.entries)) {
+			for (const auto &artifact: artifacts) {
+				auto &mainStatSlot = slot.fromStat(artifact->mainStat);
+				auto &mainStatArtifact = artifact->stats.fromStat(artifact->mainStat);
+				mainStatSlot = std::max(mainStatSlot, mainStatArtifact);
+
+				for (const auto &subStat: artifact->subStats) {
+					if (!subStat.has_value()) continue;
+					auto &statSlot = slot.fromStat(subStat->stat);
+					auto &statArtifact = artifact->stats.fromStat(subStat->stat);
+					statSlot = std::max(statSlot, statArtifact);
+				}
+			}
+		}
+		return statsForSlot;
+	}
 }// namespace Optimization

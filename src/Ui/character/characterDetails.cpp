@@ -174,9 +174,12 @@ namespace {
 		return UI::Masonry{
 			.widget{
 				.height = Size::Shrink,
+				.sizeConstraints{
+					.maxWidth = 1520.f,
+				},
 			},
 			.spacing = 4.f,
-			.columnCount = UI::Masonry::MinSize{256.f},
+			.columnCount = UI::Masonry::MinSize{250.f},
 			.children = mainContent,
 		};
 	}
@@ -188,6 +191,7 @@ UI::CharacterDetails::operator squi::Child() const {
 		.scrollableWidget{
 			.padding = 4.f,
 		},
+		.alignment = squi::Column::Alignment::center,
 		.spacing = 4.f,
 		.children{
 			Rebuilder{
