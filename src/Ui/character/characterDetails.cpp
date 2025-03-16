@@ -2,9 +2,9 @@
 
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
+#include "Ui/optimization/optimization.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "artifact/set.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
@@ -20,8 +20,6 @@
 #include "modifiers/weapon/displayStats.hpp"
 
 #include "scrollableFrame.hpp"
-
-#include "optimization/optimize.hpp"
 
 using namespace squi;
 
@@ -176,7 +174,6 @@ namespace {
 		return UI::Masonry{
 			.widget{
 				.height = Size::Shrink,
-				.padding = 8.f,
 			},
 			.spacing = 4.f,
 			.columnCount = UI::Masonry::MinSize{256.f},
@@ -188,31 +185,19 @@ namespace {
 UI::CharacterDetails::operator squi::Child() const {
 	// TODO: make each item rebuild individually
 	return ScrollableFrame{
+		.scrollableWidget{
+			.padding = 4.f,
+		},
+		.spacing = 4.f,
 		.children{
 			Rebuilder{
 				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
 				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey),
 			},
-			Button{
-				.text = "Optimize",
-				.onClick = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](auto) {
-					auto &character = ::Store::characters.at(characterKey);
-					auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
-					auto &enemy = ::Store::enemies.at(enemyKey);
-					Formula::Context ctx{
-						.source = character.loadout,
-						.active = character.loadout,
-						.team = team.stats,
-						.enemy = enemy.stats,
-					};
-					Optimization::Optimization optimization{
-						.character = character,
-						.ctx = ctx,
-						.optimizedNode = character.loadout.character.data.data.nodes.burst.at(0).formula,
-					};
-
-					optimization.optimize();
-				},
+			UI::Optimization{
+				.characterKey = characterKey,
+				.teamKey = teamKey,
+				.enemyKey = enemyKey,
 			},
 		},
 	};

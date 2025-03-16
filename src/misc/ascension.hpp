@@ -32,7 +32,7 @@ namespace Misc {
 		{5, 6},
 	};
 
-	static inline auto ascensionsAtLvl(uint8_t lvl, uint8_t rarity) {
+	static inline std::vector<Ascension> ascensionsAtLvl(uint8_t lvl, uint8_t rarity) {
 		return ascensions
 			 | std::views::take(maxAscensionByRarity.at(rarity) + 1)
 			 | std::views::filter([&](const Ascension &ascension) {

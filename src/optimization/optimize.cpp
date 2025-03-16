@@ -42,7 +42,8 @@ namespace {
 		}
 	};
 
-	std::array<Stats::Sheet<float>, 5> getMaxStatsForSlots(const Optimization::FilteredArtifacts &artifacts) {
+	// Combines all the artifacts of a slot into one unrealistically optimistic one to get the max potential
+	std::array<Stats::Sheet<float>, 5> getMaxStatsForSlots(auto &&artifacts) {
 		std::array<Stats::Sheet<float>, 5> statsForSlot{};
 
 		for (auto &&[slot, artifacts]: std::views::zip(statsForSlot, artifacts.entries)) {
@@ -65,6 +66,7 @@ namespace {
 	void bnb(Optimization::FilteredArtifacts &artifacts, Solutions &solutions, Character::Instance &character, const Formula::Context &ctx, const Formula::FloatNode &node) {
 		std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(artifacts);
 
+		// Check if this branch can possibly be good enough to be worth considering
 		character.loadout.artifact.sheet.equippedArtifacts[0] = &statsForSlot[0];
 		character.loadout.artifact.sheet.equippedArtifacts[1] = &statsForSlot[1];
 		character.loadout.artifact.sheet.equippedArtifacts[2] = &statsForSlot[2];
@@ -75,20 +77,15 @@ namespace {
 		float maxVariance = 0;
 		size_t maxVarianceSlot = 0;
 
+		// Check the potential of each artifact
 		for (size_t i = 0; i < 5; i++) {
 			auto &artis = artifacts.entries[i];
 			float maxVal = 0;
 			float minVal = std::numeric_limits<float>::max();
 
 			artis.erase(
-				std::remove_if(artis.begin(), artis.end(), [&](const auto &artifact) {
-					for (size_t index = 0; index < 5; index++) {
-						if (size_t(index) == i) {
-							character.loadout.artifact.sheet.equippedArtifacts[index] = &artifact->stats;
-							continue;
-						}
-						character.loadout.artifact.sheet.equippedArtifacts[index] = &statsForSlot[index];
-					}
+				std::remove_if(artis.begin(), artis.end(), [&](Artifact::Instance *artifact) {
+					character.loadout.artifact.sheet.equippedArtifacts[i] = &artifact->stats;
 
 					auto val = node.eval(ctx);
 					if (val > solutions.minScore) {
@@ -100,6 +97,7 @@ namespace {
 				}),
 				artis.end()
 			);
+			character.loadout.artifact.sheet.equippedArtifacts[i] = &statsForSlot[i];
 
 			auto variance = maxVal - minVal;
 			if (variance > maxVariance) {
@@ -108,6 +106,7 @@ namespace {
 			}
 		}
 
+		// Bruteforce if the combination count is low enough
 		if (artifacts.getCombCount() <= 32) {
 			for (const auto &[flower, plume, sands, goblet, circlet]: std::views::cartesian_product(artifacts.entries.at(0), artifacts.entries.at(1), artifacts.entries.at(2), artifacts.entries.at(3), artifacts.entries.at(4))) {
 				character.loadout.artifact.equipped.flower = flower->key;
@@ -138,8 +137,9 @@ namespace {
 		auto midPoint = std::midpoint(size_t(0), chosenSplitSlot.size());
 		auto copy1 = artifacts;
 		auto copy2 = artifacts;
-		copy1.entries[maxVarianceSlot] = std::vector(artifacts.entries[maxVarianceSlot].begin(), artifacts.entries[maxVarianceSlot].begin() + midPoint);
-		copy2.entries[maxVarianceSlot] = std::vector(artifacts.entries[maxVarianceSlot].begin() + midPoint, artifacts.entries[maxVarianceSlot].end());
+		auto &maxVarianceEntry = artifacts.entries[maxVarianceSlot];
+		copy1.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin(), maxVarianceEntry.begin() + midPoint);
+		copy2.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin() + midPoint, maxVarianceEntry.end());
 
 		bnb(copy1, solutions, character, ctx, node);
 		bnb(copy2, solutions, character, ctx, node);
@@ -157,10 +157,12 @@ void Optimization::Optimization::optimize() const {
 		for (auto &entry: pattern.filters) {
 			entry.set = key;
 		}
+		filters.emplace_back(pattern);
 
 		for (size_t i = 0; i < 5; i++) {
 			auto ret = pattern;
 			ret.filters.at(i).set = std::nullopt;
+			ret.filters.at(i).notSet = key;
 			filters.emplace_back(ret);
 		}
 	}
@@ -173,18 +175,18 @@ void Optimization::Optimization::optimize() const {
 				ArtifactFilter ret{};
 				ret.filters.at(i).set = key;
 				ret.filters.at(j).set = key;
-				auto retCopy = ret;
-				std::vector<ArtifactSlotFilter *> otherSlots{};
-				for (size_t k = 0; k < 5; k++) {
-					if (k == i || k == j) continue;
-					otherSlots.emplace_back(&retCopy.filters.at(k));
-					retCopy.filters.at(k).notSet = key;
-				}
-				for (auto &slot: otherSlots) {
-					slot->notSet = {};
-					filters.emplace_back(retCopy);
-					slot->notSet = key;
-				}
+				// auto retCopy = ret;
+				// std::vector<ArtifactSlotFilter *> otherSlots{};
+				// for (size_t k = 0; k < 5; k++) {
+				// 	if (k == i || k == j) continue;
+				// 	otherSlots.emplace_back(&retCopy.filters.at(k));
+				// 	retCopy.filters.at(k).notSet = key;
+				// }
+				// for (auto &slot: otherSlots) {
+				// 	slot->notSet = {};
+				// 	filters.emplace_back(retCopy);
+				// 	slot->notSet = key;
+				// }
 
 				// 2pc2pc
 				for (auto it2 = std::next(it); it2 != Artifact::sets.end(); it2++) {
@@ -221,6 +223,7 @@ void Optimization::Optimization::optimize() const {
 
 	auto initialArtifacts = ArtifactFilter{}.filter(artifacts);
 	std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
+	// Roughly sort the artifact based on potential. Helps a lot when splitting
 	for (size_t i = 0; i < 5; i++) {
 		auto &artis = initialArtifacts.entries[i];
 		for (size_t index = 0; index < 5; index++) {
