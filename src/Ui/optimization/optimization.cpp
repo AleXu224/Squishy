@@ -44,7 +44,7 @@ UI::Optimization::operator squi::Child() const {
 			.child = Column{
 				.widget{
 					.sizeConstraints{
-						.maxWidth = 1000.f,
+						.maxWidth = 1520.f,
 					},
 				},
 				.alignment = squi::Column::Alignment::center,

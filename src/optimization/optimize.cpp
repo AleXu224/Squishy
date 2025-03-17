@@ -180,6 +180,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		std::println("Solution dmg: {}", solution.score);
 		for (const auto &ptr: Stats::Artifact::Slotted::getMembers()) {
 			auto &slot = std::invoke(ptr, solution.artifacts);
+			if (!slot) continue;
 			auto &artifact = ::Store::artifacts.at(slot);
 			std::println(
 				"{} {} {} Lvl{} ({} {}, {} {}, {} {}, {} {})", Artifact::sets.at(artifact.set).name, Utils::Stringify(artifact.slot), Utils::Stringify(artifact.mainStat), artifact.level,

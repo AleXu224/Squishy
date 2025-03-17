@@ -59,8 +59,12 @@ UI::OptimizationResult::operator squi::Child() const {
 			},
 		},
 		.expandedContent = Column{
+			.widget{
+				.padding = 4.f,
+			},
 			.children{
 				Row{
+					.spacing = 4.f,
 					.children = [solution = solution]() {
 						Children ret;
 						for (const auto &slot: Artifact::slots) {

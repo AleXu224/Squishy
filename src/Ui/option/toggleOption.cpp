@@ -3,6 +3,7 @@
 #include "align.hpp"
 #include "button.hpp"
 #include "column.hpp"
+#include "container.hpp"
 #include "fontIcon.hpp"
 #include "observer.hpp"
 #include "row.hpp"
@@ -116,9 +117,11 @@ UI::ToggleOption::operator squi::Child() const {
 								.switchEvent = switchEvent,
 								.readyEvent = readyEvent,
 							},
-							Text{
-								.text = option.name,
-								.lineWrap = true,
+							Container{
+								.child = Text{
+									.text = option.name,
+									.lineWrap = true,
+								},
 							},
 						},
 					},
