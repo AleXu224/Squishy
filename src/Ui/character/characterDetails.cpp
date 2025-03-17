@@ -1,9 +1,13 @@
 #include "characterDetails.hpp"
 
+#include "Ui/artifact/artifactCard.hpp"
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
 #include "Ui/optimization/optimization.hpp"
+#include "Ui/utils/card.hpp"
+#include "Ui/utils/grid.hpp"
 #include "Ui/utils/masonry.hpp"
+#include "Ui/weapon/weaponCard.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
 #include "characterStats.hpp"
@@ -171,7 +175,7 @@ namespace {
 			});
 		}
 
-		return UI::Masonry{
+		return Column{
 			.widget{
 				.height = Size::Shrink,
 				.sizeConstraints{
@@ -179,8 +183,37 @@ namespace {
 				},
 			},
 			.spacing = 4.f,
-			.columnCount = UI::Masonry::MinSize{250.f},
-			.children = mainContent,
+			.children{
+				UI::Masonry{
+					.spacing = 4.f,
+					.columnCount = UI::Masonry::MinSize{250.f},
+					.children = mainContent,
+				},
+				UI::Grid{
+					.spacing = 4.f,
+					.columnCount = UI::Grid::MinSize{250.f},
+					.children = [&]() {
+						Children ret;
+						ret.emplace_back(UI::WeaponCard{
+							.weapon = ::Store::weapons.at(character.weaponInstanceKey),
+							.hasActions = false,
+						});
+						for (const auto &slot: Artifact::slots) {
+							auto &key = character.loadout.artifact.equipped.fromSlot(slot);
+							if (!key) {
+								ret.emplace_back(UI::Card{});
+								continue;
+							}
+							auto &artifact = ::Store::artifacts.at(key);
+							ret.emplace_back(UI::ArtifactCard{
+								.artifact = artifact,
+								.hasActions = false,
+							});
+						}
+						return ret;
+					}(),
+				},
+			},
 		};
 	}
 }// namespace

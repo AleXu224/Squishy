@@ -13,6 +13,7 @@
 #include "gestureDetector.hpp"
 #include "image.hpp"
 #include "misc/rarityToColor.hpp"
+#include "rebuilder.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "store.hpp"
@@ -82,6 +83,7 @@ struct ArtifactCardContent {
 	// Args
 	squi::Widget::Args widget{};
 	Artifact::Instance &artifact;
+	bool hasActions;
 
 	operator squi::Child() const {
 		auto header = ArtifactHeader{
@@ -175,7 +177,7 @@ struct ArtifactCardContent {
 			.children{
 				header,
 				subStats,
-				footer,
+				hasActions ? footer : Child{},
 			},
 		};
 	}
@@ -187,18 +189,18 @@ UI::ArtifactCard::operator squi::Child() const {
 	return Card{
 		.widget{
 			.padding = Padding{1.f},
-			.onInit = [updateEvent = artifact.updateEvent, key = artifact.key](Widget &w) {
-				w.customState.add(updateEvent.observe([&w, key]() {
-					if (!Store::artifacts.contains(key)) {
-						w.deleteLater();
-						return;
-					}
-					w.setChildren({ArtifactCardContent{
-						.artifact = Store::artifacts.at(key),
-					}});
-				}));
+		},
+		.child = Rebuilder{
+			.rebuildEvent = artifact.updateEvent,
+			.buildFunc = [key = artifact.key, hasActions = hasActions]() -> Child {
+				if (!Store::artifacts.contains(key)) {
+					return Child{};
+				}
+				return ArtifactCardContent{
+					.artifact = Store::artifacts.at(key),
+					.hasActions = hasActions,
+				};
 			},
 		},
-		.child = ArtifactCardContent{.artifact = artifact},
 	};
 }

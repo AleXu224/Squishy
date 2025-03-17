@@ -1,8 +1,10 @@
 #include "optimizationResult.hpp"
 
+#include "Ui/artifact/artifactCard.hpp"
 #include "artifact/sets.hpp"
 #include "box.hpp"
 #include "button.hpp"
+#include "column.hpp"
 #include "expander.hpp"
 #include "image.hpp"
 #include "row.hpp"
@@ -53,6 +55,24 @@ UI::OptimizationResult::operator squi::Child() const {
 					}
 					character.loadout.artifact.refreshStats();
 					character.updateEvent.notify();
+				},
+			},
+		},
+		.expandedContent = Column{
+			.children{
+				Row{
+					.children = [solution = solution]() {
+						Children ret;
+						for (const auto &slot: Artifact::slots) {
+							auto &key = solution.artifacts.fromSlot(slot);
+							if (!key) continue;
+							ret.emplace_back(ArtifactCard{
+								.artifact = ::Store::artifacts.at(key),
+								.hasActions = false,
+							});
+						}
+						return ret;
+					}(),
 				},
 			},
 		},

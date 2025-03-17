@@ -22,6 +22,7 @@ UI::CharacterStats::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return UI::DisplayCard{
+		.widget = widget,
 		.title = ctx.active.character.data.name,
 		.children = [&]() {
 			const auto &loadout = ctx.source;
