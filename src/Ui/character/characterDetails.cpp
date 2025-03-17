@@ -1,27 +1,30 @@
 #include "characterDetails.hpp"
 
+#include "Ui/artifact/artifactCard.hpp"
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
+#include "Ui/optimization/optimization.hpp"
+#include "Ui/utils/card.hpp"
+#include "Ui/utils/grid.hpp"
 #include "Ui/utils/masonry.hpp"
+#include "Ui/weapon/weaponCard.hpp"
 #include "artifact/set.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
+#include "expander.hpp"
 #include "ranges"
 #include "rebuilder.hpp"
 #include "store.hpp"
 
 
-#include "formula/requires.hpp"
 #include "formula/stat.hpp"// IWYU pragma: keep
 
 #include "modifiers/artifact/displayStats.hpp"
 #include "modifiers/weapon/displayStats.hpp"
 
 #include "scrollableFrame.hpp"
-
-#include "optimization/optimize.hpp"
+#include "utils/slotToCondition.hpp"
 
 using namespace squi;
 
@@ -144,22 +147,10 @@ namespace {
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {
 			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
 		}
-		const std::vector<std::pair<std::string_view, Formula::BoolNode>> namesAndConditions = {
-			{"Normal attack", Formula::ConstantBool(true)},
-			{"Charged attack", Formula::ConstantBool(true)},
-			{"Plunge attack", Formula::ConstantBool(true)},
-			{"Elemental skill", Formula::ConstantBool(true)},
-			{"Elemental burst", Formula::ConstantBool(true)},
-			{"Passive 1", Requirement::passive1},
-			{"Passive 2", Requirement::passive2},
-			{"Constellation 1", Requirement::constellation1},
-			{"Constellation 2", Requirement::constellation2},
-			{"Constellation 4", Requirement::constellation4},
-			{"Constellation 6", Requirement::constellation6},
-		};
 
-		for (const auto &[nodeWrapper, options, nameAndCondition]: std::views::zip(nodes, characterOpts, namesAndConditions)) {
-			auto &[name, condition] = nameAndCondition;
+		for (const auto &[nodeWrapper, options, slot]: std::views::zip(nodes, characterOpts, Node::characterSlots)) {
+			auto name = Utils::Stringify(slot);
+			auto condition = Utils::slotToCondition(slot);
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
@@ -173,46 +164,99 @@ namespace {
 			});
 		}
 
-		return UI::Masonry{
+		return Column{
 			.widget{
 				.height = Size::Shrink,
-				.padding = 8.f,
+				.sizeConstraints{
+					.maxWidth = 1520.f,
+				},
 			},
 			.spacing = 4.f,
-			.columnCount = UI::Masonry::MinSize{256.f},
-			.children = mainContent,
+			.children{
+				UI::Masonry{
+					.spacing = 4.f,
+					.columnCount = UI::Masonry::MinSize{250.f},
+					.children = mainContent,
+				},
+			},
 		};
 	}
+
+	struct EquipmentExpander {
+		// Args
+		squi::Widget::Args widget{};
+		Character::InstanceKey characterKey;
+
+		static inline Child makeContent(Character::InstanceKey characterKey) {
+			auto &character = ::Store::characters.at(characterKey);
+
+			return UI::Grid{
+				.widget{
+					.padding = Padding{8.f, 8.f},
+				},
+				.spacing = 4.f,
+				.columnCount = UI::Grid::MinSize{250.f},
+				.children = [&]() {
+					Children ret;
+					ret.emplace_back(UI::WeaponCard{
+						.weapon = ::Store::weapons.at(character.weaponInstanceKey),
+						.hasActions = false,
+					});
+					for (const auto &slot: Artifact::slots) {
+						auto &key = character.loadout.artifact.equipped.fromSlot(slot);
+						if (!key) {
+							ret.emplace_back(UI::Card{});
+							continue;
+						}
+						auto &artifact = ::Store::artifacts.at(key);
+						ret.emplace_back(UI::ArtifactCard{
+							.artifact = artifact,
+							.hasActions = false,
+						});
+					}
+					return ret;
+				}(),
+			};
+		}
+
+		operator squi::Child() const {
+			return Expander{
+				.widget = widget,
+				.heading = "Equipment",
+				.expandedContent = Rebuilder{
+					.rebuildEvent = ::Store::characters.at(characterKey).updateEvent,
+					.buildFunc = std::bind(makeContent, characterKey),
+				},
+			};
+		}
+	};
 }// namespace
 
 UI::CharacterDetails::operator squi::Child() const {
 	// TODO: make each item rebuild individually
 	return ScrollableFrame{
+		.scrollableWidget{
+			.padding = 4.f,
+		},
+		.alignment = squi::Column::Alignment::center,
+		.spacing = 4.f,
 		.children{
+			EquipmentExpander{
+				.widget{
+					.sizeConstraints{
+						.maxWidth = 1520.f,
+					},
+				},
+				.characterKey = characterKey,
+			},
 			Rebuilder{
 				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
 				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey),
 			},
-			Button{
-				.text = "Optimize",
-				.onClick = [characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey](auto) {
-					auto &character = ::Store::characters.at(characterKey);
-					auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
-					auto &enemy = ::Store::enemies.at(enemyKey);
-					Formula::Context ctx{
-						.source = character.loadout,
-						.active = character.loadout,
-						.team = team.stats,
-						.enemy = enemy.stats,
-					};
-					Optimization::Optimization optimization{
-						.character = character,
-						.ctx = ctx,
-						.optimizedNode = character.loadout.character.data.data.nodes.burst.at(0).formula,
-					};
-
-					optimization.optimize();
-				},
+			UI::Optimization{
+				.characterKey = characterKey,
+				.teamKey = teamKey,
+				.enemyKey = enemyKey,
 			},
 		},
 	};

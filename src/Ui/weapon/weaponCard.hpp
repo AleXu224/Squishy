@@ -8,6 +8,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
         Weapon::Instance &weapon;
+		bool hasActions = true;
 
 		struct Storage {
 			// Data

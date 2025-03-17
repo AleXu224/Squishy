@@ -1,13 +1,15 @@
 #pragma once
 
-#include "widget.hpp"
 #include "artifact/instance.hpp"
+#include "widget.hpp"
+
 
 namespace UI {
 	struct ArtifactCard {
 		// Args
 		squi::Widget::Args widget{};
 		Artifact::Instance &artifact;
+		bool hasActions = true;
 
 		struct Storage {
 			// Data

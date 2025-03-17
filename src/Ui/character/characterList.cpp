@@ -67,12 +67,16 @@ UI::CharacterList::operator squi::Child() const {
 			.scrollableWidget{
 				.padding = 8.f,
 			},
+			.alignment = squi::Column::Alignment::center,
 			.spacing = 8.f,
 			.children{
 				buttonBar,
 				Grid{
 					.widget{
 						.height = Size::Shrink,
+						.sizeConstraints{
+							.maxWidth = 1520.f,
+						},
 						.onInit = [controller](Widget &w) {
 							observe(w, Store::characterListUpdateEvent, [controller, &w]() {
 								w.setChildren(makeCharacters(controller));

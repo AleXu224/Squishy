@@ -8,6 +8,7 @@
 #include "column.hpp"
 #include "image.hpp"
 #include "misc/rarityToColor.hpp"
+#include "rebuilder.hpp"
 #include "row.hpp"
 #include "stack.hpp"
 #include "store.hpp"
@@ -78,6 +79,7 @@ struct WeaponCardContent {
 	// Args
 	squi::Widget::Args widget{};
 	Weapon::Instance &weapon;
+	bool hasActions = true;
 
 	operator squi::Child() const {
 		auto header = WeaponHeader{
@@ -154,7 +156,7 @@ struct WeaponCardContent {
 			.children{
 				header,
 				content,
-				footer,
+				hasActions ? footer : Child{},
 			},
 		};
 	}
@@ -166,18 +168,18 @@ UI::WeaponCard::operator squi::Child() const {
 	return Card{
 		.widget{
 			.padding = Padding{1.f},
-			.onInit = [updateEvent = weapon.updateEvent, key = weapon.instanceKey](Widget &w) {
-				w.customState.add(updateEvent.observe([&w, key]() {
-					if (!Store::weapons.contains(key)) {
-						w.deleteLater();
-						return;
-					}
-					w.setChildren({
-						WeaponCardContent{.weapon = Store::weapons.at(key)},
-					});
-				}));
+		},
+		.child = Rebuilder{
+			.rebuildEvent = weapon.updateEvent,
+			.buildFunc = [key = weapon.instanceKey, hasActions = hasActions]() -> Child {
+				if (!Store::weapons.contains(key)) {
+					return Child{};
+				}
+				return WeaponCardContent{
+					.weapon = Store::weapons.at(key),
+					.hasActions = hasActions,
+				};
 			},
 		},
-		.child = WeaponCardContent{.weapon = weapon},
 	};
 }

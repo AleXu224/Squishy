@@ -10,6 +10,7 @@
 #include "stats/loadout.hpp"
 #include "store.hpp"
 #include "text.hpp"
+#include "utils/slotToCondition.hpp"
 
 
 using namespace squi;
@@ -90,16 +91,17 @@ UI::NodePicker::operator squi::Child() const {
 
 				auto &character = ::Store::characters.at(characterKey);
 
-				for (const auto &entry: Node::characterEntries) {
+				for (const auto &slot: Node::characterSlots) {
+					if (!Utils::slotToCondition(slot).eval(ctx)) continue;
 					Children entryRet{};
-					const auto &nodeList = character.loadout.character.data.data.nodes.fromEntry(entry);
+					const auto &nodeList = character.loadout.character.data.data.nodes.fromEntry(slot);
 					for (const auto &[index, node]: nodeList | std::views::enumerate) {
 						if (!Node::getOptimizable(node.data)) continue;
 						entryRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = Combo::Source::Character{
 								.key = character.dataKey,
-								.slot = entry,
+								.slot = slot,
 								.index = static_cast<size_t>(index),
 							},
 							.ctx = ctx,
@@ -110,7 +112,7 @@ UI::NodePicker::operator squi::Child() const {
 
 					if (!entryRet.empty()) {
 						ret.emplace_back(DisplayCard{
-							.title = Utils::Stringify(entry),
+							.title = Utils::Stringify(slot),
 							.children = entryRet,
 						});
 					}

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "cstdint"
+#include "utility"
 #include "utils/stringify.hpp"
 #include "vector"
-#include "utility"
+
 
 namespace Node {
 	enum class CharacterSlot : uint8_t {
@@ -20,7 +21,7 @@ namespace Node {
 		constellation6,
 	};
 
-	static inline std::vector<CharacterSlot> characterEntries{
+	static inline std::vector<CharacterSlot> characterSlots{
 		CharacterSlot::normal,
 		CharacterSlot::charged,
 		CharacterSlot::plunge,
