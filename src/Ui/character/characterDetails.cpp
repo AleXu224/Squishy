@@ -200,7 +200,7 @@ namespace {
 					Children ret;
 					ret.emplace_back(UI::WeaponCard{
 						.weapon = ::Store::weapons.at(character.weaponInstanceKey),
-						.hasActions = false,
+						.actions = UI::WeaponCard::Actions::character,
 					});
 					for (const auto &slot: Artifact::slots) {
 						auto &key = character.loadout.artifact.equipped.fromSlot(slot);
@@ -211,7 +211,7 @@ namespace {
 						auto &artifact = ::Store::artifacts.at(key);
 						ret.emplace_back(UI::ArtifactCard{
 							.artifact = artifact,
-							.hasActions = false,
+							.actions = UI::ArtifactCard::Actions::character,
 						});
 					}
 					return ret;

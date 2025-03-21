@@ -72,7 +72,7 @@ UI::OptimizationResult::operator squi::Child() const {
 							if (!key) continue;
 							ret.emplace_back(ArtifactCard{
 								.artifact = ::Store::artifacts.at(key),
-								.hasActions = false,
+								.actions = ArtifactCard::Actions::showcase,
 							});
 						}
 						return ret;

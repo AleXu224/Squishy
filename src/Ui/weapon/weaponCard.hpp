@@ -1,14 +1,21 @@
 #pragma once
 
-#include "widget.hpp"
 #include "weapon/instance.hpp"
+#include "widget.hpp"
+
 
 namespace UI {
 	struct WeaponCard {
+		enum class Actions {
+			list,
+			character,
+			showcase,
+		};
+
 		// Args
 		squi::Widget::Args widget{};
-        Weapon::Instance &weapon;
-		bool hasActions = true;
+		Weapon::Instance &weapon;
+		Actions actions = WeaponCard::Actions::list;
 
 		struct Storage {
 			// Data

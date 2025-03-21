@@ -83,7 +83,7 @@ struct ArtifactCardContent {
 	// Args
 	squi::Widget::Args widget{};
 	Artifact::Instance &artifact;
-	bool hasActions;
+	UI::ArtifactCard::Actions actions;
 
 	operator squi::Child() const {
 		auto header = ArtifactHeader{
@@ -135,7 +135,7 @@ struct ArtifactCardContent {
 			},
 			.spacing = 4.f,
 			.children{
-				equippedButton,
+				actions == UI::ArtifactCard::Actions::list ? equippedButton : Child{},
 				Button{
 					.text = "Edit",
 					.style = ButtonStyle::Standard(),
@@ -156,28 +156,29 @@ struct ArtifactCardContent {
 						});
 					},
 				},
-				Button{
-					.text = "Delete",
-					.style = ButtonStyle::Standard(),
-					.onClick = [key = artifact.key](GestureDetector::Event) {
-						auto &artifact = Store::artifacts.at(key);
-						if (artifact.equippedCharacter.key) {
-							auto &character = Store::characters.at(artifact.equippedCharacter);
-							character.loadout.artifact.equipped.fromSlot(artifact.slot) = {};
-							character.loadout.artifact.refreshStats();
-						}
+				actions == UI::ArtifactCard::Actions::list ? Button{
+																 .text = "Delete",
+																 .style = ButtonStyle::Standard(),
+																 .onClick = [key = artifact.key](GestureDetector::Event) {
+																	 auto &artifact = Store::artifacts.at(key);
+																	 if (artifact.equippedCharacter.key) {
+																		 auto &character = Store::characters.at(artifact.equippedCharacter);
+																		 character.loadout.artifact.equipped.fromSlot(artifact.slot) = {};
+																		 character.loadout.artifact.refreshStats();
+																	 }
 
-						Store::artifacts.erase(key);
-						Store::artifactListUpdateEvent.notify();
-					},
-				},
+																	 Store::artifacts.erase(key);
+																	 Store::artifactListUpdateEvent.notify();
+																 },
+															 }
+														   : Child{},
 			},
 		};
 		return Column{
 			.children{
 				header,
 				subStats,
-				hasActions ? footer : Child{},
+				actions != UI::ArtifactCard::Actions::showcase ? footer : Child{},
 			},
 		};
 	}
@@ -192,13 +193,13 @@ UI::ArtifactCard::operator squi::Child() const {
 		},
 		.child = Rebuilder{
 			.rebuildEvent = artifact.updateEvent,
-			.buildFunc = [key = artifact.key, hasActions = hasActions]() -> Child {
+			.buildFunc = [key = artifact.key, actions = actions]() -> Child {
 				if (!Store::artifacts.contains(key)) {
 					return Child{};
 				}
 				return ArtifactCardContent{
 					.artifact = Store::artifacts.at(key),
-					.hasActions = hasActions,
+					.actions = actions,
 				};
 			},
 		},

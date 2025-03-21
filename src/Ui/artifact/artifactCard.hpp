@@ -6,10 +6,16 @@
 
 namespace UI {
 	struct ArtifactCard {
+		enum class Actions {
+			list,
+			character,
+			showcase,
+		};
+
 		// Args
 		squi::Widget::Args widget{};
 		Artifact::Instance &artifact;
-		bool hasActions = true;
+		Actions actions = Actions::list;
 
 		struct Storage {
 			// Data

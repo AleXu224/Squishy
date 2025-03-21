@@ -79,7 +79,7 @@ struct WeaponCardContent {
 	// Args
 	squi::Widget::Args widget{};
 	Weapon::Instance &weapon;
-	bool hasActions = true;
+	UI::WeaponCard::Actions actions;
 
 	operator squi::Child() const {
 		auto header = WeaponHeader{
@@ -135,28 +135,29 @@ struct WeaponCardContent {
 						});
 					},
 				},
-				Button{
-					.text = "Delete",
-					.style = ButtonStyle::Standard(),
-					.onClick = [key = weapon.instanceKey](GestureDetector::Event) {
-						for (const auto &[_, instance]: Store::characters) {
-							if (instance.weaponInstanceKey == key) {
-								std::println("Cannot delete a used weapon");
-								return;
-							}
-						}
+				actions == UI::WeaponCard::Actions::list ? Button{
+															   .text = "Delete",
+															   .style = ButtonStyle::Standard(),
+															   .onClick = [key = weapon.instanceKey](GestureDetector::Event) {
+																   for (const auto &[_, instance]: Store::characters) {
+																	   if (instance.weaponInstanceKey == key) {
+																		   std::println("Cannot delete a used weapon");
+																		   return;
+																	   }
+																   }
 
-						Store::weapons.erase(key);
-						Store::weaponListUpdateEvent.notify();
-					},
-				},
+																   Store::weapons.erase(key);
+																   Store::weaponListUpdateEvent.notify();
+															   },
+														   }
+														 : Child{},
 			},
 		};
 		return Column{
 			.children{
 				header,
 				content,
-				hasActions ? footer : Child{},
+				actions != UI::WeaponCard::Actions::showcase ? footer : Child{},
 			},
 		};
 	}
@@ -171,13 +172,13 @@ UI::WeaponCard::operator squi::Child() const {
 		},
 		.child = Rebuilder{
 			.rebuildEvent = weapon.updateEvent,
-			.buildFunc = [key = weapon.instanceKey, hasActions = hasActions]() -> Child {
+			.buildFunc = [key = weapon.instanceKey, actions = actions]() -> Child {
 				if (!Store::weapons.contains(key)) {
 					return Child{};
 				}
 				return WeaponCardContent{
 					.weapon = Store::weapons.at(key),
-					.hasActions = hasActions,
+					.actions = actions,
 				};
 			},
 		},
