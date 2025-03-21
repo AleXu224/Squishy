@@ -122,7 +122,7 @@ namespace Stats {
 	}
 
 	template<class T, class RetType = Formula::FloatNode>
-	[[nodiscard]] constexpr RetType fromSkillStat(T &sheet, Misc::SkillStat skillStat) {
+	[[nodiscard]] constexpr const RetType &fromSkillStat(T &sheet, Misc::SkillStat skillStat) {
 		switch (skillStat) {
 			case Misc::SkillStat::DMG:
 				return sheet.DMG;
@@ -150,6 +150,21 @@ namespace Stats {
 				return Skill.critRate;
 			case Misc::SkillStat::critDMG:
 				return Skill.critDMG;
+		}
+	}
+	template<auto Skill>
+	[[nodiscard]] constexpr auto evalSkillStat(Misc::SkillStat skillStat, const Formula::Context &ctx) {
+		switch (skillStat) {
+			case Misc::SkillStat::DMG:
+				return Skill.DMG.eval(ctx);
+			case Misc::SkillStat::additiveDMG:
+				return Skill.additiveDMG.eval(ctx);
+			case Misc::SkillStat::multiplicativeDMG:
+				return Skill.multiplicativeDMG.eval(ctx);
+			case Misc::SkillStat::critRate:
+				return Skill.critRate.eval(ctx);
+			case Misc::SkillStat::critDMG:
+				return Skill.critDMG.eval(ctx);
 		}
 	}
 
@@ -260,7 +275,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T, class RetType = Formula::FloatNode>
-	[[nodiscard]] constexpr RetType fromReaction(T &sheet, Misc::Reaction reaction, Misc::SkillStat skillStat) {
+	[[nodiscard]] constexpr const RetType &fromReaction(T &sheet, Misc::Reaction reaction, Misc::SkillStat skillStat) {
 		switch (reaction) {
 			case Misc::Reaction::vape:
 				return fromSkillStat(sheet.vape, skillStat);
@@ -367,7 +382,7 @@ namespace Stats {
 	}
 
 	template<SheetLike T, class RetType = Formula::FloatNode>
-	[[nodiscard]] constexpr RetType fromDamageElement(T &sheet, Misc::DamageElement element, Misc::SkillStat skillStat) {
+	[[nodiscard]] constexpr const RetType &fromDamageElement(T &sheet, Misc::DamageElement element, Misc::SkillStat skillStat) {
 		switch (element) {
 			case Misc::DamageElement::pyro:
 				return fromSkillStat(sheet.pyro, skillStat);
@@ -428,7 +443,7 @@ namespace Stats {
 	}
 
 	template<class T, class RetType = Formula::FloatNode>
-	[[nodiscard]] constexpr RetType fromEnemyResElement(T &sheet, Misc::Element element) {
+	[[nodiscard]] constexpr const RetType &fromEnemyResElement(T &sheet, Misc::Element element) {
 		switch (element) {
 			case Misc::Element::pyro:
 				return sheet.pyro;
@@ -468,6 +483,27 @@ namespace Stats {
 				return Sheet.geo;
 			case Misc::Element::physical:
 				return Sheet.physical;
+		}
+	}
+	template<auto Sheet>
+	[[nodiscard]] constexpr auto evalEnemyResElement(Misc::Element element, const Formula::Context &ctx) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return Sheet.pyro.eval(ctx);
+			case Misc::Element::hydro:
+				return Sheet.hydro.eval(ctx);
+			case Misc::Element::cryo:
+				return Sheet.cryo.eval(ctx);
+			case Misc::Element::electro:
+				return Sheet.electro.eval(ctx);
+			case Misc::Element::dendro:
+				return Sheet.dendro.eval(ctx);
+			case Misc::Element::anemo:
+				return Sheet.anemo.eval(ctx);
+			case Misc::Element::geo:
+				return Sheet.geo.eval(ctx);
+			case Misc::Element::physical:
+				return Sheet.physical.eval(ctx);
 		}
 	}
 }// namespace Stats

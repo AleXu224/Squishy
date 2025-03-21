@@ -43,7 +43,7 @@ namespace Formula {
 
 		[[nodiscard]] float eval(const Context &context) const {
 			const auto attackElement = getElement(attackSource, element, context);
-			auto RES = Stats::fromEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement).eval(context);
+			auto RES = Stats::evalEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement, context);
 
 			if (RES < 0.f) return 1.f - (RES / 2.f);
 			if (RES < 0.75f) return 1.f - RES;

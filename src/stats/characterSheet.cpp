@@ -52,7 +52,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 				"All Elemental",
 				Formula::Custom(
 					[stat](const Formula::Context &context) {
-						return fromSkillStat<Modifiers::total.allElemental>(stat).eval(context);
+						return evalSkillStat<Modifiers::total.allElemental>(stat, context);
 					},
 					true
 				)

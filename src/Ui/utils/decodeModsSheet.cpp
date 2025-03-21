@@ -12,7 +12,7 @@
 using namespace squi;
 
 namespace {
-	void addItem(auto stat, Modifiers::SheetMemberIdentifier identifier, Children &ret, const Formula::Context &ctx, bool &transparent, std::string_view prefix) {
+	void addItem(auto &&stat, Modifiers::SheetMemberIdentifier identifier, Children &ret, const Formula::Context &ctx, bool &transparent, std::string_view prefix) {
 		if (!stat.hasValue()) return;
 		auto message = stat.print(ctx);
 		auto value = stat.eval(ctx);
