@@ -7,15 +7,18 @@
 #include "row.hpp"
 #include "scrollableFrame.hpp"
 #include "store.hpp"
+#include "widgets/paginator.hpp"
 
 using namespace squi;
 
 namespace {
-	[[nodiscard]] auto makeArtifacts() {
+	[[nodiscard]] auto makeArtifacts(uint32_t offset, uint32_t count) {
 		Children ret;
-		for (auto &[_, artifact]: ::Store::artifacts) {
+		auto begin = std::next(::Store::artifacts.begin(), offset);
+		auto end = std::next(begin, count);
+		for (auto it = begin; it != end; it++) {
 			ret.emplace_back(UI::ArtifactCard{
-				.artifact = artifact,
+				.artifact = it->second,
 			});
 		}
 		return ret;
@@ -55,22 +58,24 @@ UI::ArtifactPage::operator squi::Child() const {
 		.spacing = 8.f,
 		.children{
 			buttonBar,
-			Grid{
-				.widget{
-					.height = Size::Shrink,
-					.sizeConstraints{
-						.maxWidth = 1520.f,
-					},
-					.onInit = [](Widget &w) {
-						w.setChildren(makeArtifacts());
-
-						w.customState.add(Store::artifactListUpdateEvent.observe([&w]() {
-							w.setChildren(makeArtifacts());
-						}));
-					},
+			Paginator{
+				.refreshItemsEvent = ::Store::artifactListUpdateEvent,
+				.getItemCount = []() {
+					return ::Store::artifacts.size();
 				},
-				.spacing = 2.f,
-				.columnCount = Grid::MinSize{256.f},
+				.builder = [](uint32_t offset, uint32_t count) {
+					return Grid{
+						.widget{
+							.height = Size::Shrink,
+							.sizeConstraints{
+								.maxWidth = 1520.f,
+							},
+						},
+						.spacing = 2.f,
+						.columnCount = Grid::MinSize{256.f},
+						.children = makeArtifacts(offset, count),
+					};
+				},
 			},
 		},
 	};
