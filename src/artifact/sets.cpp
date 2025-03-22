@@ -8,6 +8,7 @@
 #include "artifact/sets/GildedDreams.hpp"
 #include "artifact/sets/GladiatorsFinale.hpp"
 #include "artifact/sets/GoldenTroupe.hpp"
+#include "artifact/sets/HeartOfDepth.hpp"
 #include "artifact/sets/MarechausseeHunter.hpp"
 #include "artifact/sets/NoblesseOblige.hpp"
 #include "artifact/sets/ObsidianCodex.hpp"
@@ -15,6 +16,7 @@
 #include "artifact/sets/ShimenawasReminiscence.hpp"
 #include "artifact/sets/TenacityOfTheMillelith.hpp"
 #include "artifact/sets/ThunderingFury.hpp"
+#include "artifact/sets/ViridescentVenerer.hpp"
 #include "artifact/sets/WanderersTroupe.hpp"
 
 
@@ -28,6 +30,7 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::gildedDreams.key, Artifact::Sets::gildedDreams},
 		{Artifact::Sets::gladiatorsFinale.key, Artifact::Sets::gladiatorsFinale},
 		{Artifact::Sets::goldenTroupe.key, Artifact::Sets::goldenTroupe},
+		{Artifact::Sets::heartOfDepth.key, Artifact::Sets::heartOfDepth},
 		{Artifact::Sets::marechausseeHunter.key, Artifact::Sets::marechausseeHunter},
 		{Artifact::Sets::noblesseOblige.key, Artifact::Sets::noblesseOblige},
 		{Artifact::Sets::obsidianCodex.key, Artifact::Sets::obsidianCodex},
@@ -35,6 +38,7 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::shimenawasReminiscence.key, Artifact::Sets::shimenawasReminiscence},
 		{Artifact::Sets::tenacityOfTheMillelith.key, Artifact::Sets::tenacityOfTheMillelith},
 		{Artifact::Sets::thunderingFury.key, Artifact::Sets::thunderingFury},
+		{Artifact::Sets::viridescentVenerer.key, Artifact::Sets::viridescentVenerer},
 		{Artifact::Sets::wanderersTroupe.key, Artifact::Sets::wanderersTroupe},
 	};
 }

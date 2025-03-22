@@ -121,7 +121,7 @@ void Store::saveToFile(const std::string &strpath) {
 	{
 		// Using json at the moment for debugability
 		std::string buff{};
-		auto d = glz::write<glz::opts{.prettify = true}>(save(), buff);
+		auto d = glz::write<glz::opts{.prettify = false}>(save(), buff);
 		if (d) {
 			std::println("Failed saving");
 		}

@@ -38,6 +38,13 @@ namespace Misc {
 		Misc::Element::geo,
 		Misc::Element::physical,
 	};
+
+	static constexpr auto phecElements = std::array{
+		Misc::Element::pyro,
+		Misc::Element::hydro,
+		Misc::Element::cryo,
+		Misc::Element::electro,
+	};
 }// namespace Misc
 
 namespace Utils {
