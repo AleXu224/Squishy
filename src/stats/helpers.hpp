@@ -99,6 +99,8 @@ namespace Stats {
 				return sheet.hb;
 			case Stat::incHb:
 				return sheet.incHb;
+			case Stat::shield_:
+				return sheet.shield_;
 			case Stat::pyroDmg:
 				return sheet.pyro.DMG;
 			case Stat::hydroDmg:
@@ -203,6 +205,8 @@ namespace Stats {
 				return Sheet.hb;
 			case Stat::incHb:
 				return Sheet.incHb;
+			case Stat::shield_:
+				return Sheet.shield_;
 			case Stat::pyroDmg:
 				return fromSkillStat<Sheet.pyro, RetType>(skillStat);
 			case Stat::hydroDmg:

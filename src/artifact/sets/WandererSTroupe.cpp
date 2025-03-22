@@ -1,8 +1,8 @@
-#include "WandererSTroupe.hpp"
+#include "WanderersTroupe.hpp"
 
 #include "artifact/setup.hpp"
 
-const Artifact::Set Artifact::Sets::wandererSTroupe{
+const Artifact::Set Artifact::Sets::wanderersTroupe{
 	.key{15003},
 	.goodKey{"WanderersTroupe"},
 	.name = "Wanderer's Troupe",

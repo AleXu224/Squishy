@@ -109,6 +109,7 @@ namespace Stats {
 		_Value cd{};
 		_Value hb{};
 		_Value incHb{};
+		_Value shield_{};
 
 		_SkillValue pyro{};
 		_SkillValue hydro{};

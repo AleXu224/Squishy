@@ -44,6 +44,8 @@ enum class Stat : uint8_t {
 	geoDmg,
 	physicalDmg,
 	allDmg,
+	
+	shield_,
 };
 
 namespace Stats {
@@ -75,6 +77,7 @@ namespace Stats {
 			Stat::cd,
 			Stat::hb,
 			Stat::incHb,
+			Stat::shield_,
 			Stat::pyroDmg,
 			Stat::hydroDmg,
 			Stat::cryoDmg,
@@ -105,6 +108,7 @@ namespace Stats {
 			Stat::cd,
 			Stat::hb,
 			Stat::incHb,
+			Stat::shield_,
 		}
 	};
 
@@ -173,6 +177,7 @@ namespace Utils {
 			case Stat::cd:
 			case Stat::hb:
 			case Stat::incHb:
+			case Stat::shield_:
 			case Stat::pyroDmg:
 			case Stat::hydroDmg:
 			case Stat::cryoDmg:
@@ -221,6 +226,8 @@ namespace Utils {
 				return "Healing Bonus";
 			case Stat::incHb:
 				return "Incoming Healing Bonus";
+			case Stat::shield_:
+				return "Shield Strength%";
 			case Stat::pyroDmg:
 				return "Pyro DMG Bonus";
 			case Stat::hydroDmg:

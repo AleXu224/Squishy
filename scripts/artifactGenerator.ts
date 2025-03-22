@@ -24,6 +24,7 @@ const contents: Artifact = await response.json();
 const data = {
 	key: contents.Id,
 	name: contents.Affix[0].Name,
+	caseableName: contents.Affix[0].Name.replaceAll("'", ""),
 	iconGoblet: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_1.webp`,
 	iconPlume: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_2.webp`,
 	iconCirclet: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_3.webp`,
@@ -40,13 +41,13 @@ namespace Artifact::Sets {
 }// namespace Artifact::Sets
 `;
 
-const retSource: string = `#include "${pascalCase(data.name)}.hpp"
+const retSource: string = `#include "${pascalCase(data.caseableName)}.hpp"
 
 #include "artifact/setup.hpp"
 
-const Artifact::Set Artifact::Sets::${camelCase(data.name)}{
+const Artifact::Set Artifact::Sets::${camelCase(data.caseableName)}{
 	.key{${data.key}},
-	.goodKey{"${pascalCase(data.name.replaceAll("'", ""))}"},
+	.goodKey{"${pascalCase(data.caseableName)}"},
 	.name = "${data.name}",
 	.setup = []() -> Set::Setup {
 		return Set::Setup{
@@ -105,5 +106,5 @@ if (!iconResponseSands.ok) {
 }
 Deno.writeFileSync(`./assets/Artifacts/${data.name}/Sands.webp`, await iconResponseSands.bytes());
 
-Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(retHeader));
-Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.name)}.cpp`, new TextEncoder().encode(retSource));
+Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.caseableName)}.hpp`, new TextEncoder().encode(retHeader));
+Deno.writeFileSync(`./src/artifact/sets/${pascalCase(data.caseableName)}.cpp`, new TextEncoder().encode(retSource));

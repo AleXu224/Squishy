@@ -51,6 +51,7 @@ const stat = new Map<string, string>([
 const data = {
 	key: Deno.args[0],
 	name: contents.Name,
+	caseableName: contents.Name.replaceAll("'", ""),
 	type: weaponType.get(contents.WeaponType),
 	growCurve: contents.WeaponProp[0].type.replace("GROW_CURVE_", ""),
 	hasSubstat: Object.entries(contents.StatsModifier).length > 1,
@@ -109,17 +110,17 @@ const retHeader: string = `#pragma once
 #include "weapon/data.hpp"
 
 namespace Weapon::Datas {
-	const extern Weapon::Data ${camelCase(data.name)};
+	const extern Weapon::Data ${camelCase(data.caseableName)};
 }// namespace Weapon::Datas
 `;
 
-const retSource: string = `#include "${pascalCase(data.name)}.hpp"
+const retSource: string = `#include "${pascalCase(data.caseableName)}.hpp"
 
 #include "weapon/setup.hpp"
 
-const Weapon::Data Weapon::Datas::${camelCase(data.name)}{
+const Weapon::Data Weapon::Datas::${camelCase(data.caseableName)}{
 	.key{${data.key}},
-	.goodKey{"${pascalCase(data.name.replaceAll("'", ""))}"},
+	.goodKey{"${pascalCase(data.caseableName)}"},
 	.name = "${data.name}",
 	.baseStats{
 		.type = ${data.type},
@@ -155,5 +156,5 @@ if (!iconResponseAwaken.ok) {
 }
 Deno.writeFileSync(`./assets/Weapons/${data.name}/icon_ascended.webp`, await iconResponseAwaken.bytes());
 
-Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(retHeader));
-Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.name)}.cpp`, new TextEncoder().encode(retSource));
+Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.caseableName)}.hpp`, new TextEncoder().encode(retHeader));
+Deno.writeFileSync(`./src/weapon/weapons/${pascalCase(data.caseableName)}.cpp`, new TextEncoder().encode(retSource));

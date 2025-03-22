@@ -41,6 +41,8 @@ namespace Formula {
 				return evalFunc(sheet.hb);
 			case ::Stat::incHb:
 				return evalFunc(sheet.incHb);
+			case ::Stat::shield_:
+				return evalFunc(sheet.shield_);
 			case ::Stat::pyroDmg:
 				return evalFunc(sheet.pyro.DMG);
 			case ::Stat::hydroDmg:

@@ -3,5 +3,5 @@
 #include "artifact/setup.hpp"
 
 namespace Artifact::Sets {
-	const extern Artifact::Set wanderersTroupe;
+	const extern Artifact::Set gladiatorsFinale;
 }// namespace Artifact::Sets

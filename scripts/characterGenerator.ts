@@ -26,6 +26,7 @@ const contents: Character = await response.json();
 const data = {
 	key: Deno.args[0],
 	name: contents.Name,
+	caseableName: contents.Name.replaceAll("'", ""),
 	ascensionStat: propToStat.get(Object.keys(contents.StatsModifier.Ascension[0])[3]),
 	icon: `https://api.hakush.in/gi/UI/${contents.Icon}.webp`,
 	namecardIcon: `https://api.hakush.in/gi/UI/${contents.CharaInfo.Namecard.Icon}.webp`,
@@ -90,17 +91,17 @@ const retHeader: string = `#pragma once
 #include "character/data.hpp"
 
 namespace Character::Datas {
-	const extern Character::Data ${camelCase(data.name)};
+	const extern Character::Data ${camelCase(data.caseableName)};
 }// namespace Character::Datas
 `;
 
-const retSource: string = `#include "${pascalCase(data.name)}.hpp"
+const retSource: string = `#include "${pascalCase(data.caseableName)}.hpp"
 
 #include "character/setup.hpp"
 
-const Character::Data Character::Datas::${camelCase(data.name)}{
+const Character::Data Character::Datas::${camelCase(data.caseableName)}{
 	.key{${data.key}},
-	.goodKey{"${pascalCase(data.name.replaceAll("'", ""))}"},
+	.goodKey{"${pascalCase(data.caseableName)}"},
 	.name{"${data.name}"},
 	.baseStats{
 		.baseHp = ${contents.BaseHP.toFixed(3)},
@@ -151,15 +152,15 @@ Deno.mkdirSync(`./assets/Characters/${data.name}`, { recursive: true });
 
 const avatarResponse = await fetch(data.icon);
 if (!avatarResponse.ok) {
-    console.log(`Failed getting the icon with code ${avatarResponse.status}, "${avatarResponse.statusText}" (${data.icon})`);
+	console.log(`Failed getting the icon with code ${avatarResponse.status}, "${avatarResponse.statusText}" (${data.icon})`);
 }
 Deno.writeFileSync(`./assets/Characters/${data.name}/avatar.webp`, await avatarResponse.bytes());
 
 const namecardResponse = await fetch(data.namecardIcon);
 if (!namecardResponse.ok) {
-    console.log(`Failed getting the icon with code ${namecardResponse.status}, "${namecardResponse.statusText}" (${data.icon})`);
+	console.log(`Failed getting the icon with code ${namecardResponse.status}, "${namecardResponse.statusText}" (${data.icon})`);
 }
 Deno.writeFileSync(`./assets/Characters/${data.name}/banner.webp`, await namecardResponse.bytes());
 
-Deno.writeFileSync(`./src/character/characters/${pascalCase(data.name)}.hpp`, new TextEncoder().encode(retHeader));
-Deno.writeFileSync(`./src/character/characters/${pascalCase(data.name)}.cpp`, new TextEncoder().encode(retSource));
+Deno.writeFileSync(`./src/character/characters/${pascalCase(data.caseableName)}.hpp`, new TextEncoder().encode(retHeader));
+Deno.writeFileSync(`./src/character/characters/${pascalCase(data.caseableName)}.cpp`, new TextEncoder().encode(retSource));

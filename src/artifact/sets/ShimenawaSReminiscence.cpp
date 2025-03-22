@@ -1,8 +1,8 @@
-#include "ShimenawaSReminiscence.hpp"
+#include "ShimenawasReminiscence.hpp"
 
 #include "artifact/setup.hpp"
 
-const Artifact::Set Artifact::Sets::shimenawaSReminiscence{
+const Artifact::Set Artifact::Sets::shimenawasReminiscence{
 	.key{15019},
 	.goodKey{"ShimenawasReminiscence"},
 	.name = "Shimenawa's Reminiscence",
