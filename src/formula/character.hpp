@@ -37,6 +37,18 @@ namespace Formula {
 		}
 	};
 
+	struct IsCharacterWeaponType {
+		Misc::WeaponType type;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is character {} ({})", Utils::Stringify(type), eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.source.character.base.weaponType == type;
+		}
+	};
+
 
 	template<FormulaLike T>
 	struct MaxCharacter {

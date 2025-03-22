@@ -11,7 +11,36 @@
 
 
 Optimization::Solutions Optimization::Optimization::optimize() const {
+	auto start_artifactDuplication = std::chrono::high_resolution_clock::now();
+	std::vector<Artifact::Instance> artifacts;
+	for (const auto &[_, artifact]: ::Store::artifacts) {
+		artifacts.emplace_back(artifact);
+	}
+	auto end_artifactDuplication = std::chrono::high_resolution_clock::now();
+	std::println("artifact duplication {}", std::chrono::duration_cast<std::chrono::microseconds>(end_artifactDuplication - start_artifactDuplication));
+
 	auto start_filterGen = std::chrono::high_resolution_clock::now();
+
+	std::unordered_map<uint32_t, std::array<size_t, 5>> counts{};
+
+	for (const auto &[key, set]: Artifact::sets) {
+		ArtifactFilter pattern{};
+		pattern.filters.at(0).set = key;
+		pattern.filters.at(1).set = key;
+		pattern.filters.at(2).set = key;
+		pattern.filters.at(3).set = key;
+		pattern.filters.at(4).set = key;
+
+		auto res = pattern.filter(artifacts);
+
+		counts[key.key] = {
+			res.entries.at(0).size(),
+			res.entries.at(1).size(),
+			res.entries.at(2).size(),
+			res.entries.at(3).size(),
+			res.entries.at(4).size(),
+		};
+	}
 
 	std::vector<ArtifactFilter> filters{};
 
@@ -33,6 +62,15 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		filters.emplace_back(pattern);
 
 		for (size_t i = 0; i < 5; i++) {
+			bool skipFilter = false;
+			for (size_t j = 0; j < 5; j++) {
+				if (j == i) continue;
+				if (counts.at(key.key).at(j) == 0) {
+					skipFilter = true;
+					break;
+				}
+			}
+			if (skipFilter) continue;
 			auto ret = pattern;
 			ret.filters.at(i).set = std::nullopt;
 			ret.filters.at(i).notSet = key;
@@ -45,7 +83,9 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		auto key = *it;
 		auto &set = Artifact::sets.at(key);
 		for (size_t i = 0; i < 5; i++) {
+			if (counts.at(key.key).at(i) == 0) continue;
 			for (size_t j = i + 1; j < 5; j++) {
+				if (counts.at(key.key).at(j) == 0) continue;
 				ArtifactFilter ret{};
 				ret.bonus1.emplace(Stats::ArtifactBonus{
 					.setPtr = set,
@@ -79,6 +119,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 					});
 					for (size_t k = 0; k < 5; k++) {
 						if (k == i || k == j) continue;
+						if (counts.at(key2.key).at(k) == 0) continue;
 						auto retSwapped = ret;
 						// Swap the positions
 						if (k < i) {
@@ -90,6 +131,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 						}
 						for (size_t l = k + 1; l < 5; l++) {
 							if (l == i || l == j) continue;
+							if (counts.at(key2.key).at(l) == 0) continue;
 							auto ret2 = retSwapped;
 							ret2.filters.at(k).set = key2;
 							ret2.filters.at(l).set = key2;
@@ -107,14 +149,6 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
 	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
-
-	auto start_artifactDuplication = std::chrono::high_resolution_clock::now();
-	std::vector<Artifact::Instance> artifacts;
-	for (const auto &[_, artifact]: ::Store::artifacts) {
-		artifacts.emplace_back(artifact);
-	}
-	auto end_artifactDuplication = std::chrono::high_resolution_clock::now();
-	std::println("artifact duplication {}", std::chrono::duration_cast<std::chrono::microseconds>(end_artifactDuplication - start_artifactDuplication));
 
 	auto prevLoadout = character.loadout.artifact.equipped;
 

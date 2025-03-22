@@ -19,7 +19,7 @@ namespace UI {
 			float spacing;
 			std::variant<int, MinSize> columnCountRule;
 
-			size_t columns = 0;
+			size_t columns = 1;
 			std::vector<float> rowHeights{};
 
 			size_t computeColumnCount(float availableWidth) const;

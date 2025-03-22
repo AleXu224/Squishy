@@ -32,7 +32,7 @@ UI::Grid::Impl::Impl(const Grid &args) : Widget(args.widget, Widget::FlagsArgs::
 squi::vec2 UI::Grid::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize, ShouldShrink shouldShrink, bool final) {
 	auto &children = getChildren();
 
-	auto columns = computeColumnCount(shouldShrink.width ? 0.f : maxSize.x);
+	const auto columns = computeColumnCount(shouldShrink.width ? 0.f : maxSize.x);
 
 	std::vector<float> maxHeights{};
 	float maxWidth = 0.f;
