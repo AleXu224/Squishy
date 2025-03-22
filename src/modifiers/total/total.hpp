@@ -14,11 +14,16 @@ namespace Modifiers {
 		}
 
 		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
-			return characterKitStat.eval(context)
-				 + weaponPassiveStat.eval(context)
-				 + artifactSetStat.eval(context)
-				 + teamPostStat.eval(context)
-				 + preModStat.eval(context);
+			auto characterKit = characterKitStat.eval(context);
+			auto weaponPassive = weaponPassiveStat.eval(context);
+			auto artifactSet = artifactSetStat.eval(context);
+			auto teamPost = teamPostStat.eval(context);
+			auto preMod = preModStat.eval(context);
+			return characterKit
+				 + weaponPassive
+				 + artifactSet
+				 + teamPost
+				 + preMod;
 		}
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>

@@ -7,6 +7,7 @@
 #include "expander.hpp"
 #include "optimization/optimize.hpp"
 #include "optimizationResult.hpp"
+#include "optimizationSetChooser.hpp"
 #include "row.hpp"
 #include "store.hpp"
 #include "widgets/toggleSwitch.hpp"
@@ -19,13 +20,35 @@ using namespace squi;
 namespace {
 	struct OptimizationStorage {
 		std::optional<Combo::Source::Types> nodeSource;
+		std::unordered_map<Artifact::SetKey, bool> twoPcSets{};
+		std::unordered_map<Artifact::SetKey, bool> fourPcSets{};
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
+
+		auto makeEnabledSets() const {
+			std::vector<Artifact::SetKey> retTwoPcSets{};
+			std::vector<Artifact::SetKey> retFourPcSets{};
+
+			for (const auto &[key, val]: twoPcSets) {
+				if (val) retTwoPcSets.emplace_back(key);
+			}
+			for (const auto &[key, val]: fourPcSets) {
+				if (val) retFourPcSets.emplace_back(key);
+			}
+
+			return std::pair{retTwoPcSets, retFourPcSets};
+		}
 	};
 }// namespace
 
 UI::Optimization::operator squi::Child() const {
 	auto storage = std::make_shared<OptimizationStorage>();
+
+	for (const auto &[key, set]: Artifact::sets) {
+		storage->twoPcSets[key] = true;
+		storage->fourPcSets[key] = true;
+	}
+
 	auto &character = ::Store::characters.at(characterKey);
 	auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 	auto &enemy = ::Store::enemies.at(enemyKey);
@@ -75,6 +98,24 @@ UI::Optimization::operator squi::Child() const {
 						},
 					},
 					Expander{
+						.heading = "Enabled sets and bonuses",
+						.caption = "Select which sets and bonuses will be used in the optimization",
+						.actions{
+							Button{
+								.text = "Configure",
+								.style = ButtonStyle::Standard(),
+								.onClick = [storage, &character = character, ctx = ctx](GestureDetector::Event event) {
+									event.widget.addOverlay(OptimizationSetChooser{
+										.character = character,
+										.ctx = ctx,
+										.twoPcSets = storage->twoPcSets,
+										.fourPcSets = storage->fourPcSets,
+									});
+								},
+							},
+						},
+					},
+					Expander{
 						.heading = "Optimize",
 						.actions{
 							Row{
@@ -118,18 +159,15 @@ UI::Optimization::operator squi::Child() const {
 												},
 												storage->nodeSource.value()
 											);
-											std::vector<Artifact::SetKey> allSets{};
-											for (const auto &[key, _]: Artifact::sets) {
-												allSets.emplace_back(key);
-											}
+											auto [twoPc, fourPc] = storage->makeEnabledSets();
 											::Optimization::Optimization optimization{
 												.character = character,
 												.ctx = ctx,
 												.optimizedNode = node,
 												.threeRainbow = storage->threeRainbow,
 												.fiveRainbow = storage->fiveRainbow,
-												.enabledTwoPiece = allSets,
-												.enabledFourPiece = allSets,
+												.enabledTwoPiece = twoPc,
+												.enabledFourPiece = fourPc,
 											};
 											solutionsEvent.notify(optimization.optimize());
 										},
