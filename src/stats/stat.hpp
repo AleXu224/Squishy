@@ -7,6 +7,7 @@
 #include "utility"
 #include "utils/isPercentage.hpp"// IWYU pragma: keep
 #include "utils/stringify.hpp"   // IWYU pragma: keep
+#include <optional>
 #include <vector>
 
 
@@ -44,7 +45,7 @@ enum class Stat : uint8_t {
 	geoDmg,
 	physicalDmg,
 	allDmg,
-	
+
 	shield_,
 };
 
@@ -161,7 +162,7 @@ namespace Stats {
 
 
 struct StatValue {
-	Stat stat;
+	std::optional<Stat> stat;
 	float value;
 };
 
@@ -191,6 +192,12 @@ namespace Utils {
 			default:
 				return false;
 		};
+	}
+
+	template<>
+	[[nodiscard]] constexpr bool isPercentage<>(const std::optional<::Stat> &stat) {
+		if (!stat.has_value()) return false;
+		return isPercentage(stat.value());
 	}
 
 	template<>
@@ -253,7 +260,14 @@ namespace Utils {
 	}
 
 	template<>
+	constexpr std::string Stringify<>(const std::optional<Stat> &stat) {
+		if (!stat.has_value()) return "None";
+		return Stringify(stat.value());
+	}
+
+	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
+		if (stat.stat.has_value()) return "0";
 		if (Utils::isPercentage(stat.stat)) {
 			return fmt::format("{:.1f}%", stat.value * 100.f);
 		}

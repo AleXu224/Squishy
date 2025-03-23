@@ -21,7 +21,7 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 	);
 
 	if (base.subStat.has_value()) {
-		this->stats.fromStat(base.subStat.value().stat.stat).modifiers.at(0) = Formula::Prefix(
+		this->stats.fromStat(base.subStat.value().stat.stat.value()).modifiers.at(0) = Formula::Prefix(
 			"Weapon Base",
 			Formula::Custom(
 				[](const Formula::Context &context) {

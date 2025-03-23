@@ -228,27 +228,9 @@ UI::ArtifactEditor::operator squi::Child() const {
 					.widget{
 						.onInit = [subStatChangeEvent, subStatTextUpdater, subStatDisable, storage, subStatIndex, subStatValueUpdater](Widget &w) {
 							w.customState.add(subStatChangeEvent.observe([subStatTextUpdater, subStatDisable, storage, subStatIndex, subStatValueUpdater](std::optional<Stat> newStat) {
-								auto prevStat = storage->artifact.subStats.at(subStatIndex).and_then([](const StatValue &val) -> std::optional<Stat> {
-									return val.stat;
-								});
-								storage->artifact.subStats.at(subStatIndex) = newStat.transform([storage, subStatIndex](auto &&val) {
-									return StatValue{
-										.stat = val,
-										.value = storage->artifact.subStats.at(subStatIndex)
-													 .and_then([](const StatValue &val) -> std::optional<float> {
-														 return val.value;
-													 })
-													 .value_or(0.f)
-									};
-								});
+								auto &subStat = storage->artifact.subStats.at(subStatIndex);
+								subStat.stat = newStat;
 								subStatDisable.notify(!newStat.has_value());
-								subStatValueUpdater.notify(
-									storage->artifact.subStats.at(subStatIndex)
-										.and_then([newStat, prevStat](const StatValue &stat) -> std::optional<float> {
-											return stat.value * (Utils::isPercentage(prevStat.value_or(newStat.value())) ? 100.f : 1.f);
-										})
-										.value_or(0.f)
-								);
 								subStatTextUpdater.notify(
 									newStat
 										.transform([](auto &&val) {
@@ -260,30 +242,26 @@ UI::ArtifactEditor::operator squi::Child() const {
 						},
 					},
 					.style = ButtonStyle::Standard(),
-					.text = storage->artifact.subStats.at(subStatIndex).transform([](auto &&val) {
-																		   return Utils::Stringify(val.stat);
-																	   })
+					.text = storage->artifact.subStats.at(subStatIndex).stat.transform([](auto &&val) {
+																				return Utils::Stringify(val);
+																			})
 								.value_or("None"),
 					.items = subStatItemsProvider(),
 					.textUpdater = subStatTextUpdater,
 				},
 				NumberBox{
-					.value = storage->artifact.subStats.at(subStatIndex).transform([&](auto &&val) {
-																			return val.value * (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
-																		})
-								 .value_or(0.f),
+					.value = storage->artifact.subStats.at(subStatIndex).value * (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat) ? 100.f : 1.f),
 					.min = 0.f,
-					.disabled = !storage->artifact.subStats.at(subStatIndex).has_value(),
+					.disabled = !storage->artifact.subStats.at(subStatIndex).stat.has_value(),
 					.onChange = [storage, subStatIndex](float val) {
-						if (storage->artifact.subStats.at(subStatIndex).has_value()) {
-							storage->artifact.subStats.at(subStatIndex)->value
-								= val / (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat) ? 100.f : 1.f);
+						if (storage->artifact.subStats.at(subStatIndex).stat.has_value()) {
+							storage->artifact.subStats.at(subStatIndex).value = val / (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat) ? 100.f : 1.f);
 						}
 					},
 					.formatter = [storage, subStatIndex](float val) {
 						if (
-							!storage->artifact.subStats.at(subStatIndex).has_value()
-							|| !Utils::isPercentage(storage->artifact.subStats.at(subStatIndex)->stat)
+							!storage->artifact.subStats.at(subStatIndex).stat.has_value()
+							|| !Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat.value())
 						) {
 							return std::format("{:.0f}", val);
 						}

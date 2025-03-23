@@ -20,7 +20,7 @@ namespace Artifact {
 		SetKey set{};
 		Slot slot{};
 		Stat mainStat{};
-		std::array<std::optional<StatValue>, 4> subStats{};
+		std::array<StatValue, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
 		Character::InstanceKey equippedCharacter{};
@@ -39,9 +39,8 @@ namespace Artifact {
 
 			// Sub stats
 			for (const auto &subStat: subStats) {
-				if (subStat.has_value()) {
-					const auto &val = subStat.value();
-					stats.fromStat(val.stat) = val.value;
+				if (subStat.stat.has_value()) {
+					stats.fromStat(subStat.stat.value()) = subStat.value;
 				}
 			}
 		}

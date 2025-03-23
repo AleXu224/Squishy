@@ -22,9 +22,9 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 			auto ret = std::vector<ISubstat>(4);
 
 			for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, ret)) {
-				if (!subStat.has_value()) continue;
-				dataSubStat.key = keyStat.at(subStat->stat);
-				dataSubStat.value = subStat->value * (Utils::isPercentage(subStat->stat) ? 100.f : 1.f);
+				if (!subStat.stat.has_value()) continue;
+				dataSubStat.key = keyStat.at(subStat.stat.value());
+				dataSubStat.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
 			}
 
 			return ret;
@@ -68,7 +68,7 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 		bool validSubstats = true;
 		for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {
 			if (dataSubStat.key.empty()) {
-				if (subStat.has_value()) {
+				if (subStat.stat.has_value()) {
 					validSubstats = false;
 					break;
 				}
@@ -79,11 +79,11 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 				validSubstats = false;
 				break;
 			}
-			if (!subStat.has_value()) {
+			if (!subStat.stat.has_value()) {
 				validSubstats = false;
 				break;
 			}
-			const auto &val = subStat.value();
+			const auto &val = subStat;
 			if (val.stat != statKey.at(dataSubStat.key) || val.value > dataSubStat.value) {
 				validSubstats = false;
 				break;
@@ -101,7 +101,7 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 	artifact.level = level;
 
 	for (auto &subStat: artifact.subStats) {
-		subStat = std::nullopt;
+		subStat.stat = std::nullopt;
 	}
 
 	for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {

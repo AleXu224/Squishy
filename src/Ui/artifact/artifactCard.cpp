@@ -103,10 +103,10 @@ struct ArtifactCardContent {
 					auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));
 
 					for (const auto &[transparent, substat]: std::views::zip(trueFalseInf, artifact.subStats)) {
-						if (!substat.has_value()) continue;
+						if (!substat.stat.has_value()) continue;
 						w.addChild(UI::StatDisplay{
 							.isTransparent = transparent,
-							.stat = substat.value(),
+							.stat = substat,
 						});
 					}
 				},

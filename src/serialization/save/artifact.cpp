@@ -5,10 +5,10 @@
 Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const ::Artifact::Instance &artifact) {
 	std::array<std::optional<ArtifactSubStat>, 4> subStats{};
 	for (auto [subStatData, artifactSubStat]: std::views::zip(subStats, artifact.subStats)) {
-		if (!artifactSubStat) continue;
+		if (!artifactSubStat.stat) continue;
 		subStatData = ArtifactSubStat{
-			.stat = artifactSubStat->stat,
-			.value = artifactSubStat->value,
+			.stat = artifactSubStat.stat.value(),
+			.value = artifactSubStat.value,
 		};
 	}
 
@@ -25,7 +25,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 }
 
 ::Artifact::Instance Serialization::Save::Artifact::toInstance() const {
-	std::array<std::optional<StatValue>, 4> subStats{};
+	std::array<StatValue, 4> subStats{};
 	for (auto [subStatData, artifactSubStat]: std::views::zip(this->subStats, subStats)) {
 		if (!subStatData) continue;
 		artifactSubStat = StatValue{

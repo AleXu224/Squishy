@@ -9,7 +9,6 @@
 #include "solution.hpp"
 #include <execution>
 
-
 Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto start_artifactDuplication = std::chrono::high_resolution_clock::now();
 	std::vector<Artifact::Instance> artifacts;
@@ -194,6 +193,9 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				.reaction = initialCtx.reaction,
 			};
 			auto filtered = filter.filter(initialArtifacts);
+			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5
+			// This however could help in figuring out the single best solution when a single build is requested
+			// filtered.removeInferior();
 			for (auto [slotPtr, filtered]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
 				auto &slot = std::invoke(slotPtr, character.loadout.artifact.equipped);
 				if (!filtered.empty()) slot = filtered.front()->key;
@@ -218,10 +220,10 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			auto &artifact = ::Store::artifacts.at(slot);
 			std::println(
 				"{} {} {} Lvl{} ({} {}, {} {}, {} {}, {} {})", Artifact::sets.at(artifact.set).name, Utils::Stringify(artifact.slot), Utils::Stringify(artifact.mainStat), artifact.level,
-				Utils::Stringify(artifact.subStats.at(0)->stat), Formula::Percentage({}, artifact.subStats.at(0)->value, Utils::isPercentage(artifact.subStats.at(0)->stat)),
-				Utils::Stringify(artifact.subStats.at(1)->stat), Formula::Percentage({}, artifact.subStats.at(1)->value, Utils::isPercentage(artifact.subStats.at(1)->stat)),
-				Utils::Stringify(artifact.subStats.at(2)->stat), Formula::Percentage({}, artifact.subStats.at(2)->value, Utils::isPercentage(artifact.subStats.at(2)->stat)),
-				Utils::Stringify(artifact.subStats.at(3)->stat), Formula::Percentage({}, artifact.subStats.at(3)->value, Utils::isPercentage(artifact.subStats.at(3)->stat))
+				Utils::Stringify(artifact.subStats.at(0).stat.value()), Formula::Percentage({}, artifact.subStats.at(0).value, Utils::isPercentage(artifact.subStats.at(0).stat.value())),
+				Utils::Stringify(artifact.subStats.at(1).stat.value()), Formula::Percentage({}, artifact.subStats.at(1).value, Utils::isPercentage(artifact.subStats.at(1).stat.value())),
+				Utils::Stringify(artifact.subStats.at(2).stat.value()), Formula::Percentage({}, artifact.subStats.at(2).value, Utils::isPercentage(artifact.subStats.at(2).stat.value())),
+				Utils::Stringify(artifact.subStats.at(3).stat.value()), Formula::Percentage({}, artifact.subStats.at(3).value, Utils::isPercentage(artifact.subStats.at(3).stat.value()))
 			);
 		}
 	}
