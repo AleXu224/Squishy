@@ -13,6 +13,10 @@
 #include "weapons/FavoniusSword.hpp"
 #include "weapons/FavoniusWarbow.hpp"
 #include "weapons/HunterSBow.hpp"
+#include "weapons/SacrificialBow.hpp"
+#include "weapons/SacrificialFragments.hpp"
+#include "weapons/SacrificialGreatsword.hpp"
+#include "weapons/SacrificialSword.hpp"
 #include "weapons/WasterGreatsword.hpp"
 
 
@@ -31,6 +35,10 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
+		{Weapon::Datas::sacrificialBow.key, Weapon::Datas::sacrificialBow},
+		{Weapon::Datas::sacrificialFragments.key, Weapon::Datas::sacrificialFragments},
+		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},
+		{Weapon::Datas::sacrificialSword.key, Weapon::Datas::sacrificialSword},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};
 }
