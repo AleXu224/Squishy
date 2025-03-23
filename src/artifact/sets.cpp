@@ -1,6 +1,8 @@
 #include "sets.hpp"
 
+#include "artifact/sets/ArchaicPetra.hpp"
 #include "artifact/sets/BlizzardStrayer.hpp"
+#include "artifact/sets/BloodstainedChivalry.hpp"
 #include "artifact/sets/CrimsonWitchOfFlames.hpp"
 #include "artifact/sets/DeepwoodMemories.hpp"
 #include "artifact/sets/EmblemOfSeveredFate.hpp"
@@ -10,6 +12,8 @@
 #include "artifact/sets/GoldenTroupe.hpp"
 #include "artifact/sets/HeartOfDepth.hpp"
 #include "artifact/sets/HuskOfOpulentDreams.hpp"
+#include "artifact/sets/Lavawalker.hpp"
+#include "artifact/sets/MaidenBeloved.hpp"
 #include "artifact/sets/MarechausseeHunter.hpp"
 #include "artifact/sets/NoblesseOblige.hpp"
 #include "artifact/sets/ObsidianCodex.hpp"
@@ -26,6 +30,8 @@
 
 void Artifact::initArtifacts() {
 	sets = {
+		{Artifact::Sets::archaicPetra.key, Artifact::Sets::archaicPetra},
+		{Artifact::Sets::bloodstainedChivalry.key, Artifact::Sets::bloodstainedChivalry},
 		{Artifact::Sets::blizzardStrayer.key, Artifact::Sets::blizzardStrayer},
 		{Artifact::Sets::crimsonWitchOfFlames.key, Artifact::Sets::crimsonWitchOfFlames},
 		{Artifact::Sets::deepwoodMemories.key, Artifact::Sets::deepwoodMemories},
@@ -36,6 +42,8 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::goldenTroupe.key, Artifact::Sets::goldenTroupe},
 		{Artifact::Sets::heartOfDepth.key, Artifact::Sets::heartOfDepth},
 		{Artifact::Sets::huskOfOpulentDreams.key, Artifact::Sets::huskOfOpulentDreams},
+		{Artifact::Sets::lavawalker.key, Artifact::Sets::lavawalker},
+		{Artifact::Sets::maidenBeloved.key, Artifact::Sets::maidenBeloved},
 		{Artifact::Sets::marechausseeHunter.key, Artifact::Sets::marechausseeHunter},
 		{Artifact::Sets::noblesseOblige.key, Artifact::Sets::noblesseOblige},
 		{Artifact::Sets::obsidianCodex.key, Artifact::Sets::obsidianCodex},

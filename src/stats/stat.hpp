@@ -267,7 +267,7 @@ namespace Utils {
 
 	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
-		if (stat.stat.has_value()) return "0";
+		if (!stat.stat.has_value()) return "0";
 		if (Utils::isPercentage(stat.stat)) {
 			return fmt::format("{:.1f}%", stat.value * 100.f);
 		}
