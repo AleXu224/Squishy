@@ -7,6 +7,11 @@
 #include "weapons/ApprenticeSNotes.hpp"
 #include "weapons/BeginnerSProtector.hpp"
 #include "weapons/DullBlade.hpp"
+#include "weapons/FavoniusCodex.hpp"
+#include "weapons/FavoniusGreatsword.hpp"
+#include "weapons/FavoniusLance.hpp"
+#include "weapons/FavoniusSword.hpp"
+#include "weapons/FavoniusWarbow.hpp"
 #include "weapons/HunterSBow.hpp"
 #include "weapons/WasterGreatsword.hpp"
 
@@ -20,6 +25,11 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},
+		{Weapon::Datas::favoniusCodex.key, Weapon::Datas::favoniusCodex},
+		{Weapon::Datas::favoniusGreatsword.key, Weapon::Datas::favoniusGreatsword},
+		{Weapon::Datas::favoniusLance.key, Weapon::Datas::favoniusLance},
+		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
+		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};
