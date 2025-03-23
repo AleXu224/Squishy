@@ -225,7 +225,7 @@ UI::OptimizationSetChooser::operator squi::Child() const {
 	};
 
 	return Dialog{
-		.width = 800.f,
+		.width = 1000.f,
 		.closeEvent = closeEvent,
 		.title = "Choose enabled sets",
 		.content = Column{

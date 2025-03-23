@@ -9,13 +9,17 @@
 #include "artifact/sets/GladiatorsFinale.hpp"
 #include "artifact/sets/GoldenTroupe.hpp"
 #include "artifact/sets/HeartOfDepth.hpp"
+#include "artifact/sets/HuskOfOpulentDreams.hpp"
 #include "artifact/sets/MarechausseeHunter.hpp"
 #include "artifact/sets/NoblesseOblige.hpp"
 #include "artifact/sets/ObsidianCodex.hpp"
+#include "artifact/sets/OceanHuedClam.hpp"
+#include "artifact/sets/PaleFlame.hpp"
 #include "artifact/sets/ScrollOfTheHeroOfCinderCity.hpp"
 #include "artifact/sets/ShimenawasReminiscence.hpp"
 #include "artifact/sets/TenacityOfTheMillelith.hpp"
 #include "artifact/sets/ThunderingFury.hpp"
+#include "artifact/sets/UnfinishedReverie.hpp"
 #include "artifact/sets/ViridescentVenerer.hpp"
 #include "artifact/sets/WanderersTroupe.hpp"
 
@@ -31,13 +35,17 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::gladiatorsFinale.key, Artifact::Sets::gladiatorsFinale},
 		{Artifact::Sets::goldenTroupe.key, Artifact::Sets::goldenTroupe},
 		{Artifact::Sets::heartOfDepth.key, Artifact::Sets::heartOfDepth},
+		{Artifact::Sets::huskOfOpulentDreams.key, Artifact::Sets::huskOfOpulentDreams},
 		{Artifact::Sets::marechausseeHunter.key, Artifact::Sets::marechausseeHunter},
 		{Artifact::Sets::noblesseOblige.key, Artifact::Sets::noblesseOblige},
 		{Artifact::Sets::obsidianCodex.key, Artifact::Sets::obsidianCodex},
+		{Artifact::Sets::oceanHuedClam.key, Artifact::Sets::oceanHuedClam},
+		{Artifact::Sets::paleFlame.key, Artifact::Sets::paleFlame},
 		{Artifact::Sets::scrollOfTheHeroOfCinderCity.key, Artifact::Sets::scrollOfTheHeroOfCinderCity},
 		{Artifact::Sets::shimenawasReminiscence.key, Artifact::Sets::shimenawasReminiscence},
 		{Artifact::Sets::tenacityOfTheMillelith.key, Artifact::Sets::tenacityOfTheMillelith},
 		{Artifact::Sets::thunderingFury.key, Artifact::Sets::thunderingFury},
+		{Artifact::Sets::unfinishedReverie.key, Artifact::Sets::unfinishedReverie},
 		{Artifact::Sets::viridescentVenerer.key, Artifact::Sets::viridescentVenerer},
 		{Artifact::Sets::wanderersTroupe.key, Artifact::Sets::wanderersTroupe},
 	};
