@@ -10,6 +10,7 @@ namespace UI {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
+		bool enableCombos = false;
 		const Formula::Context &ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 

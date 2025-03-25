@@ -18,7 +18,7 @@ namespace Formula {
 			interface(interface &&) = delete;
 			interface &operator=(const interface &) = delete;
 			interface &operator=(interface &&) = delete;
-			
+
 			[[nodiscard]] constexpr virtual std::string print(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
@@ -65,6 +65,7 @@ namespace Formula {
 			}
 			return *this;
 		}
+		constexpr NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
 
 		[[nodiscard]] constexpr std::string print(const Context &context) const {
 			return fn->print(context);
@@ -75,7 +76,6 @@ namespace Formula {
 
 		NodeType() = default;
 
-		NodeType(NodeType &&) = delete;
 		~NodeType() = default;
 
 		[[nodiscard]] constexpr bool hasValue() const {

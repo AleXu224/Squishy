@@ -26,7 +26,10 @@ namespace Combo::Source {
 	};
 
 	struct Combo {
-		::Combo::InstanceKey key;
+		::Character::InstanceKey characterKey;
+		::Combo::InstanceKey comboKey;
+
+		[[nodiscard]] Node::Instance resolve() const;
 	};
 
 	struct Weapon {
@@ -48,5 +51,5 @@ namespace Combo::Source {
 		}
 	};
 
-	using Types = std::variant<Character, Weapon, Artifact>;
+	using Types = std::variant<Character, Combo, Weapon, Artifact>;
 }// namespace Combo::Source

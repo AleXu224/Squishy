@@ -2,6 +2,7 @@
 
 #include "artifact/key.hpp"
 #include "character/key.hpp"
+#include "combo/key.hpp"
 #include "glaze/glaze.hpp"// IWYU pragma: keep
 #include "team/key.hpp"
 #include "weapon/key.hpp"
@@ -56,6 +57,14 @@ struct glz::meta<::Weapon::DataKey> {
 template<>
 struct glz::meta<::Team::InstanceKey> {
 	using T = ::Team::InstanceKey;
+	static constexpr auto value = object(
+		&T::key
+	);
+};
+// Combo
+template<>
+struct glz::meta<::Combo::InstanceKey> {
+	using T = ::Combo::InstanceKey;
 	static constexpr auto value = object(
 		&T::key
 	);

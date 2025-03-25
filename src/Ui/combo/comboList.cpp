@@ -81,6 +81,7 @@ UI::ComboList::operator squi::Child() const {
 							{
 								::Store::lastComboId,
 								Combo::Combo{
+									.instanceKey{::Store::lastComboId},
 									.name = "New combo",
 								},
 							}

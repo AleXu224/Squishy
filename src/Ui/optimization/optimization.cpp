@@ -130,6 +130,7 @@ UI::Optimization::operator squi::Child() const {
 										.onClick = [storage, characterKey = characterKey, ctx = ctx](GestureDetector::Event event) {
 											event.widget.addOverlay(NodePicker{
 												.characterKey = characterKey,
+												.enableCombos = true,
 												.ctx = ctx,
 												.onSelect = [storage, &w = event.widget](const Combo::Source::Types &source) {
 													storage->nodeSource = source;
