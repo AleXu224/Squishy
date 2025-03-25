@@ -113,20 +113,20 @@ namespace {
 				},
 			};
 			auto multiplierBox = NumberBox{
-				.widget{
-					.width = Size::Shrink,
+				.value = entry.multiplier,
+				.onChange = [&entry](float newVal) {
+					entry.multiplier = newVal;
 				},
-				.value = 1.f,
 			};
 
 			ret.emplace_back(Expander{
+				.icon = multiplierBox,
 				.heading = Text{
 					.text = node.name,
 					.lineWrap = true,
 					.color = Node::getColor(node.data, ctx),
 				},
 				.actions{
-					multiplierBox,
 					reactionSelector.items.size() <= 1 ? Child{} : reactionSelector,
 					deleteButton,
 				},
