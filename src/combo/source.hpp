@@ -6,6 +6,7 @@
 #include "character/characters.hpp"
 #include "character/data.hpp"
 #include "character/key.hpp"
+#include "combo/key.hpp"
 #include "node/entry.hpp"
 #include "variant"
 #include "weapon/data.hpp"
@@ -22,6 +23,10 @@ namespace Combo::Source {
 		[[nodiscard]] const Node::Instance &resolve() const {
 			return ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 		}
+	};
+
+	struct Combo {
+		::Combo::InstanceKey key;
 	};
 
 	struct Weapon {
