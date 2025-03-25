@@ -91,6 +91,30 @@ UI::NodePicker::operator squi::Child() const {
 
 				auto &character = ::Store::characters.at(characterKey);
 
+				if (enableCombos) {
+					Children comboRet{};
+					for (const auto &[key, combo]: character.combos) {
+						auto source = Combo::Source::Combo{
+							.characterKey = character.instanceKey,
+							.comboKey = key,
+						};
+						auto node = source.resolve();
+						comboRet.emplace_back(NodePickerEntry{
+							.node = node,
+							.source = source,
+							.ctx = ctx,
+							.onSelect = onSelect,
+							.closeEvent = closeEvent,
+						});
+					}
+					if (!comboRet.empty()) {
+						ret.emplace_back(DisplayCard{
+							.title = "Combos",
+							.children = comboRet,
+						});
+					}
+				}
+
 				for (const auto &slot: Node::characterSlots) {
 					if (!Utils::slotToCondition(slot).eval(ctx)) continue;
 					Children entryRet{};

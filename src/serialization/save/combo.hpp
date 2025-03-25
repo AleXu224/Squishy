@@ -21,6 +21,11 @@ namespace Serialization::Save {
 		size_t index;
 	};
 
+	struct ComboCombo {
+		::Character::InstanceKey characterKey;
+		::Combo::InstanceKey comboKey;
+	};
+
 	struct WeaponCombo {
 		::Weapon::DataKey key;
 		size_t index;
@@ -32,7 +37,7 @@ namespace Serialization::Save {
 		size_t index;
 	};
 
-	using ComboSourceTypes = std::variant<CharacterCombo, WeaponCombo, ArtifactCombo>;
+	using ComboSourceTypes = std::variant<CharacterCombo, ComboCombo, WeaponCombo, ArtifactCombo>;
 
 	struct ComboEntry {
 		float multiplier;
@@ -41,17 +46,23 @@ namespace Serialization::Save {
 	};
 
 	struct Combo {
+		::Combo::InstanceKey instanceKey;
 		std::string name;
 		std::vector<ComboEntry> entries;
 	};
 
-	std::vector<Serialization::Save::Combo> comboFromInstance(const std::list<::Combo::Combo> &combos);
-	std::list<::Combo::Combo> comboToInstance(const std::vector<Serialization::Save::Combo> &combos);
+	std::vector<Serialization::Save::Combo> comboFromInstance(const std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> &combos);
+	std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> comboToInstance(const std::vector<Serialization::Save::Combo> &combos);
 }// namespace Serialization::Save
 template<>
 struct glz::meta<Serialization::Save::CharacterCombo> {
 	using T = Serialization::Save::CharacterCombo;
 	static constexpr auto value = object(&T::key, &T::slot, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboCombo> {
+	using T = Serialization::Save::ComboCombo;
+	static constexpr auto value = object(&T::characterKey, &T::comboKey);
 };
 template<>
 struct glz::meta<Serialization::Save::WeaponCombo> {

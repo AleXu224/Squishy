@@ -26,6 +26,7 @@ namespace Store {
 	inline uint32_t lastWeaponId = 1;
 	inline uint32_t lastCharacterId = 1;
 	inline uint32_t lastTeamId = 1;
+	inline uint32_t lastComboId = 1;
 
 	inline squi::VoidObservable artifactListUpdateEvent{};
 	inline squi::VoidObservable weaponListUpdateEvent{};

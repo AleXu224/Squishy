@@ -22,7 +22,7 @@ namespace {
 				auto &character = ::Store::characters.at(characterKey);
 				auto &combos = character.combos;
 
-				for (auto &combo: combos) {
+				for (auto &[key, combo]: combos) {
 					ret.emplace_back(Expander{
 						.heading = combo.name,
 						.actions{
@@ -44,10 +44,8 @@ namespace {
 							},
 							Button{
 								.text = "Delete",
-								.onClick = [&combos, &combo, combosModifiedEvent, &character](auto) {
-									combos.remove_if([&combo](const Combo::Combo &comboComp) {
-										return &comboComp == &combo;
-									});
+								.onClick = [&combos, combosModifiedEvent, &character, key](auto) {
+									combos.erase(key);
 									combosModifiedEvent.notify();
 									character.updateEvent.notify();
 								},
@@ -78,9 +76,16 @@ UI::ComboList::operator squi::Child() const {
 					.text = "Add combo",
 					.onClick = [characterKey = characterKey, combosModifiedEvent](GestureDetector::Event event) {
 						auto &character = ::Store::characters.at(characterKey);
-						character.combos.emplace_back(Combo::Combo{
-							.name = "New combo",
-						});
+						::Store::lastComboId++;
+						character.combos.insert(
+							{
+								::Store::lastComboId,
+								Combo::Combo{
+									.instanceKey{::Store::lastComboId},
+									.name = "New combo",
+								},
+							}
+						);
 						character.updateEvent.notify();
 						combosModifiedEvent.notify();
 					},

@@ -1,9 +1,9 @@
 #include "combo.hpp"
 
-std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(const std::list<::Combo::Combo> &combos) {
+std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(const std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> &combos) {
 	std::vector<Serialization::Save::Combo> ret;
 
-	for (const auto &combo: combos) {
+	for (const auto &[key, combo]: combos) {
 		std::vector<Serialization::Save::ComboEntry> comboEntries;
 
 		for (const auto &entry: combo.entries) {
@@ -20,6 +20,12 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 									.key = source.key,
 									.slot = source.slot,
 									.index = source.index,
+								};
+							},
+							[](const ::Combo::Source::Combo &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::ComboCombo{
+									.characterKey = source.characterKey,
+									.comboKey = source.comboKey,
 								};
 							},
 							[](const ::Combo::Source::Weapon &source) -> Serialization::Save::ComboSourceTypes {
@@ -45,6 +51,7 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 		}
 
 		ret.emplace_back(Serialization::Save::Combo{
+			.instanceKey = key,
 			.name = combo.name,
 			.entries = comboEntries,
 		});
@@ -53,8 +60,8 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 	return ret;
 }
 
-std::list<::Combo::Combo> Serialization::Save::comboToInstance(const std::vector<Serialization::Save::Combo> &combos) {
-	std::list<::Combo::Combo> ret;
+std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::comboToInstance(const std::vector<Serialization::Save::Combo> &combos) {
+	std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> ret;
 
 	for (const auto &combo: combos) {
 		std::list<::Combo::Entry> entries;
@@ -69,6 +76,12 @@ std::list<::Combo::Combo> Serialization::Save::comboToInstance(const std::vector
 												 .key = source.key,
 												 .slot = source.slot,
 												 .index = source.index,
+											 };
+										 },
+										 [](const Serialization::Save::ComboCombo &source) -> ::Combo::Source::Types {
+											 return ::Combo::Source::Combo{
+												 .characterKey = source.characterKey,
+												 .comboKey = source.comboKey,
 											 };
 										 },
 										 [](const Serialization::Save::WeaponCombo &source) -> ::Combo::Source::Types {
@@ -89,9 +102,13 @@ std::list<::Combo::Combo> Serialization::Save::comboToInstance(const std::vector
 			});
 		}
 
-		ret.emplace_back(::Combo::Combo{
-			.name = combo.name,
-			.entries = entries,
+		ret.insert({
+			combo.instanceKey,
+			::Combo::Combo{
+				.instanceKey = combo.instanceKey,
+				.name = combo.name,
+				.entries = entries,
+			},
 		});
 	}
 

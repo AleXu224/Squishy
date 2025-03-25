@@ -95,8 +95,12 @@ namespace {
 		}
 
 		uint32_t maxCharacterKey = 1;
+		uint32_t maxComboKey = 1;
 		for (const auto &character: save.characters) {
 			maxCharacterKey = std::max(maxCharacterKey, character.instanceKey.key);
+			for (const auto &combo: character.combos) {
+				maxComboKey = std::max(maxComboKey, combo.instanceKey.key);
+			}
 			::Store::characters.emplace(character.instanceKey, character.toInstance());
 		}
 
@@ -110,6 +114,7 @@ namespace {
 		::Store::lastWeaponId = maxWeaponKey;
 		::Store::lastCharacterId = maxCharacterKey;
 		::Store::lastTeamId = maxTeamKey;
+		::Store::lastComboId = maxComboKey;
 	}
 }// namespace
 

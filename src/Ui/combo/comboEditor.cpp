@@ -170,6 +170,7 @@ UI::ComboEditor::operator squi::Child() const {
 							.onClick = [characterKey = characterKey, storage, nodeListChangedEvent, ctx = ctx](GestureDetector::Event event) {
 								event.widget.addOverlay(NodePicker{
 									.characterKey = characterKey,
+									.enableCombos = false,
 									.ctx = ctx,
 									.onSelect = [storage, nodeListChangedEvent](Combo::Source::Types source) {
 										storage->combo.entries.emplace_back(Combo::Entry{
