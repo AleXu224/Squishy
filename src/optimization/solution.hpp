@@ -18,7 +18,7 @@ namespace Optimization {
 
 		void addSolution(const Stats::Artifact::Slotted &artifacts, float score) {
 			std::scoped_lock _{mtx};
-			if (score < minScore) return;
+			if (score <= minScore) return;
 
 			for (auto &solution: solutions) {
 				if (solution.score < score) std::swap(solution, solutions.back());
