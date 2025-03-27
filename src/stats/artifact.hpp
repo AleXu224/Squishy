@@ -114,6 +114,27 @@ namespace Stats {
 			Stat::hb,
 		};
 
+		static inline std::vector mainStats{
+			Stat::hp,
+			Stat::atk,
+			Stat::hp_,
+			Stat::atk_,
+			Stat::def_,
+			Stat::er,
+			Stat::em,
+			Stat::pyroDmg,
+			Stat::hydroDmg,
+			Stat::cryoDmg,
+			Stat::electroDmg,
+			Stat::dendroDmg,
+			Stat::anemoDmg,
+			Stat::geoDmg,
+			Stat::physicalDmg,
+			Stat::cr,
+			Stat::cd,
+			Stat::hb,
+		};
+
 		[[nodiscard]] static const std::vector<Stat> &bySlot(::Artifact::Slot slot) {
 			switch (slot) {
 				case ::Artifact::Slot::flower:

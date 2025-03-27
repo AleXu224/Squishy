@@ -4,6 +4,7 @@
 #include "align.hpp"
 #include "box.hpp"
 #include "button.hpp"
+#include "column.hpp"
 #include "fontIcon.hpp"
 #include "image.hpp"
 #include "misc/weaponType.hpp"

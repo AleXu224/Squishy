@@ -53,8 +53,27 @@ struct ArtifactHeader {
 					.padding = Padding{12.f, 0.f},
 				},
 				.children{
-					Text{
-						.text = Utils::Stringify(mainStat.stat),
+					Row{
+						.alignment = Row::Alignment::center,
+						.spacing = 4.f,
+						.children{
+							Box{
+								.widget{
+									.width = Size::Shrink,
+									.height = Size::Shrink,
+									.padding = 2.f,
+								},
+								.color = Color::css(0xffffff, 0.8f),
+								.borderRadius = 4.f,
+								.child = Text{
+									.text = "+20",
+									.color = Color::black,
+								},
+							},
+							Text{
+								.text = Utils::Stringify(mainStat.stat),
+							},
+						},
 					},
 					Text{
 						.text = Utils::Stringify(mainStat),

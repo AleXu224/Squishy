@@ -12,6 +12,7 @@
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
+#include "column.hpp"
 #include "expander.hpp"
 #include "ranges"
 #include "rebuilder.hpp"
@@ -238,7 +239,7 @@ UI::CharacterDetails::operator squi::Child() const {
 		.scrollableWidget{
 			.padding = 4.f,
 		},
-		.alignment = squi::Column::Alignment::center,
+		.alignment = Scrollable::Alignment::center,
 		.spacing = 4.f,
 		.children{
 			EquipmentExpander{

@@ -37,7 +37,7 @@ namespace {
 
 UI::TeamBuffs::operator squi::Child() const {
 	return ScrollableFrame{
-		.alignment = squi::Column::Alignment::center,
+		.alignment = Scrollable::Alignment::center,
 		.children{
 			Rebuilder{
 				.widget{.width = Size::Wrap},

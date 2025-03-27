@@ -66,7 +66,7 @@ UI::WeaponPage::operator squi::Child() const {
 		.scrollableWidget{
 			.padding = 8.f,
 		},
-		.alignment = squi::Column::Alignment::center,
+		.alignment = Scrollable::Alignment::center,
 		.spacing = 8.f,
 		.children{
 			buttonBar,
