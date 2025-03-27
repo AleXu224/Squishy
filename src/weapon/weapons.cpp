@@ -4,6 +4,7 @@
 #include "weapon/weapons/PeakPatrolSong.hpp"
 #include "weapon/weapons/SplendorOfTranquilWaters.hpp"
 #include "weapon/weapons/StaffOfTheScarletSands.hpp"
+#include "weapons/AmenomaKageuchi.hpp"
 #include "weapons/ApprenticeSNotes.hpp"
 #include "weapons/BeginnerSProtector.hpp"
 #include "weapons/DullBlade.hpp"
@@ -13,6 +14,7 @@
 #include "weapons/FavoniusSword.hpp"
 #include "weapons/FavoniusWarbow.hpp"
 #include "weapons/HunterSBow.hpp"
+#include "weapons/MistsplitterReforged.hpp"
 #include "weapons/SacrificialBow.hpp"
 #include "weapons/SacrificialFragments.hpp"
 #include "weapons/SacrificialGreatsword.hpp"
@@ -26,8 +28,9 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::peakPatrolSong.key, Weapon::Datas::peakPatrolSong},
 		{Weapon::Datas::splendorOfTranquilWaters.key, Weapon::Datas::splendorOfTranquilWaters},
 		{Weapon::Datas::staffOfTheScarletSands.key, Weapon::Datas::staffOfTheScarletSands},
-		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
+		{Weapon::Datas::amenomaKageuchi.key, Weapon::Datas::amenomaKageuchi},
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
+		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},
 		{Weapon::Datas::favoniusCodex.key, Weapon::Datas::favoniusCodex},
 		{Weapon::Datas::favoniusGreatsword.key, Weapon::Datas::favoniusGreatsword},
@@ -35,6 +38,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
+		{Weapon::Datas::mistsplitterReforged.key, Weapon::Datas::mistsplitterReforged},
 		{Weapon::Datas::sacrificialBow.key, Weapon::Datas::sacrificialBow},
 		{Weapon::Datas::sacrificialFragments.key, Weapon::Datas::sacrificialFragments},
 		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},

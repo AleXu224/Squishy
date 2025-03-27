@@ -134,7 +134,7 @@ const Character::Data Character::Datas::${camelCase(data.caseableName)}{
 				},
 				.skill{${skillContentsGenerator(contents.Skills[1], "skill")}
 				},
-				.burst{${skillContentsGenerator(contents.Skills[2], "burst")}
+				.burst{${skillContentsGenerator(contents.Skills[contents.Skills.length - 1], "burst")}
 				},
 			},
 		};

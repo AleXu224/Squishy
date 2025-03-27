@@ -66,6 +66,7 @@ namespace Modifiers {
 	using RetTypeMember = decltype(std::declval<typename decltype(val)::RetType>().eval(std::declval<const Formula::Context &>()));
 
 	struct SheetMemberIdentifier {
+		struct Infusion {};
 		enum class Type : uint8_t {
 			stat,
 			attack,
@@ -74,6 +75,7 @@ namespace Modifiers {
 			talent,
 			enemyStat,
 			enemyRes,
+			infusion,
 		} _type;
 		union _Uni {
 			::Stat stat;
@@ -83,6 +85,7 @@ namespace Modifiers {
 			::LevelableTalent talent;
 			::Misc::EnemyStat enemyStat;
 			std::pair<Misc::EnemyResistances, Misc::Element> enemyRes;
+			Infusion infusion;
 		} _uni;
 
 		constexpr SheetMemberIdentifier(::Stat stat) : _type(Type::stat), _uni{.stat = stat} {}
@@ -92,6 +95,10 @@ namespace Modifiers {
 		constexpr SheetMemberIdentifier(LevelableTalent talent) : _type(Type::talent), _uni{.talent = talent} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyStat enemyStat) : _type(Type::enemyStat), _uni{.enemyStat = enemyStat} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyResistances enemyRes, Misc::Element element) : _type(Type::enemyRes), _uni{.enemyRes{enemyRes, element}} {}
+		constexpr SheetMemberIdentifier(Infusion infusion) : _type(Type::infusion), _uni{.infusion{}} {}
+		static constexpr SheetMemberIdentifier infusion() {
+			return Infusion{};
+		}
 
 		[[nodiscard]] std::string getName() const {
 			switch (_type) {
@@ -109,6 +116,8 @@ namespace Modifiers {
 					return fmt::format("{}", Utils::Stringify(_uni.enemyStat));
 				case Type::enemyRes:
 					return fmt::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
+				case Type::infusion:
+					return "Infusion";
 			}
 			std::unreachable();
 		}
@@ -129,6 +138,8 @@ namespace Modifiers {
 					return Utils::isPercentage(_uni.enemyStat);
 				case Type::enemyRes:
 					return true;
+				case Type::infusion:
+					return false;
 			}
 			std::unreachable();
 		}

@@ -21,4 +21,18 @@ namespace Formula {
 			return indexable.at(index.eval(context));
 		}
 	};
+
+	template<class T>
+	struct Evaluator {
+		T evaluated;
+		bool isPercentage = false;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return Percentage({}, eval(context), isPercentage);
+		}
+
+		[[nodiscard]] auto eval(const Context &context) const {
+			return evaluated.eval(context).eval(context);
+		}
+	};
 }// namespace Formula

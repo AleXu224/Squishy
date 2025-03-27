@@ -1,5 +1,6 @@
 #include "decodeModsSheet.hpp"
 
+#include "Ui/elementToColor.hpp"
 #include "misc/element.hpp"
 #include "modifiers/enemyFactory.hpp"
 #include "modifiers/helpers.hpp"
@@ -76,6 +77,25 @@ namespace {
 		addItem(sheet.burst, Modifiers::EnemyNameFactory::DEFIgnored, ret, ctx, transparent, prefix);
 		return ret;
 	}
+
+	[[nodiscard]] Children decodeInfusionSheet(std::string_view prefix, bool &transparent, const Formula::ElementNode &infusion, const Formula::Context &ctx) {
+		Children ret;
+
+		auto message = infusion.print(ctx);
+		auto value = infusion.eval(ctx);
+		if (!value.has_value()) return ret;
+		ret.emplace_back(UI::Tooltip{
+			.message = message,
+			.child = UI::SkillEntry{
+				.isTransparent = transparent = !transparent,
+				.name = std::format("{}{} Infusion", prefix, message),
+				.color = Utils::elementToColor(value.value()),
+				.isPercentage = false,
+			},
+		});
+
+		return ret;
+	}
 }// namespace
 
 squi::Children UI::decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Context &ctx) {
@@ -97,6 +117,10 @@ squi::Children UI::decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Conte
 	ret.insert(ret.end(), talents.begin(), talents.end());
 	auto teamTalents = decodeTalentsSheet("Team ", transparent, sheet.teamTalents, ctx);
 	ret.insert(ret.end(), teamTalents.begin(), teamTalents.end());
+	auto infusion = decodeInfusionSheet("", transparent, sheet.infusion, ctx);
+	ret.insert(ret.end(), infusion.begin(), infusion.end());
+	auto teamInfusion = decodeInfusionSheet("", transparent, sheet.teamInfusion, ctx);
+	ret.insert(ret.end(), teamInfusion.begin(), teamInfusion.end());
 
 	return ret;
 }
@@ -122,6 +146,10 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			ret.insert(ret.end(), talents.begin(), talents.end());
 			auto teamTalents = decodeTalentsSheet("Team ", transparent, opt.mods.teamTalents, ctx);
 			ret.insert(ret.end(), teamTalents.begin(), teamTalents.end());
+			auto infusion = decodeInfusionSheet("", transparent, opt.mods.infusion, ctx);
+			ret.insert(ret.end(), infusion.begin(), infusion.end());
+			auto teamInfusion = decodeInfusionSheet("", transparent, opt.mods.teamInfusion, ctx);
+			ret.insert(ret.end(), teamInfusion.begin(), teamInfusion.end());
 
 			for (const Node::Types &node: opt.nodes) {
 				auto value = node.formula.eval(ctx);

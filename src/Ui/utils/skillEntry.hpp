@@ -1,7 +1,7 @@
 #pragma once
 
 #include "color.hpp"
-#include "widget.hpp"
+#include "widgetArgs.hpp"
 
 
 namespace UI {
@@ -9,7 +9,7 @@ namespace UI {
 		// Args
 		bool isTransparent;
 		std::string_view name;
-		float value;
+		std::optional<float> value{};
 		squi::Color color;
 		bool isPercentage = false;
 

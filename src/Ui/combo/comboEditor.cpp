@@ -119,6 +119,8 @@ namespace {
 				},
 			};
 
+
+			auto captionStr = std::format("{:.1f}", node.formula.eval(ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction))));
 			ret.emplace_back(Expander{
 				.icon = multiplierBox,
 				.heading = Text{
@@ -126,6 +128,7 @@ namespace {
 					.lineWrap = true,
 					.color = Node::getColor(node.data, ctx),
 				},
+				.caption = captionStr,
 				.actions{
 					reactionSelector.items.size() <= 1 ? Child{} : reactionSelector,
 					deleteButton,

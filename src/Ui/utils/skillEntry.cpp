@@ -33,9 +33,10 @@ UI::SkillEntry::operator squi::Child() const {
 							.color = color,
 						},
 					},
-					Text{
-						.text = isPercentage ? std::format("{:.1f}%", value * 100.f) : std::format("{:.0f}", value),
-					},
+					value.has_value() ? Text{
+											.text = isPercentage ? std::format("{:.1f}%", value.value() * 100.f) : std::format("{:.0f}", value.value()),
+										}
+									  : Child{},
 				},
 			},
 		}
