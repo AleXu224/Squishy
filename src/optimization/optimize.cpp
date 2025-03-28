@@ -211,22 +211,22 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	character.loadout.artifact.equipped = prevLoadout;
 	character.loadout.artifact.refreshStats();
-	for (const auto &solution: solutions.solutions) {
-		std::println("------------------------------------------------");
-		std::println("Solution dmg: {}", solution.score);
-		for (const auto &ptr: Stats::Artifact::Slotted::getMembers()) {
-			auto &slot = std::invoke(ptr, solution.artifacts);
-			if (!slot) continue;
-			auto &artifact = ::Store::artifacts.at(slot);
-			std::println(
-				"{} {} {} Lvl{} ({} {}, {} {}, {} {}, {} {})", Artifact::sets.at(artifact.set).name, Utils::Stringify(artifact.slot), Utils::Stringify(artifact.mainStat), artifact.level,
-				Utils::Stringify(artifact.subStats.at(0).stat.value()), Formula::Percentage({}, artifact.subStats.at(0).value, Utils::isPercentage(artifact.subStats.at(0).stat.value())),
-				Utils::Stringify(artifact.subStats.at(1).stat.value()), Formula::Percentage({}, artifact.subStats.at(1).value, Utils::isPercentage(artifact.subStats.at(1).stat.value())),
-				Utils::Stringify(artifact.subStats.at(2).stat.value()), Formula::Percentage({}, artifact.subStats.at(2).value, Utils::isPercentage(artifact.subStats.at(2).stat.value())),
-				Utils::Stringify(artifact.subStats.at(3).stat.value()), Formula::Percentage({}, artifact.subStats.at(3).value, Utils::isPercentage(artifact.subStats.at(3).stat.value()))
-			);
-		}
-	}
+	// for (const auto &solution: solutions.solutions) {
+	// 	std::println("------------------------------------------------");
+	// 	std::println("Solution dmg: {}", solution.score);
+	// 	for (const auto &ptr: Stats::Artifact::Slotted::getMembers()) {
+	// 		auto &slot = std::invoke(ptr, solution.artifacts);
+	// 		if (!slot) continue;
+	// 		auto &artifact = ::Store::artifacts.at(slot);
+	// 		std::println(
+	// 			"{} {} {} Lvl{} ({} {}, {} {}, {} {}, {} {})", Artifact::sets.at(artifact.set).name, Utils::Stringify(artifact.slot), Utils::Stringify(artifact.mainStat), artifact.level,
+	// 			Utils::Stringify(artifact.subStats.at(0).stat.value()), Formula::Percentage({}, artifact.subStats.at(0).value, Utils::isPercentage(artifact.subStats.at(0).stat.value())),
+	// 			Utils::Stringify(artifact.subStats.at(1).stat.value()), Formula::Percentage({}, artifact.subStats.at(1).value, Utils::isPercentage(artifact.subStats.at(1).stat.value())),
+	// 			Utils::Stringify(artifact.subStats.at(2).stat.value()), Formula::Percentage({}, artifact.subStats.at(2).value, Utils::isPercentage(artifact.subStats.at(2).stat.value())),
+	// 			Utils::Stringify(artifact.subStats.at(3).stat.value()), Formula::Percentage({}, artifact.subStats.at(3).value, Utils::isPercentage(artifact.subStats.at(3).stat.value()))
+	// 		);
+	// 	}
+	// }
 
 	auto end = std::chrono::high_resolution_clock::now();
 	std::println("------------------------------------------------");

@@ -55,6 +55,7 @@ namespace {
 					},
 					[](const Node::InfoData &data) {},
 					[](const Node::HealData &data) {},
+					[](const Node::ShieldData &data) {},
 				},
 				node.data
 			);

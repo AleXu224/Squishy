@@ -49,7 +49,7 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 				.key = optKey1,
 				.name = scrollOfTheHeroStrings.at(element)[2],
 				.teamBuff = true,
-				.displayCondition = ElementCountOthers{element} >= 1,
+				.displayCondition = ElementCountOthers{element} >= 1 && !IsCharacterElement{element},
 				.mods = sheet1,
 			});
 
@@ -64,7 +64,7 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 				.key = optKey2,
 				.name = scrollOfTheHeroStrings.at(element)[3],
 				.teamBuff = true,
-				.displayCondition = IsActive(optKey1) && ElementCountOthers{element} >= 1,
+				.displayCondition = IsActive(optKey1) && ElementCountOthers{element} >= 1 && !IsCharacterElement{element},
 				.mods = sheet2,
 			});
 

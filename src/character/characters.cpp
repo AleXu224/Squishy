@@ -1,5 +1,6 @@
 #include "characters.hpp"
 
+#include "character/characters/Citlali.hpp"
 #include "character/characters/Cyno.hpp"
 #include "character/characters/Furina.hpp"
 #include "character/characters/KamisatoAyaka.hpp"
@@ -9,6 +10,7 @@
 
 extern void Character::initCharacters() {
 	list = {
+		{Character::Datas::citlali.key, Character::Datas::citlali},
 		{Character::Datas::cyno.key, Character::Datas::cyno},
 		{Character::Datas::furina.key, Character::Datas::furina},
 		{Character::Datas::kamisatoAyaka.key, Character::Datas::kamisatoAyaka},

@@ -15,6 +15,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const HealData &) {
 				return Utils::elementToColor(Misc::Element::dendro);
 			},
+			[&](const ShieldData &node) {
+				return Utils::elementToColor(node.element.value_or(Misc::Element::physical));
+			},
 		},
 		data
 	);
@@ -29,6 +32,9 @@ bool Node::getOptimizable(const Data &data) {
 				return info.optimizable;
 			},
 			[&](const HealData &) {
+				return true;
+			},
+			[&](const ShieldData &) {
 				return true;
 			},
 		},

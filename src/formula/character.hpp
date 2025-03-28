@@ -49,6 +49,30 @@ namespace Formula {
 		}
 	};
 
+	struct IsCharacterId {
+		uint32_t id;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is character id {} ({})", id, eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.source.character.data.key.key == id;
+		}
+	};
+
+	struct IsActiveCharacterId {
+		uint32_t id;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is character id {} ({})", id, eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.active.character.data.key.key == id;
+		}
+	};
+
 
 	template<FormulaLike T>
 	struct MaxCharacter {

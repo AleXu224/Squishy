@@ -19,6 +19,8 @@
 #include "weapons/SacrificialFragments.hpp"
 #include "weapons/SacrificialGreatsword.hpp"
 #include "weapons/SacrificialSword.hpp"
+#include "weapons/StarcallersWatch.hpp"
+#include "weapons/ThrillingTalesOfDragonSlayers.hpp"
 #include "weapons/WasterGreatsword.hpp"
 
 
@@ -43,6 +45,8 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::sacrificialFragments.key, Weapon::Datas::sacrificialFragments},
 		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},
 		{Weapon::Datas::sacrificialSword.key, Weapon::Datas::sacrificialSword},
+		{Weapon::Datas::starcallersWatch.key, Weapon::Datas::starcallersWatch},
+		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};
 }

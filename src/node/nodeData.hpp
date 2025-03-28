@@ -24,7 +24,11 @@ namespace Node {
 
 	struct HealData {};
 
-	using Data = std::variant<AtkData, InfoData, HealData>;
+	struct ShieldData {
+		Utils::JankyOptional<Misc::Element> element{};
+	};
+
+	using Data = std::variant<AtkData, InfoData, HealData, ShieldData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
@@ -36,6 +40,9 @@ namespace Node {
 					return info.type == Utils::EntryType::multiplier;
 				},
 				[](const HealData &) {
+					return false;
+				},
+				[](const ShieldData &) {
 					return false;
 				},
 			},
