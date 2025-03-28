@@ -49,18 +49,22 @@ namespace Formula {
 		}
 
 		constexpr NodeType(const NodeType &other) {
-			if (other.fn) {
+			if (!other.fn)
+				fn.reset();
+			else
 				fn = other.fn->clone();
-			}
 		}
 		constexpr NodeType &operator=(const NodeType &other) {
-			if (this != &other && other.fn) {
-				fn = other.fn->clone();
+			if (this != &other) {
+				if (!other.fn)
+					fn.reset();
+				else
+					fn = other.fn->clone();
 			}
 			return *this;
 		}
 		constexpr NodeType &operator=(NodeType &&other) noexcept {
-			if (this != &other && other.fn) {
+			if (this != &other) {
 				fn = std::move(other.fn);
 			}
 			return *this;

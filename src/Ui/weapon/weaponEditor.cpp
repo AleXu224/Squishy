@@ -49,8 +49,8 @@ UI::WeaponEditor::operator Child() const {
 						auto level = storage->weapon.stats.sheet.level;
 						auto ascension = storage->weapon.stats.sheet.ascension;
 						auto refinement = storage->weapon.stats.sheet.refinement;
-						
-						storage->weapon = Weapon::Instance(key, storage->weapon.instanceKey);
+
+						storage->weapon.stats = ::Stats::Weapon(::Weapon::list.at(key));
 						storage->weapon.stats.sheet.level = level;
 						storage->weapon.stats.sheet.ascension = ascension;
 						storage->weapon.stats.sheet.refinement = refinement;
