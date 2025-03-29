@@ -7,6 +7,7 @@
 #include "weapons/AmenomaKageuchi.hpp"
 #include "weapons/ApprenticeSNotes.hpp"
 #include "weapons/BeginnerSProtector.hpp"
+#include "weapons/Deathmatch.hpp"
 #include "weapons/DullBlade.hpp"
 #include "weapons/FavoniusCodex.hpp"
 #include "weapons/FavoniusGreatsword.hpp"
@@ -20,6 +21,7 @@
 #include "weapons/SacrificialGreatsword.hpp"
 #include "weapons/SacrificialSword.hpp"
 #include "weapons/StarcallersWatch.hpp"
+#include "weapons/SymphonistOfScents.hpp"
 #include "weapons/ThrillingTalesOfDragonSlayers.hpp"
 #include "weapons/WasterGreatsword.hpp"
 
@@ -33,6 +35,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::amenomaKageuchi.key, Weapon::Datas::amenomaKageuchi},
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
 		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
+		{Weapon::Datas::deathmatch.key, Weapon::Datas::deathmatch},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},
 		{Weapon::Datas::favoniusCodex.key, Weapon::Datas::favoniusCodex},
 		{Weapon::Datas::favoniusGreatsword.key, Weapon::Datas::favoniusGreatsword},
@@ -46,6 +49,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},
 		{Weapon::Datas::sacrificialSword.key, Weapon::Datas::sacrificialSword},
 		{Weapon::Datas::starcallersWatch.key, Weapon::Datas::starcallersWatch},
+		{Weapon::Datas::symphonistOfScents.key, Weapon::Datas::symphonistOfScents},
 		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};

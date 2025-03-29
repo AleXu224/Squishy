@@ -118,6 +118,7 @@ UI::ToggleOption::operator squi::Child() const {
 								.readyEvent = readyEvent,
 							},
 							Container{
+								.widget{.height = Size::Shrink},
 								.child = Text{
 									.text = option.name,
 									.lineWrap = true,

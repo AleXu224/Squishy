@@ -30,6 +30,8 @@ struct ArtifactHeader {
 	Artifact::Slot slot;
 	StatValue mainStat;
 	uint8_t rarity;
+	uint8_t level;
+	Character::InstanceKey equippedCharacter;
 
 	struct Storage {
 		// Data
@@ -45,6 +47,7 @@ struct ArtifactHeader {
 				.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 			},
 		};
+		auto levelDisp = std::format("+{}", level);
 		auto title = Align{
 			.xAlign = 0.f,
 			.child = Column{
@@ -66,7 +69,7 @@ struct ArtifactHeader {
 								.color = Color::css(0xffffff, 0.8f),
 								.borderRadius = 4.f,
 								.child = Text{
-									.text = "+20",
+									.text = levelDisp,
 									.color = Color::black,
 								},
 							},
@@ -82,6 +85,22 @@ struct ArtifactHeader {
 				},
 			},
 		};
+		auto characterImage = [&]() -> Child {
+			if (!equippedCharacter) return Child{};
+			return Align{
+				.xAlign = 1.f,
+				.yAlign = 1.f,
+				.child = Image{
+					.widget{
+						.width = 32.f,
+						.height = 32.f,
+						.margin = Margin{}.withRight(64.f),
+					},
+					.fit = squi::Image::Fit::contain,
+					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", ::Store::characters.at(equippedCharacter).loadout.character.data.name))
+				},
+			};
+		}();
 		return Box{
 			.widget{
 				.height = 64.f,
@@ -91,6 +110,7 @@ struct ArtifactHeader {
 			.child = Stack{
 				.children{
 					icon,
+					characterImage,
 					title,
 				},
 			},
@@ -113,6 +133,8 @@ struct ArtifactCardContent {
 				.value = Stats::Values::mainStat.at(artifact.mainStat).at(artifact.rarity - 1).at(artifact.level),
 			},
 			.rarity = artifact.rarity,
+			.level = artifact.level,
+			.equippedCharacter = artifact.equippedCharacter,
 		};
 		auto subStats = Column{
 			.widget{

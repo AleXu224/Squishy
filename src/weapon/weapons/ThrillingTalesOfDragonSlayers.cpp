@@ -36,6 +36,7 @@ const Weapon::Data Weapon::Datas::thrillingTalesOfDragonSlayers{
 				Option::Boolean{
 					.key = "thrillingTalesCond",
 					.name = "After switching characters",
+					.teamBuff = true,
 					.mods{
 						.teamPreMod{
 							.atk_ = buff,

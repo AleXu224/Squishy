@@ -34,11 +34,13 @@ const Character::Data Character::Datas::citlali{
 		auto isCitlali = IsActiveCharacterId{10000107};
 
 		auto condC1 = IsActive("citlaliC1");
-		auto c1Buff = Requires(Requirement::constellation1 && !isCitlali && condC1, 2.f * total.em);
+		auto c1BuffDisplay = Requires(Requirement::constellation1 && condC1, 2.f * total.em);
+		auto c1Buff = Requires(!isCitlali, c1BuffDisplay);
 
 		auto c2EmBuff = Requires(Requirement::constellation2, ConstantFlat(125.f));
 		auto condC2 = IsActive("citlaliC2");
-		auto c2TeamEm = Requires(Requirement::constellation2 && condC2 && !isCitlali, ConstantFlat(250.f));
+		auto c2TeamEmDisplay = Requires(Requirement::constellation2 && condC2, ConstantFlat(250.f));
+		auto c2TeamEm = Requires(!isCitlali, c2TeamEmDisplay);
 		auto c2Res = Requires(Requirement::constellation2 && Requirement::passive1 && condA1, Constant(-0.2f));
 
 		auto c6Stacks = GetFloat("citlaliC6");
@@ -98,6 +100,12 @@ const Character::Data Character::Datas::citlali{
 								.burst{.additiveDMG = c1Buff},
 							},
 						},
+						.nodes{
+							Node::Info{
+								.name = "Others DMG Increase",
+								.formula = c1BuffDisplay,
+							},
+						},
 					},
 				},
 				.constellation2{
@@ -108,6 +116,12 @@ const Character::Data Character::Datas::citlali{
 						.mods{
 							.teamPreMod{
 								.em = c2TeamEm,
+							},
+						},
+						.nodes{
+							Node::Info{
+								.name = "Others Elemental Mastery",
+								.formula = c2TeamEmDisplay,
 							},
 						},
 					},
