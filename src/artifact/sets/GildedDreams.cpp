@@ -7,8 +7,8 @@ const Artifact::Set Artifact::Sets::gildedDreams{
 	.goodKey = "GildedDreams",
 	.name = "Gilded Dreams",
 	.setup = []() -> Set::Setup {
-		auto sameElementAtk = 0.14f * GetFloat("gildedSameElement");
-		auto otherElementEm = ConstantFlat(50.f) * GetFloat("gildedOtherElement");
+		auto sameElementAtk = 0.14f * SameElementCount{};
+		auto otherElementEm = ConstantFlat(50.f) * OtherElementCount{};
 
 		return Set::Setup{
 			.twoPc{
@@ -19,22 +19,7 @@ const Artifact::Set Artifact::Sets::gildedDreams{
 				},
 			},
 			.fourPc{
-				.opts{
-					Option::ValueList{
-						.key = "gildedSameElement",
-						.prefix = "Characters with the same Elemental Type",
-						.teamBuff = true,
-						.values = {1, 2, 3},
-						.mods{.preMod{.atk_ = sameElementAtk}},
-					},
-					Option::ValueList{
-						.key = "gildedOtherElement",
-						.prefix = "Characters with a different Elemental Type",
-						.teamBuff = true,
-						.values = {1, 2, 3},
-						.mods{.preMod{.em = otherElementEm}},
-					},
-				},
+				.opts{},
 				.mods{
 					.preMod{
 						.atk_ = sameElementAtk,

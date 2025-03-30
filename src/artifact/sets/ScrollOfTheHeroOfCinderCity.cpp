@@ -35,40 +35,61 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 					|| IsActive(scrollOfTheHeroStrings.at(Misc::Element::anemo).at(1).c_str())
 					|| IsActive(scrollOfTheHeroStrings.at(Misc::Element::geo).at(1).c_str());
 		Stats::ModsSheet mods{};
-		Stats::ModsSheet optMods1{};
-		Stats::ModsSheet optMods2{};
+
+		auto getOptKeys = [](Misc::Element element) {
+			return std::tuple{
+				scrollOfTheHeroStrings.at(element)[0].c_str(),
+				scrollOfTheHeroStrings.at(element)[1].c_str()
+			};
+		};
+
+		auto makeFormulas = [&](Misc::Element element) {
+			auto [optKey1, optKey2] = getOptKeys(element);
+
+			return std::tuple{
+				Requires(
+					IsActive(optKey1),
+					Constant(0.12f)
+				),
+				Requires(
+					anyOpt1 && IsCharacterElement{element},
+					Constant(0.12f)
+				),
+				Requires(
+					IsActive(optKey1) && IsActive(optKey2),
+					Constant(0.28)
+				),
+				Requires(
+					anyOpt2 && IsCharacterElement{element},
+					Constant(0.28f)
+				)
+			};
+		};
 
 		std::vector<Option::Types> opts{};
 		for (const auto &element: Misc::characterElements) {
-			Utils::HashedString optKey1 = scrollOfTheHeroStrings.at(element)[0].c_str();
+			auto [optKey1, optKey2] = getOptKeys(element);
+			auto [formula1, formula2, formula3, formula4] = makeFormulas(element);
+			Stats::ModsSheet optMods1{};
+			Stats::ModsSheet optMods2{};
 
-			auto formula1 = Requires(
-				IsActive(optKey1),
-				Constant(0.12f)
-			);
-			auto formula2 = Requires(
-				anyOpt1 && IsCharacterElement{element},
-				Constant(0.12f)
-			);
-			optMods1.teamPreMod.fromElement(element).DMG = formula1 + formula2;
-
-			Utils::HashedString optKey2 = scrollOfTheHeroStrings.at(element)[1].c_str();
-			auto formula3 = Requires(
-				IsActive(optKey1) && IsActive(optKey2),
-				Constant(0.28)
-			);
-			auto formula4 = Requires(
-				anyOpt2 && IsCharacterElement{element},
-				Constant(0.28f)
-			);
-			optMods2.teamPreMod.fromElement(element).DMG = formula3 + formula4;
-
-			mods.teamPreMod.fromElement(element).DMG = formula1 + formula3 + formula2 + formula4;
-		}
-		for (const auto &element: Misc::characterElements) {
-			Utils::HashedString optKey1 = scrollOfTheHeroStrings.at(element)[0].c_str();
-			Utils::HashedString optKey2 = scrollOfTheHeroStrings.at(element)[1].c_str();
-
+			for (const auto &element2: Misc::characterElements) {
+				auto formula2_2 = Requires(
+					IsActive(optKey1) && IsCharacterElement{element2},
+					Constant(0.12f)
+				);
+				auto formula4_2 = Requires(
+					IsActive(optKey2) && IsCharacterElement{element2},
+					Constant(0.28f)
+				);
+				if (element == element2) {
+					optMods1.teamPreMod.fromElement(element2).DMG = formula1 + formula2_2;
+					optMods2.teamPreMod.fromElement(element2).DMG = formula3 + formula4_2;
+				} else {
+					optMods1.teamPreMod.fromElement(element2).DMG = formula2_2;
+					optMods2.teamPreMod.fromElement(element2).DMG = formula4_2;
+				}
+			}
 			opts.emplace_back(Option::Boolean{
 				.key = optKey1,
 				.name = scrollOfTheHeroStrings.at(element)[2],
@@ -83,6 +104,8 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 				.displayCondition = IsActive(optKey1) && ElementCountOthers{element} >= 1 && !IsCharacterElement{element},
 				.mods = optMods2,
 			});
+
+			mods.teamPreMod.fromElement(element).DMG = formula1 + formula3 + formula2 + formula4;
 		}
 
 		return Set::Setup{
