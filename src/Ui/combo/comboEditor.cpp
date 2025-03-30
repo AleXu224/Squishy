@@ -12,6 +12,7 @@
 #include "row.hpp"
 #include "text.hpp"
 #include "textBox.hpp"
+#include "utils/overloaded.hpp"
 
 
 using namespace squi;
@@ -122,12 +123,48 @@ namespace {
 
 
 			auto captionStr = std::format("{:.1f}", node.formula.eval(ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction))));
+			auto sourceStr = std::visit(
+				Utils::overloaded{
+					[](const Combo::Source::Character &source) -> std::string {
+						return Utils::Stringify(source.slot);
+					},
+					[](const Combo::Source::Weapon &source) -> std::string {
+						return "Weapon";
+					},
+					[](const Combo::Source::Artifact &source) -> std::string {
+						return "Artifact";
+					},
+					[](const Combo::Source::Combo &source) -> std::string {
+						return "Combo";
+					},
+				},
+				entry.source
+			);
 			ret.emplace_back(Expander{
 				.icon = multiplierBox,
-				.heading = Text{
-					.text = node.name,
-					.lineWrap = true,
-					.color = Node::getColor(node.data, ctx),
+				.heading = Row{
+					.alignment = Row::Alignment::center,
+					.spacing = 8.f,
+					.children{
+						Text{
+							.text = node.name,
+							.lineWrap = true,
+							.color = Node::getColor(node.data, ctx),
+						},
+						Box{
+							.widget{
+								.width = Size::Shrink,
+								.padding = 4.f,
+							},
+							.color = Color::css(0xffffff, 0.8f),
+							.borderRadius = 4.f,
+							.child = Text{
+								.text = sourceStr,
+								.fontSize = 12.f,
+								.color = Color::black,
+							},
+						},
+					},
 				},
 				.caption = captionStr,
 				.actions{
@@ -138,6 +175,7 @@ namespace {
 		}
 
 		return Column{
+			.spacing = 4.f,
 			.children = ret,
 		};
 	}
@@ -150,6 +188,7 @@ UI::ComboEditor::operator squi::Child() const {
 	VoidObservable nodeListChangedEvent{};
 
 	return Dialog{
+		.width = 1000.f,
 		.closeEvent = closeEvent,
 		.title = "Edit combo",
 		.content = Column{
