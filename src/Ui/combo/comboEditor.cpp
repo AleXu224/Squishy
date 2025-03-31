@@ -1,11 +1,13 @@
 #include "comboEditor.hpp"
 
 #include "Ui/combo/nodePicker.hpp"
+#include "align.hpp"
 #include "button.hpp"
 #include "column.hpp"
 #include "dialog.hpp"
 #include "dropdownButton.hpp"
 #include "expander.hpp"
+#include "fontIcon.hpp"
 #include "numberBox.hpp"
 #include "reaction/list.hpp"
 #include "rebuilder.hpp"
@@ -35,7 +37,8 @@ namespace {
 	Child comboEditorEntries(std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, VoidObservable nodeListChangedEvent) {
 		Children ret;
 
-		for (auto &entry: storage->combo.entries) {
+		for (auto it = storage->combo.entries.begin(); it != storage->combo.entries.end(); it++) {
+			auto &entry = *it;
 			const auto &node = std::visit(
 				[](auto &&val) {
 					return val.resolve();
@@ -114,6 +117,32 @@ namespace {
 					nodeListChangedEvent.notify();
 				},
 			};
+
+			auto moveUpButton = Button{
+				.widget{.width = Size::Shrink},
+				.style = ButtonStyle::Standard(),
+				.disabled = &entry == &storage->combo.entries.front(),
+				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
+					std::swap(entry, *std::next(it, -1));
+					nodeListChangedEvent.notify();
+				},
+				.child = Align{
+					.child = FontIcon{.icon = 0xe316},
+				},
+			};
+			auto moveDownButton = Button{
+				.widget{.width = Size::Shrink},
+				.style = ButtonStyle::Standard(),
+				.disabled = &entry == &storage->combo.entries.back(),
+				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
+					std::swap(entry, *std::next(it, 1));
+					nodeListChangedEvent.notify();
+				},
+				.child = Align{
+					.child = FontIcon{.icon = 0xe313},
+				},
+			};
+
 			auto multiplierBox = NumberBox{
 				.value = entry.multiplier,
 				.onChange = [&entry](float newVal) {
@@ -141,7 +170,18 @@ namespace {
 				entry.source
 			);
 			ret.emplace_back(Expander{
-				.icon = multiplierBox,
+				.icon = Row{
+					.widget{
+						.width = Size::Shrink,
+						.height = Size::Shrink,
+					},
+					.spacing = 4.f,
+					.children{
+						moveUpButton,
+						moveDownButton,
+						multiplierBox,
+					},
+				},
 				.heading = Row{
 					.alignment = Row::Alignment::center,
 					.spacing = 8.f,
