@@ -74,10 +74,22 @@ namespace {
 			.characterKey = characterKey,
 		};
 
-		auto weaponOpts = makeOpts(character.loadout.weapon->options);
-
 		std::variant<Character::InstanceKey, Team::InstanceKey> keyParam = characterKey;
 		if (teamKey.has_value()) keyParam = teamKey.value();
+
+		auto teamOpts = makeOpts(team.stats.options);
+
+		std::vector<Node::Types> nodesPlaceholder;
+		auto teamStats = UI::DetailsSkill{
+			.name = "Resonance",
+			.instanceKey = keyParam,
+			.ctx = ctx,
+			.nodes = nodesPlaceholder,
+			.options = teamOpts,
+			.modsGenerator = std::make_shared<UI::ModsGenerator>(),
+		};
+
+		auto weaponOpts = makeOpts(character.loadout.weapon->options);
 
 		auto weaponStats = UI::DetailsSkill{
 			.name = character.loadout.weapon->data->name,
@@ -123,6 +135,7 @@ namespace {
 
 		Children mainContent{
 			characterStats,
+			teamStats,
 			transformativeReactions,
 			combos,
 			weaponStats,

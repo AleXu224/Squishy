@@ -2,6 +2,9 @@
 
 #include "array"
 #include "formula/node.hpp"
+#include "option/option.hpp"
+#include "stats/sheet.hpp"
+#include "stats/value.hpp"
 
 
 namespace Character {
@@ -12,8 +15,11 @@ namespace Stats {
 	struct Loadout;
 
 	struct Team {
-		std::array<::Character::Instance*, 4> characters{};
+		std::array<::Character::Instance *, 4> characters{};
 		Formula::ElementNode infusion;
+		Stats::Sheet<Stats::Value<float, 1>> resonances{};
+		Stats::EnemySheet<Stats::Value<float, 1>> resonancesEnemy{};
+		Option::TeamMap options{};
 
 		Team();
 	};

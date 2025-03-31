@@ -66,6 +66,8 @@ namespace Option {
 
 	using ArtifactMap = TypesMap;
 
+	using TeamMap = TypesMap;
+
 	inline void mapOptions(CharacterMap &ret, const CharacterList &vals) {
 		for (auto listMember: CharacterList::getMembers()) {
 			const auto &_ = std::invoke(listMember, vals);

@@ -3,7 +3,7 @@
 #include "fmt/core.h"
 #include "option/option.hpp"
 #include "stats/loadout.hpp"
-
+#include "stats/team.hpp"
 
 namespace Formula {
 	template<class T>
@@ -22,6 +22,8 @@ namespace Formula {
 					return &context.source.weapon->options;
 				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
 					return &context.source.artifact.options;
+				else if constexpr (std::is_same_v<T, Stats::Team>)
+					return &context.team.options;
 			}();
 			return ::Option::getBool(*options, name);
 		}
