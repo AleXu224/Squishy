@@ -119,7 +119,10 @@ namespace {
 			};
 
 			auto moveUpButton = Button{
-				.widget{.width = Size::Shrink},
+				.widget{
+					.width = Size::Shrink,
+					.padding = Padding(8.f, 6.f),
+				},
 				.style = ButtonStyle::Standard(),
 				.disabled = &entry == &storage->combo.entries.front(),
 				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
@@ -131,7 +134,10 @@ namespace {
 				},
 			};
 			auto moveDownButton = Button{
-				.widget{.width = Size::Shrink},
+				.widget{
+					.width = Size::Shrink,
+					.padding = Padding(8.f, 6.f),
+				},
 				.style = ButtonStyle::Standard(),
 				.disabled = &entry == &storage->combo.entries.back(),
 				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
