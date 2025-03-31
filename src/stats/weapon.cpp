@@ -2,6 +2,4 @@
 
 #include "weapon/data.hpp"
 
-Stats::Weapon::Weapon(const ::Weapon::Data &data) : data(&data), sheet(data.baseStats), options() {
-	data.getOpts(options);
-}
+Stats::Weapon::Weapon(const ::Weapon::Data &data) : data(&data), sheet(data.baseStats) {}

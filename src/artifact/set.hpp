@@ -34,7 +34,7 @@ namespace Artifact {
 			return setup();
 		}(setup);
 
-		void getOptions(Option::ArtifactMap &options) const {
+		void getOptions(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
 				data.twoPc.opts

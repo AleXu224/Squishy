@@ -3,7 +3,6 @@
 #include "artifact/key.hpp"
 #include "artifact/set.hpp"
 #include "artifact/slot.hpp"
-#include "option/option.hpp"
 #include "stats/artifactSheet.hpp"
 #include "utility"
 
@@ -15,9 +14,6 @@ namespace Stats {
 	};
 
 	struct Artifact {
-		// The options from all the sets are combined into one big map for ease of use and performance
-		Option::ArtifactMap options{};
-
 		// These slots contain the necessary data to correctly identify which modifiers should be applied
 		// Two of them sould cover all possible combinations:
 		// 2pc 2pc, 2pc 4pc (4pc has a separate slot), 2pc (one of the slots is left empty)

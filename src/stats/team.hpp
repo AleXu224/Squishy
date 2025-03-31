@@ -19,7 +19,7 @@ namespace Stats {
 		Formula::ElementNode infusion;
 		Stats::Sheet<Stats::Value<float, 1>> resonances{};
 		Stats::EnemySheet<Stats::Value<float, 1>> resonancesEnemy{};
-		Option::TeamMap options{};
+		Option::TypesMap options{};
 
 		Team();
 	};

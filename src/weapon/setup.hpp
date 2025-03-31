@@ -10,9 +10,9 @@
 
 
 namespace Weapon {
-	using IsActive = Formula::impl_IsActive<Stats::WeaponSheet>;
-	using GetFloat = Formula::impl_GetFloat<Stats::WeaponSheet>;
-	using GetInt = Formula::impl_GetInt<Stats::WeaponSheet>;
+	using IsActive = Formula::impl_IsActive;
+	using GetFloat = Formula::impl_GetFloat;
+	using GetInt = Formula::impl_GetInt;
 
 	using SubStat = Stats::WeaponBase::SubStat;
 

@@ -26,7 +26,7 @@ namespace Character {
 			return setup();
 		}(setup);
 
-		void getOpts(Option::CharacterMap &options) const {
+		void getOpts(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
 				data.opts

@@ -10,9 +10,9 @@
 
 
 namespace Character {
-	using IsActive = Formula::impl_IsActive<Stats::CharacterSheet>;
-	using GetFloat = Formula::impl_GetFloat<Stats::CharacterSheet>;
-	using GetInt = Formula::impl_GetInt<Stats::CharacterSheet>;
+	using IsActive = Formula::impl_IsActive;
+	using GetFloat = Formula::impl_GetFloat;
+	using GetInt = Formula::impl_GetInt;
 
 	static constexpr struct Character {
 		static constexpr Formula::CharacterLevel level{};

@@ -96,7 +96,7 @@ namespace {
 										});
 									},
 								},
-								character.loadout.artifact.options.at(
+								character.loadout.options.at(
 									std::visit(
 										[](auto &&val) {
 											return val.key;

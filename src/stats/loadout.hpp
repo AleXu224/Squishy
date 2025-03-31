@@ -10,6 +10,7 @@ namespace Stats {
 		Stats::Character character;
 		Stats::Weapon *weapon;
 		Stats::Artifact artifact;
+		Option::TypesMap options;
 
 		void init();
 	};

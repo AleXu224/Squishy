@@ -65,7 +65,7 @@ namespace {
 
 				for (auto &opt: character.loadout.weapon->data->data.opts) {
 					if (!isTeamBuff(opt)) continue;
-					parseOption(character.loadout.weapon->options.at(
+					parseOption(character.loadout.options.at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;
@@ -78,7 +78,7 @@ namespace {
 				if (character.loadout.artifact.bonus1.has_value()) {
 					for (auto &opt: character.loadout.artifact.bonus1->bonusPtr.opts) {
 						if (!isTeamBuff(opt)) continue;
-						parseOption(character.loadout.artifact.options.at(
+						parseOption(character.loadout.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;
@@ -91,7 +91,7 @@ namespace {
 				if (character.loadout.artifact.bonus2.has_value()) {
 					for (auto &opt: character.loadout.artifact.bonus2->bonusPtr.opts) {
 						if (!isTeamBuff(opt)) continue;
-						parseOption(character.loadout.artifact.options.at(
+						parseOption(character.loadout.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;
@@ -113,7 +113,7 @@ namespace {
 							optionData
 						);
 						if (!isTeamBuff) continue;
-						parseOption(character.loadout.character.options.at(
+						parseOption(character.loadout.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;

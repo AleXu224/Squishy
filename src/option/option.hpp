@@ -60,15 +60,7 @@ namespace Option {
 
 	using ArtifactList = std::vector<Types>;
 
-	using CharacterMap = TypesMap;
-
-	using WeaponMap = TypesMap;
-
-	using ArtifactMap = TypesMap;
-
-	using TeamMap = TypesMap;
-
-	inline void mapOptions(CharacterMap &ret, const CharacterList &vals) {
+	inline void mapOptions(TypesMap &ret, const CharacterList &vals) {
 		for (auto listMember: CharacterList::getMembers()) {
 			const auto &_ = std::invoke(listMember, vals);
 
@@ -83,7 +75,7 @@ namespace Option {
 		}
 	}
 
-	inline void mapOptions(WeaponMap &ret, const WeaponList &vals) {
+	inline void mapOptions(TypesMap &ret, const WeaponList &vals) {
 		for (const auto &val: vals) {
 			std::visit(
 				[&](auto &&v) {

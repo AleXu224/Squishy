@@ -26,19 +26,36 @@
 
 #include "scrollableFrame.hpp"
 #include "utils/slotToCondition.hpp"
+#include <map>
 
 using namespace squi;
 
 namespace {
-	using MakeOptsRet = std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>;
-	MakeOptsRet makeOpts(std::unordered_map<uint32_t, Option::Types> &opts) {
+	using MakeOptsRet = std::map<uint32_t, std::reference_wrapper<Option::Types>>;
+	MakeOptsRet makeOptsSimple(std::unordered_map<uint32_t, Option::Types> &opts) {
 		MakeOptsRet ret{};
 		for (auto &[key, value]: opts) {
 			ret.insert({key, std::ref(value)});
 		}
 		return ret;
 	}
-	MakeOptsRet makeArtifactOpts(const Option::ArtifactList &opts, Option::ArtifactMap &map) {
+
+	MakeOptsRet makeOpts(const Option::WeaponList &optList, std::unordered_map<uint32_t, Option::Types> &opts) {
+		MakeOptsRet ret{};
+		for (const auto &opt: optList) {
+			const auto &key = std::visit(
+				[](auto &&val) {
+					return val.key.hash;
+				},
+				opt
+			);
+			if (opts.contains(key)) {
+				ret.insert({key, std::ref(opts.at(key))});
+			}
+		}
+		return ret;
+	}
+	MakeOptsRet makeArtifactOpts(const Option::ArtifactList &opts, Option::TypesMap &map) {
 		MakeOptsRet ret{};
 		for (const auto &opt: opts) {
 			std::visit(
@@ -77,7 +94,7 @@ namespace {
 		std::variant<Character::InstanceKey, Team::InstanceKey> keyParam = characterKey;
 		if (teamKey.has_value()) keyParam = teamKey.value();
 
-		auto teamOpts = makeOpts(team.stats.options);
+		auto teamOpts = makeOptsSimple(team.stats.options);
 
 		std::vector<Node::Types> nodesPlaceholder;
 		auto teamStats = UI::DetailsSkill{
@@ -89,7 +106,7 @@ namespace {
 			.modsGenerator = std::make_shared<UI::ModsGenerator>(),
 		};
 
-		auto weaponOpts = makeOpts(character.loadout.weapon->options);
+		auto weaponOpts = makeOpts(character.loadout.weapon->data->data.opts, character.loadout.options);
 
 		auto weaponStats = UI::DetailsSkill{
 			.name = character.loadout.weapon->data->name,
@@ -103,11 +120,11 @@ namespace {
 
 		std::optional<MakeOptsRet> artifactOpts1;
 		if (character.loadout.artifact.bonus1.has_value())
-			artifactOpts1 = makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.artifact.options);
+			artifactOpts1 = makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.options);
 
 		std::optional<MakeOptsRet> artifactOpts2;
 		if (character.loadout.artifact.bonus2.has_value())
-			artifactOpts2 = makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.artifact.options);
+			artifactOpts2 = makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.options);
 
 		Child artifactStats1 = character.loadout.artifact.bonus1.has_value()
 								 ? UI::DetailsSkill{
@@ -143,19 +160,10 @@ namespace {
 			artifactStats2,
 		};
 
-		std::vector<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
+		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
 			const auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
-			std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>> ret{};
-			for (const auto &opt: optList) {
-				std::visit(
-					[&](auto &&optVisited) {
-						ret.insert({optVisited.key.hash, std::ref(character.loadout.character.options.at(optVisited.key.hash))});
-					},
-					opt
-				);
-			}
-			characterOpts.emplace_back(ret);
+			characterOpts.emplace_back(makeOpts(optList, character.loadout.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {

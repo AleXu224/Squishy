@@ -6,7 +6,6 @@
 #include "stats/team.hpp"
 
 namespace Formula {
-	template<class T>
 	struct impl_IsActive {
 		Utils::HashedString name;
 
@@ -15,21 +14,22 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			const auto options = [&]() {
-				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return &context.source.character.options;
-				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon->options;
-				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return &context.source.artifact.options;
-				else if constexpr (std::is_same_v<T, Stats::Team>)
-					return &context.team.options;
-			}();
-			return ::Option::getBool(*options, name);
+			return ::Option::getBool(context.source.options, name);
 		}
 	};
 
-	template<class T>
+	struct impl_IsActivePassive {
+		Utils::HashedString name;
+
+		[[nodiscard]] std::string print(const Context &, Step) const {
+			return fmt::format("{}", name.str);
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return ::Option::getBool(context.team.options, name);
+		}
+	};
+
 	struct impl_GetFloat {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
@@ -39,19 +39,10 @@ namespace Formula {
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			const auto options = [&]() {
-				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return &context.source.character.options;
-				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon->options;
-				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return &context.source.artifact.options;
-			}();
-			return ::Option::getFloat(*options, name, defaultValue);
+			return ::Option::getFloat(context.source.options, name, defaultValue);
 		}
 	};
 
-	template<class T>
 	struct impl_GetInt {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;
@@ -61,15 +52,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] uint32_t eval(const Context &context) const {
-			const auto options = [&]() {
-				if constexpr (std::is_same_v<T, Stats::CharacterSheet>)
-					return &context.source.character.options;
-				else if constexpr (std::is_same_v<T, Stats::WeaponSheet>)
-					return &context.source.weapon->options;
-				else if constexpr (std::is_same_v<T, Stats::ArtifactSheet>)
-					return &context.source.artifact.options;
-			}();
-			return ::Option::getInt(*options, name, defaultValue);
+			return ::Option::getInt(context.source.options, name, defaultValue);
 		}
 	};
 }// namespace Formula

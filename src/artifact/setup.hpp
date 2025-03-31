@@ -10,9 +10,9 @@
 
 
 namespace Artifact {
-	using IsActive = Formula::impl_IsActive<Stats::ArtifactSheet>;
-	using GetFloat = Formula::impl_GetFloat<Stats::ArtifactSheet>;
-	using GetInt = Formula::impl_GetInt<Stats::ArtifactSheet>;
+	using IsActive = Formula::impl_IsActive;
+	using GetFloat = Formula::impl_GetFloat;
+	using GetInt = Formula::impl_GetInt;
 
 	static constexpr struct Character {
 		static constexpr Formula::CharacterLevel level{};

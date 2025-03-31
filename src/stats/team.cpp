@@ -9,7 +9,7 @@
 Stats::Team::Team() : infusion(Formula::TeamInfusion{}) {
 	using namespace Formula::Operators;
 
-	using IsActive = Formula::impl_IsActive<Stats::Team>;
+	using IsActive = Formula::impl_IsActivePassive;
 
 	// Pyro
 	resonances.atk_.modifiers.at(0) = Formula::Requires(Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::pyro) >= 2, Formula::Constant(0.25f));

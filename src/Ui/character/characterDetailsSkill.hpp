@@ -14,6 +14,7 @@
 
 #include "Ui/utils/skillEntry.hpp"
 #include "Ui/utils/tooltip.hpp"
+#include <map>
 
 
 namespace UI {
@@ -76,7 +77,7 @@ namespace UI {
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
 		const Formula::Context &ctx;
 		const std::vector<Node::Types> &nodes;
-		std::optional<std::unordered_map<uint32_t, std::reference_wrapper<Option::Types>>> options;
+		std::optional<std::map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 		std::shared_ptr<UI::ModsGenerator> modsGenerator = std::make_shared<ModsGenerator>();
 		Formula::BoolNode displayCondition = Formula::ConstantBool(true);
 

@@ -8,7 +8,6 @@ Serialization::Save::Weapon Serialization::Save::Weapon::fromInstance(const ::We
 		.level = weapon.stats.sheet.level,
 		.ascension = weapon.stats.sheet.ascension,
 		.refinement = weapon.stats.sheet.refinement,
-		.options = optionsFromInstance(weapon.stats.options),
 	};
 }
 
@@ -17,7 +16,6 @@ Serialization::Save::Weapon Serialization::Save::Weapon::fromInstance(const ::We
 	instance.stats.sheet.level = level;
 	instance.stats.sheet.ascension = ascension;
 	instance.stats.sheet.refinement = refinement;
-	optionsToInstance(options, instance.stats.options);
 
 	return instance;
 }

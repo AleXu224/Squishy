@@ -16,8 +16,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 		.artifactSands = character.loadout.artifact.equipped.sands,
 		.artifactGoblet = character.loadout.artifact.equipped.goblet,
 		.artifactCirclet = character.loadout.artifact.equipped.circlet,
-		.options = optionsFromInstance(character.loadout.character.options),
-		.artifactOptions = optionsFromInstance(character.loadout.artifact.options),
+		.options = optionsFromInstance(character.loadout.options),
 		.combos = comboFromInstance(character.combos),
 	};
 }
@@ -36,11 +35,10 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 	instance.loadout.artifact.equipped.goblet = artifactGoblet;
 	instance.loadout.artifact.equipped.circlet = artifactCirclet;
 
-	optionsToInstance(options, instance.loadout.character.options);
-	optionsToInstance(artifactOptions, instance.loadout.artifact.options);
+	optionsToInstance(options, instance.loadout.options);
 	instance.combos = comboToInstance(combos);
 
-    instance.loadout.artifact.refreshStats();
+	instance.loadout.artifact.refreshStats();
 
 	return instance;
 }

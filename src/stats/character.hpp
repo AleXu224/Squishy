@@ -1,6 +1,5 @@
 #pragma once
 
-#include "option/option.hpp"
 #include "stats/characterBase.hpp"
 #include "stats/characterSheet.hpp"
 
@@ -14,7 +13,6 @@ namespace Stats {
 		const ::Character::Data &data;
 		const Stats::CharacterBase &base;
 		Stats::CharacterSheet sheet;
-		Option::CharacterMap options{};
 
 		explicit Character(const ::Character::Data &data);
 	};

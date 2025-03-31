@@ -25,7 +25,6 @@ namespace Serialization::Save {
 		::Artifact::InstanceKey artifactGoblet;
 		::Artifact::InstanceKey artifactCirclet;
 		std::vector<Serialization::Save::OptionTypes> options;
-		std::vector<Serialization::Save::OptionTypes> artifactOptions;
 		std::vector<Serialization::Save::Combo> combos;
 
 		static Character fromInstance(const ::Character::Instance &);

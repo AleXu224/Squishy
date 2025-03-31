@@ -26,7 +26,7 @@ namespace Weapon {
 			return setup();
 		}(setup);
 
-		void getOpts(Option::WeaponMap &options) const {
+		void getOpts(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
 				data.opts
