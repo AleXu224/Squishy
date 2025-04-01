@@ -7,10 +7,12 @@ float Combo::Combo::eval(const Formula::Context &context) const {
 
 	for (const auto &entry: entries) {
 		auto newContext = context.withReaction(Reaction::List::fromNodeReaction(entry.reaction));
-		const auto &node = std::visit([](auto &&source) {
-			return source.resolve();
-		},
-									  entry.source);
+		const auto &node = std::visit(
+			[&](auto &&source) {
+				return source.resolve(entry.options);
+			},
+			entry.source
+		);
 		ret += entry.multiplier * node.formula.eval(newContext);
 	}
 

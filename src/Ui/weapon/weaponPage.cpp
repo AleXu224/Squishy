@@ -6,6 +6,7 @@
 #include "row.hpp"
 #include "scrollableFrame.hpp"
 #include "store.hpp"
+#include "weapon/data.hpp"
 #include "weaponCard.hpp"
 
 
@@ -43,8 +44,9 @@ UI::WeaponPage::operator squi::Child() const {
 
 							instance.stats = weapon.stats;
 							instance.updateEvent.notify();
-							for (const auto &[_, character]: Store::characters) {
+							for (auto &[_, character]: Store::characters) {
 								if (character.weaponInstanceKey == weapon.instanceKey) {
+									instance.stats.data->getOpts(character.loadout.options);
 									character.updateEvent.notify();
 								}
 							}

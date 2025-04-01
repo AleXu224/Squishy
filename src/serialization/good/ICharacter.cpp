@@ -1,5 +1,6 @@
 #include "ICharacter.hpp"
 
+#include "character/characters.hpp"
 #include "store.hpp"
 
 Serialization::Good::ICharacter Serialization::Good::ICharacter::fromInstance(const Character::Instance &character) {

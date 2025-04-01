@@ -1,5 +1,6 @@
 #include "store.hpp"
 
+#include "character/characters.hpp"
 #include "fstream"
 #include "weapon/defaultWeapons.hpp"
 

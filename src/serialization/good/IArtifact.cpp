@@ -2,6 +2,8 @@
 
 #include "SlotKey.hpp"
 #include "StatKey.hpp"
+#include "artifact/sets.hpp"
+#include "character/data.hpp"
 #include "ranges"
 #include "store.hpp"
 

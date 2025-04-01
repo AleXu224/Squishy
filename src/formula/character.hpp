@@ -1,5 +1,6 @@
 #pragma once
 
+#include "character/data.hpp"
 #include "character/instance.hpp"
 #include "fmt/core.h"
 #include "formula/intermediary.hpp"

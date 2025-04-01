@@ -40,8 +40,8 @@ namespace {
 		for (auto it = storage->combo.entries.begin(); it != storage->combo.entries.end(); it++) {
 			auto &entry = *it;
 			const auto &node = std::visit(
-				[](auto &&val) {
-					return val.resolve();
+				[&](auto &&val) {
+					return val.resolve(entry.options);
 				},
 				entry.source
 			);

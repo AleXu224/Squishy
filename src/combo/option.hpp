@@ -8,6 +8,7 @@
 namespace Combo {
 	struct Option {
 		Character::InstanceKey key;
-		std::variant<bool, std::optional<size_t>> value;
+		uint32_t hash;
+		std::variant<bool, std::optional<uint8_t>> value;
 	};
 }// namespace Combo

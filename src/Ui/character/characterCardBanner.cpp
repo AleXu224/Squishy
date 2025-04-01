@@ -1,5 +1,6 @@
 #include "characterCardBanner.hpp"
 
+#include "character/characters.hpp"
 #include "column.hpp"
 #include "container.hpp"
 #include "image.hpp"

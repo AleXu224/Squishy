@@ -1,6 +1,9 @@
 #include "IWeapon.hpp"
 
+#include "character/data.hpp"
 #include "store.hpp"
+#include "weapon/data.hpp"
+#include "weapon/weapons.hpp"
 
 std::vector<Serialization::Good::IWeapon> Serialization::Good::IWeapon::fromInstance(const Weapon::Instance &weapon) {
 	auto equippedCharacters = [&]() {

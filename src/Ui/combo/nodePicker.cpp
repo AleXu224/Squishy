@@ -3,6 +3,7 @@
 #include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
+#include "character/data.hpp"
 #include "container.hpp"
 #include "dialog.hpp"
 #include "node/node.hpp"
@@ -11,6 +12,7 @@
 #include "store.hpp"
 #include "text.hpp"
 #include "utils/slotToCondition.hpp"
+#include "weapon/data.hpp"
 
 
 using namespace squi;
@@ -98,7 +100,7 @@ UI::NodePicker::operator squi::Child() const {
 							.characterKey = character.instanceKey,
 							.comboKey = key,
 						};
-						auto node = source.resolve();
+						auto node = source.resolve({});
 						comboRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = source,
