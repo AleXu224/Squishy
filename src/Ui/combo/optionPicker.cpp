@@ -1,4 +1,5 @@
 #include "optionPicker.hpp"
+#include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
@@ -6,8 +7,10 @@
 #include "character/instance.hpp"
 #include "container.hpp"
 #include "dialog.hpp"
+#include "ranges"
 #include "stats/team.hpp"
 #include "text.hpp"
+
 
 using namespace squi;
 
@@ -41,6 +44,51 @@ namespace {
 			};
 		}
 	};
+
+	struct OptionPickerCategory {
+		// Args
+		squi::Widget::Args widget{};
+		std::string name;
+		Children children;
+
+		operator squi::Child() const {
+			return Box{
+				.widget{
+					.margin = Margin{4.f, 2.f},
+				},
+				.color = Color::css(0x0, 0.25f),
+				.borderColor = Color::css(0x0, 0.1f),
+				.borderWidth = 1.f,
+				.borderRadius = 4.f,
+				.child = Column{
+					.children{
+						Box{
+							.widget{
+								.padding = Padding{20.f, 16.f},
+							},
+							.color = Color::transparent,
+							.borderColor = Color::css(0x0, 0.1f),
+							.borderWidth = BorderWidth::Bottom(1.f),
+							.child = Align{
+								.xAlign = 0.f,
+								.child = Text{
+									.text = name,
+									.font = FontStore::defaultFontBold,
+								}
+							},
+						},
+						Column{
+							.widget{
+								.padding = 4.f,
+							},
+							.spacing = 4.f,
+							.children = children,
+						},
+					},
+				},
+			};
+		}
+	};
 }// namespace
 
 UI::OptionPicker::operator squi::Child() const {
@@ -49,7 +97,7 @@ UI::OptionPicker::operator squi::Child() const {
 	return Dialog{
 		.width = 800.f,
 		.closeEvent = closeEvent,
-		.title = "Choose node",
+		.title = "Choose option",
 		.content = Masonry{
 			.spacing = 4.f,
 			.columnCount = Masonry::MinSize{200.f},
@@ -58,33 +106,68 @@ UI::OptionPicker::operator squi::Child() const {
 
 				for (const auto &character: ctx.team.characters) {
 					if (!character) continue;
-
-					for (const auto &optListPtr: Option::CharacterList::getMembers()) {
+					Children characterRet;
+					for (const auto &[memberCond, slot]: std::views::zip(Option::CharacterList::getMembersAndConditions(), Node::characterSlots)) {
+						auto &[optListPtr, cond] = memberCond;
 						auto &optList = std::invoke(optListPtr, character->loadout.character.data.data.opts);
+						Children categoryRet;
 						for (const auto &opt: optList) {
-							ret.emplace_back(OptionPickerEntry{
-								.name = "asd",
-								.option = std::visit(Utils::overloaded{
-														 [&](const Option::Boolean &opt) {
-															 return Combo::Option{
-																 .key = character->instanceKey,
-																 .hash = opt.key.hash,
-																 .value = opt.active,
-															 };
-														 },
-														 [&](const Option::ValueList &opt) {
-															 return Combo::Option{
-																 .key = character->instanceKey,
-																 .hash = opt.key.hash,
-																 .value = opt.currentIndex,
-															 };
-														 },
-													 },
-													 opt),
+							auto [teamBuff, condition] = std::visit(
+								[](auto &&val) {
+									return std::tuple{val.teamBuff, val.displayCondition};
+								},
+								opt
+							);
+							if (character->instanceKey != characterKey && !teamBuff) continue;
+							if (condition && !condition->eval(ctx)) continue;
+							if (!cond.eval(ctx)) continue;
+							categoryRet.emplace_back(OptionPickerEntry{
+								.name = std::visit(//
+									Utils::overloaded{
+										[&](const Option::Boolean &opt) {
+											return std::string{opt.name};
+										},
+										[&](const Option::ValueList &opt) {
+											return std::string{opt.prefix};
+										},
+									},
+									opt
+								),
+								.option = std::visit(//
+									Utils::overloaded{
+										[&](const Option::Boolean &opt) {
+											return Combo::Option{
+												.key = character->instanceKey,
+												.hash = opt.key.hash,
+												.value = opt.active,
+											};
+										},
+										[&](const Option::ValueList &opt) {
+											return Combo::Option{
+												.key = character->instanceKey,
+												.hash = opt.key.hash,
+												.value = opt.currentIndex,
+											};
+										},
+									},
+									opt
+								),
 								.onSelect = onSelect,
 								.closeEvent = closeEvent,
 							});
 						}
+						if (!categoryRet.empty()) {
+							characterRet.emplace_back(OptionPickerCategory{
+								.name = Utils::Stringify(slot),
+								.children = categoryRet,
+							});
+						}
+					}
+					if (!characterRet.empty()) {
+						ret.emplace_back(DisplayCard{
+							.title = character->loadout.character.data.name,
+							.children = characterRet,
+						});
 					}
 				}
 

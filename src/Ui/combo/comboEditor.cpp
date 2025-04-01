@@ -1,6 +1,7 @@
 #include "comboEditor.hpp"
 
 #include "Ui/combo/nodePicker.hpp"
+#include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
 #include "column.hpp"
@@ -109,6 +110,20 @@ namespace {
 				.textUpdater = textUpdater,
 			};
 
+			auto addOptionOverride = Button{
+				.text = "Add option",
+				.onClick = [characterKey = characterKey, ctx = ctx, &entry](GestureDetector::Event event) {
+					event.widget.addOverlay(UI::OptionPicker{
+						.characterKey = characterKey,
+						.ctx = ctx,
+						.onSelect = [&entry](Combo::Option option) {
+							entry.options.emplace_back(option);
+							entry.optionUpdateEvent.notify();
+						},
+					});
+				},
+			};
+
 			auto deleteButton = Button{
 				.text = "Delete",
 				.onClick = [storage, entryPtr = &entry, nodeListChangedEvent](GestureDetector::Event event) {
@@ -214,21 +229,28 @@ namespace {
 					},
 				},
 				.caption = captionStr,
+				.alwaysExpanded = true,
 				.actions{
 					reactionSelector.items.size() <= 1 ? Child{} : reactionSelector,
+					addOptionOverride,
 					deleteButton,
 				},
-				.expandedContent = Column{
-					.children{
-						Button{
-							.onClick = [&](GestureDetector::Event event) {
-								event.widget.addOverlay(UI::OptionPicker{
-									.characterKey = characterKey,
-									.ctx = ctx,
-									.onSelect = [](Combo::Option) {},
-								});
-							},
-						},
+				.expandedContent = Rebuilder{
+					.rebuildEvent = entry.optionUpdateEvent,
+					.buildFunc = [&entry]() {
+						return UI::Masonry{
+							.columnCount = UI::Masonry::MinSize{200.f},
+							.children = [&entry]() {
+								Children ret;
+
+								(void) entry;
+								// for (auto &opt: entry.options) {
+
+								// }
+
+								return ret;
+							}(),
+						};
 					},
 				},
 			});
