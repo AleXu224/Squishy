@@ -9,6 +9,7 @@
 #include "expander.hpp"
 #include "fontIcon.hpp"
 #include "numberBox.hpp"
+#include "optionPicker.hpp"
 #include "reaction/list.hpp"
 #include "rebuilder.hpp"
 #include "row.hpp"
@@ -34,7 +35,7 @@ namespace {
 		);
 	}
 
-	Child comboEditorEntries(std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, VoidObservable nodeListChangedEvent) {
+	Child comboEditorEntries(std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, Character::InstanceKey characterKey, VoidObservable nodeListChangedEvent) {
 		Children ret;
 
 		for (auto it = storage->combo.entries.begin(); it != storage->combo.entries.end(); it++) {
@@ -217,6 +218,19 @@ namespace {
 					reactionSelector.items.size() <= 1 ? Child{} : reactionSelector,
 					deleteButton,
 				},
+				.expandedContent = Column{
+					.children{
+						Button{
+							.onClick = [&](GestureDetector::Event event) {
+								event.widget.addOverlay(UI::OptionPicker{
+									.characterKey = characterKey,
+									.ctx = ctx,
+									.onSelect = [](Combo::Option) {},
+								});
+							},
+						},
+					},
+				},
 			});
 		}
 
@@ -250,7 +264,7 @@ UI::ComboEditor::operator squi::Child() const {
 				},
 				Rebuilder{
 					.rebuildEvent = nodeListChangedEvent,
-					.buildFunc = std::bind(comboEditorEntries, storage, ctx, nodeListChangedEvent),
+					.buildFunc = std::bind(comboEditorEntries, storage, ctx, characterKey, nodeListChangedEvent),
 				},
 				Row{
 					.children{
