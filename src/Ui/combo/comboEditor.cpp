@@ -245,8 +245,6 @@ namespace {
 						return UI::Masonry{
 							.columnCount = UI::Masonry::MinSize{200.f},
 							.children = [&entry, storage, ctx]() mutable {
-								storage->optsCopy.clear();
-
 								std::vector<Combo::Option> store;
 								ctx.optionStore = &store;
 
@@ -262,7 +260,7 @@ namespace {
 													if (character->instanceKey != opt.key) continue;
 													if (!character->loadout.options.contains(opt.hash)) continue;
 
-													auto &optPtr = storage->optsCopy.emplace_back(std::make_unique<Option::Types>(character->loadout.options.at(opt.hash)));
+													auto optPtr = std::make_shared<Option::Types>(character->loadout.options.at(opt.hash));
 													std::visit(
 														Utils::overloaded{
 															[&](bool value) {
@@ -277,6 +275,7 @@ namespace {
 																				entry.optionUpdateEvent.notify();
 																			});
 																		},
+																		.onUpdate = [optPtr](Widget &) {},
 																	},
 																	.option = optRef,
 																	.instanceKey = character->instanceKey,
@@ -296,6 +295,7 @@ namespace {
 																				entry.optionUpdateEvent.notify();
 																			});
 																		},
+																		.onUpdate = [optPtr](Widget &) {},
 																	},
 																	.option = optRef,
 																	.instanceKey = character->instanceKey,

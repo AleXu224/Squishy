@@ -179,12 +179,17 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		filters.begin(), filters.end(),
 		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx](const ArtifactFilter &filter) {
 			auto character = character_original;
+			std::array<std::optional<Character::Instance>, 4> teamCharacters;
 			Team::Instance team{
 				.instanceKey{},
 				.stats = initialCtx.team,
 			};
-			for (auto &characterPtr: team.stats.characters) {
-				if (characterPtr == &character_original) characterPtr = &character;
+			for (auto [index, characterPtr]: std::views::enumerate(team.stats.characters)) {
+				if (characterPtr == &character_original) {
+					characterPtr = &character;
+				} else if (characterPtr) {
+					characterPtr = &teamCharacters.at(index).emplace(*characterPtr);
+				}
 			}
 			std::vector<Combo::Option> optionStore;
 			auto ctx = Formula::Context{

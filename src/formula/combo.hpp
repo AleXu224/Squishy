@@ -56,6 +56,7 @@ namespace Formula {
 									opt.active = std::get<bool>(override.value);
 								},
 								[&](Option::ValueList &opt) {
+									// std::println("pushing {}", opt.currentIndex.value_or(255));
 									val = opt.currentIndex;
 									opt.currentIndex = std::get<std::optional<uint8_t>>(override.value);
 								},
@@ -82,9 +83,11 @@ namespace Formula {
 					std::visit(
 						Utils::overloaded{
 							[&](bool val) {
+								// std::println("restoring {}", val);
 								std::get<::Option::Boolean>(character->loadout.options.at(override.hash)).active = val;
 							},
 							[&](std::optional<uint8_t> val) {
+								// std::println("restoring {}", val.value_or(255));
 								std::get<::Option::ValueList>(character->loadout.options.at(override.hash)).currentIndex = val;
 							},
 						},
