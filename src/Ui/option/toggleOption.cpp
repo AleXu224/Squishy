@@ -68,13 +68,14 @@ UI::ToggleOption::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>(Storage{
 		.active = option.active,
 	});
-	Observable<bool> switchEvent{};
+	Observable<bool> internalSwitchEvent;
 	CountObserver readyEvent{2};
 
 	auto mods = decodeOption(option, ctx);
 	auto hasMods = !mods.empty();
 
 	return Box{
+		.widget = widget,
 		.color = hasMods ? Color::css(0x0, 0.3f) : Color::transparent,
 		.borderRadius = 4.f,
 		.child = Column{
@@ -82,14 +83,17 @@ UI::ToggleOption::operator squi::Child() const {
 				Button{
 					.widget{
 						.width = Size::Expand,
-						.onInit = [readyEvent, switchEvent, storage](Widget &w) {
-							w.customState.add(readyEvent.observe([storage, switchEvent]() {
-								switchEvent.notify(storage->active);
+						.onInit = [readyEvent, switchEvent = switchEvent, storage, internalSwitchEvent](Widget &w) {
+							observe(w, switchEvent, [internalSwitchEvent, storage](bool value) {
+								internalSwitchEvent.notify(value);
+							});
+							w.customState.add(readyEvent.observe([storage, internalSwitchEvent]() {
+								internalSwitchEvent.notify(storage->active);
 							}));
 						},
 					},
 					.style = ButtonStyle::Subtle(),
-					.onClick = [storage, switchEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event) {
+					.onClick = [storage, switchEvent = switchEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event) {
 						storage->active = !storage->active;
 						option.active = storage->active;
 						switchEvent.notify(storage->active);
@@ -114,7 +118,7 @@ UI::ToggleOption::operator squi::Child() const {
 						.spacing = 8.f,
 						.children{
 							ToggleBox{
-								.switchEvent = switchEvent,
+								.switchEvent = internalSwitchEvent,
 								.readyEvent = readyEvent,
 							},
 							Container{

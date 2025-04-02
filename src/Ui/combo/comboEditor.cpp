@@ -1,6 +1,8 @@
 #include "comboEditor.hpp"
 
 #include "Ui/combo/nodePicker.hpp"
+#include "Ui/option/toggleOption.hpp"
+#include "Ui/option/valueListOption.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
@@ -9,6 +11,8 @@
 #include "dropdownButton.hpp"
 #include "expander.hpp"
 #include "fontIcon.hpp"
+#include "formula/combo.hpp"
+#include "formula/custom.hpp"
 #include "numberBox.hpp"
 #include "optionPicker.hpp"
 #include "reaction/list.hpp"
@@ -237,16 +241,78 @@ namespace {
 				},
 				.expandedContent = Rebuilder{
 					.rebuildEvent = entry.optionUpdateEvent,
-					.buildFunc = [&entry]() {
+					.buildFunc = [&entry, storage, ctx]() {
 						return UI::Masonry{
 							.columnCount = UI::Masonry::MinSize{200.f},
-							.children = [&entry]() {
+							.children = [&entry, storage, ctx]() mutable {
+								storage->optsCopy.clear();
+
+								std::vector<Combo::Option> store;
+								ctx.optionStore = &store;
+
 								Children ret;
 
-								(void) entry;
-								// for (auto &opt: entry.options) {
+								auto node = Formula::ComboOptionOverride{
+									.overrides = entry.options,
+									.node = Formula::Custom{
+										.func = [&](const Formula::Context &ctx) {
+											for (auto &opt: entry.options) {
+												for (const auto &character: ctx.team.characters) {
+													if (!character) continue;
+													if (character->instanceKey != opt.key) continue;
+													if (!character->loadout.options.contains(opt.hash)) continue;
 
-								// }
+													auto &optPtr = storage->optsCopy.emplace_back(std::make_unique<Option::Types>(character->loadout.options.at(opt.hash)));
+													std::visit(
+														Utils::overloaded{
+															[&](bool value) {
+																auto &optRef = std::get<Option::Boolean>(*optPtr);
+																optRef.active = value;
+																squi::Observable<bool> switchEvent{};
+																ret.emplace_back(UI::ToggleOption{
+																	.widget{
+																		.onInit = [switchEvent, &opt, &entry](Widget &w) {
+																			observe(w, switchEvent, [&opt, &entry](bool value) {
+																				opt.value = value;
+																				entry.optionUpdateEvent.notify();
+																			});
+																		},
+																	},
+																	.option = optRef,
+																	.instanceKey = character->instanceKey,
+																	.switchEvent = switchEvent,
+																	.ctx = ctx.withSource(character->loadout),
+																});
+															},
+															[&](std::optional<uint8_t> value) {
+																auto &optRef = std::get<Option::ValueList>(*optPtr);
+																optRef.currentIndex = value;
+																squi::Observable<std::optional<uint32_t>, std::optional<uint32_t>> valueChangedEvent{};
+																ret.emplace_back(UI::ValueListOption{
+																	.widget{
+																		.onInit = [valueChangedEvent, &opt, &entry](Widget &w) {
+																			observe(w, valueChangedEvent, [&opt, &entry](std::optional<uint32_t>, std::optional<uint32_t> index) {
+																				opt.value = index;
+																				entry.optionUpdateEvent.notify();
+																			});
+																		},
+																	},
+																	.option = optRef,
+																	.instanceKey = character->instanceKey,
+																	.valueChangedEvent = valueChangedEvent,
+																	.ctx = ctx.withSource(character->loadout),
+																});
+															},
+														},
+														opt.value
+													);
+												}
+											}
+											return 0.f;
+										},
+									},
+								};
+								(void) node.eval(ctx);
 
 								return ret;
 							}(),

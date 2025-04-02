@@ -1,6 +1,7 @@
 #pragma once
 
 #include "combo/combo.hpp"
+#include "option/option.hpp"
 #include "widget.hpp"
 
 
@@ -16,6 +17,7 @@ namespace UI {
 		struct Storage {
 			// Data
 			Combo::Combo combo;
+			std::vector<std::unique_ptr<Option::Types>> optsCopy;
 		};
 
 		operator squi::Child() const;
