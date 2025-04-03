@@ -119,8 +119,9 @@ UI::OptionPicker::operator squi::Child() const {
 								opt
 							);
 							if (character->instanceKey != characterKey && !teamBuff) continue;
-							if (condition && !condition->eval(ctx)) continue;
-							if (!cond.eval(ctx)) continue;
+							auto newCtx = ctx.withSource(character->loadout);
+							if (condition && !condition->eval(newCtx)) continue;
+							if (!cond.eval(newCtx)) continue;
 							categoryRet.emplace_back(OptionPickerEntry{
 								.name = std::visit(//
 									Utils::overloaded{

@@ -41,7 +41,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {
-			if (!context.optionStore) return node.eval(context);
+			if (!context.optionStore || overrides.empty()) return node.eval(context);
 			uint32_t count = 0;
 			for (const auto &override: overrides) {
 				for (const auto &character: context.team.characters) {
@@ -56,7 +56,7 @@ namespace Formula {
 									opt.active = std::get<bool>(override.value);
 								},
 								[&](Option::ValueList &opt) {
-									// std::println("pushing {}", opt.currentIndex.value_or(255));
+									// std::println("pushing {}, using {}", opt.currentIndex.value_or(255), std::get<std::optional<uint8_t>>(override.value).value_or(255));
 									val = opt.currentIndex;
 									opt.currentIndex = std::get<std::optional<uint8_t>>(override.value);
 								},
