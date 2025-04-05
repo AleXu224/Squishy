@@ -41,6 +41,11 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 									.index = source.index,
 								};
 							},
+							[](const ::Combo::Source::TransformativeReaction &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::TransformativeReactionCombo{
+									.reaction = source.reaction,
+								};
+							},
 						},
 						entry.source
 					);
@@ -119,6 +124,11 @@ std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::co
 								.key = source.key,
 								.slot = source.slot,
 								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::TransformativeReactionCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::TransformativeReaction{
+								.reaction = source.reaction,
 							};
 						},
 					},

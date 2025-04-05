@@ -27,13 +27,7 @@ namespace {
 		std::function<void(Combo::Source::Types)> onSelect;
 		VoidObservable closeEvent;
 
-		struct Storage {
-			// Data
-		};
-
 		operator squi::Child() const {
-			auto storage = std::make_shared<Storage>();
-
 			return Button{
 				.widget{
 					.width = Size::Expand,
@@ -61,13 +55,7 @@ namespace {
 		squi::Widget::Args widget{};
 		Children children;
 
-		struct Storage {
-			// Data
-		};
-
 		operator squi::Child() const {
-			auto storage = std::make_shared<Storage>();
-
 			return UI::DisplayCard{
 				.title = "Category",
 				.children = children,
@@ -77,8 +65,6 @@ namespace {
 }// namespace
 
 UI::NodePicker::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
 	VoidObservable closeEvent;
 
 	return Dialog{
@@ -92,6 +78,25 @@ UI::NodePicker::operator squi::Child() const {
 				Children ret;
 
 				auto &character = ::Store::characters.at(characterKey);
+
+				Children transformativeRet;
+				for (const auto &reaction: Misc::transformativeReactions) {
+					auto source = Combo::Source::TransformativeReaction{reaction};
+					auto node = source.resolve({});
+					transformativeRet.emplace_back(NodePickerEntry{
+						.node = node,
+						.source = source,
+						.ctx = ctx,
+						.onSelect = onSelect,
+						.closeEvent = closeEvent,
+					});
+				}
+				if (!transformativeRet.empty()) {
+					ret.emplace_back(DisplayCard{
+						.title = "Transformative reactions",
+						.children = transformativeRet,
+					});
+				}
 
 				if (enableCombos) {
 					Children comboRet{};

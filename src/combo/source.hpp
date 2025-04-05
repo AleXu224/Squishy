@@ -4,6 +4,7 @@
 #include "artifact/slot.hpp"
 #include "character/key.hpp"
 #include "combo/key.hpp"
+#include "misc/reaction.hpp"
 #include "node/entry.hpp"
 #include "node/node.hpp"
 #include "variant"
@@ -41,5 +42,11 @@ namespace Combo::Source {
 		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
 	};
 
-	using Types = std::variant<Character, Combo, Weapon, Artifact>;
+	struct TransformativeReaction {
+		Misc::TransformativeReaction reaction;
+
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+	};
+
+	using Types = std::variant<Character, Combo, Weapon, Artifact, TransformativeReaction>;
 }// namespace Combo::Source

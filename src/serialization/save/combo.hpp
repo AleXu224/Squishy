@@ -37,7 +37,11 @@ namespace Serialization::Save {
 		size_t index;
 	};
 
-	using ComboSourceTypes = std::variant<CharacterCombo, ComboCombo, WeaponCombo, ArtifactCombo>;
+	struct TransformativeReactionCombo {
+		Misc::TransformativeReaction reaction;
+	};
+
+	using ComboSourceTypes = std::variant<CharacterCombo, ComboCombo, WeaponCombo, ArtifactCombo, TransformativeReactionCombo>;
 
 	struct ComboOptionBool {
 		bool value;
@@ -90,6 +94,11 @@ template<>
 struct glz::meta<Serialization::Save::ArtifactCombo> {
 	using T = Serialization::Save::ArtifactCombo;
 	static constexpr auto value = object(&T::key, &T::slot, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::TransformativeReactionCombo> {
+	using T = Serialization::Save::TransformativeReactionCombo;
+	static constexpr auto value = object(&T::reaction);
 };
 template<>
 struct glz::meta<Serialization::Save::ComboSourceTypes> {

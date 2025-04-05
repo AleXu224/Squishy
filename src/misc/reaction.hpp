@@ -25,6 +25,21 @@ namespace Misc {
 		hyperbloom,
 	};
 
+	enum class TransformativeReaction : uint8_t {
+		burning,
+		superconduct,
+		pyroSwirl,
+		hydroSwirl,
+		electroSwirl,
+		cryoSwirl,
+		electroCharged,
+		shattered,
+		overloaded,
+		bloom,
+		burgeon,
+		hyperbloom,
+	};
+
 	enum class NodeReaction : uint8_t {
 		none,
 
@@ -37,24 +52,38 @@ namespace Misc {
 		spread,
 	};
 
-	static inline std::vector<Reaction>
-		reactions{
-			Reaction::vape,
-			Reaction::melt,
-			Reaction::aggravate,
-			Reaction::spread,
-			Reaction::burning,
-			Reaction::superconduct,
-			Reaction::swirl,
-			Reaction::electroCharged,
-			Reaction::shattered,
-			Reaction::overloaded,
-			Reaction::bloom,
-			Reaction::burgeon,
-			Reaction::hyperbloom,
-		};
+	const inline std::vector<Reaction> reactions{
+		Reaction::vape,
+		Reaction::melt,
+		Reaction::aggravate,
+		Reaction::spread,
+		Reaction::burning,
+		Reaction::superconduct,
+		Reaction::swirl,
+		Reaction::electroCharged,
+		Reaction::shattered,
+		Reaction::overloaded,
+		Reaction::bloom,
+		Reaction::burgeon,
+		Reaction::hyperbloom,
+	};
 
-	static inline std::vector<NodeReaction> nodeReactions{
+	const inline std::vector<TransformativeReaction> transformativeReactions{
+		TransformativeReaction::burning,
+		TransformativeReaction::superconduct,
+		TransformativeReaction::pyroSwirl,
+		TransformativeReaction::hydroSwirl,
+		TransformativeReaction::electroSwirl,
+		TransformativeReaction::cryoSwirl,
+		TransformativeReaction::electroCharged,
+		TransformativeReaction::shattered,
+		TransformativeReaction::overloaded,
+		TransformativeReaction::bloom,
+		TransformativeReaction::burgeon,
+		TransformativeReaction::hyperbloom,
+	};
+
+	const inline std::vector<NodeReaction> nodeReactions{
 		NodeReaction::none,
 		NodeReaction::forwardVape,
 		NodeReaction::forwardMelt,
@@ -94,6 +123,37 @@ namespace Utils {
 			case Misc::Reaction::burgeon:
 				return "Burgeon";
 			case Misc::Reaction::hyperbloom:
+				return "Hyperbloom";
+		}
+		std::unreachable();
+	}
+
+	template<>
+	constexpr std::string Stringify<>(const Misc::TransformativeReaction &reaction) {
+		switch (reaction) {
+			case Misc::TransformativeReaction::burning:
+				return "Burning";
+			case Misc::TransformativeReaction::superconduct:
+				return "Superconduct";
+			case Misc::TransformativeReaction::pyroSwirl:
+				return "Pyro Swirl";
+			case Misc::TransformativeReaction::hydroSwirl:
+				return "Hydro Swirl";
+			case Misc::TransformativeReaction::electroSwirl:
+				return "Electro Swirl";
+			case Misc::TransformativeReaction::cryoSwirl:
+				return "Cryo Swirl";
+			case Misc::TransformativeReaction::electroCharged:
+				return "Electro-Charged";
+			case Misc::TransformativeReaction::shattered:
+				return "Shattered";
+			case Misc::TransformativeReaction::overloaded:
+				return "Overloaded";
+			case Misc::TransformativeReaction::bloom:
+				return "Bloom";
+			case Misc::TransformativeReaction::burgeon:
+				return "Burgeon";
+			case Misc::TransformativeReaction::hyperbloom:
 				return "Hyperbloom";
 		}
 		std::unreachable();

@@ -14,10 +14,6 @@ namespace UI {
 		const Formula::Context &ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 
-		struct Storage {
-			// Data
-		};
-
 		operator squi::Child() const;
 	};
 }// namespace UI

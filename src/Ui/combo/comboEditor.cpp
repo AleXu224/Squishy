@@ -57,6 +57,9 @@ namespace {
 				[](const Combo::Source::Combo &source) -> std::string {
 					return "Combo";
 				},
+				[](const Combo::Source::TransformativeReaction &source) -> std::string {
+					return "Transformative reaction";
+				},
 			},
 			source
 		);
