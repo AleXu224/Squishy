@@ -10,6 +10,7 @@
 #include "ranges"
 #include "stats/team.hpp"
 #include "text.hpp"
+#include <unordered_set>
 
 
 using namespace squi;
@@ -104,6 +105,11 @@ UI::OptionPicker::operator squi::Child() const {
 			.children = [&]() {
 				Children ret;
 
+				std::unordered_set<uint32_t> existingOptions;
+				for (const auto &opt: options) {
+					existingOptions.insert(opt.hash);
+				}
+
 				for (const auto &character: ctx.team.characters) {
 					if (!character) continue;
 					Children characterRet;
@@ -122,6 +128,14 @@ UI::OptionPicker::operator squi::Child() const {
 							auto newCtx = ctx.withSource(character->loadout);
 							if (condition && !condition->eval(newCtx)) continue;
 							if (!cond.eval(newCtx)) continue;
+							if (existingOptions.contains(
+									std::visit(
+										[](auto &&val) {
+											return val.key.hash;
+										},
+										opt
+									)
+								)) continue;
 							categoryRet.emplace_back(OptionPickerEntry{
 								.name = std::visit(//
 									Utils::overloaded{

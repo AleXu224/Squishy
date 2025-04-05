@@ -12,6 +12,7 @@ namespace UI {
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
 		const Formula::Context &ctx;
+		const std::vector<::Combo::Option> &options;
 		std::function<void(::Combo::Option)> onSelect;
 
 		operator squi::Child() const;
