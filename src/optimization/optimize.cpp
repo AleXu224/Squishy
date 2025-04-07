@@ -1,5 +1,6 @@
 #include "optimize.hpp"
 
+#include "artifact/sets.hpp"
 #include "artifactFilter.hpp"
 #include "store.hpp"
 
@@ -178,19 +179,26 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		filters.begin(), filters.end(),
 		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx](const ArtifactFilter &filter) {
 			auto character = character_original;
+			std::array<std::optional<Character::Instance>, 4> teamCharacters;
 			Team::Instance team{
 				.instanceKey{},
 				.stats = initialCtx.team,
 			};
-			for (auto &characterPtr: team.stats.characters) {
-				if (characterPtr == &character_original) characterPtr = &character;
+			for (auto [index, characterPtr]: std::views::enumerate(team.stats.characters)) {
+				if (characterPtr == &character_original) {
+					characterPtr = &character;
+				} else if (characterPtr) {
+					characterPtr = &teamCharacters.at(index).emplace(*characterPtr);
+				}
 			}
+			std::vector<Combo::Option> optionStore;
 			auto ctx = Formula::Context{
 				.source = character.loadout,
 				.active = character.loadout,
 				.team = team.stats,
 				.enemy = initialCtx.enemy,
 				.reaction = initialCtx.reaction,
+				.optionStore = &optionStore,
 			};
 			auto filtered = filter.filter(initialArtifacts);
 			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5

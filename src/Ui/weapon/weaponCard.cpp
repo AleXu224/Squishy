@@ -126,8 +126,9 @@ struct WeaponCardContent {
 								auto &instance = Store::weapons.at(weapon.instanceKey);
 								instance.stats = weapon.stats;
 								instance.updateEvent.notify();
-								for (const auto &[_, character]: Store::characters) {
+								for (auto &[_, character]: Store::characters) {
 									if (character.weaponInstanceKey == weapon.instanceKey) {
+										instance.stats.data->getOpts(character.loadout.options);
 										character.updateEvent.notify();
 									}
 								}

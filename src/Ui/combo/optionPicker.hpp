@@ -2,17 +2,18 @@
 
 #include "widget.hpp"
 
-#include "combo/source.hpp"
-#include "functional"
+#include "character/key.hpp"
+#include "combo/option.hpp"
+#include "formula/formulaContext.hpp"
 
 namespace UI {
-	struct NodePicker {
+	struct OptionPicker {
 		// Args
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
-		bool enableCombos = false;
 		const Formula::Context &ctx;
-		std::function<void(Combo::Source::Types)> onSelect;
+		const std::vector<::Combo::Option> &options;
+		std::function<void(::Combo::Option)> onSelect;
 
 		operator squi::Child() const;
 	};

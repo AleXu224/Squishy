@@ -41,9 +41,37 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 									.index = source.index,
 								};
 							},
+							[](const ::Combo::Source::TransformativeReaction &source) -> Serialization::Save::ComboSourceTypes {
+								return Serialization::Save::TransformativeReactionCombo{
+									.reaction = source.reaction,
+								};
+							},
 						},
 						entry.source
 					);
+
+					return ret;
+				}(),
+				.options = [&]() {
+					std::vector<ComboOption> ret;
+
+					for (const auto &opt: entry.options) {
+						ret.emplace_back(ComboOption{
+							.key = opt.key,
+							.hash = opt.hash,
+							.value = std::visit(//
+								Utils::overloaded{
+									[](const bool &val) -> decltype(ComboOption::value) {
+										return ComboOptionBool{val};
+									},
+									[](const std::optional<uint8_t> &val) -> decltype(ComboOption::value) {
+										return ComboOptionValueList{val};
+									},
+								},
+								opt.value
+							),
+						});
+					}
 
 					return ret;
 				}(),
@@ -70,35 +98,65 @@ std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::co
 			entries.emplace_back(::Combo::Entry{
 				.multiplier = entry.multiplier,
 				.reaction = entry.reaction,
-				.source = std::visit(Utils::overloaded{
-										 [](const Serialization::Save::CharacterCombo &source) -> ::Combo::Source::Types {
-											 return ::Combo::Source::Character{
-												 .key = source.key,
-												 .slot = source.slot,
-												 .index = source.index,
-											 };
-										 },
-										 [](const Serialization::Save::ComboCombo &source) -> ::Combo::Source::Types {
-											 return ::Combo::Source::Combo{
-												 .characterKey = source.characterKey,
-												 .comboKey = source.comboKey,
-											 };
-										 },
-										 [](const Serialization::Save::WeaponCombo &source) -> ::Combo::Source::Types {
-											 return ::Combo::Source::Weapon{
-												 .key = source.key,
-												 .index = source.index,
-											 };
-										 },
-										 [](const Serialization::Save::ArtifactCombo &source) -> ::Combo::Source::Types {
-											 return ::Combo::Source::Artifact{
-												 .key = source.key,
-												 .slot = source.slot,
-												 .index = source.index,
-											 };
-										 },
-									 },
-									 entry.source),
+				.source = std::visit(//
+					Utils::overloaded{
+						[](const Serialization::Save::CharacterCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::Character{
+								.key = source.key,
+								.slot = source.slot,
+								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::ComboCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::Combo{
+								.characterKey = source.characterKey,
+								.comboKey = source.comboKey,
+							};
+						},
+						[](const Serialization::Save::WeaponCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::Weapon{
+								.key = source.key,
+								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::ArtifactCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::Artifact{
+								.key = source.key,
+								.slot = source.slot,
+								.index = source.index,
+							};
+						},
+						[](const Serialization::Save::TransformativeReactionCombo &source) -> ::Combo::Source::Types {
+							return ::Combo::Source::TransformativeReaction{
+								.reaction = source.reaction,
+							};
+						},
+					},
+					entry.source
+				),
+				.options = [&]() {
+					std::vector<::Combo::Option> ret;
+
+					for (const auto &opt: entry.options) {
+						ret.emplace_back(::Combo::Option{
+							.key = opt.key,
+							.hash = opt.hash,
+							.value = std::visit(//
+								Utils::overloaded{
+									[](const ComboOptionBool &val) -> decltype(::Combo::Option::value) {
+										return val.value;
+									},
+									[](const ComboOptionValueList &val) -> decltype(::Combo::Option::value) {
+										return val.value;
+									},
+								},
+								opt.value
+							),
+						});
+					}
+
+					return ret;
+				}(),
 			});
 		}
 

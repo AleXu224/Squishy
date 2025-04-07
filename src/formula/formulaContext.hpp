@@ -1,6 +1,7 @@
 #pragma once
 
 #include "variant"
+#include <vector>
 
 namespace Reaction {
 	struct None;
@@ -14,6 +15,10 @@ namespace Stats {
 	struct Enemy;
 }// namespace Stats
 
+namespace Combo {
+	struct Option;
+}
+
 namespace Formula {
 	struct Context {
 		const Stats::Loadout &source;
@@ -21,6 +26,7 @@ namespace Formula {
 		const Stats::Team &team;
 		const Stats::Enemy &enemy;
 		const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction{};
+		std::vector<Combo::Option> *optionStore = nullptr;
 
 		[[nodiscard]] Context withSource(const Stats::Loadout &newSource) const {
 			return {
@@ -29,6 +35,7 @@ namespace Formula {
 				.team = team,
 				.enemy = enemy,
 				.reaction = reaction,
+				.optionStore = optionStore,
 			};
 		}
 
@@ -39,6 +46,7 @@ namespace Formula {
 				.team = team,
 				.enemy = enemy,
 				.reaction = newReaction,
+				.optionStore = optionStore,
 			};
 		}
 	};

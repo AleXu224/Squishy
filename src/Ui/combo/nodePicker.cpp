@@ -3,6 +3,7 @@
 #include "Ui/utils/masonry.hpp"
 #include "align.hpp"
 #include "button.hpp"
+#include "character/data.hpp"
 #include "container.hpp"
 #include "dialog.hpp"
 #include "node/node.hpp"
@@ -11,6 +12,7 @@
 #include "store.hpp"
 #include "text.hpp"
 #include "utils/slotToCondition.hpp"
+#include "weapon/data.hpp"
 
 
 using namespace squi;
@@ -25,13 +27,7 @@ namespace {
 		std::function<void(Combo::Source::Types)> onSelect;
 		VoidObservable closeEvent;
 
-		struct Storage {
-			// Data
-		};
-
 		operator squi::Child() const {
-			auto storage = std::make_shared<Storage>();
-
 			return Button{
 				.widget{
 					.width = Size::Expand,
@@ -59,13 +55,7 @@ namespace {
 		squi::Widget::Args widget{};
 		Children children;
 
-		struct Storage {
-			// Data
-		};
-
 		operator squi::Child() const {
-			auto storage = std::make_shared<Storage>();
-
 			return UI::DisplayCard{
 				.title = "Category",
 				.children = children,
@@ -75,8 +65,6 @@ namespace {
 }// namespace
 
 UI::NodePicker::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
 	VoidObservable closeEvent;
 
 	return Dialog{
@@ -91,6 +79,25 @@ UI::NodePicker::operator squi::Child() const {
 
 				auto &character = ::Store::characters.at(characterKey);
 
+				Children transformativeRet;
+				for (const auto &reaction: Misc::transformativeReactions) {
+					auto source = Combo::Source::TransformativeReaction{reaction};
+					auto node = source.resolve({});
+					transformativeRet.emplace_back(NodePickerEntry{
+						.node = node,
+						.source = source,
+						.ctx = ctx,
+						.onSelect = onSelect,
+						.closeEvent = closeEvent,
+					});
+				}
+				if (!transformativeRet.empty()) {
+					ret.emplace_back(DisplayCard{
+						.title = "Transformative reactions",
+						.children = transformativeRet,
+					});
+				}
+
 				if (enableCombos) {
 					Children comboRet{};
 					for (const auto &[key, combo]: character.combos) {
@@ -98,7 +105,7 @@ UI::NodePicker::operator squi::Child() const {
 							.characterKey = character.instanceKey,
 							.comboKey = key,
 						};
-						auto node = source.resolve();
+						auto node = source.resolve({});
 						comboRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = source,

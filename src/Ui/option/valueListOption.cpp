@@ -19,13 +19,13 @@ using namespace squi;
 
 UI::ValueListOption::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
+	squi::Observable<std::optional<uint32_t>, std::optional<uint32_t>> internalValueChangedEvent{};
 	CountObserver readyEvent(2);
-	Observable<std::optional<uint32_t>> valueChangedEvent{};
 
 	auto buttonText = Text{
 		.widget{
-			.onInit = [readyEvent, valueChangedEvent, &option = option](Widget &w) {
-				w.customState.add(valueChangedEvent.observe([&w, &option](std::optional<uint32_t> newValue) {
+			.onInit = [readyEvent, internalValueChangedEvent, &option = option](Widget &w) {
+				w.customState.add(internalValueChangedEvent.observe([&w, &option](std::optional<uint32_t> newValue, std::optional<uint32_t> index) {
 					auto &text = w.as<Text::Impl>();
 					if (newValue.has_value()) {
 						text.setText(std::format("{}: {}", option.prefix, newValue.value()));
@@ -44,8 +44,8 @@ UI::ValueListOption::operator squi::Child() const {
 
 	auto buttonCaret = FontIcon{
 		.textWidget{
-			.onInit = [readyEvent, valueChangedEvent](Widget &w) {
-				w.customState.add(valueChangedEvent.observe([&w](std::optional<uint32_t> newValue) {
+			.onInit = [readyEvent, internalValueChangedEvent](Widget &w) {
+				w.customState.add(internalValueChangedEvent.observe([&w](std::optional<uint32_t> newValue, std::optional<uint32_t> index) {
 					auto &text = w.as<Text::Impl>();
 					if (newValue.has_value()) {
 						text.setColor(Color{0.f, 0.f, 0.f, 0.9f});
@@ -79,6 +79,7 @@ UI::ValueListOption::operator squi::Child() const {
 	};
 
 	return Column{
+		.widget = widget,
 		.children{
 			Button{
 				.widget{
@@ -87,20 +88,23 @@ UI::ValueListOption::operator squi::Child() const {
 					.sizeConstraints{
 						.minHeight = 32.f,
 					},
-					.onInit = [readyEvent, valueChangedEvent, &option = option, borderRadiusFunc](Widget &w) {
-						w.customState.add(valueChangedEvent.observe([&w, borderRadiusFunc](std::optional<uint32_t> newVal) {
+					.onInit = [readyEvent, internalValueChangedEvent, valueChangedEvent = valueChangedEvent, &option = option, borderRadiusFunc](Widget &w) {
+						observe("valueChangedEvent", w, valueChangedEvent, [internalValueChangedEvent](std::optional<uint32_t> value, std::optional<uint32_t> index) {
+							internalValueChangedEvent.notify(value, index);
+						});
+						w.customState.add(internalValueChangedEvent.observe([&w, borderRadiusFunc](std::optional<uint32_t> newVal, std::optional<uint32_t> index) {
 							auto style = ButtonStyle::Standard();
 
 							if (newVal.has_value()) style = ButtonStyle::Accent();
 							Button::State::style.of(w) = borderRadiusFunc(style);
 						}));
-						w.customState.add(readyEvent.observe([valueChangedEvent, &option]() {
-							valueChangedEvent.notify(option.getValue());
+						w.customState.add(readyEvent.observe([internalValueChangedEvent, &option]() {
+							internalValueChangedEvent.notify(option.getValue(), option.currentIndex);
 						}));
 					},
 				},
 				.style = option.getValue().has_value() ? borderRadiusFunc(ButtonStyle::Accent()) : borderRadiusFunc(ButtonStyle::Standard()),
-				.onClick = [valueChangedEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event event) {
+				.onClick = [valueChangedEvent = valueChangedEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event event) {
 					event.widget.addOverlay(ContextMenu{
 						.position = event.widget.getPos().withYOffset(event.widget.getSize().y),
 						.items = [&]() {
@@ -109,7 +113,7 @@ UI::ValueListOption::operator squi::Child() const {
 									.text = "Not Active",
 									.content = [valueChangedEvent, &option, instanceKey]() {
 										option.currentIndex = std::nullopt;
-										valueChangedEvent.notify(option.getValue());
+										valueChangedEvent.notify(option.getValue(), option.currentIndex);
 										std::visit(
 											Utils::overloaded{
 												[](const Character::InstanceKey &key) {
@@ -138,7 +142,7 @@ UI::ValueListOption::operator squi::Child() const {
 									.text = std::format("{}", item),
 									.content = [index, valueChangedEvent, &option, instanceKey]() {
 										option.currentIndex = index;
-										valueChangedEvent.notify(option.getValue());
+										valueChangedEvent.notify(option.getValue(), option.currentIndex);
 										std::visit(
 											Utils::overloaded{
 												[](const Character::InstanceKey &key) {

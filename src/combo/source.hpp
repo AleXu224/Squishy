@@ -1,17 +1,14 @@
 #pragma once
 
 #include "artifact/key.hpp"
-#include "artifact/sets.hpp"
 #include "artifact/slot.hpp"
-#include "character/characters.hpp"
-#include "character/data.hpp"
 #include "character/key.hpp"
 #include "combo/key.hpp"
+#include "misc/reaction.hpp"
 #include "node/entry.hpp"
+#include "node/node.hpp"
 #include "variant"
-#include "weapon/data.hpp"
 #include "weapon/key.hpp"
-#include "weapon/weapons.hpp"
 
 
 namespace Combo::Source {
@@ -20,25 +17,21 @@ namespace Combo::Source {
 		Node::CharacterSlot slot;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve() const {
-			return ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
-		}
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
 	};
 
 	struct Combo {
 		::Character::InstanceKey characterKey;
 		::Combo::InstanceKey comboKey;
 
-		[[nodiscard]] Node::Instance resolve() const;
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
 	};
 
 	struct Weapon {
 		::Weapon::DataKey key;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve() const {
-			return ::Weapon::list.at(key).data.nodes.at(index);
-		}
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
 	};
 
 	struct Artifact {
@@ -46,10 +39,14 @@ namespace Combo::Source {
 		::Artifact::SetSlot slot;
 		size_t index;
 
-		[[nodiscard]] const Node::Instance &resolve() const {
-			return ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
-		}
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
 	};
 
-	using Types = std::variant<Character, Combo, Weapon, Artifact>;
+	struct TransformativeReaction {
+		Misc::TransformativeReaction reaction;
+
+		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+	};
+
+	using Types = std::variant<Character, Combo, Weapon, Artifact, TransformativeReaction>;
 }// namespace Combo::Source

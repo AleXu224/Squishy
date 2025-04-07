@@ -37,12 +37,33 @@ namespace Serialization::Save {
 		size_t index;
 	};
 
-	using ComboSourceTypes = std::variant<CharacterCombo, ComboCombo, WeaponCombo, ArtifactCombo>;
+	struct TransformativeReactionCombo {
+		Misc::TransformativeReaction reaction;
+	};
+
+	using ComboSourceTypes = std::variant<CharacterCombo, ComboCombo, WeaponCombo, ArtifactCombo, TransformativeReactionCombo>;
+
+	struct ComboOptionBool {
+		bool value;
+	};
+
+	struct ComboOptionValueList {
+		std::optional<uint8_t> value;
+	};
+
+	using ComboOptionTypes = std::variant<ComboOptionBool, ComboOptionValueList>;
+
+	struct ComboOption {
+		Character::InstanceKey key;
+		uint32_t hash;
+		ComboOptionTypes value;
+	};
 
 	struct ComboEntry {
 		float multiplier;
 		Misc::NodeReaction reaction;
 		ComboSourceTypes source;
+		std::vector<ComboOption> options;
 	};
 
 	struct Combo {
@@ -75,6 +96,26 @@ struct glz::meta<Serialization::Save::ArtifactCombo> {
 	static constexpr auto value = object(&T::key, &T::slot, &T::index);
 };
 template<>
+struct glz::meta<Serialization::Save::TransformativeReactionCombo> {
+	using T = Serialization::Save::TransformativeReactionCombo;
+	static constexpr auto value = object(&T::reaction);
+};
+template<>
 struct glz::meta<Serialization::Save::ComboSourceTypes> {
+	static constexpr std::string_view tag = "type";
+};
+
+template<>
+struct glz::meta<Serialization::Save::ComboOptionBool> {
+	using T = Serialization::Save::ComboOptionBool;
+	static constexpr auto value = object(&T::value);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboOptionValueList> {
+	using T = Serialization::Save::ComboOptionValueList;
+	static constexpr auto value = object(&T::value);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboOptionTypes> {
 	static constexpr std::string_view tag = "type";
 };

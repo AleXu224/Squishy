@@ -13,6 +13,7 @@ void Weapon::Instance::equipOn(Character::InstanceKey instanceKey) {
 
 	character.loadout.weapon = &this->stats;
 	character.weaponInstanceKey = this->instanceKey;
+	stats.data->getOpts(character.loadout.options);
 	character.updateEvent.notify();
 	updateEvent.notify();
 }

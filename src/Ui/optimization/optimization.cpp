@@ -1,6 +1,7 @@
 #include "optimization.hpp"
 #include "Ui/combo/nodePicker.hpp"
 #include "align.hpp"
+#include "artifact/sets.hpp"
 #include "button.hpp"
 #include "column.hpp"
 #include "container.hpp"
@@ -136,7 +137,7 @@ UI::Optimization::operator squi::Child() const {
 													storage->nodeSource = source;
 													auto node = std::visit(
 														[](auto &&node) {
-															return node.resolve();
+															return node.resolve({});
 														},
 														source
 													);
@@ -155,8 +156,10 @@ UI::Optimization::operator squi::Child() const {
 										.onClick = [ctx, &character, storage, solutionsEvent](auto) {
 											if (!storage->nodeSource.has_value()) return;
 											auto &&node = std::visit(
-												[](auto &&node) {
-													return node.resolve().formula;
+												[&](auto &&node) {
+													return node
+														.resolve({})
+														.formula;
 												},
 												storage->nodeSource.value()
 											);

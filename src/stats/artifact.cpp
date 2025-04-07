@@ -1,8 +1,10 @@
 #include "artifact.hpp"
 
+#include "artifact/sets.hpp"
 #include "ranges"
 #include "store.hpp"
 #include "utility"
+
 
 void Stats::Artifact::Slotted::unequipAll() {
 	for (const auto &member: getMembers()) {
