@@ -14,6 +14,10 @@ namespace Formula {
 		bool isPercentage = false;
 		std::array<float, 5> values;
 
+		[[nodiscard]] Compiled::ConstantFloat compile(const Context &context) const {
+			return {_getRefinementMultiplier(values, context.source)};
+		}
+		
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getRefinementMultiplier(values, context.source);
 			return Percentage({}, multiplier, isPercentage);

@@ -11,6 +11,10 @@
 namespace Modifiers::Weapon {
 	template<SheetMember<Stats::Sheet<Stats::Value<float, 1>>> stat, SheetMemberIdentifier member>
 	struct InstanceStats {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			return stat.resolve(context.source.weapon->sheet.stats).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage("Weapon Base", eval(context), member.isPercentage());
 		}

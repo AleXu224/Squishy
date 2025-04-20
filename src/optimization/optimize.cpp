@@ -44,6 +44,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	std::vector<ArtifactFilter> filters{};
 
+	auto [enabledTwoPiece, enabledFourPiece] = options.makeEnabledSets();
+
 	// 4pc filters
 	for (const auto &key: enabledFourPiece) {
 		ArtifactFilter pattern{};
@@ -93,7 +95,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				});
 				ret.filters.at(i).set = key;
 				ret.filters.at(j).set = key;
-				if (threeRainbow) {
+				if (options.threeRainbow) {
 					auto retCopy = ret;
 					std::vector<ArtifactSlotFilter *> otherSlots{};
 					for (size_t k = 0; k < 5; k++) {
@@ -144,7 +146,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		}
 	}
 	// Rainbow filter
-	if (fiveRainbow)
+	if (options.fiveRainbow)
 		filters.emplace_back(ArtifactFilter{});
 
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
@@ -209,8 +211,9 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				if (!filtered.empty()) slot = filtered.front()->key;
 			}
 			character.loadout.artifact.refreshStats();
+			auto node = optimizedNode.compile(ctx);
 
-			bnb(filtered, solutions, character, ctx, optimizedNode, filter.bonus1, filter.bonus2);
+			bnb(filtered, solutions, character, ctx, node, filter.bonus1, filter.bonus2, {});
 
 			combed++;
 			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), filterCount, (static_cast<float>(combed) / static_cast<float>(filterCount)) * 100.f);

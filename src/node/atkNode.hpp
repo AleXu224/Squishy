@@ -18,6 +18,28 @@ namespace Node {
 		Utils::JankyOptional<Misc::Element> element{};
 		Misc::AttackSource source{};
 
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			switch (Formula::getElement(source, element, context)) {
+				case Misc::Element::pyro:
+					return Stats::fromSkillStat<Modifiers::total.pyro, skillStat>().compile(context);
+				case Misc::Element::hydro:
+					return Stats::fromSkillStat<Modifiers::total.hydro, skillStat>().compile(context);
+				case Misc::Element::cryo:
+					return Stats::fromSkillStat<Modifiers::total.cryo, skillStat>().compile(context);
+				case Misc::Element::electro:
+					return Stats::fromSkillStat<Modifiers::total.electro, skillStat>().compile(context);
+				case Misc::Element::dendro:
+					return Stats::fromSkillStat<Modifiers::total.dendro, skillStat>().compile(context);
+				case Misc::Element::anemo:
+					return Stats::fromSkillStat<Modifiers::total.anemo, skillStat>().compile(context);
+				case Misc::Element::geo:
+					return Stats::fromSkillStat<Modifiers::total.geo, skillStat>().compile(context);
+				case Misc::Element::physical:
+					return Stats::fromSkillStat<Modifiers::total.physical, skillStat>().compile(context);
+			}
+			std::unreachable();
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
 		}
@@ -52,6 +74,22 @@ namespace Node {
 	struct _NodeSkill {
 		Misc::AttackSource source{};
 
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			switch (source) {
+				case Misc::AttackSource::normal:
+					return Stats::fromSkillStat<Modifiers::total.normal, skillStat>().compile(context);
+				case Misc::AttackSource::charged:
+					return Stats::fromSkillStat<Modifiers::total.charged, skillStat>().compile(context);
+				case Misc::AttackSource::plunge:
+					return Stats::fromSkillStat<Modifiers::total.plunge, skillStat>().compile(context);
+				case Misc::AttackSource::skill:
+					return Stats::fromSkillStat<Modifiers::total.skill, skillStat>().compile(context);
+				case Misc::AttackSource::burst:
+					return Stats::fromSkillStat<Modifiers::total.burst, skillStat>().compile(context);
+			}
+			std::unreachable();
+		}
+		
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
 		}

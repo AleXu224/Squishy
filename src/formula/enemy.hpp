@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/requires.hpp"
 #include "element.hpp"
 #include "fmt/core.h"
 #include "formulaContext.hpp"
@@ -10,6 +11,11 @@
 
 namespace Formula {
 	struct EnemyDef {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			using namespace Compiled::Operators;
+			return ((Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFReduction.compile(context)) * Compiled::ConstantFloat(5.f) * Modifiers::totalEnemy.level.compile(context)) + Compiled::ConstantFloat(500.f);
+		}
+
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Enemy DEF {:.1f}%", eval(context));
 		}
@@ -20,6 +26,15 @@ namespace Formula {
 	};
 
 	struct EnemyDefMultiplier {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			using namespace Compiled::Operators;
+			const auto characterLevel = Compiled::ConstantFloat(context.source.character.sheet.level);
+			const auto enemyLevel = Modifiers::totalEnemy.level.compile(context);
+			const auto k = (Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFReduction.compile(context)) * (Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFIgnored.compile(context));
+
+			return (characterLevel + Compiled::ConstantFloat(100.f)) / (k * (enemyLevel + Compiled::ConstantFloat(100.f)) + (characterLevel + Compiled::ConstantFloat(100.f)));
+		}
+
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Enemy DEF Multiplier {:.1f}%", eval(context) * 100.f);
 		}
@@ -36,6 +51,24 @@ namespace Formula {
 	struct EnemyResMultiplier {
 		Misc::AttackSource attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
+
+		[[nodiscard]] auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any character that has either
+			// an infusion or res shred that relies on artifact stats then this will break
+			const auto attackElement = getElement(attackSource, element, context);
+			auto RES = Stats::evalEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement, context);
+
+			return Compiled::IfElseMaker(
+				Compiled::ConstantFloat(RES) < Compiled::ConstantFloat(0.f),
+				Compiled::ConstantFloat(1.f) - (Compiled::ConstantFloat(RES) / Compiled::ConstantFloat(2.f)),
+				Compiled::IfElseMaker(
+					Compiled::ConstantFloat(RES) < Compiled::ConstantFloat(0.75f),
+					Compiled::ConstantFloat(1.f) - Compiled::ConstantFloat(RES),
+					Compiled::ConstantFloat(1.f) - (Compiled::ConstantFloat(4.f) * Compiled::ConstantFloat(RES) + Compiled::ConstantFloat(1.f))
+				)
+			);
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Enemy RES Multiplier {:.1f}%", eval(context) * 100.f);

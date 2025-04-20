@@ -1,6 +1,7 @@
 #pragma once
 
 #include "character/instance.hpp"
+#include "compiled/constant.hpp"
 #include "formulaContext.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
@@ -28,6 +29,10 @@ namespace Formula {
 	struct ElementCount {
 		::Misc::Element element;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
@@ -45,6 +50,10 @@ namespace Formula {
 	struct ElementCountOthers {
 		::Misc::Element element;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
@@ -61,6 +70,10 @@ namespace Formula {
 
 
 	struct SameElementCount {
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team same element count {}", eval(context));
 		}
@@ -77,6 +90,10 @@ namespace Formula {
 	};
 
 	struct OtherElementCount {
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team other element count {}", eval(context));
 		}
@@ -93,6 +110,10 @@ namespace Formula {
 	};
 
 	struct PHECCount {
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team other element count {}", eval(context));
 		}
@@ -119,6 +140,10 @@ namespace Formula {
 	struct IsCharacterElement {
 		Misc::Element element;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantBool(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));
 		}
@@ -130,6 +155,10 @@ namespace Formula {
 
 	struct IsActiveCharacterElement {
 		Misc::Element element;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantBool(eval(context));
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));

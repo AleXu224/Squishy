@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Talents.hpp"
+#include "formula/compiled/index.hpp"
 #include "formula/formulaContext.hpp"
 #include "modifiers/total/total.hpp"
 #include "reaction/levelMultiplier.hpp"
@@ -26,6 +27,20 @@ namespace Formula {
 		std::array<float, 15> values;
 		Utils::EntryType type = Utils::EntryType::multiplier;
 
+		[[nodiscard]] auto compile(const Context &context) const {
+			auto index = [&]() {
+				switch (talent) {
+					case LevelableTalent::normal:
+						return Modifiers::totalTalents.normal.compile(context);
+					case LevelableTalent::skill:
+						return Modifiers::totalTalents.skill.compile(context);
+					case LevelableTalent::burst:
+						return Modifiers::totalTalents.burst.compile(context);
+				}
+			}();
+			return Compiled::IndexMaker(index, values);
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getMultiplier(talent, values, context);
 			return Utils::printEntryType(multiplier, type);
@@ -41,6 +56,10 @@ namespace Formula {
 	}
 
 	struct LevelMultiplier {
+		[[nodiscard]] static Compiled::ConstantFloat compile(const Context &context) {
+			return {eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Level Multiplier {:.1f}", eval(context));
 		}

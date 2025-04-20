@@ -2,11 +2,13 @@
 
 #include "character/instance.hpp"
 #include "combo/option.hpp"
+#include "compiled/node.hpp"
 #include "fmt/core.h"
 #include "formula/node.hpp"
 #include "formulaContext.hpp"
 #include "stats/team.hpp"
 #include <vector>
+
 
 namespace Formula {
 	struct Combo {
@@ -16,6 +18,34 @@ namespace Formula {
 			FloatNode node;
 		};
 		std::vector<Entry> nodes;
+
+		struct Compiled {
+			std::vector<Formula::Compiled::FloatNode> nodes;
+
+			[[nodiscard]] float eval(const Formula::Context &context) const {
+				float ret = 0;
+				for (const auto &node: nodes) {
+					ret += node.eval(context);
+				}
+				return ret;
+			}
+
+			[[nodiscard]] bool isConstant() const {
+				for (const auto &node: nodes) {
+					if (!node.isConstant()) return false;
+				}
+				return true;
+			}
+		};
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			std::vector<Formula::Compiled::FloatNode> compiledNodes;
+			for (const auto &node: nodes) {
+				compiledNodes.emplace_back(node.node.compile(context));
+			}
+
+			return Compiled{compiledNodes};
+		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("Combo {}", eval(context));
@@ -36,12 +66,10 @@ namespace Formula {
 		std::vector<::Combo::Option> overrides;
 		T node;
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Combo {}", eval(context));
-		}
-
-		[[nodiscard]] inline float eval(const Context &context) const {
-			if (!context.optionStore || overrides.empty()) return node.eval(context);
+		inline auto runFor(const Context &context, auto &&lbd) const {
+			if (!context.optionStore || overrides.empty()) {
+				return lbd(context);
+			}
 			uint32_t count = 0;
 			for (const auto &override: overrides) {
 				for (const auto &character: context.team.characters) {
@@ -73,7 +101,7 @@ namespace Formula {
 				}
 			}
 
-			auto ret = node.eval(context);
+			auto ret = lbd(context);
 
 			for (uint32_t i = 0; i < count; i++) {
 				auto &override = context.optionStore->back();
@@ -98,6 +126,22 @@ namespace Formula {
 			}
 
 			return ret;
+		}
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return runFor(context, [&node = node](const Context &context) {
+				return node.compile(context);
+			});
+		}
+
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("Combo {}", eval(context));
+		}
+
+		[[nodiscard]] inline float eval(const Context &context) const {
+			return runFor(context, [&node = node](const Formula::Context &context) {
+				return node.eval(context);
+			});
 		}
 	};
 }// namespace Formula

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/operators.hpp"// IWYU pragma: keep
 #include "fmt/core.h"
 #include "intermediary.hpp"
 
@@ -9,6 +10,11 @@ namespace Formula {
 	struct Fraction {
 		T val1;
 		U val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) / val2.compile(context);
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto r2 = val2.eval(context);

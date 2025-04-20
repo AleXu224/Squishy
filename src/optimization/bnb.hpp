@@ -11,9 +11,10 @@ namespace Optimization {
 		Solutions &solutions,
 		Character::Instance &character,
 		const Formula::Context &ctx,
-		const Formula::FloatNode &node,
+		const Formula::Compiled::FloatNode &node,
 		const std::optional<Stats::ArtifactBonus> &bonus1,
-		const std::optional<Stats::ArtifactBonus> &bonus2
+		const std::optional<Stats::ArtifactBonus> &bonus2,
+		const std::optional<uint32_t> &splitSlot
 	) {
 		std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(artifacts);
 
@@ -32,6 +33,16 @@ namespace Optimization {
 
 		// Check the potential of each artifact
 		for (size_t i = 0; i < 5; i++) {
+			auto varianceFunc = [&](const float &variance) {
+				if (variance > maxVariance) {
+					maxVariance = variance;
+					maxVarianceSlot = i;
+				}
+			};
+			if (splitSlot.has_value() && splitSlot.value() == i) {
+				varianceFunc(0);
+				continue;
+			}
 			auto &artis = artifacts.entries[i];
 			float maxVal = 0;
 			float minVal = std::numeric_limits<float>::max();
@@ -53,10 +64,7 @@ namespace Optimization {
 			character.loadout.artifact.sheet.equippedArtifacts[i] = &statsForSlot[i];
 
 			auto variance = maxVal - minVal;
-			if (variance > maxVariance) {
-				maxVariance = variance;
-				maxVarianceSlot = i;
-			}
+			varianceFunc(variance);
 		}
 
 		// Bruteforce if the combination count is low enough
@@ -94,6 +102,8 @@ namespace Optimization {
 			}
 		}
 
+		std::optional<uint32_t> splitSlotRet = maxVarianceSlot;
+
 		auto &chosenSplitSlot = artifacts.entries[maxVarianceSlot];
 		auto midPoint = std::midpoint(size_t(0), chosenSplitSlot.size());
 		auto copy1 = artifacts;
@@ -102,7 +112,7 @@ namespace Optimization {
 		copy1.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin(), maxVarianceEntry.begin() + midPoint);
 		copy2.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin() + midPoint, maxVarianceEntry.end());
 
-		bnb(copy1, solutions, character, ctx, node, bonus1, bonus2);
-		bnb(copy2, solutions, character, ctx, node, bonus1, bonus2);
+		bnb(copy1, solutions, character, ctx, node, bonus1, bonus2, splitSlotRet);
+		bnb(copy2, solutions, character, ctx, node, bonus1, bonus2, splitSlotRet);
 	}
 }// namespace Optimization

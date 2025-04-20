@@ -1,6 +1,7 @@
 #pragma once
 
 #include "character/instance.hpp"
+#include "formula/compiled/constantOrValue.hpp"
 #include "formula/operators.hpp"// IWYU pragma: keep
 #include "modifiers/artifact/set.hpp"
 #include "modifiers/character/kit.hpp"
@@ -12,11 +13,23 @@ namespace Modifiers::Team {
 	using namespace Formula::Operators;
 	template<auto characterStat, auto weaponStat, auto artifactStat>
 	struct Frm {
+		using Ret = RetType<characterStat>;
+		using CompiledRet = decltype((characterStat + weaponStat + artifactStat).compile(std::declval<const Formula::Context &>()));
+
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			Formula::Compiled::TeamConstantOr<Ret, CompiledRet> ret{};
+			for (auto [val, character]: std::views::zip(ret.vals, context.team.characters)) {
+				if (!character) continue; // Val is a constant of 0 by default, no need to do anything
+				auto newContext = context.withSource(character->loadout);
+				val = (characterStat + weaponStat + artifactStat).compile(newContext);
+			}
+			return ret;
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (characterStat + weaponStat + artifactStat).print(context, prevStep);
 		}
 
-		using Ret = RetType<characterStat>;
 
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			Ret total = 0;

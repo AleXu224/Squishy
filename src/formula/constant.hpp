@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/constant.hpp"
 #include "fmt/core.h"
 #include "formula/formulaContext.hpp"
 #include "step.hpp"
@@ -8,6 +9,10 @@
 namespace Formula {
 	struct Constant {
 		float value;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantFloat(value);
+		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{:.1f}%", value * 100.f);
@@ -20,6 +25,10 @@ namespace Formula {
 	struct ConstantFlat {
 		float value;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantFloat(value);
+		}
+
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{:.1f}", value);
 		}
@@ -31,6 +40,10 @@ namespace Formula {
 	struct ConstantBool {
 		bool value;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantBool(value);
+		}
+
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", value);
 		}
@@ -41,6 +54,10 @@ namespace Formula {
 	};
 	struct ConstantInt {
 		uint32_t value;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::ConstantInt(value);
+		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", value);

@@ -3,7 +3,7 @@
 #include "cassert"
 #include "formula/formulaContext.hpp"
 #include "formula/node.hpp"
-
+#include "ranges"
 
 namespace Stats {
 	template<class T, size_t Count>
@@ -14,6 +14,42 @@ namespace Stats {
 
 		T constant = T{};
 		std::array<Formula::NodeType<T>, Count> modifiers{};
+
+		struct Compiled {
+			T constant;
+			std::array<Formula::Compiled::NodeType<T>, Count> vals{};
+
+			[[nodiscard]] T eval(const Formula::Context &context) const {
+				T ret = constant;
+				for (const auto &val: vals) {
+					if (!val.hasValue()) continue;
+					ret += val.eval(context);
+				}
+				return ret;
+			}
+
+			[[nodiscard]] bool isConstant() const {
+				for (const auto &val: vals) {
+					if (!val.hasValue()) continue;
+					if (!val.isConstant()) return false;
+				}
+				return true;
+			}
+		};
+
+		[[nodiscard]] inline Compiled compile(const Formula::Context &context) const {
+			Compiled ret{
+				.constant = constant,
+				.vals{},
+			};
+
+			for (auto [retEntry, modifier]: std::views::zip(ret.vals, modifiers)) {
+				if (!modifier.hasValue()) continue;
+				retEntry = modifier.compile(context);
+			}
+
+			return ret;
+		}
 
 		[[nodiscard]] inline T get(const Formula::Context &context) const {
 			// #ifndef NDEBUG

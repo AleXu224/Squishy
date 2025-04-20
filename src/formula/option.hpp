@@ -9,6 +9,10 @@ namespace Formula {
 	struct impl_IsActive {
 		Utils::HashedString name;
 
+		[[nodiscard]] Compiled::ConstantBool compile(const Context &context) const {
+			return Compiled::ConstantBool(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", name.str);
 		}
@@ -20,6 +24,10 @@ namespace Formula {
 
 	struct impl_IsActivePassive {
 		Utils::HashedString name;
+
+		[[nodiscard]] Compiled::ConstantBool compile(const Context &context) const {
+			return Compiled::ConstantBool(eval(context));
+		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", name.str);
@@ -34,6 +42,10 @@ namespace Formula {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
+		[[nodiscard]] Compiled::ConstantFloat compile(const Context &context) const {
+			return Compiled::ConstantFloat(eval(context));
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));
 		}
@@ -46,6 +58,10 @@ namespace Formula {
 	struct impl_GetInt {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;
+
+		[[nodiscard]] Compiled::ConstantInt compile(const Context &context) const {
+			return Compiled::ConstantInt(eval(context));
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));

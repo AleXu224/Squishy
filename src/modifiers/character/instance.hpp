@@ -12,6 +12,10 @@
 namespace Modifiers::Character {
 	template<SheetMember<Stats::Sheet<Stats::Value<float, 2>>> stat, SheetMemberIdentifier member>
 	struct InstanceStats {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			return stat.resolve(context.source.character.sheet.stats).compile(context);
+		}
+		
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage("Character Base", eval(context), member.isPercentage());
 		}
@@ -23,6 +27,10 @@ namespace Modifiers::Character {
 
 	template<TalentMember<Talents<Stats::Value<uint32_t, 1>>> stat>
 	struct InstanceTalents {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			return stat.resolve(context.source.character.sheet.talents).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
 			// FIXME:: add this
 			return "";

@@ -169,6 +169,21 @@ namespace Stats {
 				return Skill.critDMG.eval(ctx);
 		}
 	}
+	template<auto Skill>
+	[[nodiscard]] constexpr auto compileSkillStat(Misc::SkillStat skillStat, const Formula::Context &ctx) {
+		switch (skillStat) {
+			case Misc::SkillStat::DMG:
+				return Skill.DMG.compile(ctx);
+			case Misc::SkillStat::additiveDMG:
+				return Skill.additiveDMG.compile(ctx);
+			case Misc::SkillStat::multiplicativeDMG:
+				return Skill.multiplicativeDMG.compile(ctx);
+			case Misc::SkillStat::critRate:
+				return Skill.critRate.compile(ctx);
+			case Misc::SkillStat::critDMG:
+				return Skill.critDMG.compile(ctx);
+		}
+	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
 	[[nodiscard]] RetType fromStat(Stat stat, Misc::SkillStat skillStat = Misc::SkillStat::DMG) {
@@ -508,6 +523,27 @@ namespace Stats {
 				return Sheet.geo.eval(ctx);
 			case Misc::Element::physical:
 				return Sheet.physical.eval(ctx);
+		}
+	}
+	template<auto Sheet>
+	[[nodiscard]] constexpr auto compileEnemyResElement(Misc::Element element, const Formula::Context &ctx) {
+		switch (element) {
+			case Misc::Element::pyro:
+				return Sheet.pyro.compile(ctx);
+			case Misc::Element::hydro:
+				return Sheet.hydro.compile(ctx);
+			case Misc::Element::cryo:
+				return Sheet.cryo.compile(ctx);
+			case Misc::Element::electro:
+				return Sheet.electro.compile(ctx);
+			case Misc::Element::dendro:
+				return Sheet.dendro.compile(ctx);
+			case Misc::Element::anemo:
+				return Sheet.anemo.compile(ctx);
+			case Misc::Element::geo:
+				return Sheet.geo.compile(ctx);
+			case Misc::Element::physical:
+				return Sheet.physical.compile(ctx);
 		}
 	}
 }// namespace Stats

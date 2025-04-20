@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/intermediary.hpp"
 #include "formula/formulaContext.hpp"
 #include "misc/element.hpp"
 #include "step.hpp"
@@ -11,21 +12,25 @@
 namespace Formula {
 	template<class T>
 	concept FloatFormula = requires(T t) {
+		{ t.compile(std::declval<const Formula::Context &>()) } -> Compiled::FloatFormula;
 		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<float>;
 	};
 	template<class T>
 	concept BoolFormula = requires(T t) {
+		{ t.compile(std::declval<const Formula::Context &>()) } -> Compiled::BoolFormula;
 		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<bool>;
 	};
 	template<class T>
 	concept IntFormula = requires(T t) {
+		{ t.compile(std::declval<const Formula::Context &>()) } -> Compiled::IntFormula;
 		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<uint32_t>;
 	};
 	template<class T>
 	concept ElementFormula = requires(T t) {
+		{ t.compile(std::declval<const Formula::Context &>()) } -> Compiled::ElementFormula;
 		{ t.print(std::declval<const Formula::Context &>(), std::declval<Step>()) } -> std::same_as<std::string>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<Utils::JankyOptional<Misc::Element>>;
 	};

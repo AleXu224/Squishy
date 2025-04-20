@@ -1,6 +1,9 @@
 #pragma once
 
 #include "algorithm"
+#include "compiled/constant.hpp"
+#include "compiled/max.hpp"
+#include "compiled/min.hpp"
 #include "fmt/core.h"
 #include "formula/intermediary.hpp"
 
@@ -13,6 +16,16 @@ namespace Formula {
 		RetType min = 0.f;
 		RetType max = 1.f;
 		bool isPercentage = true;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::Max{
+				Compiled::Constant<RetType>{max},
+				Compiled::Min{
+					Compiled::Constant<RetType>{min},
+					val1.compile(context),
+				},
+			};
+		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
@@ -32,6 +45,13 @@ namespace Formula {
 		RetType val2;
 		bool isPercentage = true;
 
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::MinMaker(
+				val1.compile(context),
+				Compiled::Constant<RetType>{val2}
+			);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
 			if (val < val2) return val1.print(context, prevStep);
@@ -49,6 +69,13 @@ namespace Formula {
 		T val1;
 		RetType val2;
 		bool isPercentage = true;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			return Compiled::MaxMaker(
+				val1.compile(context),
+				Compiled::Constant<RetType>{val2}
+			);
+		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);

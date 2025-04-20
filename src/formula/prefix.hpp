@@ -10,6 +10,10 @@ namespace Formula {
 		std::string_view prefix;
 		T val;
 
+		[[nodiscard]] auto compile(const Context &context) const {
+			return val.compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", prefix, val.eval(context));
 		}

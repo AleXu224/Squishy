@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/operators.hpp"// IWYU pragma: keep
 #include "fmt/core.h"
 #include "intermediary.hpp"
 
@@ -9,6 +10,12 @@ namespace Formula {
 	struct Equal {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) == val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} == {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -22,6 +29,12 @@ namespace Formula {
 	struct NotEqual {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) != val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} != {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -34,6 +47,12 @@ namespace Formula {
 	template<BoolFormula T>
 	struct Not {
 		T val;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return !val.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("!{}", val.print(context, Step::none));
 		}
@@ -47,6 +66,12 @@ namespace Formula {
 	struct Less {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) < val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} < {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -59,6 +84,12 @@ namespace Formula {
 	struct LessEqual {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) <= val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} <= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -71,6 +102,12 @@ namespace Formula {
 	struct Greater {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) > val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} > {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -83,6 +120,12 @@ namespace Formula {
 	struct GreaterEqual {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) >= val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} >= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -96,6 +139,12 @@ namespace Formula {
 	struct And {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) && val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} && {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
@@ -108,6 +157,12 @@ namespace Formula {
 	struct Or {
 		T val1;
 		V val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			return val1.compile(context) || val2.compile(context);
+		}
+
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("{} || {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}

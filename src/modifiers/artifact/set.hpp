@@ -1,6 +1,7 @@
 #pragma once
 
 #include "artifact/set.hpp"
+#include "formula/compiled/constantOrValue.hpp"
 #include "formula/formulaContext.hpp"
 #include "formula/operators.hpp"// IWYU pragma: keep
 #include "modifiers/enemyFactory.hpp"
@@ -15,6 +16,10 @@ namespace Modifiers::Artifact::Set {
 	using namespace Formula::Operators;
 	template<auto sheet1, auto sheet2>
 	struct SetFormula {
+		[[nodiscard]] auto compile(const Formula::Context &context) const {
+			return (sheet1 + sheet2).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (sheet1 + sheet2).print(context, prevStep);
 		}
@@ -30,6 +35,22 @@ namespace Modifiers::Artifact::Set {
 	struct SheetFormulaMaker {
 		template<StatMember stat>
 		struct Frm {
+			using Ret = RetTypeMember<stat>;
+			using CompiledRet = decltype(stat.resolve(std::invoke(location, std::invoke(location2, std::declval<const Formula::Context &>().source.artifact).value().bonusPtr.mods)).compile(std::declval<const Formula::Context &>()));
+
+			[[nodiscard]] Formula::Compiled::ConstantOr<Ret, CompiledRet> compile(const Formula::Context &context) const {
+				const auto &bonus = std::invoke(location2, context.source.artifact);
+				if (!bonus) return {
+					.val = Formula::Compiled::Constant<Ret>{0},
+				};
+				const auto &val = bonus.value();
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				if (!mod.hasValue()) return {.val = Formula::Compiled::Constant<Ret>{0}};
+				return {
+					.val = mod.compile(context),
+				};
+			}
+
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 				const auto &bonus = std::invoke(location2, context.source.artifact);
 				if (!bonus) return std::string();
@@ -38,8 +59,6 @@ namespace Modifiers::Artifact::Set {
 				if (!mod.hasValue()) return std::string();
 				return mod.print(context);
 			}
-
-			using Ret = RetTypeMember<stat>;
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 				const auto &bonus = std::invoke(location2, context.source.artifact);

@@ -1,7 +1,6 @@
 #include "optimization.hpp"
 #include "Ui/combo/nodePicker.hpp"
 #include "align.hpp"
-#include "artifact/sets.hpp"
 #include "button.hpp"
 #include "column.hpp"
 #include "container.hpp"
@@ -18,38 +17,7 @@
 
 using namespace squi;
 
-namespace {
-	struct OptimizationStorage {
-		std::optional<Combo::Source::Types> nodeSource;
-		std::unordered_map<Artifact::SetKey, bool> twoPcSets{};
-		std::unordered_map<Artifact::SetKey, bool> fourPcSets{};
-		bool threeRainbow = true;
-		bool fiveRainbow = true;
-
-		auto makeEnabledSets() const {
-			std::vector<Artifact::SetKey> retTwoPcSets{};
-			std::vector<Artifact::SetKey> retFourPcSets{};
-
-			for (const auto &[key, val]: twoPcSets) {
-				if (val) retTwoPcSets.emplace_back(key);
-			}
-			for (const auto &[key, val]: fourPcSets) {
-				if (val) retFourPcSets.emplace_back(key);
-			}
-
-			return std::pair{retTwoPcSets, retFourPcSets};
-		}
-	};
-}// namespace
-
 UI::Optimization::operator squi::Child() const {
-	auto storage = std::make_shared<OptimizationStorage>();
-
-	for (const auto &[key, set]: Artifact::sets) {
-		storage->twoPcSets[key] = true;
-		storage->fourPcSets[key] = true;
-	}
-
 	auto &character = ::Store::characters.at(characterKey);
 	auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 	auto &enemy = ::Store::enemies.at(enemyKey);
@@ -79,8 +47,8 @@ UI::Optimization::operator squi::Child() const {
 						.caption = "Having a 2pc set and three other artifacts that don't make up any set. Disabling this will drastically speed up the optimization",
 						.actions{
 							ToggleSwitch{
-								.active = storage->threeRainbow,
-								.onSwitch = [storage](bool active) {
+								.active = character.optimizationOptions->threeRainbow,
+								.onSwitch = [storage = character.optimizationOptions](bool active) {
 									storage->threeRainbow = active;
 								},
 							},
@@ -91,8 +59,8 @@ UI::Optimization::operator squi::Child() const {
 						.caption = "Having no 2pc or 4pc set. Disabling this will drastically speed up the optimization",
 						.actions{
 							ToggleSwitch{
-								.active = storage->fiveRainbow,
-								.onSwitch = [storage](bool active) {
+								.active = character.optimizationOptions->fiveRainbow,
+								.onSwitch = [storage = character.optimizationOptions](bool active) {
 									storage->fiveRainbow = active;
 								},
 							},
@@ -105,7 +73,7 @@ UI::Optimization::operator squi::Child() const {
 							Button{
 								.text = "Configure",
 								.style = ButtonStyle::Standard(),
-								.onClick = [storage, &character = character, ctx = ctx](GestureDetector::Event event) {
+								.onClick = [storage = character.optimizationOptions, &character = character, ctx = ctx](GestureDetector::Event event) {
 									event.widget.addOverlay(OptimizationSetChooser{
 										.character = character,
 										.ctx = ctx,
@@ -122,13 +90,18 @@ UI::Optimization::operator squi::Child() const {
 							Row{
 								.children{
 									Button{
-										.text = "Select optimization target",
+										.text = character.optimizationOptions->nodeSource.has_value()//
+												  ? std::visit([](auto &&node) {
+														return node.resolve({}).name;
+													},
+															   character.optimizationOptions->nodeSource.value())
+												  : "Select optimization target",
 										.style = []() {
 											auto ret = ButtonStyle::Standard();
 											ret.borderRadius = ret.borderRadius.withRight(0.f);
 											return ret;
 										}(),
-										.onClick = [storage, characterKey = characterKey, ctx = ctx](GestureDetector::Event event) {
+										.onClick = [storage = character.optimizationOptions, characterKey = characterKey, ctx = ctx](GestureDetector::Event event) {
 											event.widget.addOverlay(NodePicker{
 												.characterKey = characterKey,
 												.enableCombos = true,
@@ -153,7 +126,7 @@ UI::Optimization::operator squi::Child() const {
 											ret.borderRadius = ret.borderRadius.withLeft(0.f);
 											return ret;
 										}(),
-										.onClick = [ctx, &character, storage, solutionsEvent](auto) {
+										.onClick = [ctx, &character, storage = character.optimizationOptions, solutionsEvent](auto) {
 											if (!storage->nodeSource.has_value()) return;
 											auto &&node = std::visit(
 												[&](auto &&node) {
@@ -168,10 +141,7 @@ UI::Optimization::operator squi::Child() const {
 												.character = character,
 												.ctx = ctx,
 												.optimizedNode = node,
-												.threeRainbow = storage->threeRainbow,
-												.fiveRainbow = storage->fiveRainbow,
-												.enabledTwoPiece = twoPc,
-												.enabledFourPiece = fourPc,
+												.options = *storage,
 											};
 											solutionsEvent.notify(optimization.optimize());
 										},

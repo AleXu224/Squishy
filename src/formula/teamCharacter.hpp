@@ -32,6 +32,10 @@ namespace Formula {
 	};
 
 	struct TeamInfusion {
+		[[nodiscard]] static Compiled::ConstantElement compile(const Context &context) {
+			return {eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			auto elem = eval(context);
 			if (elem.has_value()) {
@@ -62,6 +66,10 @@ namespace Formula {
 	};
 
 	struct TeamCharacterCount {
+		[[nodiscard]] Compiled::ConstantInt compile(const Context &context) const {
+			return {eval(context)};
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team character count {}", eval(context));
 		}
@@ -78,6 +86,10 @@ namespace Formula {
 
 	struct CharacterTeamInfusion {
 		Formula::ElementNode val;
+
+		[[nodiscard]] Compiled::ConstantElement compile(const Context &context) const {
+			return {eval(context)};
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			auto elem = eval(context);

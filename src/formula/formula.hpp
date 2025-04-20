@@ -1,6 +1,5 @@
 #pragma once
 
-#include "artifact.hpp"      // IWYU pragma: export
 #include "attackModifier.hpp"// IWYU pragma: export
 #include "character.hpp"     // IWYU pragma: export
 #include "custom.hpp"        // IWYU pragma: export
