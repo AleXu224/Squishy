@@ -20,28 +20,37 @@ namespace Formula {
 		std::vector<Entry> nodes;
 
 		struct Compiled {
-			std::vector<Formula::Compiled::FloatNode> nodes;
+			struct Entry {
+				float multiplier;
+				std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction;
+				Formula::Compiled::FloatNode node;
+			};
+			std::vector<Entry> nodes;
 
 			[[nodiscard]] float eval(const Formula::Context &context) const {
 				float ret = 0;
 				for (const auto &node: nodes) {
-					ret += node.eval(context);
+					ret += node.multiplier * node.node.eval(context.withReaction(node.reaction));
 				}
 				return ret;
 			}
 
 			[[nodiscard]] bool isConstant() const {
 				for (const auto &node: nodes) {
-					if (!node.isConstant()) return false;
+					if (!node.node.isConstant()) return false;
 				}
 				return true;
 			}
 		};
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			std::vector<Formula::Compiled::FloatNode> compiledNodes;
+			std::vector<Compiled::Entry> compiledNodes;
 			for (const auto &node: nodes) {
-				compiledNodes.emplace_back(node.node.compile(context));
+				compiledNodes.emplace_back(Compiled::Entry{
+					.multiplier = node.multiplier,
+					.reaction = node.reaction,
+					.node = node.node.compile(context.withReaction(node.reaction)),
+				});
 			}
 
 			return Compiled{compiledNodes};

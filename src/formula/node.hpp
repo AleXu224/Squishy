@@ -1,6 +1,5 @@
 #pragma once
 
-#include "compiled/constant.hpp"
 #include "string"
 
 #include "compiled/node.hpp"
@@ -35,7 +34,7 @@ namespace Formula {
 			[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const override {
 				auto compiled = fn.compile(context);
 				if (compiled.isConstant()) {
-					return Compiled::NodeType<RetType>(Compiled::Constant<RetType>(compiled.eval(context)));
+					return Compiled::NodeType<RetType>(compiled.eval(context));
 				}
 				return compiled;
 			}

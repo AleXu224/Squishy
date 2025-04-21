@@ -2,6 +2,7 @@
 
 #include "formula/formulaContext.hpp"
 #include "intermediary.hpp"
+#include "utility"
 
 namespace Formula::Compiled {
 	template<class T, FormulaLike V>
@@ -9,73 +10,66 @@ namespace Formula::Compiled {
 		std::variant<Constant<T>, V> val;
 
 		[[nodiscard]] T eval(const Formula::Context &context) const {
-			return std::visit(
-				[&](auto &&val) {
-					return val.eval(context);
-				},
-				val
-			);
+			switch (val.index()) {
+				case 0:
+					return std::get<0>(val).eval(context);
+				case 1:
+					return std::get<1>(val).eval(context);
+			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] bool isConstant() const {
-			return std::visit(
-				[](auto &&val) {
-					return val.isConstant();
-				},
-				val
-			);
+			switch (val.index()) {
+				case 0:
+					return std::get<0>(val).isConstant();
+				case 1:
+					return std::get<1>(val).isConstant();
+			}
+			std::unreachable();
 		}
 	};
 
-	template<FormulaLike... T>
+	template<FormulaLike T, FormulaLike V>
 	struct ValueOr {
-		std::variant<T...> val;
+		std::variant<T, V> val;
 
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
-			return std::visit(
-				[&](auto &&val) {
-					return val.eval(context);
-				},
-				val
-			);
+			switch (val.index()) {
+				case 0:
+					return std::get<0>(val).eval(context);
+				case 1:
+					return std::get<1>(val).eval(context);
+			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] bool isConstant() const {
-			return std::visit(
-				[](auto &&val) {
-					return val.isConstant();
-				},
-				val
-			);
+			switch (val.index()) {
+				case 0:
+					return std::get<0>(val).isConstant();
+				case 1:
+					return std::get<1>(val).isConstant();
+			}
+			std::unreachable();
 		}
 	};
 
 	template<class T, FormulaLike V>
 	struct TeamConstantOr {
-		std::array<std::variant<Constant<T>, V>, 4> vals;
+		std::array<ConstantOr<T, V>, 4> vals;
 
 		[[nodiscard]] T eval(const Formula::Context &context) const {
 			T ret{};
 			for (const auto &val: vals) {
-				ret += std::visit(
-					[&](auto &&val) {
-						return val.eval(context);
-					},
-					val
-				);
+				ret += val.eval(context);
 			}
 			return ret;
 		}
 
 		[[nodiscard]] bool isConstant() const {
 			for (const auto &val: vals) {
-				auto constant = std::visit(
-					[](auto &&val) {
-						return val.isConstant();
-					},
-					val
-				);
-				if (!constant) return false;
+				if (!val.isConstant()) return false;
 			}
 			return true;
 		}

@@ -17,10 +17,11 @@ namespace Modifiers::Character::Kit {
 		struct Frm {
 			using Ret = RetTypeMember<stat>;
 
-			[[nodiscard]] Formula::Compiled::ConstantOr<Ret, Formula::Compiled::NodeType<Ret>> compile(const Formula::Context &context) const {
+			using CompileRet = Formula::Compiled::ConstantOr<Ret, Formula::Compiled::NodeType<Ret>>;
+			[[nodiscard]] CompileRet compile(const Formula::Context &context) const {
 				const auto &mod = stat.resolve(std::invoke(location, context.source.character.data.data.mods));
-				if (!mod.hasValue()) return {Formula::Compiled::Constant<Ret>{}};
-				return {mod.compile(context)};
+				if (!mod.hasValue()) return CompileRet(Formula::Compiled::Constant<Ret>{});
+				return CompileRet(mod.compile(context));
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

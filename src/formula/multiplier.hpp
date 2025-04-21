@@ -28,17 +28,15 @@ namespace Formula {
 		Utils::EntryType type = Utils::EntryType::multiplier;
 
 		[[nodiscard]] auto compile(const Context &context) const {
-			auto index = [&]() {
-				switch (talent) {
-					case LevelableTalent::normal:
-						return Modifiers::totalTalents.normal.compile(context);
-					case LevelableTalent::skill:
-						return Modifiers::totalTalents.skill.compile(context);
-					case LevelableTalent::burst:
-						return Modifiers::totalTalents.burst.compile(context);
-				}
-			}();
-			return Compiled::IndexMaker(index, values);
+			switch (talent) {
+				case LevelableTalent::normal:
+					return Compiled::IndexMaker(Modifiers::totalTalents.normal.compile(context), values);
+				case LevelableTalent::skill:
+					return Compiled::IndexMaker(Modifiers::totalTalents.skill.compile(context), values);
+				case LevelableTalent::burst:
+					return Compiled::IndexMaker(Modifiers::totalTalents.burst.compile(context), values);
+			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

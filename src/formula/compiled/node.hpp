@@ -40,37 +40,18 @@ namespace Formula::Compiled {
 			Fn fn{};
 		};
 
+		constexpr NodeType(const RetType &compiledValue) : compiledValue(compiledValue) {}
+
 		template<class T>
 		constexpr NodeType(const T &t)
 			: fn(std::make_unique<implementation<T>>(t)) {}
 
-		constexpr NodeType(const NodeType &other) {
-			if (!other.fn)
-				fn.reset();
-			else
-				fn = other.fn->clone();
-		}
-		constexpr NodeType &operator=(const NodeType &other) {
-			if (this != &other) {
-				if (!other.fn)
-					fn.reset();
-				else
-					fn = other.fn->clone();
-			}
-			return *this;
-		}
-		constexpr NodeType &operator=(NodeType &&other) noexcept {
-			if (this != &other) {
-				fn = std::move(other.fn);
-			}
-			return *this;
-		}
-		constexpr NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
-
 		[[nodiscard]] constexpr RetType eval(const Context &context) const {
+			if (compiledValue.has_value()) return compiledValue.value();
 			return fn->eval(context);
 		}
 		[[nodiscard]] constexpr bool isConstant() const {
+			if (compiledValue.has_value()) return true;
 			return fn->isConstant();
 		}
 
@@ -79,11 +60,12 @@ namespace Formula::Compiled {
 		~NodeType() = default;
 
 		[[nodiscard]] constexpr bool hasValue() const {
-			return fn != nullptr;
+			return compiledValue.has_value() || fn != nullptr;
 		}
 
 	private:
-		std::unique_ptr<interface> fn{};
+		Utils::JankyOptional<RetType> compiledValue{};
+		std::shared_ptr<interface> fn{};
 	};
 
 	using FloatNode = NodeType<float>;

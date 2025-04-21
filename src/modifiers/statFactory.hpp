@@ -2,7 +2,6 @@
 
 #include "helpers.hpp"
 #include "type_traits"
-#include <utility>
 
 namespace Modifiers {
 	template<class T>
@@ -11,11 +10,11 @@ namespace Modifiers {
 
 		template<auto V>
 		struct Skill {
-			static constexpr auto DMG = std::make_pair(V, &TT::_SkillValue::DMG);
-			static constexpr auto additiveDMG = std::make_pair(V, &TT::_SkillValue::additiveDMG);
-			static constexpr auto multiplicativeDMG = std::make_pair(V, &TT::_SkillValue::multiplicativeDMG);
-			static constexpr auto critRate = std::make_pair(V, &TT::_SkillValue::critRate);
-			static constexpr auto critDMG = std::make_pair(V, &TT::_SkillValue::critDMG);
+			static constexpr auto DMG = SkillType{V, &TT::_SkillValue::DMG};
+			static constexpr auto additiveDMG = SkillType{V, &TT::_SkillValue::additiveDMG};
+			static constexpr auto multiplicativeDMG = SkillType{V, &TT::_SkillValue::multiplicativeDMG};
+			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
+			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
 		};
 
 		static constexpr auto hp = &TT::hp;

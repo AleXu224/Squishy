@@ -4,7 +4,6 @@
 #include "fmt/format.h"
 #include "intermediary.hpp"
 
-
 namespace Formula {
 	template<ArithmeticFormula T, ArithmeticFormula U>
 	struct Difference {

@@ -21,7 +21,7 @@ namespace Modifiers::Team {
 			for (auto [val, character]: std::views::zip(ret.vals, context.team.characters)) {
 				if (!character) continue; // Val is a constant of 0 by default, no need to do anything
 				auto newContext = context.withSource(character->loadout);
-				val = (characterStat + weaponStat + artifactStat).compile(newContext);
+				val.val = (characterStat + weaponStat + artifactStat).compile(newContext);
 			}
 			return ret;
 		}

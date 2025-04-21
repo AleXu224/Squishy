@@ -35,7 +35,11 @@ namespace Formula::Compiled::Operators {
 	}
 
 	[[nodiscard]] constexpr auto operator+(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
-		return Sum(param1, param2);
+		if constexpr (SumOnlyMonomial<decltype(param1)> && SumOnlyMonomial<decltype(param2)>) {
+			return SumMonomial{param1.value + param2.value}.add(param1.sumParam + param2.param1.sumParam);
+		} else {
+			return Sum(param1, param2);
+		}
 	}
 
 	// Subtract
@@ -62,7 +66,11 @@ namespace Formula::Compiled::Operators {
 	}
 
 	[[nodiscard]] constexpr auto operator-(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
-		return Difference(param1, param2);
+		if constexpr (SumOnlyMonomial<decltype(param1)> && SumOnlyMonomial<decltype(param2)>) {
+			return SumMonomial{param1.value - param2.value}.add(param1.sumParam - param2.param1.sumParam);
+		} else {
+			return Difference(param1, param2);
+		}
 	}
 
 	// Multiply
@@ -89,13 +97,17 @@ namespace Formula::Compiled::Operators {
 	}
 
 	[[nodiscard]] constexpr auto operator*(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
-		return Product(param1, param2);
+		if constexpr (ProdOnlyMonomial<decltype(param1)> && ProdOnlyMonomial<decltype(param2)>) {
+			return ProdMonomial{param1.value * param2.value}.mult(param1.multParam * param2.param1.multParam);
+		} else {
+			return Product(param1, param2);
+		}
 	}
 
 	// Divide
 	template<MonomialFormula T>
 	[[nodiscard]] constexpr auto operator/(const ConstantFormula auto &param1, const T &param2) {
-		return param2.divide(param1.value);
+		return Fraction{param1, param2};
 	}
 
 	template<MonomialFormula T>
@@ -104,7 +116,7 @@ namespace Formula::Compiled::Operators {
 	}
 
 	[[nodiscard]] constexpr auto operator/(const ConstantFormula auto &param1, const ArithmeticVariableNotMonomial auto &param2) {
-		return ProdMonomial{param2}.divide(param1.value);
+		return Fraction{param1, param2};
 	}
 
 	[[nodiscard]] constexpr auto operator/(const ArithmeticVariableNotMonomial auto &param1, const ConstantFormula auto &param2) {
@@ -116,7 +128,11 @@ namespace Formula::Compiled::Operators {
 	}
 
 	[[nodiscard]] constexpr auto operator/(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
-		return Fraction(param1, param2);
+		if constexpr (ProdOnlyMonomial<decltype(param1)> && ProdOnlyMonomial<decltype(param2)>) {
+			return ProdMonomial{param1.value / param2.value}.mult(param1.multParam / param2.param1.multParam);
+		} else {
+			return Fraction(param1, param2);
+		}
 	}
 
 	// Equal

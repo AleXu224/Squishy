@@ -13,7 +13,6 @@
 namespace Modifiers::Artifact {
 	struct CompiledSubStat {
 		SheetMember<Stats::Sheet<float>> stat;
-		SheetMemberIdentifier member;
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
@@ -33,15 +32,12 @@ namespace Modifiers::Artifact {
 		using CompiledRet = Formula::Compiled::ConstantOr<float, CompiledSubStat>;
 
 		[[nodiscard]] CompiledRet compile(const Formula::Context &context) const {
-			if (&context.active == &context.source) {
-				return CompiledRet{
-					.val = Formula::Compiled::ConstantFloat{eval(context)},
-				};
+			if (&context.active != &context.source) {
+				return CompiledRet{Formula::Compiled::ConstantFloat{eval(context)}};
 			}
 			return CompiledRet{
-				.val = CompiledSubStat{
+				CompiledSubStat{
 					.stat = stat,
-					.member = member,
 				},
 			};
 		}

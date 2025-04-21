@@ -7,7 +7,6 @@
 #include "fmt/core.h"
 #include "formula/intermediary.hpp"
 
-
 namespace Formula {
 	template<ArithmeticFormula T>
 	struct Clamp {
@@ -18,13 +17,13 @@ namespace Formula {
 		bool isPercentage = true;
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::Max{
-				Compiled::Constant<RetType>{max},
-				Compiled::Min{
-					Compiled::Constant<RetType>{min},
-					val1.compile(context),
-				},
-			};
+			return Compiled::MaxMaker(
+				Compiled::Constant<RetType>{min},
+				Compiled::MinMaker(
+					Compiled::Constant<RetType>{max},
+					val1.compile(context)
+				)
+			);
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {

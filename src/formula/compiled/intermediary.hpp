@@ -10,12 +10,26 @@
 namespace Formula::Compiled {
 	template<class T>
 	concept MonomialFormula = requires(T t) {
-		{ t.add(std::declval<T::RetType>()) };
-		{ t.subtract(std::declval<T::RetType>()) };
-		{ t.mult(std::declval<T::RetType>()) };
-		{ t.divide(std::declval<T::RetType>()) };
+		{ t.add(std::declval<typename T::RetType>()) };
+		{ t.subtract(std::declval<typename T::RetType>()) };
+		{ t.mult(std::declval<typename T::RetType>()) };
+		{ t.divide(std::declval<typename T::RetType>()) };
 		{ t.eval(std::declval<const Formula::Context &>()) };
 	};
+	template<class T>
+	concept SumMonomialFormula = requires(T t) {
+		{ t.sumParam };
+	};
+	template<class T>
+	concept ProdMonomialFormula = requires(T t) {
+		{ t.multParam };
+	};
+
+	template<class T>
+	concept SumOnlyMonomial = MonomialFormula<T> && !ProdMonomialFormula<T>;
+	template<class T>
+	concept ProdOnlyMonomial = MonomialFormula<T> && !SumMonomialFormula<T>;
+
 	template<class T>
 	concept FloatFormula = requires(T t) {
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<float>;

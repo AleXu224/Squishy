@@ -15,7 +15,8 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", prefix, val.eval(context));
+			// return fmt::format("{} {}", prefix, val.eval(context));
+			return "";
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
