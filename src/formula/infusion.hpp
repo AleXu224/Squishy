@@ -27,7 +27,7 @@ namespace Formula {
 
 	struct NoInfusion {
 		[[nodiscard]] Compiled::ConstantElement compile(const Context &context) const {
-			return Compiled::ConstantElement({});
+			return Compiled::ConstantElement();
 		}
 
 		[[nodiscard]] static std::string print(const Context &, Step) {

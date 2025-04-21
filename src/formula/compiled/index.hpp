@@ -20,7 +20,7 @@ namespace Formula::Compiled {
 
 	auto IndexMaker(const IntFormula auto &index, const std::ranges::random_access_range auto &indexable) {
 		if constexpr (std::is_same_v<std::remove_cvref_t<decltype(index)>, ConstantInt>)
-			return Constant<decltype(indexable.at(std::declval<size_t>()))>(indexable.at(index.value));
+			return Constant<std::remove_cvref_t<decltype(indexable.at(std::declval<size_t>()))>>(indexable.at(index.value));
 		else
 			return Index{
 				.index = index,

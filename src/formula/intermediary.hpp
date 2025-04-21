@@ -41,5 +41,5 @@ namespace Formula {
 	concept ArithmeticFormula = FloatFormula<T> || IntFormula<T>;
 
 	template<class T>
-	using FormulaType = decltype(std::declval<T>().eval(std::declval<const Context &>()));
+	using FormulaType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Context &>()))>;
 }// namespace Formula

@@ -25,9 +25,13 @@ namespace Formula::Compiled {
 
 	[[nodiscard]] auto RequiresMaker(const Formula::Context &context, const BoolFormula auto &cond, const auto &ret) {
 		if constexpr (std::is_same_v<std::remove_cvref_t<decltype(cond)>, ConstantBool>) {
-			using RetType = Constant<std::remove_cvref_t<decltype(ret.eval(std::declval<const Formula::Context &>()))>>;
+			using EvalType = std::remove_cvref_t<decltype(ret.eval(std::declval<const Formula::Context &>()))>;
+			using RetType = std::conditional_t<
+				ConstantFormula<std::remove_cvref_t<decltype(ret)>>,
+				Constant<EvalType>,
+				ConstantOr<EvalType, std::remove_cvref_t<decltype(ret)>>>;
 			if (cond.value)
-				return RetType(ret.eval(context));
+				return RetType(ret);
 			else
 				return RetType();
 		} else {

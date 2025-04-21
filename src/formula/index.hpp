@@ -38,7 +38,7 @@ namespace Formula {
 			if constexpr (Compiled::ConstantFormula<decltype(compiled)>)
 				return compiled.eval(context).compile(context);
 			else
-				return compiled;
+				return Compiled::Evaluator{compiled};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
