@@ -26,9 +26,9 @@ namespace Formula::Compiled {
 	};
 
 	template<class T>
-	concept SumOnlyMonomial = MonomialFormula<T> && !ProdMonomialFormula<T>;
+	concept SumOnlyMonomial = MonomialFormula<std::remove_cvref_t<T>> && !ProdMonomialFormula<std::remove_cvref_t<T>>;
 	template<class T>
-	concept ProdOnlyMonomial = MonomialFormula<T> && !SumMonomialFormula<T>;
+	concept ProdOnlyMonomial = MonomialFormula<std::remove_cvref_t<T>> && !SumMonomialFormula<std::remove_cvref_t<T>>;
 
 	template<class T>
 	concept FloatFormula = requires(T t) {

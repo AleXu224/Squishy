@@ -36,7 +36,7 @@ namespace Formula::Compiled::Operators {
 
 	[[nodiscard]] constexpr auto operator+(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
 		if constexpr (SumOnlyMonomial<decltype(param1)> && SumOnlyMonomial<decltype(param2)>) {
-			return SumMonomial{param1.value + param2.value}.add(param1.sumParam + param2.param1.sumParam);
+			return SumMonomial{param1.value + param2.value}.add(param1.sumParam + param2.sumParam);
 		} else {
 			return Sum(param1, param2);
 		}
@@ -67,7 +67,7 @@ namespace Formula::Compiled::Operators {
 
 	[[nodiscard]] constexpr auto operator-(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
 		if constexpr (SumOnlyMonomial<decltype(param1)> && SumOnlyMonomial<decltype(param2)>) {
-			return SumMonomial{param1.value - param2.value}.add(param1.sumParam - param2.param1.sumParam);
+			return SumMonomial{param1.value - param2.value}.add(param1.sumParam - param2.sumParam);
 		} else {
 			return Difference(param1, param2);
 		}
@@ -98,7 +98,7 @@ namespace Formula::Compiled::Operators {
 
 	[[nodiscard]] constexpr auto operator*(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
 		if constexpr (ProdOnlyMonomial<decltype(param1)> && ProdOnlyMonomial<decltype(param2)>) {
-			return ProdMonomial{param1.value * param2.value}.mult(param1.multParam * param2.param1.multParam);
+			return ProdMonomial{param1.value * param2.value}.mult(param1.multParam * param2.multParam);
 		} else {
 			return Product(param1, param2);
 		}
@@ -129,7 +129,7 @@ namespace Formula::Compiled::Operators {
 
 	[[nodiscard]] constexpr auto operator/(const ArithmeticVariableFormula auto &param1, const ArithmeticVariableFormula auto &param2) {
 		if constexpr (ProdOnlyMonomial<decltype(param1)> && ProdOnlyMonomial<decltype(param2)>) {
-			return ProdMonomial{param1.value / param2.value}.mult(param1.multParam / param2.param1.multParam);
+			return ProdMonomial{param1.value / param2.value}.mult(param1.multParam / param2.multParam);
 		} else {
 			return Fraction(param1, param2);
 		}

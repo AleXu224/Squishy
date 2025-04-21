@@ -21,7 +21,7 @@ namespace Formula {
 			interface &operator=(interface &&) = delete;
 
 			[[nodiscard]] constexpr virtual Compiled::NodeType<RetType> compile(const Context &) const = 0;
-			[[nodiscard]] constexpr virtual std::string print(const Context &) const = 0;
+			[[nodiscard]] constexpr virtual std::string print(const Context &, Step) const = 0;
 			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			constexpr virtual ~interface() = default;
@@ -38,8 +38,8 @@ namespace Formula {
 				}
 				return compiled;
 			}
-			[[nodiscard]] constexpr std::string print(const Context &context) const override {
-				return fn.print(context, Step::none);
+			[[nodiscard]] constexpr std::string print(const Context &context, Step step) const override {
+				return fn.print(context, step);
 			}
 			[[nodiscard]] constexpr RetType eval(const Context &context) const override {
 				return fn.eval(context);
@@ -83,8 +83,8 @@ namespace Formula {
 		[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const {
 			return fn->compile(context);
 		}
-		[[nodiscard]] constexpr std::string print(const Context &context) const {
-			return fn->print(context);
+		[[nodiscard]] constexpr std::string print(const Context &context, Step step = Step::none) const {
+			return fn->print(context, step);
 		}
 		[[nodiscard]] constexpr RetType eval(const Context &context) const {
 			return fn->eval(context);
