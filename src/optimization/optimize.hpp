@@ -10,10 +10,7 @@ namespace Optimization {
 		Formula::Context ctx;
 		Formula::FloatNode optimizedNode;
 
-		bool threeRainbow = true;
-		bool fiveRainbow = true;
-		std::vector<Artifact::SetKey> enabledTwoPiece;
-		std::vector<Artifact::SetKey> enabledFourPiece;
+		const ::Optimization::Options &options;
 
 		Solutions optimize() const;
 	};

@@ -15,6 +15,10 @@ namespace Modifiers {
 	using namespace Formula::Operators;
 	template<auto characterKitStat, auto characterInstanceStat, auto weaponPassiveStat, auto weaponInstanceStat, auto artifactSetStat, auto artifactSubStats, auto teamPreStat, auto teamResonances>
 	struct PreModFrm {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			return (characterKitStat + characterInstanceStat + weaponPassiveStat + weaponInstanceStat + artifactSetStat + artifactSubStats + teamPreStat + teamResonances).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (characterKitStat + characterInstanceStat + weaponPassiveStat + weaponInstanceStat + artifactSetStat + artifactSubStats + teamPreStat).print(context, prevStep);
 		}

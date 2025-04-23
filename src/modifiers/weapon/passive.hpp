@@ -15,13 +15,19 @@ namespace Modifiers::Weapon::Passive {
 	struct FormulaMaker {
 		template<StatMember stat, SheetMemberIdentifier member>
 		struct Frm {
+			using Ret = RetTypeMember<stat>;
+
+			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
+				auto node = stat.resolve(std::invoke(location, context.source.weapon->data->data.mods));
+				if (!node.hasValue()) return Formula::Compiled::Constant<Ret>{};
+				return node.compile(context);
+			}
+
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 				const auto &mod = stat.resolve(std::invoke(location, context.source.weapon->data->data.mods));
 				if (!mod.hasValue()) return "";
 				return mod.print(context);
 			}
-
-			using Ret = RetTypeMember<stat>;
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 				const auto &mod = stat.resolve(std::invoke(location, context.source.weapon->data->data.mods));

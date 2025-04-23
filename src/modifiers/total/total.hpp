@@ -10,6 +10,10 @@ namespace Modifiers {
 	using namespace Formula::Operators;
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct TotalFrm {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
 		}
@@ -29,6 +33,10 @@ namespace Modifiers {
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct TotalActiveFrm {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
 		}
@@ -43,6 +51,10 @@ namespace Modifiers {
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct DisplayTotalFrm {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).print(context, prevStep);
 		}
@@ -58,6 +70,10 @@ namespace Modifiers {
 	};
 	template<auto characterKitTalent, auto characterInstanceTalent, auto weaponPassiveTalent, auto artifactSetTalent, auto teamTalent>
 	struct TotalTalentsFrm {
+		[[nodiscard]] Formula::Compiled::IntNode compile(const Formula::Context &context) const {
+			return (characterKitTalent + characterInstanceTalent + weaponPassiveTalent + artifactSetTalent + teamTalent).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (characterKitTalent + characterInstanceTalent + weaponPassiveTalent + artifactSetTalent + teamTalent).print(context, prevStep);
 		}
@@ -72,6 +88,10 @@ namespace Modifiers {
 	};
 	template<auto teamStat, auto teamResonanceStat, auto instanceStat, SheetMemberIdentifier name>
 	struct TotalEnemyFrm {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			return (teamStat + teamResonanceStat + instanceStat).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
 		}

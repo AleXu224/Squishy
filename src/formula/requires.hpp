@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compiled/requires.hpp"
 #include "fmt/core.h"
 #include "intermediary.hpp"
 #include "stats/loadout.hpp"
@@ -12,6 +13,10 @@ namespace Formula {
 		V ret;
 
 		using RetType = decltype(std::declval<V>().eval(std::declval<const Context &>()));
+
+		[[nodiscard]] auto compile(const Context &context) const {
+			return Compiled::RequiresMaker(requirement.compile(context), ret.compile(context));
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
@@ -37,6 +42,14 @@ namespace Formula {
 		using RetType2 = decltype(std::declval<U>().eval(std::declval<const Context &>()));
 		static_assert(std::is_same_v<RetType, RetType2>, "Both formulas need to return the same type");
 
+		[[nodiscard]] Compiled::NodeType<RetType> compile(const Context &context) const {
+			return Compiled::IfElse{
+				.requirement = requirement.compile(context),
+				.trueVal = trueVal.compile(context),
+				.elseVal = elseVal.compile(context),
+			};
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
 			return fmt::format("{}", cond ? trueVal.print(context, prevStep) : elseVal.print(context, prevStep));
@@ -54,6 +67,10 @@ namespace Formula {
 
 namespace Requirement {
 	static constexpr struct impl_Passive1 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Passive 1";
 		}
@@ -63,6 +80,10 @@ namespace Requirement {
 		}
 	} passive1{};
 	static constexpr struct impl_Passive2 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Passive 2";
 		}
@@ -72,6 +93,10 @@ namespace Requirement {
 		}
 	} passive2{};
 	static constexpr struct impl_Constellation1 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 1";
 		}
@@ -81,6 +106,10 @@ namespace Requirement {
 		}
 	} constellation1{};
 	static constexpr struct impl_Constellation2 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 2";
 		}
@@ -90,6 +119,10 @@ namespace Requirement {
 		}
 	} constellation2{};
 	static constexpr struct impl_Constellation3 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 3";
 		}
@@ -99,6 +132,10 @@ namespace Requirement {
 		}
 	} constellation3{};
 	static constexpr struct impl_Constellation4 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 4";
 		}
@@ -108,6 +145,10 @@ namespace Requirement {
 		}
 	} constellation4{};
 	static constexpr struct impl_Constellation5 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 5";
 		}
@@ -117,6 +158,10 @@ namespace Requirement {
 		}
 	} constellation5{};
 	static constexpr struct impl_Constellation6 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
 		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
 			return "Constellation 6";
 		}

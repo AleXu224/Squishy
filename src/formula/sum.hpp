@@ -1,8 +1,8 @@
 #pragma once
 
+#include "compiled/operators.hpp"// IWYU pragma: keep
 #include "fmt/format.h"
 #include "intermediary.hpp"
-
 
 namespace Formula {
 	inline std::string stepPrint(Step step) {
@@ -21,6 +21,15 @@ namespace Formula {
 	struct Sum {
 		T val1;
 		U val2;
+
+		[[nodiscard]] inline auto compile(const Context &context) const {
+			using namespace Compiled::Operators;
+			auto ret = val1.compile(context) + val2.compile(context);
+			// if (ret.eval(context) != eval(context)) {
+			// 	fmt::println("{} vs {}", ret.eval(context), eval(context));
+			// }
+			return ret;
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			if (val1.eval(context) == 0.f) return val2.print(context, prevStep);

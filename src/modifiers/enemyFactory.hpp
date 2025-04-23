@@ -2,7 +2,6 @@
 
 #include "helpers.hpp"
 #include "type_traits"
-#include "utility"
 
 
 namespace Modifiers {
@@ -12,14 +11,14 @@ namespace Modifiers {
 
 		template<auto V>
 		struct Skill {
-			static constexpr auto pyro = std::make_pair(V, &TT::_SkillValue::pyro);
-			static constexpr auto hydro = std::make_pair(V, &TT::_SkillValue::hydro);
-			static constexpr auto cryo = std::make_pair(V, &TT::_SkillValue::cryo);
-			static constexpr auto electro = std::make_pair(V, &TT::_SkillValue::electro);
-			static constexpr auto dendro = std::make_pair(V, &TT::_SkillValue::dendro);
-			static constexpr auto anemo = std::make_pair(V, &TT::_SkillValue::anemo);
-			static constexpr auto geo = std::make_pair(V, &TT::_SkillValue::geo);
-			static constexpr auto physical = std::make_pair(V, &TT::_SkillValue::physical);
+			static constexpr auto pyro = SkillType{V, &TT::_SkillValue::pyro};
+			static constexpr auto hydro = SkillType{V, &TT::_SkillValue::hydro};
+			static constexpr auto cryo = SkillType{V, &TT::_SkillValue::cryo};
+			static constexpr auto electro = SkillType{V, &TT::_SkillValue::electro};
+			static constexpr auto dendro = SkillType{V, &TT::_SkillValue::dendro};
+			static constexpr auto anemo = SkillType{V, &TT::_SkillValue::anemo};
+			static constexpr auto geo = SkillType{V, &TT::_SkillValue::geo};
+			static constexpr auto physical = SkillType{V, &TT::_SkillValue::physical};
 		};
 
 		static constexpr auto level = &TT::level;

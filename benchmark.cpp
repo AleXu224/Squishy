@@ -161,8 +161,12 @@ namespace {
 			.enemy = enemy,
 		};
 
+		auto compiledNode = node.formula.compile(ctx);
+
 		for (auto _: state) {
-			benchmark::DoNotOptimize(node.formula.eval(ctx));
+			// benchmark::DoNotOptimize(node.formula.eval(ctx));
+			benchmark::DoNotOptimize(compiledNode.eval(ctx));
+			// benchmark::DoNotOptimize(node.formula.compile(ctx));
 			// character.getArtifactStats();
 		}
 	}

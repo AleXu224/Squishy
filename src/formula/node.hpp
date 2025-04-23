@@ -2,6 +2,7 @@
 
 #include "string"
 
+#include "compiled/node.hpp"
 #include "formula/formulaContext.hpp"
 #include "memory"
 #include "misc/element.hpp"
@@ -19,7 +20,8 @@ namespace Formula {
 			interface &operator=(const interface &) = delete;
 			interface &operator=(interface &&) = delete;
 
-			[[nodiscard]] constexpr virtual std::string print(const Context &) const = 0;
+			[[nodiscard]] constexpr virtual Compiled::NodeType<RetType> compile(const Context &) const = 0;
+			[[nodiscard]] constexpr virtual std::string print(const Context &, Step) const = 0;
 			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			constexpr virtual ~interface() = default;
@@ -29,8 +31,12 @@ namespace Formula {
 		struct implementation final : interface {
 			constexpr explicit(true) implementation(Fn fn) : fn{fn} {}
 
-			[[nodiscard]] constexpr std::string print(const Context &context) const override {
-				return fn.print(context, Step::none);
+			[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const override {
+				auto compiled = fn.compile(context);
+				return compiled;
+			}
+			[[nodiscard]] constexpr std::string print(const Context &context, Step step) const override {
+				return fn.print(context, step);
 			}
 			[[nodiscard]] constexpr RetType eval(const Context &context) const override {
 				return fn.eval(context);
@@ -71,8 +77,11 @@ namespace Formula {
 		}
 		constexpr NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
 
-		[[nodiscard]] constexpr std::string print(const Context &context) const {
-			return fn->print(context);
+		[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const {
+			return fn->compile(context);
+		}
+		[[nodiscard]] constexpr std::string print(const Context &context, Step step = Step::none) const {
+			return fn->print(context, step);
 		}
 		[[nodiscard]] constexpr RetType eval(const Context &context) const {
 			return fn->eval(context);
@@ -92,6 +101,6 @@ namespace Formula {
 
 	using FloatNode = NodeType<float>;
 	using BoolNode = NodeType<bool>;
-	using IntNode = NodeType<uint32_t>;
+	using IntNode = NodeType<int32_t>;
 	using ElementNode = NodeType<Utils::JankyOptional<Misc::Element>>;
 }// namespace Formula

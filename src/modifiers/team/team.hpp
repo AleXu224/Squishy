@@ -12,11 +12,22 @@ namespace Modifiers::Team {
 	using namespace Formula::Operators;
 	template<auto characterStat, auto weaponStat, auto artifactStat>
 	struct Frm {
+		using Ret = RetType<characterStat>;
+		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
+			Formula::Compiled::NodeType<Ret> ret = Formula::Compiled::Constant<Ret>{};
+			for (const auto &character: context.team.characters) {
+				using namespace Formula::Compiled::Operators;
+				if (!character) continue;// Val is a constant of 0 by default, no need to do anything
+				auto newContext = context.withSource(character->loadout);
+				ret = ret + (characterStat + weaponStat + artifactStat).compile(newContext);
+			}
+			return ret;
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (characterStat + weaponStat + artifactStat).print(context, prevStep);
 		}
 
-		using Ret = RetType<characterStat>;
 
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			Ret total = 0;

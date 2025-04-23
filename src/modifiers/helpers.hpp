@@ -16,7 +16,10 @@ namespace Modifiers {
 	template<class T>
 	using StatType = T::_Value T::*;
 	template<class T>
-	using SkillType = std::pair<typename T::_SkillValue T::*, typename T::_Value T::_SkillValue::*>;
+	struct SkillType{
+		T::_SkillValue T::* first;
+		T::_Value T::_SkillValue::* second;
+	};
 
 	template<class T>
 	using TalentType = T::Type T::*;

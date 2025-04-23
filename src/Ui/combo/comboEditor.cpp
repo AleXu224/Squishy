@@ -152,6 +152,9 @@ namespace {
 			auto node = Formula::ComboOptionOverride{
 				.overrides = entry.options,
 				.node = Formula::Custom{
+					.compileFunc = [](const Formula::Context &ctx) {
+						return Formula::Compiled::ConstantFloat{.value = 0.f}.wrap();
+					},
 					.func = [&](const Formula::Context &ctx) {
 						for (auto &opt: entry.options) {
 							for (const auto &character: ctx.team.characters) {

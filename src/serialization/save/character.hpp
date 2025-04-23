@@ -16,9 +16,9 @@ namespace Serialization::Save {
 		uint8_t constellation;
 		uint8_t level;
 		uint8_t ascension;
-		uint32_t normalLevel;
-		uint32_t skillLevel;
-		uint32_t burstLevel;
+		int32_t normalLevel;
+		int32_t skillLevel;
+		int32_t burstLevel;
 		::Artifact::InstanceKey artifactFlower;
 		::Artifact::InstanceKey artifactPlume;
 		::Artifact::InstanceKey artifactSands;

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "formula/formulaContext.hpp"
+#include "compiled/constant.hpp"
 #include "fmt/core.h"
+#include "formula/formulaContext.hpp"
 #include "misc/element.hpp"
 #include "step.hpp"
 #include "utils/optional.hpp"
@@ -10,6 +11,10 @@
 namespace Formula {
 	struct Infusion {
 		::Misc::Element element;
+
+		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
+			return Compiled::ConstantElement{.value = element};
+		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", Utils::Stringify(element));
@@ -21,6 +26,10 @@ namespace Formula {
 	};
 
 	struct NoInfusion {
+		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
+			return Compiled::ConstantElement{};
+		}
+
 		[[nodiscard]] static std::string print(const Context &, Step) {
 			return "None";
 		}

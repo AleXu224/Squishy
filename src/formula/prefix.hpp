@@ -10,8 +10,13 @@ namespace Formula {
 		std::string_view prefix;
 		T val;
 
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+			return val.compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", prefix, val.eval(context));
+			// return fmt::format("{} {}", prefix, val.eval(context));
+			return "";
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

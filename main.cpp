@@ -30,6 +30,21 @@ int main() {
 
 	enemy.first->second.stats.sheet.level.constant = 100.f;
 
+	// auto &cyno = Store::characters.at({3});
+	// auto &team = Store::teams.at({2});
+
+	// auto ctx = Formula::Context{
+	// 	.source = cyno.loadout,
+	// 	.active = cyno.loadout,
+	// 	.team = team.stats,
+	// 	.enemy = enemy.first->second.stats,
+	// };
+
+	// auto source = Combo::Source::Character{.key{cyno.dataKey}, .slot = Node::CharacterSlot::burst, .index = 0};
+	// auto resolved = source.resolve({});
+	// auto compiled = resolved.formula.compile(ctx);
+	// std::println("{}", compiled.eval(ctx));
+
 	using namespace squi;
 	Window window{};
 	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");

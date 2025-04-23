@@ -5,11 +5,15 @@
 namespace Modifiers::Artifact {
 	template<auto sheetPre, auto sheetPost>
 	struct DisplayStatsFrm {
+		using Ret = RetType<sheetPre>;
+
+		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
+			return (sheetPre + sheetPost).compile(context);
+		}
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (sheetPre + sheetPost).print(context, prevStep);
 		}
-
-		using Ret = RetType<sheetPre>;
 
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			return (sheetPre + sheetPost).eval(context);
