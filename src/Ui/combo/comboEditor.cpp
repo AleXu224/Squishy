@@ -153,7 +153,7 @@ namespace {
 				.overrides = entry.options,
 				.node = Formula::Custom{
 					.compileFunc = [](const Formula::Context &ctx) {
-						return Formula::Compiled::ConstantFloat(0.f);
+						return Formula::Compiled::ConstantFloat{.value = 0.f}.wrap();
 					},
 					.func = [&](const Formula::Context &ctx) {
 						for (auto &opt: entry.options) {

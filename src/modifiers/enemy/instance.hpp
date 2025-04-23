@@ -11,7 +11,7 @@
 namespace Modifiers::Enemy {
 	template<SheetMember<Stats::EnemySheet<Stats::Value<float, 0>>> stat, SheetMemberIdentifier member>
 	struct InstanceStats {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return stat.resolve(context.enemy.sheet).compile(context);
 		}
 

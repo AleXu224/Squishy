@@ -11,7 +11,7 @@ namespace Formula {
 		float value;
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantFloat(value);
+			return Compiled::ConstantFloat{.value = value}.wrap();
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -26,7 +26,7 @@ namespace Formula {
 		float value;
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantFloat(value);
+			return Compiled::ConstantFloat{.value = value}.wrap();
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -41,7 +41,7 @@ namespace Formula {
 		bool value;
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantBool(value);
+			return Compiled::ConstantBool{.value = value}.wrap();
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -53,17 +53,17 @@ namespace Formula {
 		}
 	};
 	struct ConstantInt {
-		uint32_t value;
+		int32_t value;
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(value);
+			return Compiled::ConstantInt{.value = value}.wrap();
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", value);
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &) const {
+		[[nodiscard]] int32_t eval(const Context &) const {
 			return value;
 		}
 	};

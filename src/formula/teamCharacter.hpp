@@ -32,8 +32,8 @@ namespace Formula {
 	};
 
 	struct TeamInfusion {
-		[[nodiscard]] static Compiled::ConstantElement compile(const Context &context) {
-			return {eval(context)};
+		[[nodiscard]] static Compiled::ElementNode compile(const Context &context) {
+			return Compiled::ConstantElement{.value = eval(context)};
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -66,15 +66,15 @@ namespace Formula {
 	};
 
 	struct TeamCharacterCount {
-		[[nodiscard]] Compiled::ConstantInt compile(const Context &context) const {
-			return {eval(context)};
+		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team character count {}", eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (character) ret++;
@@ -87,8 +87,8 @@ namespace Formula {
 	struct CharacterTeamInfusion {
 		Formula::ElementNode val;
 
-		[[nodiscard]] Compiled::ConstantElement compile(const Context &context) const {
-			return {eval(context)};
+		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
+			return Compiled::ConstantElement{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

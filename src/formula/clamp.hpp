@@ -18,9 +18,9 @@ namespace Formula {
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
 			return Compiled::MaxMaker(
-				Compiled::Constant<RetType>{min},
+				Compiled::Constant<RetType>{.value = min}.wrap(),
 				Compiled::MinMaker(
-					Compiled::Constant<RetType>{max},
+					Compiled::Constant<RetType>{.value = max}.wrap(),
 					val1.compile(context)
 				)
 			);
@@ -47,7 +47,7 @@ namespace Formula {
 		[[nodiscard]] inline auto compile(const Context &context) const {
 			return Compiled::MinMaker(
 				val1.compile(context),
-				Compiled::Constant<RetType>{val2}
+				Compiled::Constant<RetType>{.value = val2}.wrap()
 			);
 		}
 
@@ -72,7 +72,7 @@ namespace Formula {
 		[[nodiscard]] inline auto compile(const Context &context) const {
 			return Compiled::MaxMaker(
 				val1.compile(context),
-				Compiled::Constant<RetType>{val2}
+				Compiled::Constant<RetType>{.value = val2}.wrap()
 			);
 		}
 

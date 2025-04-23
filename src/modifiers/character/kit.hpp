@@ -1,7 +1,6 @@
 #pragma once
 
 #include "character/data.hpp"
-#include "formula/compiled/constantOrValue.hpp"
 #include "modifiers/enemyFactory.hpp"
 #include "modifiers/helpers.hpp"// IWYU pragma: keep
 #include "modifiers/statFactory.hpp"
@@ -17,11 +16,10 @@ namespace Modifiers::Character::Kit {
 		struct Frm {
 			using Ret = RetTypeMember<stat>;
 
-			using CompileRet = Formula::Compiled::ConstantOr<Ret, Formula::Compiled::NodeType<Ret>>;
-			[[nodiscard]] CompileRet compile(const Formula::Context &context) const {
+			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
 				const auto &mod = stat.resolve(std::invoke(location, context.source.character.data.data.mods));
-				if (!mod.hasValue()) return CompileRet(Formula::Compiled::Constant<Ret>{});
-				return CompileRet(mod.compile(context));
+				if (!mod.hasValue()) return Formula::Compiled::Constant<Ret>{};
+				return mod.compile(context);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

@@ -5,74 +5,64 @@
 
 namespace Formula::Compiled {
 	template<ArithmeticFormula T>
-	struct Monomial {
+	struct Monomial : FormulaBase<typename T::Type, Type::monomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		RetType sumParam = 0.f;
-		RetType multParam = 1.f;
+		mutable RetType sumParam = 0.f;
+		mutable RetType multParam = 1.f;
 
-		[[nodiscard]] Monomial add(RetType value) const {
-			Monomial ret = *this;
-			ret.sumParam += value;
-			return ret;
+		[[nodiscard]] const Monomial &add(RetType value) const {
+			sumParam += value;
+			return *this;
 		}
 
-		[[nodiscard]] Monomial subtract(RetType value) const {
-			Monomial ret = *this;
-			ret.sumParam -= value;
-			return ret;
+		[[nodiscard]] const Monomial &subtract(RetType value) const {
+			sumParam -= value;
+			return *this;
 		}
 
-		[[nodiscard]] Monomial mult(RetType value) const {
-			Monomial ret = *this;
-			ret.sumParam *= value;
-			ret.multParam *= value;
-			return ret;
+		[[nodiscard]] const Monomial &mult(RetType value) const {
+			sumParam *= value;
+			multParam *= value;
+			return *this;
 		}
 
-		[[nodiscard]] Monomial divide(RetType value) const {
-			Monomial ret = *this;
-			ret.sumParam /= value;
-			ret.multParam /= value;
-			return ret;
+		[[nodiscard]] const Monomial &divide(RetType value) const {
+			sumParam /= value;
+			multParam /= value;
+			return *this;
 		}
 
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return sumParam + multParam * value.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return value.isConstant();
-		}
 	};
 
 	template<ArithmeticFormula T>
-	struct SumMonomial {
+	struct SumMonomial : FormulaBase<typename T::Type, Type::summonomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		RetType sumParam = 0.f;
+		mutable RetType sumParam = 0.f;
 
-		[[nodiscard]] SumMonomial add(RetType value) const {
-			SumMonomial ret = *this;
-			ret.sumParam += value;
-			return ret;
+		[[nodiscard]] const SumMonomial &add(RetType value) const {
+			sumParam += value;
+			return *this;
 		}
 
-		[[nodiscard]] SumMonomial subtract(RetType value) const {
-			SumMonomial ret = *this;
-			ret.sumParam -= value;
-			return ret;
+		[[nodiscard]] const SumMonomial &subtract(RetType value) const {
+			sumParam -= value;
+			return *this;
 		}
 
 		[[nodiscard]] Monomial<T> mult(RetType value) const {
-			auto ret = Monomial<T>{this->value};
+			auto ret = Monomial<T>{.value = std::move(this->value)};
 			ret = ret.add(sumParam);
 			ret = ret.mult(value);
 			return ret;
 		}
 
 		[[nodiscard]] Monomial<T> divide(RetType value) const {
-			auto ret = Monomial<T>{this->value};
+			auto ret = Monomial<T>{.value = std::move(this->value)};
 			ret = ret.add(sumParam);
 			ret = ret.divide(value);
 			return ret;
@@ -81,50 +71,40 @@ namespace Formula::Compiled {
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return sumParam + value.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return value.isConstant();
-		}
 	};
 
 	template<ArithmeticFormula T>
-	struct ProdMonomial {
+	struct ProdMonomial : FormulaBase<typename T::Type, Type::prodmonomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		RetType multParam = 1.f;
+		mutable RetType multParam = 1.f;
 
 		Monomial<T> add(RetType value) const {
-			auto ret = Monomial<T>{this->value};
+			auto ret = Monomial<T>{.value = std::move(this->value)};
 			ret = ret.mult(multParam);
 			ret = ret.add(value);
 			return ret;
 		}
 
 		Monomial<T> subtract(RetType value) const {
-			auto ret = Monomial<T>{this->value};
+			auto ret = Monomial<T>{.value = std::move(this->value)};
 			ret = ret.mult(multParam);
 			ret = ret.subtract(value);
 			return ret;
 		}
 
-		ProdMonomial mult(RetType value) const {
-			ProdMonomial ret = *this;
-			ret.multParam *= value;
-			return ret;
+		const ProdMonomial &mult(RetType value) const {
+			multParam *= value;
+			return *this;
 		}
 
-		ProdMonomial divide(RetType value) const {
-			ProdMonomial ret = *this;
-			ret.multParam /= value;
-			return ret;
+		const ProdMonomial &divide(RetType value) const {
+			multParam /= value;
+			return *this;
 		}
 
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return multParam * value.eval(context);
-		}
-
-		[[nodiscard]] bool isConstant() const {
-			return value.isConstant();
 		}
 	};
 }// namespace Formula::Compiled

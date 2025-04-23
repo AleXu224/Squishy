@@ -33,9 +33,6 @@ namespace Formula {
 
 			[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const override {
 				auto compiled = fn.compile(context);
-				if (compiled.isConstant()) {
-					return Compiled::NodeType<RetType>(compiled.eval(context));
-				}
 				return compiled;
 			}
 			[[nodiscard]] constexpr std::string print(const Context &context, Step step) const override {
@@ -104,6 +101,6 @@ namespace Formula {
 
 	using FloatNode = NodeType<float>;
 	using BoolNode = NodeType<bool>;
-	using IntNode = NodeType<uint32_t>;
+	using IntNode = NodeType<int32_t>;
 	using ElementNode = NodeType<Utils::JankyOptional<Misc::Element>>;
 }// namespace Formula

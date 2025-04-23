@@ -12,8 +12,8 @@ namespace Formula {
 	struct Infusion {
 		::Misc::Element element;
 
-		[[nodiscard]] Compiled::ConstantElement compile(const Context &context) const {
-			return Compiled::ConstantElement(element);
+		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
+			return Compiled::ConstantElement{.value = element};
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -26,8 +26,8 @@ namespace Formula {
 	};
 
 	struct NoInfusion {
-		[[nodiscard]] Compiled::ConstantElement compile(const Context &context) const {
-			return Compiled::ConstantElement();
+		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
+			return Compiled::ConstantElement{};
 		}
 
 		[[nodiscard]] static std::string print(const Context &, Step) {

@@ -11,9 +11,9 @@
 
 namespace Formula {
 	struct EnemyDef {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
 			using namespace Compiled::Operators;
-			return ((Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFReduction.compile(context)) * Compiled::ConstantFloat(5.f) * Modifiers::totalEnemy.level.compile(context)) + Compiled::ConstantFloat(500.f);
+			return ((Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy.DEFReduction.compile(context)) * Compiled::ConstantFloat{.value = 5.f}.wrap() * Modifiers::totalEnemy.level.compile(context)) + Compiled::ConstantFloat{.value = 500.f}.wrap();
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -26,13 +26,13 @@ namespace Formula {
 	};
 
 	struct EnemyDefMultiplier {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
 			using namespace Compiled::Operators;
-			const auto characterLevel = Compiled::ConstantFloat(context.source.character.sheet.level);
+			const auto characterLevel = Compiled::ConstantFloat{.value = static_cast<float>(context.source.character.sheet.level)}.wrap();
 			const auto enemyLevel = Modifiers::totalEnemy.level.compile(context);
-			const auto k = (Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFReduction.compile(context)) * (Compiled::ConstantFloat(1.f) - Modifiers::totalEnemy.DEFIgnored.compile(context));
+			const auto k = (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy.DEFReduction.compile(context)) * (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy.DEFIgnored.compile(context));
 
-			return (characterLevel + Compiled::ConstantFloat(100.f)) / (k * (enemyLevel + Compiled::ConstantFloat(100.f)) + (characterLevel + Compiled::ConstantFloat(100.f)));
+			return (characterLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()) / (k * (enemyLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()) + (characterLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()));
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -52,22 +52,23 @@ namespace Formula {
 		Misc::AttackSource attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
 
-		[[nodiscard]] auto compile(const Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			using namespace Compiled::Operators;
 			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any character that has either
 			// an infusion or res shred that relies on artifact stats then this will break
 			const auto attackElement = getElement(attackSource, element, context);
 			auto RES = Stats::evalEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement, context);
 
-			return Compiled::IfElseMaker(
-				Compiled::ConstantFloat(RES) < Compiled::ConstantFloat(0.f),
-				Compiled::ConstantFloat(1.f) - (Compiled::ConstantFloat(RES) / Compiled::ConstantFloat(2.f)),
-				Compiled::IfElseMaker(
-					Compiled::ConstantFloat(RES) < Compiled::ConstantFloat(0.75f),
-					Compiled::ConstantFloat(1.f) - Compiled::ConstantFloat(RES),
-					Compiled::ConstantFloat(1.f) - (Compiled::ConstantFloat(4.f) * Compiled::ConstantFloat(RES) + Compiled::ConstantFloat(1.f))
-				)
-			);
+			return Compiled::IfElse{
+				.requirement = Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.f}.wrap(),
+				.trueVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - (Compiled::ConstantFloat{.value = RES}.wrap() / Compiled::ConstantFloat{.value = 2.f}.wrap()),
+				.elseVal = Compiled::IfElse{
+					.requirement = Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.75f}.wrap(),
+					.trueVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = RES}.wrap(),
+					.elseVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = 4.f}.wrap() * Compiled::ConstantFloat{.value = RES}.wrap() + Compiled::ConstantFloat{.value = 1.f}.wrap()
+				}
+							   .wrap()
+			};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

@@ -20,7 +20,7 @@ namespace Stats {
 			.cr{.constant = 0.05f},
 			.cd{.constant = 0.5f},
 		};
-		Talents<Stats::Value<uint32_t, 1>> talents{};
+		Talents<Stats::Value<int32_t, 1>> talents{};
 
 		void init(Stats::Loadout &stats);
 	};

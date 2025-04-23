@@ -12,8 +12,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->stats.baseHp.modifiers.at(0) = Formula::Prefix(
 		"Character Base",
 		Formula::Custom(
-			[](const Formula::Context &context) {
-				return Formula::Compiled::ConstantFloat(context.source.character.base.getHpAt(context.source.character.sheet.level, context.source.character.sheet.ascension));
+			[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
+				return Formula::Compiled::ConstantFloat{.value = context.source.character.base.getHpAt(context.source.character.sheet.level, context.source.character.sheet.ascension)};
 			},
 			[](const Formula::Context &context) {
 				return context.source.character.base.getHpAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
@@ -26,8 +26,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->stats.baseAtk.modifiers.at(0) = Formula::Prefix(
 		"Character Base",
 		Formula::Custom(
-			[](const Formula::Context &context) {
-				return Formula::Compiled::ConstantFloat(context.source.character.base.getAtkAt(context.source.character.sheet.level, context.source.character.sheet.ascension));
+			[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
+				return Formula::Compiled::ConstantFloat{.value = context.source.character.base.getAtkAt(context.source.character.sheet.level, context.source.character.sheet.ascension)};
 			},
 			[](const Formula::Context &context) {
 				return context.source.character.base.getAtkAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
@@ -40,8 +40,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->stats.baseDef.modifiers.at(0) = Formula::Prefix(
 		"Character Base",
 		Formula::Custom(
-			[](const Formula::Context &context) {
-				return Formula::Compiled::ConstantFloat(context.source.character.base.getDefAt(context.source.character.sheet.level, context.source.character.sheet.ascension));
+			[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
+				return Formula::Compiled::ConstantFloat{.value = context.source.character.base.getDefAt(context.source.character.sheet.level, context.source.character.sheet.ascension)};
 			},
 			[](const Formula::Context &context) {
 				return context.source.character.base.getDefAt(context.source.character.sheet.level, context.source.character.sheet.ascension);
@@ -54,8 +54,8 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->stats.fromStat(stats.character.base.ascensionStat).modifiers.at(0) = Formula::Prefix(
 		"Character Base",
 		Formula::Custom(
-			[](const Formula::Context &context) {
-				return Formula::Compiled::ConstantFloat(context.source.character.base.getAscensionStatAt(context.source.character.sheet.ascension));
+			[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
+				return Formula::Compiled::ConstantFloat{.value = context.source.character.base.getAscensionStatAt(context.source.character.sheet.ascension)};
 			},
 			[](const Formula::Context &context) {
 				return context.source.character.base.getAscensionStatAt(context.source.character.sheet.ascension);

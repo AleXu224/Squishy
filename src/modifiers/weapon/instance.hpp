@@ -11,7 +11,7 @@
 namespace Modifiers::Weapon {
 	template<SheetMember<Stats::Sheet<Stats::Value<float, 1>>> stat, SheetMemberIdentifier member>
 	struct InstanceStats {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return stat.resolve(context.source.weapon->sheet.stats).compile(context);
 		}
 

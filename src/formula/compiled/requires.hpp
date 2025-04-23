@@ -1,13 +1,13 @@
 #pragma once
 
-#include "constantOrValue.hpp"
+#include "constant.hpp"
 #include "formula/formulaContext.hpp"
 #include "intermediary.hpp"
 
 
 namespace Formula::Compiled {
 	template<BoolFormula T, class V>
-	struct Requires {
+	struct Requires : FormulaBase<typename V::Type> {
 		T cond;
 		V ret;
 
@@ -17,33 +17,28 @@ namespace Formula::Compiled {
 			if (!condVal) return RetType{};
 			return ret.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return cond.isConstant() && ret.isConstant();
-		}
 	};
 
-	[[nodiscard]] auto RequiresMaker(const Formula::Context &context, const BoolFormula auto &cond, const auto &ret) {
-		if constexpr (std::is_same_v<std::remove_cvref_t<decltype(cond)>, ConstantBool>) {
-			using EvalType = std::remove_cvref_t<decltype(ret.eval(std::declval<const Formula::Context &>()))>;
-			using RetType = std::conditional_t<
-				ConstantFormula<std::remove_cvref_t<decltype(ret)>>,
-				Constant<EvalType>,
-				ConstantOr<EvalType, std::remove_cvref_t<decltype(ret)>>>;
-			if (cond.value)
-				return RetType(ret);
+	[[nodiscard]] auto RequiresMaker(const BoolFormula auto &cond, const auto &ret) {
+		auto type1 = cond.getType();
+
+		if (type1 == Type::constant) {
+			auto val1 = cond.getConstantValue();
+			if (val1)
+				return ret;
 			else
-				return RetType();
-		} else {
-			return Requires{
-				.index = cond,
-				.ret = ret,
-			};
+				return Constant<FormulaType<decltype(ret)>>{}.wrap();
 		}
+
+		return Requires{
+			.cond = cond,
+			.ret = ret,
+		}
+			.wrap();
 	}
 
 	template<BoolFormula T, FormulaLike V, FormulaLike U>
-	struct IfElse {
+	struct IfElse : FormulaBase<typename V::Type> {
 		T requirement;
 		V trueVal;
 		U elseVal;
@@ -58,30 +53,24 @@ namespace Formula::Compiled {
 
 			return elseVal.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return requirement.isConstant() && trueVal.isConstant() && elseVal.isConstant();
-		}
 	};
 
 	[[nodiscard]] auto IfElseMaker(const BoolFormula auto &requirement, const FormulaLike auto &trueVal, const FormulaLike auto &elseVal) {
-		if constexpr (ConstantFormula<std::remove_cvref_t<decltype(requirement)>>) {
-			if constexpr (std::is_same_v<std::remove_cvref_t<decltype(trueVal)>, std::remove_cvref_t<decltype(elseVal)>>) {
-				if (requirement.value) {
-					return trueVal;
-				} else {
-					return elseVal;
-				}
-			} else {
-				using RetType = ValueOr<std::remove_cvref_t<decltype(trueVal)>, std::remove_cvref_t<decltype(elseVal)>>;
-				if (requirement.value) {
-					return RetType{trueVal};
-				} else {
-					return RetType{elseVal};
-				}
-			}
-		} else {
-			return IfElse{requirement, trueVal, elseVal};
+		auto type1 = requirement.getType();
+
+		if (type1 == Type::constant) {
+			auto val1 = requirement.getConstantValue();
+
+			if (val1)
+				return trueVal;
+			else
+				return elseVal;
 		}
+		return IfElse{
+			.requirement = requirement,
+			.trueVal = trueVal,
+			.elseVal = elseVal,
+		}
+			.wrap();
 	}
 }// namespace Formula::Compiled

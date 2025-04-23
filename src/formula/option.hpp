@@ -9,8 +9,8 @@ namespace Formula {
 	struct impl_IsActive {
 		Utils::HashedString name;
 
-		[[nodiscard]] Compiled::ConstantBool compile(const Context &context) const {
-			return Compiled::ConstantBool(eval(context));
+		[[nodiscard]] Compiled::BoolNode compile(const Context &context) const {
+			return Compiled::ConstantBool{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -25,8 +25,8 @@ namespace Formula {
 	struct impl_IsActivePassive {
 		Utils::HashedString name;
 
-		[[nodiscard]] Compiled::ConstantBool compile(const Context &context) const {
-			return Compiled::ConstantBool(eval(context));
+		[[nodiscard]] Compiled::BoolNode compile(const Context &context) const {
+			return Compiled::ConstantBool{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
@@ -42,8 +42,8 @@ namespace Formula {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
-		[[nodiscard]] Compiled::ConstantFloat compile(const Context &context) const {
-			return Compiled::ConstantFloat(eval(context));
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+			return Compiled::ConstantFloat{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
@@ -59,15 +59,15 @@ namespace Formula {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;
 
-		[[nodiscard]] Compiled::ConstantInt compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			return ::Option::getInt(context.source.options, name, defaultValue);
 		}
 	};

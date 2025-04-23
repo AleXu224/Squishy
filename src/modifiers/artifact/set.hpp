@@ -1,7 +1,6 @@
 #pragma once
 
 #include "artifact/set.hpp"
-#include "formula/compiled/constantOrValue.hpp"
 #include "formula/formulaContext.hpp"
 #include "formula/operators.hpp"// IWYU pragma: keep
 #include "modifiers/enemyFactory.hpp"
@@ -38,17 +37,13 @@ namespace Modifiers::Artifact::Set {
 			using Ret = RetTypeMember<stat>;
 			using CompiledRet = decltype(stat.resolve(std::invoke(location, std::invoke(location2, std::declval<const Formula::Context &>().source.artifact).value().bonusPtr.mods)).compile(std::declval<const Formula::Context &>()));
 
-			[[nodiscard]] Formula::Compiled::ConstantOr<Ret, CompiledRet> compile(const Formula::Context &context) const {
+			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
 				const auto &bonus = std::invoke(location2, context.source.artifact);
-				if (!bonus) return {
-					.val = Formula::Compiled::Constant<Ret>{0},
-				};
+				if (!bonus) return Formula::Compiled::Constant<Ret>{};
 				const auto &val = bonus.value();
 				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
-				if (!mod.hasValue()) return {.val = Formula::Compiled::Constant<Ret>{0}};
-				return {
-					.val = mod.compile(context),
-				};
+				if (!mod.hasValue()) return Formula::Compiled::Constant<Ret>{};
+				return mod.compile(context);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

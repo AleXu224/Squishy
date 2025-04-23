@@ -6,10 +6,10 @@
 namespace Modifiers::Weapon {
 	template<auto weaponPassivePre, auto weaponPassivePost, auto weaponInstance>
 	struct Frm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (weaponPassivePre + weaponPassivePost + weaponInstance).compile(context);
 		}
-		
+
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
 			return (weaponPassivePre + weaponPassivePost + weaponInstance).print(context, prevStep);
 		}

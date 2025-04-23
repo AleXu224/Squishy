@@ -15,7 +15,7 @@ namespace Modifiers {
 	using namespace Formula::Operators;
 	template<auto characterKitStat, auto characterInstanceStat, auto weaponPassiveStat, auto weaponInstanceStat, auto artifactSetStat, auto artifactSubStats, auto teamPreStat, auto teamResonances>
 	struct PreModFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (characterKitStat + characterInstanceStat + weaponPassiveStat + weaponInstanceStat + artifactSetStat + artifactSubStats + teamPreStat + teamResonances).compile(context);
 		}
 

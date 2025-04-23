@@ -27,14 +27,14 @@ namespace Formula {
 		std::array<float, 15> values;
 		Utils::EntryType type = Utils::EntryType::multiplier;
 
-		[[nodiscard]] auto compile(const Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			switch (talent) {
 				case LevelableTalent::normal:
-					return Compiled::IndexMaker(Modifiers::totalTalents.normal.compile(context), values);
+					return Compiled::Index{.index = Modifiers::totalTalents.normal.compile(context), .indexable = values};
 				case LevelableTalent::skill:
-					return Compiled::IndexMaker(Modifiers::totalTalents.skill.compile(context), values);
+					return Compiled::Index{.index = Modifiers::totalTalents.skill.compile(context), .indexable = values};
 				case LevelableTalent::burst:
-					return Compiled::IndexMaker(Modifiers::totalTalents.burst.compile(context), values);
+					return Compiled::Index{.index = Modifiers::totalTalents.burst.compile(context), .indexable = values};
 			}
 			std::unreachable();
 		}
@@ -54,8 +54,8 @@ namespace Formula {
 	}
 
 	struct LevelMultiplier {
-		[[nodiscard]] static Compiled::ConstantFloat compile(const Context &context) {
-			return {eval(context)};
+		[[nodiscard]] static Compiled::FloatNode compile(const Context &context) {
+			return Compiled::ConstantFloat{.value = eval(context)};
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {

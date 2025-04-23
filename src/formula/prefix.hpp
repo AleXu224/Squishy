@@ -10,7 +10,7 @@ namespace Formula {
 		std::string_view prefix;
 		T val;
 
-		[[nodiscard]] auto compile(const Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			return val.compile(context);
 		}
 

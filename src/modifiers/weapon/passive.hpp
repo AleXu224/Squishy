@@ -1,6 +1,5 @@
 #pragma once
 
-#include "formula/compiled/constantOrValue.hpp"
 #include "formula/formulaContext.hpp"
 #include "modifiers/enemyFactory.hpp"
 #include "modifiers/helpers.hpp"// IWYU pragma: keep
@@ -18,10 +17,10 @@ namespace Modifiers::Weapon::Passive {
 		struct Frm {
 			using Ret = RetTypeMember<stat>;
 
-			[[nodiscard]] Formula::Compiled::ConstantOr<Ret, Formula::Compiled::NodeType<Ret>> compile(const Formula::Context &context) const {
+			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
 				auto node = stat.resolve(std::invoke(location, context.source.weapon->data->data.mods));
-				if (!node.hasValue()) return {Formula::Compiled::Constant<Ret>{}};
-				return {node.compile(context)};
+				if (!node.hasValue()) return Formula::Compiled::Constant<Ret>{};
+				return node.compile(context);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

@@ -12,7 +12,11 @@ namespace Formula {
 
 		[[nodiscard]] inline auto compile(const Context &context) const {
 			using namespace Compiled::Operators;
-			return val1.compile(context) - val2.compile(context);
+			auto ret = val1.compile(context) - val2.compile(context);
+			// if (ret.eval(context) != eval(context)) {
+			// 	fmt::println("{} vs {}", ret.eval(context), eval(context));
+			// }
+			return ret;
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {

@@ -5,123 +5,87 @@
 
 namespace Formula::Compiled {
 	template<FormulaLike T, FormulaLike V>
-	struct Equal {
+	struct Equal : FormulaBase<bool, Type::none> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) == val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 
 	template<FormulaLike T, FormulaLike V>
-	struct NotEqual {
+	struct NotEqual : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) != val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 
 	template<BoolFormula T>
-	struct Not {
+	struct Not : FormulaBase<bool> {
 		T val;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return !val.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val.isConstant();
-		}
 	};
 
 	template<ArithmeticFormula T, ArithmeticFormula V>
-	struct Less {
+	struct Less : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) < val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 	template<ArithmeticFormula T, ArithmeticFormula V>
-	struct LessEqual {
+	struct LessEqual : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) <= val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 	template<ArithmeticFormula T, ArithmeticFormula V>
-	struct Greater {
+	struct Greater : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) > val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 	template<ArithmeticFormula T, ArithmeticFormula V>
-	struct GreaterEqual {
+	struct GreaterEqual : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) >= val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 
 	template<BoolFormula T, BoolFormula V>
-	struct And {
+	struct And : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) && val2.eval(context);
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
-		}
 	};
 	template<BoolFormula T, BoolFormula V>
-	struct Or {
+	struct Or : FormulaBase<bool> {
 		T val1;
 		V val2;
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
 			return val1.eval(context) || val2.eval(context);
-		}
-
-		[[nodiscard]] bool isConstant() const {
-			return val1.isConstant() && val2.isConstant();
 		}
 	};
 }// namespace Formula::Compiled

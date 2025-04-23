@@ -14,9 +14,9 @@ namespace Serialization::Good {
 		uint8_t ascension;
 
 		struct Talent {
-			uint32_t auto_;
-			uint32_t skill;
-			uint32_t burst;
+			int32_t auto_;
+			int32_t skill;
+			int32_t burst;
 		} talent;
 
 		static ICharacter fromInstance(const Character::Instance &character);

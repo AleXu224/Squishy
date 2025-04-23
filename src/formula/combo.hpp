@@ -3,6 +3,7 @@
 #include "character/instance.hpp"
 #include "combo/option.hpp"
 #include "compiled/node.hpp"
+#include "compiled/operators.hpp"
 #include "fmt/core.h"
 #include "formula/node.hpp"
 #include "formulaContext.hpp"
@@ -19,41 +20,15 @@ namespace Formula {
 		};
 		std::vector<Entry> nodes;
 
-		struct Compiled {
-			struct Entry {
-				float multiplier;
-				std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction;
-				Formula::Compiled::FloatNode node;
-			};
-			std::vector<Entry> nodes;
+		[[nodiscard]] inline Formula::Compiled::FloatNode compile(const Context &context) const {
+			using namespace Formula::Compiled::Operators;
+			Formula::Compiled::FloatNode ret = Formula::Compiled::ConstantFloat();
 
-			[[nodiscard]] float eval(const Formula::Context &context) const {
-				float ret = 0;
-				for (const auto &node: nodes) {
-					ret += node.multiplier * node.node.eval(context.withReaction(node.reaction));
-				}
-				return ret;
-			}
-
-			[[nodiscard]] bool isConstant() const {
-				for (const auto &node: nodes) {
-					if (!node.node.isConstant()) return false;
-				}
-				return true;
-			}
-		};
-
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			std::vector<Compiled::Entry> compiledNodes;
 			for (const auto &node: nodes) {
-				compiledNodes.emplace_back(Compiled::Entry{
-					.multiplier = node.multiplier,
-					.reaction = node.reaction,
-					.node = node.node.compile(context.withReaction(node.reaction)),
-				});
+				ret = ret + (Formula::Compiled::FloatNode(Formula::Compiled::ConstantFloat{.value = node.multiplier}) * node.node.compile(context.withReaction(node.reaction)));
 			}
 
-			return Compiled{compiledNodes};
+			return ret;
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {

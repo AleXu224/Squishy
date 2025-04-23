@@ -10,7 +10,7 @@
 namespace Modifiers::Team {
 	template<SheetMember<Stats::Sheet<Stats::Value<float, 1>>> stat, SheetMemberIdentifier member>
 	struct ResonanceFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return stat.resolve(context.team.resonances).compile(context);
 		}
 
@@ -24,7 +24,7 @@ namespace Modifiers::Team {
 	};
 	template<SheetMember<Stats::EnemySheet<Stats::Value<float, 1>>> stat, SheetMemberIdentifier member>
 	struct EnemyResonanceFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return stat.resolve(context.team.resonancesEnemy).compile(context);
 		}
 

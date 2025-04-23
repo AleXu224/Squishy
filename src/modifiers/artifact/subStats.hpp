@@ -1,6 +1,5 @@
 #pragma once
 
-#include "formula/compiled/constantOrValue.hpp"
 #include "formula/formulaContext.hpp"
 #include "formula/percentage.hpp"
 #include "modifiers/helpers.hpp"
@@ -11,7 +10,7 @@
 
 
 namespace Modifiers::Artifact {
-	struct CompiledSubStat {
+	struct CompiledSubStat : Formula::Compiled::FormulaBase<float> {
 		SheetMember<Stats::Sheet<float>> stat;
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -22,23 +21,15 @@ namespace Modifiers::Artifact {
 			}
 			return total;
 		}
-
-		[[nodiscard]] bool isConstant() const {
-			return false;
-		}
 	};
 	template<SheetMember<Stats::Sheet<float>> stat, SheetMemberIdentifier member>
 	struct SubStatFormula {
-		using CompiledRet = Formula::Compiled::ConstantOr<float, CompiledSubStat>;
-
-		[[nodiscard]] CompiledRet compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			if (&context.active != &context.source) {
-				return CompiledRet{Formula::Compiled::ConstantFloat{eval(context)}};
+				return Formula::Compiled::ConstantFloat{.value = eval(context)};
 			}
-			return CompiledRet{
-				CompiledSubStat{
-					.stat = stat,
-				},
+			return CompiledSubStat{
+				.stat = stat,
 			};
 		}
 

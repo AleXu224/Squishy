@@ -29,15 +29,15 @@ namespace Formula {
 	struct ElementCount {
 		::Misc::Element element;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
@@ -50,15 +50,15 @@ namespace Formula {
 	struct ElementCountOthers {
 		::Misc::Element element;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character || &character->loadout == &context.source) continue;
@@ -70,15 +70,15 @@ namespace Formula {
 
 
 	struct SameElementCount {
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team same element count {}", eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character || &character->loadout == &context.source) continue;
@@ -90,15 +90,15 @@ namespace Formula {
 	};
 
 	struct OtherElementCount {
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team other element count {}", eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character || &character->loadout == &context.source) continue;
@@ -110,15 +110,15 @@ namespace Formula {
 	};
 
 	struct PHECCount {
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantInt(eval(context));
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Team other element count {}", eval(context));
 		}
 
-		[[nodiscard]] uint32_t eval(const Context &context) const {
+		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character || &character->loadout == &context.source) continue;
@@ -140,8 +140,8 @@ namespace Formula {
 	struct IsCharacterElement {
 		Misc::Element element;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantBool(eval(context));
+		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
+			return Compiled::ConstantBool{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
@@ -156,8 +156,8 @@ namespace Formula {
 	struct IsActiveCharacterElement {
 		Misc::Element element;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return Compiled::ConstantBool(eval(context));
+		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
+			return Compiled::ConstantBool{.value = eval(context)};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

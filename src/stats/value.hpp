@@ -1,9 +1,11 @@
 #pragma once
 
 #include "cassert"
+#include "formula/compiled/constant.hpp"
+#include "formula/compiled/operators.hpp"// IWYU pragma: keep
 #include "formula/formulaContext.hpp"
 #include "formula/node.hpp"
-#include "ranges"
+
 
 namespace Stats {
 	template<class T, size_t Count>
@@ -15,37 +17,13 @@ namespace Stats {
 		T constant = T{};
 		std::array<Formula::NodeType<T>, Count> modifiers{};
 
-		struct Compiled {
-			T constant;
-			std::array<Formula::Compiled::NodeType<T>, Count> vals{};
+		[[nodiscard]] inline Formula::Compiled::NodeType<T> compile(const Formula::Context &context) const {
+			using namespace Formula::Compiled::Operators;
+			Formula::Compiled::NodeType<T> ret = Formula::Compiled::Constant<T>{.value = constant};
 
-			[[nodiscard]] T eval(const Formula::Context &context) const {
-				T ret = constant;
-				for (const auto &val: vals) {
-					if (!val.hasValue()) continue;
-					ret += val.eval(context);
-				}
-				return ret;
-			}
-
-			[[nodiscard]] bool isConstant() const {
-				for (const auto &val: vals) {
-					if (!val.hasValue()) continue;
-					if (!val.isConstant()) return false;
-				}
-				return true;
-			}
-		};
-
-		[[nodiscard]] inline Compiled compile(const Formula::Context &context) const {
-			Compiled ret{
-				.constant = constant,
-				.vals{},
-			};
-
-			for (auto [retEntry, modifier]: std::views::zip(ret.vals, modifiers)) {
+			for (const auto &modifier: modifiers) {
 				if (!modifier.hasValue()) continue;
-				retEntry = modifier.compile(context);
+				ret = ret + modifier.compile(context);
 			}
 
 			return ret;

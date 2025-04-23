@@ -10,7 +10,7 @@ namespace Modifiers {
 	using namespace Formula::Operators;
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct TotalFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
 		}
 
@@ -33,7 +33,7 @@ namespace Modifiers {
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct TotalActiveFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
 		}
 
@@ -51,7 +51,7 @@ namespace Modifiers {
 	};
 	template<auto characterKitStat, auto weaponPassiveStat, auto artifactSetStat, auto teamPostStat, auto preModStat, SheetMemberIdentifier name>
 	struct DisplayTotalFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).compile(context);
 		}
 
@@ -70,7 +70,7 @@ namespace Modifiers {
 	};
 	template<auto characterKitTalent, auto characterInstanceTalent, auto weaponPassiveTalent, auto artifactSetTalent, auto teamTalent>
 	struct TotalTalentsFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::IntNode compile(const Formula::Context &context) const {
 			return (characterKitTalent + characterInstanceTalent + weaponPassiveTalent + artifactSetTalent + teamTalent).compile(context);
 		}
 
@@ -88,7 +88,7 @@ namespace Modifiers {
 	};
 	template<auto teamStat, auto teamResonanceStat, auto instanceStat, SheetMemberIdentifier name>
 	struct TotalEnemyFrm {
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return (teamStat + teamResonanceStat + instanceStat).compile(context);
 		}
 

@@ -151,8 +151,8 @@ UI::CharacterEditor::operator Child() const {
 	};
 
 	// Talent
-	using TalentType = Talents<Stats::Value<uint32_t, 1>>;
-	auto getTalentSelector = [&](std::string_view name, Stats::Value<uint32_t, 1> TalentType::*talentPtr) {
+	using TalentType = Talents<Stats::Value<int32_t, 1>>;
+	auto getTalentSelector = [&](std::string_view name, Stats::Value<int32_t, 1> TalentType::*talentPtr) {
 		decltype(DropdownButton::textUpdater) talentTextUpdater{};
 		decltype(DropdownButton::itemsUpdater) talentItemUpdater{};
 		Observable<uint8_t> talentUpdateEvent{};
@@ -185,7 +185,7 @@ UI::CharacterEditor::operator Child() const {
 							const auto &ascension = Misc::ascensions.at(newAscension);
 							auto &talentLvl = std::invoke(talentPtr, storage->character.loadout.character.sheet.talents).constant;
 
-							talentLvl = std::min(static_cast<uint32_t>(ascension.maxTalent) - 1, talentLvl);
+							talentLvl = std::min(static_cast<int32_t>(ascension.maxTalent) - 1, talentLvl);
 							talentUpdateEvent.notify(talentLvl);
 							talentItemUpdater.notify(itemBuilder());
 						});

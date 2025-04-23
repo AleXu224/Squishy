@@ -7,16 +7,14 @@
 
 namespace Formula {
 	struct AmplifyingMultiplier {
-		using RetType = Compiled::ConstantOr<float, decltype(std::declval<Reaction::Amplifying>().formula.compile(std::declval<const Context &>()))>;
-
-		[[nodiscard]] RetType compile(const Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			switch (context.reaction.index()) {
 				case 0:
-					return {Compiled::ConstantFloat(1.f)};
+					return Compiled::ConstantFloat{.value = 1.f};
 				case 1:
-					return {std::get<1>(context.reaction)->formula.compile(context)};
+					return std::get<1>(context.reaction)->formula.compile(context);
 				case 2:
-					return {Compiled::ConstantFloat(1.f)};
+					return Compiled::ConstantFloat{.value = 1.f};
 			}
 			std::unreachable();
 		}
@@ -38,16 +36,14 @@ namespace Formula {
 		}
 	};
 	struct AdditiveMultiplier {
-		using RetType = Compiled::ConstantOr<float, decltype(std::declval<Reaction::Additive>().formula.compile(std::declval<const Context &>()))>;
-
-		[[nodiscard]] RetType compile(const Context &context) const {
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			switch (context.reaction.index()) {
 				case 0:
-					return {Compiled::ConstantFloat(0.f)};
+					return Compiled::ConstantFloat{.value = 0.f};
 				case 1:
-					return {Compiled::ConstantFloat(0.f)};
+					return Compiled::ConstantFloat{.value = 0.f};
 				case 2:
-					return {std::get<2>(context.reaction)->formula.compile(context)};
+					return std::get<2>(context.reaction)->formula.compile(context);
 			}
 			std::unreachable();
 		}
