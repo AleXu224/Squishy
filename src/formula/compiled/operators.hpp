@@ -20,9 +20,13 @@ namespace Formula::Compiled::Operators {
 		if (type1 == Type::constant && type2 == Type::constant) {
 			return Constant{.value = param1.getConstantValue() + param2.getConstantValue()};
 		} else if (type1 == Type::constant && type2 == Type::none) {
-			return SumMonomial{.value = param2}.add(param1.getConstantValue()).wrap();
+			auto constValue = param1.getConstantValue();
+			if (constValue == 0) return param2;
+			return SumMonomial{.value = param2}.add(constValue).wrap();
 		} else if (type2 == Type::constant && type1 == Type::none) {
-			return SumMonomial{.value = param1}.add(param2.getConstantValue()).wrap();
+			auto constValue = param2.getConstantValue();
+			if (constValue == 0) return param1;
+			return SumMonomial{.value = param1}.add(constValue).wrap();
 		} else if (type1 == Type::constant && (type2 == Type::monomial || type2 == Type::summonomial || type2 == Type::prodmonomial)) {
 			return param2.add(param1.getConstantValue());
 		} else if (type2 == Type::constant && (type1 == Type::monomial || type1 == Type::summonomial || type1 == Type::prodmonomial)) {
@@ -46,10 +50,14 @@ namespace Formula::Compiled::Operators {
 		if (type1 == Type::constant && type2 == Type::constant) {
 			return Constant{.value = param1.getConstantValue() - param2.getConstantValue()};
 		} else if (type1 == Type::constant && type2 == Type::none) {
+			auto constValue = param1.getConstantValue();
+			if (constValue == 0) return Monomial{.value = param2}.mult(-1).wrap();
 			//a - b = b * -1 + a
-			return Monomial{.value = param2}.mult(-1).add(param1.getConstantValue()).wrap();
+			return Monomial{.value = param2}.mult(-1).add(constValue).wrap();
 		} else if (type2 == Type::constant && type1 == Type::none) {
-			return SumMonomial{.value = param1}.subtract(param2.getConstantValue()).wrap();
+			auto constValue = param2.getConstantValue();
+			if (constValue == 0) return param1;
+			return SumMonomial{.value = param1}.subtract(constValue).wrap();
 		} else if (type1 == Type::constant && (type2 == Type::monomial || type2 == Type::summonomial || type2 == Type::prodmonomial)) {
 			//a - b = b * -1 + a
 			return param2.mult(-1).add(param1.getConstantValue());
@@ -74,13 +82,33 @@ namespace Formula::Compiled::Operators {
 		if (type1 == Type::constant && type2 == Type::constant) {
 			return Constant{.value = param1.getConstantValue() * param2.getConstantValue()};
 		} else if (type1 == Type::constant && type2 == Type::none) {
-			return ProdMonomial{.value = param2}.mult(param1.getConstantValue()).wrap();
+			auto constValue = param1.getConstantValue();
+			if (constValue == 0)
+				return param1;
+			else if (constValue == 1)
+				return param2;
+			return ProdMonomial{.value = param2}.mult(constValue).wrap();
 		} else if (type2 == Type::constant && type1 == Type::none) {
-			return ProdMonomial{.value = param1}.mult(param2.getConstantValue()).wrap();
+			auto constValue = param2.getConstantValue();
+			if (constValue == 0)
+				return param2;
+			else if (constValue == 1)
+				return param1;
+			return ProdMonomial{.value = param1}.mult(constValue).wrap();
 		} else if (type1 == Type::constant && (type2 == Type::monomial || type2 == Type::summonomial || type2 == Type::prodmonomial)) {
-			return param2.mult(param1.getConstantValue());
+			auto constValue = param1.getConstantValue();
+			if (constValue == 0)
+				return param1;
+			else if (constValue == 1)
+				return param2;
+			return param2.mult(constValue);
 		} else if (type2 == Type::constant && (type1 == Type::monomial || type1 == Type::summonomial || type1 == Type::prodmonomial)) {
-			return param1.mult(param2.getConstantValue());
+			auto constValue = param2.getConstantValue();
+			if (constValue == 0)
+				return param2;
+			else if (constValue == 1)
+				return param1;
+			return param1.mult(constValue);
 		} else if (type1 == Type::prodmonomial && type2 == Type::prodmonomial) {
 			return ProdMonomial{.value = param1.getMonomialValue() * param2.getMonomialValue()}.mult(param1.getMultParam() * param2.getMultParam()).wrap();
 		}
@@ -100,10 +128,16 @@ namespace Formula::Compiled::Operators {
 		if (type1 == Type::constant && type2 == Type::constant) {
 			return Constant{.value = param1.getConstantValue() / param2.getConstantValue()};
 		} else if (type1 == Type::constant && type2 == Type::none) {
+			auto constValue = param1.getConstantValue();
+			// Return the zero
+			if (constValue == 0) return param1;
 			// return ProdMonomial{.value = param2}.divide(param1.getConstantValue()).wrap();
 		} else if (type2 == Type::constant && type1 == Type::none) {
 			return ProdMonomial{.value = param1}.divide(param2.getConstantValue()).wrap();
 		} else if (type1 == Type::constant && (type2 == Type::monomial || type2 == Type::summonomial || type2 == Type::prodmonomial)) {
+			auto constValue = param1.getConstantValue();
+			// Return the zero
+			if (constValue == 0) return param1;
 			// return param2.divide(param1.getConstantValue());
 		} else if (type2 == Type::constant && (type1 == Type::monomial || type1 == Type::summonomial || type1 == Type::prodmonomial)) {
 			return param1.divide(param2.getConstantValue());

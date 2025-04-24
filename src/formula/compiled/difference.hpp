@@ -12,5 +12,9 @@ namespace Formula::Compiled {
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return val1.eval(context) - val2.eval(context);
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("Difference<{}, {}>", val1.print(), val2.print());
+		}
 	};
 }// namespace Formula::Compiled

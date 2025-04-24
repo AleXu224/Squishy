@@ -151,11 +151,12 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
 	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
-
+	auto start_sorting = std::chrono::high_resolution_clock::now();
 	auto prevLoadout = character.loadout.artifact.equipped;
 
 	auto initialArtifacts = ArtifactFilter{}.filter(artifacts);
 	std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
+	auto compiledNode = optimizedNode.compile(ctx);
 	// Roughly sort the artifact based on potential. Helps a lot when splitting
 	for (size_t i = 0; i < 5; i++) {
 		auto &artis = initialArtifacts.entries[i];
@@ -164,12 +165,14 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		}
 		std::sort(artis.begin(), artis.end(), [&](Artifact::Instance *art1, Artifact::Instance *art2) -> bool {
 			character.loadout.artifact.sheet.equippedArtifacts[i] = &art1->stats;
-			auto val1 = optimizedNode.eval(ctx);
+			auto val1 = compiledNode.eval(ctx);
 			character.loadout.artifact.sheet.equippedArtifacts[i] = &art2->stats;
-			auto val2 = optimizedNode.eval(ctx);
+			auto val2 = compiledNode.eval(ctx);
 			return val1 < val2;
 		});
 	}
+	auto end_sorting = std::chrono::high_resolution_clock::now();
+	std::println("sorting gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_sorting - start_sorting));
 
 	Solutions solutions{};
 	std::atomic<uint64_t> combed = 0;

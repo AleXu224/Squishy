@@ -15,7 +15,7 @@ namespace Formula {
 		V indexable;
 
 		[[nodiscard]] Compiled::NodeType<std::remove_cvref_t<decltype(std::declval<V>().at(std::declval<size_t>()))>> compile(const Context &context) const {
-			return Compiled::Index{.index = index.compile(context), .indexable = indexable};
+			return Compiled::IndexMaker(index.compile(context), indexable);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
@@ -33,8 +33,7 @@ namespace Formula {
 		bool isPercentage = false;
 
 		[[nodiscard]] auto compile(const Context &context) const {
-			auto compiled = evaluated.compile(context);
-			return Compiled::Evaluator{.evaluated = compiled}.wrap();
+			return Compiled::EvaluatorMaker(context, evaluated.compile(context));
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

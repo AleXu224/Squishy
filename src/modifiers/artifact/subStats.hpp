@@ -21,6 +21,10 @@ namespace Modifiers::Artifact {
 			}
 			return total;
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("SubStat<...>");
+		}
 	};
 	template<SheetMember<Stats::Sheet<float>> stat, SheetMemberIdentifier member>
 	struct SubStatFormula {

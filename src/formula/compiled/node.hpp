@@ -44,6 +44,7 @@ namespace Formula::Compiled {
 			[[nodiscard]] constexpr virtual Formula::Compiled::Type getType() const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
 			[[nodiscard]] constexpr virtual Type getConstantValue() const = 0;
+			[[nodiscard]] constexpr virtual std::string print() const = 0;
 
 			[[nodiscard]] constexpr virtual NodeType add(RetType) const = 0;
 			[[nodiscard]] constexpr virtual NodeType subtract(RetType) const = 0;
@@ -71,6 +72,9 @@ namespace Formula::Compiled {
 				} else {
 					return {};
 				}
+			}
+			[[nodiscard]] constexpr std::string print() const override {
+				return fn.print();
 			}
 			[[nodiscard]] constexpr NodeType add(RetType val) const override {
 				if constexpr (isMonomial<Fn>) {
@@ -151,6 +155,9 @@ namespace Formula::Compiled {
 		}
 		[[nodiscard]] constexpr RetType getConstantValue() const {
 			return fn->getConstantValue();
+		}
+		[[nodiscard]] constexpr std::string print() const {
+			return fn->print();
 		}
 		[[nodiscard]] constexpr NodeType add(RetType value) const {
 			return fn->add(value);

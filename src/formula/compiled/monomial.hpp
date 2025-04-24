@@ -36,6 +36,10 @@ namespace Formula::Compiled {
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return sumParam + multParam * value.eval(context);
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("Monomial<{}, {}, {}>", sumParam, multParam, value.print());
+		}
 	};
 
 	template<ArithmeticFormula T>
@@ -71,6 +75,10 @@ namespace Formula::Compiled {
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return sumParam + value.eval(context);
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("SumMonomial<{}, {}>", sumParam, value.print());
+		}
 	};
 
 	template<ArithmeticFormula T>
@@ -105,6 +113,10 @@ namespace Formula::Compiled {
 
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return multParam * value.eval(context);
+		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("ProdMonomial<{}, {}>", multParam, value.print());
 		}
 	};
 }// namespace Formula::Compiled

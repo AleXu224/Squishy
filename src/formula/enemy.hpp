@@ -59,16 +59,15 @@ namespace Formula {
 			const auto attackElement = getElement(attackSource, element, context);
 			auto RES = Stats::evalEnemyResElement<Modifiers::totalEnemy.resistance>(attackElement, context);
 
-			return Compiled::IfElse{
-				.requirement = Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.f}.wrap(),
-				.trueVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - (Compiled::ConstantFloat{.value = RES}.wrap() / Compiled::ConstantFloat{.value = 2.f}.wrap()),
-				.elseVal = Compiled::IfElse{
-					.requirement = Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.75f}.wrap(),
-					.trueVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = RES}.wrap(),
-					.elseVal = Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = 4.f}.wrap() * Compiled::ConstantFloat{.value = RES}.wrap() + Compiled::ConstantFloat{.value = 1.f}.wrap()
-				}
-							   .wrap()
-			};
+			return Compiled::IfElseMaker(
+				Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.f}.wrap(),
+				Compiled::ConstantFloat{.value = 1.f}.wrap() - (Compiled::ConstantFloat{.value = RES}.wrap() / Compiled::ConstantFloat{.value = 2.f}.wrap()),
+				Compiled::IfElseMaker(
+					Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.75f}.wrap(),
+					Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = RES}.wrap(),
+					Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = 4.f}.wrap() * Compiled::ConstantFloat{.value = RES}.wrap() + Compiled::ConstantFloat{.value = 1.f}.wrap()
+				)
+			);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

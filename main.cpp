@@ -43,6 +43,7 @@ int main() {
 	// auto source = Combo::Source::Character{.key{cyno.dataKey}, .slot = Node::CharacterSlot::burst, .index = 0};
 	// auto resolved = source.resolve({});
 	// auto compiled = resolved.formula.compile(ctx);
+	// std::println("{}", compiled.print());
 	// std::println("{}", compiled.eval(ctx));
 
 	using namespace squi;

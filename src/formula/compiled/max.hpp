@@ -12,6 +12,10 @@ namespace Formula::Compiled {
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
 			return std::max(val1.eval(context), val2.eval(context));
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("Max<{}, {}>", val1.print(), val2.print());
+		}
 	};
 
 	auto MaxMaker(const ArithmeticFormula auto &param1, const ArithmeticFormula auto &param2) {

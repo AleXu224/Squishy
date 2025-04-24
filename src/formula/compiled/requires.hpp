@@ -17,6 +17,10 @@ namespace Formula::Compiled {
 			if (!condVal) return RetType{};
 			return ret.eval(context);
 		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("Requires<{}, {}>", cond.print(), ret.print());
+		}
 	};
 
 	[[nodiscard]] auto RequiresMaker(const BoolFormula auto &cond, const auto &ret) {
@@ -52,6 +56,10 @@ namespace Formula::Compiled {
 				return trueVal.eval(context);
 
 			return elseVal.eval(context);
+		}
+
+		[[nodiscard]] std::string print() const {
+			return fmt::format("IfElse<{}, {}, {}>", requirement.print(), trueVal.print(), elseVal.print());
 		}
 	};
 

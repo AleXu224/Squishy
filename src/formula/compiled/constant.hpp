@@ -14,6 +14,20 @@ namespace Formula::Compiled {
 		[[nodiscard]] T eval(const Formula::Context &context) const {
 			return value;
 		}
+
+		[[nodiscard]] std::string print() const {
+			if constexpr (std::is_same_v<T, Utils::JankyOptional<Misc::Element>>) {
+				if (value.has_value()) {
+					return fmt::format("{}", Utils::Stringify(value.value()));
+				} else {
+					return "No element";
+				}
+			} else if constexpr (std::is_same_v<T, float> || std::is_same_v<T, int32_t> || std::is_same_v<T, bool>) {
+				return fmt::format("Constant<{}>", value);
+			} else {
+				return "Unformattable";
+			}
+		}
 	};
 
 	using ConstantFloat = Constant<float>;

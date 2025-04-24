@@ -30,11 +30,11 @@ namespace Formula {
 		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			switch (talent) {
 				case LevelableTalent::normal:
-					return Compiled::Index{.index = Modifiers::totalTalents.normal.compile(context), .indexable = values};
+					return Compiled::IndexMaker(Modifiers::totalTalents.normal.compile(context), values);
 				case LevelableTalent::skill:
-					return Compiled::Index{.index = Modifiers::totalTalents.skill.compile(context), .indexable = values};
+					return Compiled::IndexMaker(Modifiers::totalTalents.skill.compile(context), values);
 				case LevelableTalent::burst:
-					return Compiled::Index{.index = Modifiers::totalTalents.burst.compile(context), .indexable = values};
+					return Compiled::IndexMaker(Modifiers::totalTalents.burst.compile(context), values);
 			}
 			std::unreachable();
 		}

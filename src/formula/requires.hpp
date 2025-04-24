@@ -43,11 +43,7 @@ namespace Formula {
 		static_assert(std::is_same_v<RetType, RetType2>, "Both formulas need to return the same type");
 
 		[[nodiscard]] Compiled::NodeType<RetType> compile(const Context &context) const {
-			return Compiled::IfElse{
-				.requirement = requirement.compile(context),
-				.trueVal = trueVal.compile(context),
-				.elseVal = elseVal.compile(context),
-			};
+			return Compiled::IfElseMaker(requirement.compile(context), trueVal.compile(context), elseVal.compile(context));
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
