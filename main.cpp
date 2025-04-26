@@ -47,8 +47,21 @@ int main() {
 	// std::println("{}", compiled.eval(ctx));
 
 	using namespace squi;
-	Window window{};
-	glfwSetWindowTitle(window.engine.instance.window.ptr, "Squishy");
+	Window window{WindowOptions{
+		.name = "Squishy",
+		.width = ::Store::windowWidth,
+		.height = ::Store::windowHeight,
+		.maximized = ::Store::maximized,
+	}};
+	window.setMaximizeCallback([](bool maximized) {
+		::Store::maximized = maximized;
+	});
+	window.setResizeCallback([](uint32_t width, uint32_t height) {
+		if (!::Store::maximized) {
+			::Store::windowWidth = width;
+			::Store::windowHeight = height;
+		}
+	});
 	window.addChild(UI::homePage{});
 
 	Window::run();

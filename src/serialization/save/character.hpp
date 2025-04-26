@@ -4,6 +4,7 @@
 #include "character/instance.hpp"
 #include "character/key.hpp"
 #include "combo.hpp"
+#include "optimization.hpp"
 #include "option.hpp"
 #include "weapon/key.hpp"
 
@@ -26,6 +27,7 @@ namespace Serialization::Save {
 		::Artifact::InstanceKey artifactCirclet;
 		std::vector<Serialization::Save::OptionTypes> options;
 		std::vector<Serialization::Save::Combo> combos;
+		Optimization optimizationOptions;
 
 		static Character fromInstance(const ::Character::Instance &);
 		::Character::Instance toInstance() const;

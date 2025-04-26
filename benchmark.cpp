@@ -165,9 +165,10 @@ namespace {
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
-			benchmark::DoNotOptimize(compiledNode.eval(ctx));
+			(void) compiledNode.eval(ctx);
 			// benchmark::DoNotOptimize(node.formula.compile(ctx));
 			// character.getArtifactStats();
+			benchmark::DoNotOptimize(compiledNode);
 		}
 	}
 }// namespace

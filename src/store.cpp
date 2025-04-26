@@ -73,6 +73,11 @@ namespace {
 			.weapons = retWeapons,
 			.characters = retCharacters,
 			.teams = retTeams,
+			.window{
+				.width = ::Store::windowWidth,
+				.height = ::Store::windowHeight,
+				.maximized = ::Store::maximized,
+			},
 		};
 	}
 
@@ -116,6 +121,10 @@ namespace {
 		::Store::lastCharacterId = maxCharacterKey;
 		::Store::lastTeamId = maxTeamKey;
 		::Store::lastComboId = maxComboKey;
+
+		::Store::windowWidth = save.window.width;
+		::Store::windowHeight = save.window.height;
+		::Store::maximized = save.window.maximized;
 	}
 }// namespace
 

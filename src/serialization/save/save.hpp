@@ -4,6 +4,7 @@
 #include "character.hpp"
 #include "team.hpp"
 #include "weapon.hpp"
+#include "window.hpp"
 
 
 namespace Serialization::Save {
@@ -12,5 +13,6 @@ namespace Serialization::Save {
 		std::vector<Serialization::Save::Weapon> weapons;
 		std::vector<Serialization::Save::Character> characters;
 		std::vector<Serialization::Save::Team> teams;
+		Serialization::Save::Window window;
 	};
 }// namespace Serialization::Save

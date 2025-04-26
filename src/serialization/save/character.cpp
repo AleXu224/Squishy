@@ -18,6 +18,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 		.artifactCirclet = character.loadout.artifact.equipped.circlet,
 		.options = optionsFromInstance(character.loadout.options),
 		.combos = comboFromInstance(character.combos),
+		.optimizationOptions = Optimization::fromInstance(*character.optimizationOptions),
 	};
 }
 
@@ -37,6 +38,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 
 	optionsToInstance(options, instance.loadout.options);
 	instance.combos = comboToInstance(combos);
+	instance.optimizationOptions = std::make_shared<::Optimization::Options>(optimizationOptions.toInstance());
 
 	instance.loadout.artifact.refreshStats();
 

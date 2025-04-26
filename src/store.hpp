@@ -33,6 +33,10 @@ namespace Store {
 	inline squi::VoidObservable characterListUpdateEvent{};
 	inline squi::VoidObservable teamListUpdateEvent{};
 
+	inline uint32_t windowWidth = 1280;
+	inline uint32_t windowHeight = 720;
+	inline bool maximized = false;
+
 	Character::Instance &createCharacter(Character::DataKey dataKey, Weapon::InstanceKey weapon = {});
 	Weapon::Instance &createWeapon(Weapon::DataKey dataKey);
 	Artifact::Instance &createArtifact(Artifact::SetKey setKey);
