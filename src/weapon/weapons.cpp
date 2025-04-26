@@ -7,6 +7,7 @@
 #include "weapons/AThousandBlazingSuns.hpp"
 #include "weapons/AmenomaKageuchi.hpp"
 #include "weapons/ApprenticeSNotes.hpp"
+#include "weapons/AquilaFavonia.hpp"
 #include "weapons/BeginnerSProtector.hpp"
 #include "weapons/Deathmatch.hpp"
 #include "weapons/DullBlade.hpp"
@@ -36,6 +37,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::aThousandBlazingSuns.key, Weapon::Datas::aThousandBlazingSuns},
 		{Weapon::Datas::amenomaKageuchi.key, Weapon::Datas::amenomaKageuchi},
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
+		{Weapon::Datas::aquilaFavonia.key, Weapon::Datas::aquilaFavonia},
 		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
 		{Weapon::Datas::deathmatch.key, Weapon::Datas::deathmatch},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},

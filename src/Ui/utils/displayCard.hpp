@@ -12,6 +12,7 @@ namespace UI {
 	struct DisplayCard {
 		// Args
 		squi::Widget::Args widget{};
+		std::optional<squi::Color> borderColor{};
 		std::string_view title;
 		std::string_view subtitle{};
 		squi::Children children{};
@@ -20,6 +21,7 @@ namespace UI {
 		operator squi::Child() const {
 			return UI::Card{
 				.widget = widget.withDefaultPadding(1.f),
+				.borderColor = borderColor,
 				.child = squi::Column{
 					.children{
 						UI::SkillHeader{

@@ -85,6 +85,7 @@ const Character::Data Character::Datas::mavuika{
 					Option::ValueList{
 						.key = "mavuikaBurstStacks",
 						.prefix = "Fighting Spirit consumed",
+						.teamBuff = true,
 						.values = std::views::iota(100 / 10)
 								| std::views::take(11)
 								| std::views::transform([](auto &&val) {

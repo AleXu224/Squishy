@@ -5,6 +5,7 @@
 #include "Ui/option/valueListOption.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/masonry.hpp"
+#include "Ui/utils/tag.hpp"
 #include "button.hpp"
 #include "column.hpp"
 #include "container.hpp"
@@ -65,31 +66,6 @@ namespace {
 		);
 	}
 
-	struct ComboEditorSourceTag {
-		// Args
-		std::string sourceStr;
-
-		operator squi::Child() const {
-			return Box{
-				.widget{
-					.width = Size::Shrink,
-					.height = Size::Shrink,
-					.padding = 4.f,
-				},
-				.color = Color::css(0x0, 0.2f),
-				.borderColor = Color::css(0x0, 0.1f),
-				.borderWidth = 1.f,
-				.borderRadius = 4.f,
-				.borderPosition = Box::BorderPosition::inset,
-				.child = Text{
-					.text = sourceStr,
-					.fontSize = 12.f,
-					.color = Color::css(0xffffff, 0.75f),
-				},
-			};
-		}
-	};
-
 	struct ComboEditorOptionContainer {
 		// Args
 		squi::Widget::Args widget{};
@@ -118,7 +94,7 @@ namespace {
 									.text = ::Store::characters.at(option.key).loadout.character.data.name,
 									.lineWrap = true,
 								},
-								ComboEditorSourceTag{.sourceStr = getSourceName(source)},
+								UI::Tag{.sourceStr = getSourceName(source)},
 								Container{},
 								IconButton{
 									.icon = 0xe5cd,
@@ -267,6 +243,9 @@ namespace {
 							data.element,
 							ctx
 						);
+					},
+					[&](const Node::CustomAtkData &data) {
+						element = data.element;
 					},
 					[](const Node::InfoData &data) {},
 					[](const Node::HealData &data) {},
@@ -453,7 +432,7 @@ namespace {
 							.lineWrap = true,
 							.color = Node::getColor(node.data, ctx),
 						},
-						ComboEditorSourceTag{.sourceStr = getSourceName(entry.source)},
+						UI::Tag{.sourceStr = getSourceName(entry.source)},
 					},
 				},
 				.caption = captionText,

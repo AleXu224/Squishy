@@ -16,6 +16,10 @@ namespace Node {
 		Misc::AttackSource source{};
 	};
 
+	struct CustomAtkData {
+		Misc::Element element;
+	};
+
 	struct InfoData {
 		Utils::EntryType type;
 		squi::Color color;
@@ -28,12 +32,15 @@ namespace Node {
 		Utils::JankyOptional<Misc::Element> element{};
 	};
 
-	using Data = std::variant<AtkData, InfoData, HealData, ShieldData>;
+	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ShieldData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
 			Utils::overloaded{
 				[](const AtkData &) {
+					return false;
+				},
+				[](const CustomAtkData &) {
 					return false;
 				},
 				[](const InfoData &info) {

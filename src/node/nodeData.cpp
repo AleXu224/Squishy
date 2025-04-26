@@ -9,6 +9,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const AtkData &node) {
 				return Utils::elementToColor(Formula::getElement(node.source, node.element, ctx));
 			},
+			[&](const CustomAtkData &node) {
+				return Utils::elementToColor(node.element);
+			},
 			[&](const InfoData &info) {
 				return info.color;
 			},
@@ -26,6 +29,9 @@ bool Node::getOptimizable(const Data &data) {
 	return std::visit(
 		Utils::overloaded{
 			[&](const AtkData &node) {
+				return true;
+			},
+			[&](const CustomAtkData &node) {
 				return true;
 			},
 			[&](const InfoData &info) {

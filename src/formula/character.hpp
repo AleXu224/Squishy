@@ -69,6 +69,22 @@ namespace Formula {
 		}
 	};
 
+	struct IsActiveCharacterWeaponType {
+		Misc::WeaponType type;
+
+		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
+			return Compiled::ConstantBool{.value = eval(context)};
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is active character {} ({})", Utils::Stringify(type), eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.active.character.base.weaponType == type;
+		}
+	};
+
 	struct IsCharacterId {
 		uint32_t id;
 

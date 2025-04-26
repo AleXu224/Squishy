@@ -150,14 +150,30 @@ namespace {
 								   }
 								 : Child{};
 
+		Column leftColumn{
+			.spacing = 4.f,
+			.children{
+				teamStats,
+				transformativeReactions,
+				combos,
+				weaponStats,
+				artifactStats1,
+				artifactStats2,
+			},
+		};
+
+		Child normalColumn = Column{.spacing = 4.f};
+		Child skillColumn = Column{.spacing = 4.f};
+		Child burstColumn = Column{.spacing = 4.f};
+		Child otherColumn = Column{.spacing = 4.f};
+
 		Children mainContent{
 			characterStats,
-			teamStats,
-			transformativeReactions,
-			combos,
-			weaponStats,
-			artifactStats1,
-			artifactStats2,
+			leftColumn,
+			normalColumn,
+			skillColumn,
+			burstColumn,
+			otherColumn,
 		};
 
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
@@ -176,14 +192,30 @@ namespace {
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
-			mainContent.emplace_back(UI::DetailsSkill{
+			auto ret = UI::DetailsSkill{
 				.name = name,
 				.instanceKey = keyParam,
 				.ctx = ctx,
 				.nodes = nodes,
 				.options = options,
 				.displayCondition = condition,
-			});
+			};
+			switch (slot) {
+				case Node::CharacterSlot::normal:
+				case Node::CharacterSlot::charged:
+				case Node::CharacterSlot::plunge:
+					normalColumn->addChild(ret);
+					break;
+				case Node::CharacterSlot::skill:
+					skillColumn->addChild(ret);
+					break;
+				case Node::CharacterSlot::burst:
+					burstColumn->addChild(ret);
+					break;
+				default:
+					otherColumn->addChild(ret);
+					break;
+			}
 		}
 
 		return Column{

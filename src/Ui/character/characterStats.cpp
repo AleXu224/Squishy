@@ -1,7 +1,9 @@
 #include "characterStats.hpp"
 
+#include "Ui/elementToColor.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/statDisplay.hpp"
+#include "Ui/utils/tag.hpp"
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 
@@ -15,7 +17,6 @@
 #include "row.hpp"
 #include "stack.hpp"
 #include "stats/loadout.hpp"
-#include "text.hpp"
 
 using namespace squi;
 UI::CharacterStats::operator squi::Child() const {
@@ -23,6 +24,7 @@ UI::CharacterStats::operator squi::Child() const {
 
 	return UI::DisplayCard{
 		.widget = widget,
+		.borderColor = Utils::elementToColor(ctx.active.character.base.element),
 		.title = ctx.active.character.data.name,
 		.children = [&]() {
 			const auto &loadout = ctx.source;
@@ -47,30 +49,8 @@ UI::CharacterStats::operator squi::Child() const {
 							},
 							.spacing = 4.f,
 							.children{
-								Box{
-									.widget{
-										.width = Size::Shrink,
-										.height = Size::Shrink,
-										.padding = 4.f,
-									},
-									.borderRadius = 4.f,
-									.child = Text{
-										.text = std::format("Lvl {}", loadout.character.sheet.level),
-										.color = Color::css(0x0, 1.f),
-									},
-								},
-								Box{
-									.widget{
-										.width = Size::Shrink,
-										.height = Size::Shrink,
-										.padding = 4.f,
-									},
-									.borderRadius = 4.f,
-									.child = Text{
-										.text = std::format("C{}", loadout.character.sheet.constellation),
-										.color = Color::css(0x0, 1.f),
-									},
-								},
+								UI::Tag{.sourceStr = std::format("Lvl {}", loadout.character.sheet.level)},
+								UI::Tag{.sourceStr = std::format("C{}", loadout.character.sheet.constellation)},
 							},
 						},
 					},

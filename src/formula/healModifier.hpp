@@ -1,11 +1,11 @@
 #pragma once
 
 #include "formula/constant.hpp"
+#include "formula/node.hpp"
 
 namespace Formula {
-	template<class T_hb = Constant, class T_incHb = Constant>
 	struct HealModifier {
-		T_hb hb{};
-		T_incHb incHb{};
+		FloatNode hb{Constant(0.f)};
+		FloatNode incHb{Constant(0.f)};
 	};
 }// namespace Formula

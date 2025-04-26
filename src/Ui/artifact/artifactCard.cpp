@@ -4,6 +4,7 @@
 #include "Ui/character/characterSelector.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
+#include "Ui/utils/tag.hpp"
 #include "align.hpp"
 #include "artifact/sets.hpp"
 #include "box.hpp"
@@ -47,7 +48,6 @@ struct ArtifactHeader {
 				.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 			},
 		};
-		auto levelDisp = std::format("+{}", level);
 		auto title = Align{
 			.xAlign = 0.f,
 			.child = Column{
@@ -60,19 +60,7 @@ struct ArtifactHeader {
 						.alignment = Row::Alignment::center,
 						.spacing = 4.f,
 						.children{
-							Box{
-								.widget{
-									.width = Size::Shrink,
-									.height = Size::Shrink,
-									.padding = 2.f,
-								},
-								.color = Color::css(0xffffff, 0.8f),
-								.borderRadius = 4.f,
-								.child = Text{
-									.text = levelDisp,
-									.color = Color::black,
-								},
-							},
+							UI::Tag{.sourceStr = std::format("+{}", level)},
 							Text{
 								.text = Utils::Stringify(mainStat.stat),
 							},
@@ -105,7 +93,8 @@ struct ArtifactHeader {
 			.widget{
 				.height = 64.f,
 			},
-			.color = Misc::rarityToColor.at(rarity),
+			// .color = Misc::rarityToColor.at(rarity),
+			.color = Color::css(0xffffff, 0.0419f),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
 			.child = Stack{
 				.children{
@@ -228,21 +217,23 @@ struct ArtifactCardContent {
 UI::ArtifactCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
-	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
-		.child = Rebuilder{
-			.rebuildEvent = artifact.updateEvent,
-			.buildFunc = [key = artifact.key, actions = actions]() -> Child {
-				if (!Store::artifacts.contains(key)) {
-					return Child{};
-				}
-				return ArtifactCardContent{
-					.artifact = Store::artifacts.at(key),
+	return Rebuilder{
+		.rebuildEvent = artifact.updateEvent,
+		.buildFunc = [key = artifact.key, actions = actions]() -> Child {
+			if (!Store::artifacts.contains(key)) {
+				return Child{};
+			}
+			auto &artifact = Store::artifacts.at(key);
+			return Card{
+				.widget{
+					.padding = Padding{1.f},
+				},
+				.borderColor = Misc::rarityToColor.at(artifact.rarity),
+				.child = ArtifactCardContent{
+					.artifact = artifact,
 					.actions = actions,
-				};
-			},
+				},
+			};
 		},
 	};
 }

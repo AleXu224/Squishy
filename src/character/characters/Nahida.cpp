@@ -61,7 +61,7 @@ const Character::Data Character::Datas::nahida{
 		auto c4EmBuff = Requires(
 			Requirement::constellation4 && IsActive("nahidaC4OpponentsAffected"),
 			Index{
-				GetInt("nahidaC4OpponentsAffected") - ConstantInt(1),
+				GetInt("nahidaC4OpponentsAffected", 1) - ConstantInt(1),
 				false,
 				std::array{100.f, 120.f, 140.f, 160.f},
 			}

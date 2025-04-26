@@ -4,6 +4,7 @@
 #include "formula/formula.hpp"      // IWYU pragma: export
 #include "modifiers/total/total.hpp"// IWYU pragma: export
 #include "node/atkNode.hpp"         // IWYU pragma: export
+#include "node/customAtkNode.hpp"   // IWYU pragma: export
 #include "node/healNode.hpp"        // IWYU pragma: export
 #include "node/infoNode.hpp"        // IWYU pragma: export
 #include "node/shieldNode.hpp"      // IWYU pragma: export

@@ -33,7 +33,7 @@ struct WeaponHeader {
 			.widget{
 				.height = 128.f,
 			},
-			.color = Misc::rarityToColor.at(weapon.stats.data->baseStats.rarity),
+			.color = Color::css(0xffffff, 0.0419f),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
 			.child = Stack{
 				.children{
@@ -166,6 +166,26 @@ struct WeaponCardContent {
 
 UI::WeaponCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
+
+	return Rebuilder{
+		.rebuildEvent = weapon.updateEvent,
+		.buildFunc = [key = weapon.instanceKey, actions = actions]() -> Child {
+			if (!Store::weapons.contains(key)) {
+				return Child{};
+			}
+			auto weapon = Store::weapons.at(key);
+			return Card{
+				.widget{
+					.padding = Padding{1.f},
+				},
+				.borderColor = Misc::rarityToColor.at(weapon.stats.data->baseStats.rarity),
+				.child = WeaponCardContent{
+					.weapon = weapon,
+					.actions = actions,
+				},
+			};
+		},
+	};
 
 	return Card{
 		.widget{

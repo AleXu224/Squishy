@@ -8,8 +8,8 @@ namespace Formula::Compiled {
 	struct Monomial : FormulaBase<typename T::Type, Type::monomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		mutable RetType sumParam = 0.f;
-		mutable RetType multParam = 1.f;
+		mutable RetType sumParam = 0;
+		mutable RetType multParam = 1;
 
 		[[nodiscard]] const Monomial &add(RetType value) const {
 			sumParam += value;
@@ -46,7 +46,7 @@ namespace Formula::Compiled {
 	struct SumMonomial : FormulaBase<typename T::Type, Type::summonomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		mutable RetType sumParam = 0.f;
+		mutable RetType sumParam = 0;
 
 		[[nodiscard]] const SumMonomial &add(RetType value) const {
 			sumParam += value;
@@ -85,7 +85,7 @@ namespace Formula::Compiled {
 	struct ProdMonomial : FormulaBase<typename T::Type, Type::prodmonomial> {
 		T value;
 		using RetType = std::remove_cvref_t<decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()))>;
-		mutable RetType multParam = 1.f;
+		mutable RetType multParam = 1;
 
 		Monomial<T> add(RetType value) const {
 			auto ret = Monomial<T>{.value = std::move(this->value)};
