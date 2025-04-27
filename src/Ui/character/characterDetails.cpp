@@ -26,6 +26,7 @@
 
 #include "scrollableFrame.hpp"
 #include "utils/slotToCondition.hpp"
+#include "weapon/data.hpp"
 #include <map>
 
 using namespace squi;
@@ -115,7 +116,7 @@ namespace {
 			.ctx = ctx,
 			.nodes = character.loadout.weapon->data->data.nodes,
 			.options = weaponOpts,
-			.modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Weapon::displayStats>>(),
+			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Weapon::displayStats()),
 		};
 
 		std::optional<MakeOptsRet> artifactOpts1;
@@ -134,7 +135,7 @@ namespace {
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
 									   .options = artifactOpts1,
-									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Artifact::display1>>(),
+									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display1()),
 								   }
 								 : Child{};
 
@@ -146,7 +147,7 @@ namespace {
 									   .ctx = ctx,
 									   .nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
 									   .options = artifactOpts2,
-									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator<Modifiers::Artifact::display2>>(),
+									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display2()),
 								   }
 								 : Child{};
 

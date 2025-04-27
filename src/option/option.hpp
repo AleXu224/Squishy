@@ -37,17 +37,17 @@ namespace Option {
 	}
 
 	struct CharacterList {
-		const std::vector<Types> normal{};
-		const std::vector<Types> charged{};
-		const std::vector<Types> plunge{};
-		const std::vector<Types> skill{};
-		const std::vector<Types> burst{};
-		const std::vector<Types> passive1{};
-		const std::vector<Types> passive2{};
-		const std::vector<Types> constellation1{};
-		const std::vector<Types> constellation2{};
-		const std::vector<Types> constellation4{};
-		const std::vector<Types> constellation6{};
+		std::vector<Types> normal{};
+		std::vector<Types> charged{};
+		std::vector<Types> plunge{};
+		std::vector<Types> skill{};
+		std::vector<Types> burst{};
+		std::vector<Types> passive1{};
+		std::vector<Types> passive2{};
+		std::vector<Types> constellation1{};
+		std::vector<Types> constellation2{};
+		std::vector<Types> constellation4{};
+		std::vector<Types> constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
 			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};

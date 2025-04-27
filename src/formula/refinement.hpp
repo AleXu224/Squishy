@@ -28,11 +28,11 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] consteval auto WeaponMultiplier(auto stat, const std::array<float, 5> &values) {
+	[[nodiscard]] inline auto WeaponMultiplier(auto stat, const std::array<float, 5> &values) {
 		return stat * WeaponMultiplierValue(true, values);
 	}
 
-	[[nodiscard]] consteval auto WeaponMultiplier(bool isPercentage, const std::array<float, 5> &values) {
+	[[nodiscard]] inline auto WeaponMultiplier(bool isPercentage, const std::array<float, 5> &values) {
 		return WeaponMultiplierValue(isPercentage, values);
 	}
 }// namespace Formula

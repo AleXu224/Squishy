@@ -21,13 +21,13 @@ const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 		.ascensionUpgrade{0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7}
 	},
 	.setup = []() {
-		auto eHitsAtk = WeaponMultiplier(Modifiers::preMods.em, {0.28, 0.35, 0.42, 0.49, 0.56})
+		auto eHitsAtk = WeaponMultiplier(preMods.em, {0.28, 0.35, 0.42, 0.49, 0.56})
 					  * GetFloat("eHits");
 
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.atk = WeaponMultiplier(Modifiers::preMods.em, {0.52, 0.65, 0.78, 0.91, 1.04})
+					.atk = WeaponMultiplier(preMods.em, {0.52, 0.65, 0.78, 0.91, 1.04})
 						 + eHitsAtk,
 				},
 			},

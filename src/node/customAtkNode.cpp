@@ -15,21 +15,21 @@ namespace Node {
 		[[nodiscard]] auto compile(const Formula::Context &context) const {
 			switch (element) {
 				case Misc::Element::pyro:
-					return Stats::fromSkillStat<Modifiers::total.pyro, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).compile(context);
 				case Misc::Element::hydro:
-					return Stats::fromSkillStat<Modifiers::total.hydro, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).compile(context);
 				case Misc::Element::cryo:
-					return Stats::fromSkillStat<Modifiers::total.cryo, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).compile(context);
 				case Misc::Element::electro:
-					return Stats::fromSkillStat<Modifiers::total.electro, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).compile(context);
 				case Misc::Element::dendro:
-					return Stats::fromSkillStat<Modifiers::total.dendro, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).compile(context);
 				case Misc::Element::anemo:
-					return Stats::fromSkillStat<Modifiers::total.anemo, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).compile(context);
 				case Misc::Element::geo:
-					return Stats::fromSkillStat<Modifiers::total.geo, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).compile(context);
 				case Misc::Element::physical:
-					return Stats::fromSkillStat<Modifiers::total.physical, skillStat>().compile(context);
+					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).compile(context);
 			}
 			std::unreachable();
 		}
@@ -41,21 +41,21 @@ namespace Node {
 		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
 			switch (element) {
 				case Misc::Element::pyro:
-					return Stats::fromSkillStat<Modifiers::total.pyro, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).eval(context);
 				case Misc::Element::hydro:
-					return Stats::fromSkillStat<Modifiers::total.hydro, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).eval(context);
 				case Misc::Element::cryo:
-					return Stats::fromSkillStat<Modifiers::total.cryo, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).eval(context);
 				case Misc::Element::electro:
-					return Stats::fromSkillStat<Modifiers::total.electro, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).eval(context);
 				case Misc::Element::dendro:
-					return Stats::fromSkillStat<Modifiers::total.dendro, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).eval(context);
 				case Misc::Element::anemo:
-					return Stats::fromSkillStat<Modifiers::total.anemo, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).eval(context);
 				case Misc::Element::geo:
-					return Stats::fromSkillStat<Modifiers::total.geo, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).eval(context);
 				case Misc::Element::physical:
-					return Stats::fromSkillStat<Modifiers::total.physical, skillStat>().eval(context);
+					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).eval(context);
 			}
 			std::unreachable();
 		}
@@ -70,7 +70,7 @@ namespace Node {
 		Misc::Element attackElement,
 		auto formula
 	) {
-		auto allStats = Stats::fromSkillStat<Modifiers::total.all, skillStat>();
+		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
 		auto elementStats = _CustomAtkNodeElement<skillStat>(attackElement);
 
 		return allStats + elementStats + formula;

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "type_traits"
 #include "helpers.hpp"
+#include "type_traits"
+
 
 namespace Modifiers {
 	template<class T>
@@ -25,4 +26,13 @@ namespace Modifiers {
 		static constexpr Formula<Params.skill...> skill{};
 		static constexpr Formula<Params.burst...> burst{};
 	};
+
+	template<class T, class Formula>
+	[[nodiscard]] inline Talents<T> talentFactory(auto... params) {
+		return {
+			.normal = Formula(params.normal...),
+			.skill = Formula(params.skill...),
+			.burst = Formula(params.burst...),
+		};
+	}
 }// namespace Modifiers

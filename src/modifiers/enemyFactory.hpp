@@ -1,6 +1,7 @@
 #pragma once
 
 #include "helpers.hpp"
+#include "stats/sheet.hpp"
 #include "type_traits"
 
 
@@ -65,4 +66,23 @@ namespace Modifiers {
 		static constexpr Formula<Params.DEFIgnored...> DEFIgnored{};
 		static constexpr _SkillValue<Params.resistance...> resistance{};
 	};
+
+	template<class T, class Formula>
+	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(auto... params) {
+		return {
+			.level = Formula(params.level...),
+			.DEFReduction = Formula(params.DEFReduction...),
+			.DEFIgnored = Formula(params.DEFIgnored...),
+			.resistance{
+				.pyro = Formula(params.resistance.pyro...),
+				.hydro = Formula(params.resistance.hydro...),
+				.cryo = Formula(params.resistance.cryo...),
+				.electro = Formula(params.resistance.electro...),
+				.dendro = Formula(params.resistance.dendro...),
+				.anemo = Formula(params.resistance.anemo...),
+				.geo = Formula(params.resistance.geo...),
+				.physical = Formula(params.resistance.physical...),
+			},
+		};
+	}
 }// namespace Modifiers

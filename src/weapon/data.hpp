@@ -12,17 +12,17 @@ namespace Weapon {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
-			const Option::WeaponList opts{};
+			Option::WeaponList opts{};
 			Node::WeaponList nodes{};
 		};
 
-		const DataKey key;
-		const std::string_view goodKey;
-		const std::string name;
-		const Stats::WeaponBase baseStats;
-		const std::function<Setup(void)> setup;
+		DataKey key;
+		std::string_view goodKey;
+		std::string name;
+		Stats::WeaponBase baseStats;
+		std::function<Setup(void)> setup;
 
-		const Setup data = [](const std::function<Setup(void)> &setup) {
+		Setup data = [](const std::function<Setup(void)> &setup) {
 			return setup();
 		}(setup);
 

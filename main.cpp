@@ -4,7 +4,6 @@
 #include "utils/storageFolder.hpp"
 #include "weapon/weapons.hpp"
 
-
 #include "Ui/home/homePage.hpp"
 
 #include "window.hpp"
@@ -45,6 +44,7 @@ int main() {
 	// auto compiled = resolved.formula.compile(ctx);
 	// std::println("{}", compiled.print());
 	// std::println("{}", compiled.eval(ctx));
+	// std::println("{}", resolved.formula.eval(ctx));
 
 	using namespace squi;
 	Window window{WindowOptions{

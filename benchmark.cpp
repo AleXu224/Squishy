@@ -12,9 +12,9 @@
 
 namespace {
 	[[nodiscard]] Character::Instance &getCharacter() {
-		auto weaponData = Weapon::list.begin()->second;
-		auto characterData = Character::list.begin()->second;
-		auto artifactData = Artifact::sets.begin()->second;
+		const auto &weaponData = Weapon::list.begin()->second;
+		const auto &characterData = Character::list.begin()->second;
+		const auto &artifactData = Artifact::sets.begin()->second;
 		Weapon::InstanceKey weaponKey{0};
 		Character::InstanceKey characterKey{0};
 		auto &weapon = Store::weapons.insert({weaponKey, Weapon::Instance(weaponData.key, weaponKey)}).first->second;
@@ -165,8 +165,8 @@ namespace {
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
-			(void) compiledNode.eval(ctx);
-			// benchmark::DoNotOptimize(node.formula.compile(ctx));
+			// (void) compiledNode.eval(ctx);
+			benchmark::DoNotOptimize(node.formula.compile(ctx));
 			// character.getArtifactStats();
 			benchmark::DoNotOptimize(compiledNode);
 		}

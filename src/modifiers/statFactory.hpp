@@ -1,6 +1,7 @@
 #pragma once
 
 #include "helpers.hpp"
+#include "stats/sheet.hpp"
 #include "type_traits"
 
 namespace Modifiers {
@@ -193,6 +194,73 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.burgeon...> burgeon{};
 		static constexpr _SkillValue<Params.hyperbloom...> hyperbloom{};
 	};
+
+	template<class T, class Formula>
+	[[nodiscard]] inline Stats::Sheet<T>::_SkillValue statSkillValueFactory(auto... params) {
+		return {
+			.DMG = Formula(params.DMG...),
+			.additiveDMG = Formula(params.additiveDMG...),
+			.multiplicativeDMG = Formula(params.multiplicativeDMG...),
+			.critRate = Formula(params.critRate...),
+			.critDMG = Formula(params.critDMG...),
+		};
+	}
+
+	template<class T, class Formula, class... Params>
+	[[nodiscard]] inline Stats::Sheet<T> statFactory(Params... params) {
+		return Stats::Sheet<T>{
+			.hp = Formula(params.hp...),
+			.hp_ = Formula(params.hp_...),
+			.baseHp = Formula(params.baseHp...),
+			.atk = Formula(params.atk...),
+			.atk_ = Formula(params.atk_...),
+			.baseAtk = Formula(params.baseAtk...),
+			.additionalAtk = Formula(params.additionalAtk...),
+			.def = Formula(params.def...),
+			.def_ = Formula(params.def_...),
+			.baseDef = Formula(params.baseDef...),
+			.er = Formula(params.er...),
+			.em = Formula(params.em...),
+			.cr = Formula(params.cr...),
+			.cd = Formula(params.cd...),
+			.hb = Formula(params.hb...),
+			.incHb = Formula(params.incHb...),
+			.shield_ = Formula(params.shield_...),
+
+			.pyro = statSkillValueFactory<T, Formula>(params.pyro...),
+			.hydro = statSkillValueFactory<T, Formula>(params.hydro...),
+			.cryo = statSkillValueFactory<T, Formula>(params.cryo...),
+			.electro = statSkillValueFactory<T, Formula>(params.electro...),
+			.dendro = statSkillValueFactory<T, Formula>(params.dendro...),
+			.anemo = statSkillValueFactory<T, Formula>(params.anemo...),
+			.geo = statSkillValueFactory<T, Formula>(params.geo...),
+			.physical = statSkillValueFactory<T, Formula>(params.physical...),
+			.all = statSkillValueFactory<T, Formula>(params.all...),
+			.allElemental = statSkillValueFactory<T, Formula>(params.allElemental...),
+
+			.normal = statSkillValueFactory<T, Formula>(params.normal...),
+			.charged = statSkillValueFactory<T, Formula>(params.charged...),
+			.plunge = statSkillValueFactory<T, Formula>(params.plunge...),
+			.skill = statSkillValueFactory<T, Formula>(params.skill...),
+			.burst = statSkillValueFactory<T, Formula>(params.burst...),
+
+			.vape = statSkillValueFactory<T, Formula>(params.vape...),
+			.melt = statSkillValueFactory<T, Formula>(params.melt...),
+
+			.aggravate = statSkillValueFactory<T, Formula>(params.aggravate...),
+			.spread = statSkillValueFactory<T, Formula>(params.spread...),
+
+			.burning = statSkillValueFactory<T, Formula>(params.burning...),
+			.superconduct = statSkillValueFactory<T, Formula>(params.superconduct...),
+			.swirl = statSkillValueFactory<T, Formula>(params.swirl...),
+			.electroCharged = statSkillValueFactory<T, Formula>(params.electroCharged...),
+			.shattered = statSkillValueFactory<T, Formula>(params.shattered...),
+			.overloaded = statSkillValueFactory<T, Formula>(params.overloaded...),
+			.bloom = statSkillValueFactory<T, Formula>(params.bloom...),
+			.burgeon = statSkillValueFactory<T, Formula>(params.burgeon...),
+			.hyperbloom = statSkillValueFactory<T, Formula>(params.hyperbloom...),
+		};
+	}
 
 
 }// namespace Modifiers

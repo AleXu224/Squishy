@@ -62,8 +62,11 @@ namespace Modifiers {
 		}
 	};
 
-	template<auto val>
-	using RetType = decltype(val.eval(std::declval<const Formula::Context &>()));
+	// template<auto val>
+	// using RetType = decltype(val.eval(std::declval<const Formula::Context &>()));
+
+	template<class T>
+	using RetType = decltype(std::declval<T>().eval(std::declval<const Formula::Context &>()));
 
 	template<auto val>
 	using RetTypeMember = decltype(std::declval<typename decltype(val)::RetType>().eval(std::declval<const Formula::Context &>()));

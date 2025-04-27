@@ -12,17 +12,17 @@ namespace Character {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
-			const Option::CharacterList opts{};
+			Option::CharacterList opts{};
 			Node::CharacterList nodes{};
 		};
 
-		const DataKey key;
-		const std::string_view goodKey;
-		const std::string_view name;
-		const Stats::CharacterBase baseStats;
-		const std::function<Setup(void)> setup;
+		DataKey key;
+		std::string_view goodKey;
+		std::string_view name;
+		Stats::CharacterBase baseStats;
+		std::function<Setup(void)> setup;
 
-		const Setup data = [](const std::function<Setup(void)> &setup) {
+		Setup data = [](const std::function<Setup(void)> &setup) {
 			return setup();
 		}(setup);
 
