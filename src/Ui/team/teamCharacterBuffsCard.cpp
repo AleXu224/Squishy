@@ -63,7 +63,7 @@ namespace {
 					);
 				};
 
-				for (auto &opt: character.loadout.weapon->data->data.opts) {
+				for (auto &opt: character.loadout.weapon->data->data->opts) {
 					if (!isTeamBuff(opt)) continue;
 					parseOption(character.loadout.options.at(
 						std::visit(
@@ -104,7 +104,7 @@ namespace {
 
 				for (const auto &[optPtr, condition]: Option::CharacterList::getMembersAndConditions()) {
 					if (!condition.eval(ctx)) continue;
-					auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
+					auto &optList = std::invoke(optPtr, character.loadout.character.data.data->opts);
 					for (auto &optionData: optList) {
 						bool isTeamBuff = std::visit(
 							[](auto &&opt) {

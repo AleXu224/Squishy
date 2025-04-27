@@ -20,7 +20,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			}
 		)
 	);
-	this->stats.hp.modifiers.at(0) = (Modifiers::total.hp_ + 1.f) * Modifiers::total.baseHp;
+	this->stats.hp.modifiers.at(0) = (Modifiers::total().hp_ + 1.f) * Modifiers::total().baseHp;
 
 	// ATK
 	this->stats.baseAtk.modifiers.at(0) = Formula::Prefix(
@@ -34,7 +34,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			}
 		)
 	);
-	this->stats.atk.modifiers.at(0) = (Modifiers::total.atk_ + 1.f) * Modifiers::total.baseAtk;
+	this->stats.atk.modifiers.at(0) = (Modifiers::total().atk_ + 1.f) * Modifiers::total().baseAtk;
 
 	// DEF
 	this->stats.baseDef.modifiers.at(0) = Formula::Prefix(
@@ -48,7 +48,7 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 			}
 		)
 	);
-	this->stats.def.modifiers.at(0) = (Modifiers::total.def_ + 1.f) * Modifiers::total.baseDef;
+	this->stats.def.modifiers.at(0) = (Modifiers::total().def_ + 1.f) * Modifiers::total().baseDef;
 
 	// Ascension stat
 	this->stats.fromStat(stats.character.base.ascensionStat).modifiers.at(0) = Formula::Prefix(
@@ -70,10 +70,10 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 				"All Elemental",
 				Formula::Custom(
 					[stat](const Formula::Context &context) {
-						return compileSkillStat<Modifiers::total.allElemental>(stat, context);
+						return fromSkillStat(Modifiers::total().allElemental, stat).compile(context);
 					},
 					[stat](const Formula::Context &context) {
-						return evalSkillStat<Modifiers::total.allElemental>(stat, context);
+						return fromSkillStat(Modifiers::total().allElemental, stat).eval(context);
 					},
 					true
 				)
@@ -86,6 +86,6 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->talents.fromTalent(stats.character.base.c5Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));
 
 	// Infusion
-	infusion = Formula::CharacterTeamInfusion(stats.character.data.data.mods.infusion);
-	teamInfusion = stats.character.data.data.mods.teamInfusion;
+	infusion = Formula::CharacterTeamInfusion(stats.character.data.data->mods.infusion);
+	teamInfusion = stats.character.data.data->mods.teamInfusion;
 }

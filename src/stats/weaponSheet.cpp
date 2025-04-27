@@ -3,6 +3,7 @@
 #include "formula/formula.hpp"
 #include "stats/loadout.hpp"
 #include "stats/weapon.hpp"
+#include "weapon/data.hpp"
 
 
 constexpr auto getWeaponAtk = [](const Stats::Weapon &stats) {

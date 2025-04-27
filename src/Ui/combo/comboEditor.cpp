@@ -7,6 +7,7 @@
 #include "Ui/utils/masonry.hpp"
 #include "Ui/utils/tag.hpp"
 #include "button.hpp"
+#include "character/data.hpp"
 #include "column.hpp"
 #include "container.hpp"
 #include "dialog.hpp"

@@ -52,11 +52,11 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		auto &set = Artifact::sets.at(key);
 		pattern.bonus1.emplace(Stats::ArtifactBonus{
 			.setPtr = set,
-			.bonusPtr = set.data.twoPc,
+			.bonusPtr = set.data->twoPc,
 		});
 		pattern.bonus2.emplace(Stats::ArtifactBonus{
 			.setPtr = set,
-			.bonusPtr = set.data.fourPc,
+			.bonusPtr = set.data->fourPc,
 		});
 		for (auto &entry: pattern.filters) {
 			entry.set = key;
@@ -91,7 +91,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				ArtifactFilter ret{};
 				ret.bonus1.emplace(Stats::ArtifactBonus{
 					.setPtr = set,
-					.bonusPtr = set.data.twoPc,
+					.bonusPtr = set.data->twoPc,
 				});
 				ret.filters.at(i).set = key;
 				ret.filters.at(j).set = key;
@@ -117,7 +117,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 					auto &set2 = Artifact::sets.at(key2);
 					ret.bonus2.emplace(Stats::ArtifactBonus{
 						.setPtr = set2,
-						.bonusPtr = set2.data.twoPc,
+						.bonusPtr = set2.data->twoPc,
 					});
 					for (size_t k = 0; k < 5; k++) {
 						if (k == i || k == j) continue;
@@ -128,7 +128,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 							retSwapped.bonus2.emplace(retSwapped.bonus1.value());
 							retSwapped.bonus1.emplace(Stats::ArtifactBonus{
 								.setPtr = set2,
-								.bonusPtr = set2.data.twoPc,
+								.bonusPtr = set2.data->twoPc,
 							});
 						}
 						for (size_t l = k + 1; l < 5; l++) {

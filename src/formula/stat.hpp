@@ -69,13 +69,13 @@ namespace Formula {
 
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return EvalStat(Modifiers::total, stat, [&](auto &&stat) {
+			return EvalStat(Modifiers::total(), stat, [&](auto &&stat) {
 				return stat.print(context, prevStep);
 			});
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			return EvalStat(Modifiers::total, stat, [&](auto &&stat) {
+			return EvalStat(Modifiers::total(), stat, [&](auto &&stat) {
 				return stat.eval(context);
 			});
 		}

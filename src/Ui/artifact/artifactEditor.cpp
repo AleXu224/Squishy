@@ -93,7 +93,7 @@ UI::ArtifactEditor::operator squi::Child() const {
 		for (const auto &set: Artifact::sets) {
 			ret.emplace_back(ContextMenu::Item{
 				.text = std::string(set.second.name),
-				.content = [set = set.second, setChangeEvent]() {
+				.content = [&set = set.second, setChangeEvent]() {
 					setChangeEvent.notify(set);
 				},
 			});

@@ -65,7 +65,7 @@ void Stats::Artifact::refreshStats() {
 			}();
 			targetBonus.emplace(Stats::ArtifactBonus{
 				.setPtr = artifactData,
-				.bonusPtr = artifactData.data.twoPc,
+				.bonusPtr = artifactData.data->twoPc,
 			});
 
 			// The second check should not be be outside since a four set can only happen
@@ -73,7 +73,7 @@ void Stats::Artifact::refreshStats() {
 			if (occurence.count >= 4) {
 				bonus2.emplace(Stats::ArtifactBonus{
 					.setPtr = artifactData,
-					.bonusPtr = artifactData.data.fourPc,
+					.bonusPtr = artifactData.data->fourPc,
 				});
 			}
 		}

@@ -4,20 +4,22 @@
 #include "formula/compiled/index.hpp"
 #include "formula/formulaContext.hpp"
 #include "modifiers/total/total.hpp"
+#include "operators.hpp"// IWYU pragma: keep
 #include "reaction/levelMultiplier.hpp"
 #include "stats/loadout.hpp"
 #include "utils/entryType.hpp"
+
 
 namespace Formula {
 	using namespace Formula::Operators;
 	[[nodiscard]] inline const auto &_getMultiplier(LevelableTalent talent, const std::array<float, 15> &values, const Formula::Context &context) {
 		switch (talent) {
 			case LevelableTalent::normal:
-				return values.at(Modifiers::totalTalents.normal.eval(context));
+				return values.at(Modifiers::totalTalents().normal.eval(context));
 			case LevelableTalent::skill:
-				return values.at(Modifiers::totalTalents.skill.eval(context));
+				return values.at(Modifiers::totalTalents().skill.eval(context));
 			case LevelableTalent::burst:
-				return values.at(Modifiers::totalTalents.burst.eval(context));
+				return values.at(Modifiers::totalTalents().burst.eval(context));
 		}
 		std::unreachable();
 	}
@@ -30,11 +32,11 @@ namespace Formula {
 		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
 			switch (talent) {
 				case LevelableTalent::normal:
-					return Compiled::IndexMaker(Modifiers::totalTalents.normal.compile(context), values);
+					return Compiled::IndexMaker(Modifiers::totalTalents().normal.compile(context), values);
 				case LevelableTalent::skill:
-					return Compiled::IndexMaker(Modifiers::totalTalents.skill.compile(context), values);
+					return Compiled::IndexMaker(Modifiers::totalTalents().skill.compile(context), values);
 				case LevelableTalent::burst:
-					return Compiled::IndexMaker(Modifiers::totalTalents.burst.compile(context), values);
+					return Compiled::IndexMaker(Modifiers::totalTalents().burst.compile(context), values);
 			}
 			std::unreachable();
 		}
@@ -49,7 +51,7 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] consteval auto Multiplier(auto stat, LevelableTalent talent, const std::array<float, 15> &values) {
+	[[nodiscard]] inline auto Multiplier(auto stat, LevelableTalent talent, const std::array<float, 15> &values) {
 		return stat * MultiplierValue(talent, values);
 	}
 
@@ -67,11 +69,11 @@ namespace Formula {
 		}
 	};
 
-	[[nodiscard]] consteval auto Multiplier(LevelableTalent talent, const std::array<float, 15> &values) {
+	[[nodiscard]] inline auto Multiplier(LevelableTalent talent, const std::array<float, 15> &values) {
 		return MultiplierValue(talent, values, Utils::EntryType::points);
 	}
 
-	[[nodiscard]] consteval auto Multiplier(Utils::EntryType type, LevelableTalent talent, const std::array<float, 15> &values) {
+	[[nodiscard]] inline auto Multiplier(Utils::EntryType type, LevelableTalent talent, const std::array<float, 15> &values) {
 		return MultiplierValue(talent, values, type);
 	}
 }// namespace Formula

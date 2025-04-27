@@ -57,4 +57,8 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::viridescentVenerer.key, Artifact::Sets::viridescentVenerer},
 		{Artifact::Sets::wanderersTroupe.key, Artifact::Sets::wanderersTroupe},
 	};
+
+	for (const auto &set: sets) {
+		set.second.init();
+	}
 }

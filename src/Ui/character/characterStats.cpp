@@ -9,6 +9,7 @@
 
 #include "align.hpp"
 #include "button.hpp"
+#include "character/data.hpp"
 #include "characterEditor.hpp"
 #include "formula/stat.hpp"
 #include "store.hpp"
@@ -61,10 +62,10 @@ UI::CharacterStats::operator squi::Child() const {
 			Children ret2{};
 
 			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				auto message = Formula::EvalStat(Modifiers::displayTotal, stat, [&](auto &&val) {
+				auto message = Formula::EvalStat(Modifiers::displayTotal(), stat, [&](auto &&val) {
 					return val.print(ctx, Formula::Step::none);
 				});
-				auto value = Formula::EvalStat(Modifiers::displayTotal, stat, [&](auto &&val) {
+				auto value = Formula::EvalStat(Modifiers::displayTotal(), stat, [&](auto &&val) {
 					return val.eval(ctx);
 				});
 				ret2.emplace_back(UI::Tooltip{

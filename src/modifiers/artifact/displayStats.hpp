@@ -1,25 +1,8 @@
 #pragma once
 
-#include "modifiers/artifact/set.hpp"
+#include "stats/sheet.hpp"
 
 namespace Modifiers::Artifact {
-	template<auto sheetPre, auto sheetPost>
-	struct DisplayStatsFrm {
-		using Ret = RetType<sheetPre>;
-
-		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
-			return (sheetPre + sheetPost).compile(context);
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (sheetPre + sheetPost).print(context, prevStep);
-		}
-
-		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-			return (sheetPre + sheetPost).eval(context);
-		}
-	};
-
-	static constexpr StatFactory<DisplayStatsFrm, Set::sheet1PreMods, Set::sheet1PostMods> display1;
-	static constexpr StatFactory<DisplayStatsFrm, Set::sheet2PreMods, Set::sheet2PostMods> display2;
+	const Stats::Sheet<Formula::FloatNode> &display1();
+	const Stats::Sheet<Formula::FloatNode> &display2();
 }// namespace Modifiers::Artifact

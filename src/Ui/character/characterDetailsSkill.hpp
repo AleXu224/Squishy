@@ -24,9 +24,12 @@ namespace UI {
 		virtual ~ModsGenerator() = default;
 	};
 
-	template<auto sheet>
 	struct DerivedModsGenerator : public ModsGenerator {
-		squi::Children generate(const Formula::Context &ctx) const override {
+		const Stats::Sheet<Formula::FloatNode> &sheet;
+
+		DerivedModsGenerator(const Stats::Sheet<Formula::FloatNode> &sheet) : sheet(sheet) {}
+
+		squi::Children generate(const Formula::Context &ctx) const {
 			squi::Children ret{};
 
 			bool transparent = true;
@@ -48,21 +51,21 @@ namespace UI {
 			};
 
 			for (const auto &stat: Stats::simple) {
-				evalFunc(Stats::fromStat<sheet>(stat), Stats::fromStat<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(stat));
+				evalFunc(Stats::fromStat(sheet, stat), Stats::fromStat<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(stat));
 			}
 			for (const auto &element: Misc::damageElements) {
 				for (const auto &skill: Misc::skillStats) {
-					evalFunc(Stats::fromDamageElement<sheet>(element, skill), Stats::fromDamageElement<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(element, skill));
+					evalFunc(Stats::fromDamageElement(sheet, element, skill), Stats::fromDamageElement<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(element, skill));
 				}
 			}
 			for (const auto &attackSource: Misc::attackSources) {
 				for (const auto &skill: Misc::skillStats) {
-					evalFunc(Stats::fromAttackSource<sheet>(attackSource, skill), Stats::fromAttackSource<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(attackSource, skill));
+					evalFunc(Stats::fromAttackSource(sheet, attackSource, skill), Stats::fromAttackSource<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(attackSource, skill));
 				}
 			}
 			for (const auto &reaction: Misc::reactions) {
 				for (const auto &skill: Misc::skillStats) {
-					evalFunc(Stats::fromReaction<sheet>(reaction, skill), Stats::fromReaction<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(reaction, skill));
+					evalFunc(Stats::fromReaction(sheet, reaction, skill), Stats::fromReaction<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(reaction, skill));
 				}
 			}
 

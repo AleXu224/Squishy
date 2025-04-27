@@ -12,24 +12,26 @@ namespace Weapon {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
-			const Option::WeaponList opts{};
+			Option::WeaponList opts{};
 			Node::WeaponList nodes{};
 		};
 
-		const DataKey key;
-		const std::string_view goodKey;
-		const std::string name;
-		const Stats::WeaponBase baseStats;
-		const std::function<Setup(void)> setup;
+		DataKey key;
+		std::string_view goodKey;
+		std::string name;
+		Stats::WeaponBase baseStats;
+		std::function<Setup(void)> setup;
 
-		const Setup data = [](const std::function<Setup(void)> &setup) {
-			return setup();
-		}(setup);
+		mutable std::unique_ptr<const Setup> data = nullptr;
+
+		void init() const {
+			data = std::make_unique<Setup>(setup());
+		}
 
 		void getOpts(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
-				data.opts
+				data->opts
 			);
 		}
 	};

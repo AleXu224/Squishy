@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formula/operators.hpp"// IWYU pragma: keep
 #include "formula/shieldModified.hpp"
 #include "modifiers/total/total.hpp"
 #include "nodeData.hpp"
@@ -20,7 +21,7 @@ namespace Node {
 			Frm formula,
 			T modifier
 		) {
-			auto totalShield_ = Modifiers::total.shield_ + modifier.shield_;
+			auto totalShield_ = Modifiers::total().shield_ + modifier.shield_;
 			auto elementBonus = modifier.elementBonus;
 			auto additiveHp = modifier.additiveHp;
 
