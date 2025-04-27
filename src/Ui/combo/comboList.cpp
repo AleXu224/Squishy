@@ -8,12 +8,14 @@
 #include "expander.hpp"
 #include "rebuilder.hpp"
 #include "store.hpp"
+#include "theme.hpp"
 
 
 using namespace squi;
 
 namespace {
-	[[nodiscard]] Child comboListBuilder(const Character::InstanceKey &characterKey, const Formula::Context &ctx, VoidObservable combosModifiedEvent) {
+	[[nodiscard]] Child comboListBuilder(const Character::InstanceKey &characterKey, const Formula::Context &ctx, VoidObservable combosModifiedEvent, Theme theme) {
+		auto _ = ThemeManager::pushTheme(theme);
 		return Column{
 			.spacing = 4.f,
 			.children = [&]() {
@@ -29,7 +31,8 @@ namespace {
 							Button{
 								.text = "Edit combo",
 								.style = ButtonStyle::Standard(),
-								.onClick = [&combo, characterKey, ctx, combosModifiedEvent](GestureDetector::Event event) {
+								.onClick = [&combo, characterKey, ctx, combosModifiedEvent, theme](GestureDetector::Event event) {
+									auto _ = ThemeManager::pushTheme(theme);
 									event.widget.addOverlay(UI::ComboEditor{
 										.combo = combo,
 										.characterKey = characterKey,
@@ -92,7 +95,7 @@ UI::ComboList::operator squi::Child() const {
 				},
 				Rebuilder{
 					.rebuildEvent = combosModifiedEvent,
-					.buildFunc = std::bind(comboListBuilder, characterKey, ctx, combosModifiedEvent),
+					.buildFunc = std::bind(comboListBuilder, characterKey, ctx, combosModifiedEvent, ThemeManager::getTheme()),
 				}
 			},
 		},

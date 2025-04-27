@@ -8,6 +8,7 @@
 #include "character/characters/KamisatoAyaka.hpp"
 #include "character/characters/Mavuika.hpp"
 #include "character/characters/Nahida.hpp"
+#include "character/characters/Neuvillette.hpp"
 #include "character/characters/Xilonen.hpp"
 
 
@@ -21,6 +22,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::kamisatoAyaka.key, Character::Datas::kamisatoAyaka},
 		{Character::Datas::mavuika.key, Character::Datas::mavuika},
 		{Character::Datas::nahida.key, Character::Datas::nahida},
+		{Character::Datas::neuvillette.key, Character::Datas::neuvillette},
 		{Character::Datas::xilonen.key, Character::Datas::xilonen},
 	};
 }

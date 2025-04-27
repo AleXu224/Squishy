@@ -10,6 +10,7 @@
 #include "optimizationSetChooser.hpp"
 #include "row.hpp"
 #include "store.hpp"
+#include "theme.hpp"
 #include "widgets/toggleSwitch.hpp"
 
 #include "optimization/solution.hpp"
@@ -29,6 +30,8 @@ UI::Optimization::operator squi::Child() const {
 	};
 
 	Observable<::Optimization::Solutions> solutionsEvent;
+
+	auto theme = ThemeManager::getTheme();
 
 	return Container{
 		.child = Align{
@@ -73,7 +76,8 @@ UI::Optimization::operator squi::Child() const {
 							Button{
 								.text = "Configure",
 								.style = ButtonStyle::Standard(),
-								.onClick = [storage = character.optimizationOptions, &character = character, ctx = ctx](GestureDetector::Event event) {
+								.onClick = [storage = character.optimizationOptions, &character = character, ctx = ctx, theme](GestureDetector::Event event) {
+									auto _ = ThemeManager::pushTheme(theme);
 									event.widget.addOverlay(OptimizationSetChooser{
 										.character = character,
 										.ctx = ctx,
@@ -101,7 +105,9 @@ UI::Optimization::operator squi::Child() const {
 											ret.borderRadius = ret.borderRadius.withRight(0.f);
 											return ret;
 										}(),
-										.onClick = [storage = character.optimizationOptions, characterKey = characterKey, ctx = ctx](GestureDetector::Event event) {
+										.onClick = [storage = character.optimizationOptions, characterKey = characterKey, ctx = ctx, theme](GestureDetector::Event event) {
+											auto _ = ThemeManager::pushTheme(theme);
+
 											event.widget.addOverlay(NodePicker{
 												.characterKey = characterKey,
 												.enableCombos = true,

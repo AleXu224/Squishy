@@ -226,12 +226,11 @@ extern void Store::loadFromGOOD(const Serialization::Good::IGOOD &data) {
 		}
 		::Store::artifacts.clear();
 		for (const auto &artifact: data.artifacts.value()) {
-			auto storedArtifact = artifact.isAlreadyStored();
-			if (!storedArtifact && !(storedArtifact = artifact.createInstance())) {
+			auto storedArtifact = artifact.createInstance();
+			if (!storedArtifact) {
 				std::println("{}", storedArtifact.error());
 				continue;
 			}
-
 			artifact.writeToInstance(storedArtifact.value());
 		}
 		artifactListUpdateEvent.notify();

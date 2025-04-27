@@ -6,8 +6,10 @@
 
 #include "Ui/home/homePage.hpp"
 
+#include "theme.hpp"
 #include "window.hpp"
 #include <GLFW/glfw3.h>
+
 
 int main() {
 	Weapon::initWeapons();
@@ -47,6 +49,12 @@ int main() {
 	// std::println("{}", resolved.formula.eval(ctx));
 
 	using namespace squi;
+
+	auto systemTheme = ThemeManager::getSystemAccentColor();
+	auto _ = ThemeManager::pushTheme(Theme{
+		.accent = systemTheme.value_or(ThemeManager::getTheme().accent),
+	});
+
 	Window window{WindowOptions{
 		.name = "Squishy",
 		.width = ::Store::windowWidth,

@@ -8,6 +8,7 @@
 #include "ranges"
 #include "rebuilder.hpp"
 #include "store.hpp"
+#include "theme.hpp"
 
 
 using namespace squi;
@@ -26,7 +27,8 @@ UI::ComboDisplay::operator squi::Child() const {
 				const auto &[comboKey, combo] = comboPair;
 				ret.emplace_back(Rebuilder{
 					.rebuildEvent = combo.updateEvent,
-					.buildFunc = [transparent, &combo, ctx]() {
+					.buildFunc = [transparent, &combo, ctx, theme = ThemeManager::getTheme()]() {
+						auto _ = ThemeManager::pushTheme(theme);
 						return SkillEntry{
 							.isTransparent = transparent,
 							.name = combo.name,
@@ -42,7 +44,8 @@ UI::ComboDisplay::operator squi::Child() const {
 		.footer{
 			Button{
 				.text = "Edit",
-				.onClick = [characterKey = characterKey, ctx = ctx](GestureDetector::Event event) {
+				.onClick = [characterKey = characterKey, ctx = ctx, theme = ThemeManager::getTheme()](GestureDetector::Event event) {
+					auto _ = ThemeManager::pushTheme(theme);
 					event.widget.addOverlay(ComboList{
 						.characterKey = characterKey,
 						.ctx = ctx,

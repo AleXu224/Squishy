@@ -21,7 +21,7 @@ void Artifact::Instance::equipOn(Character::InstanceKey characterKey) {
 
 	auto &character = Store::characters.at(characterKey);
 	auto &slot = character.loadout.artifact.equipped.fromSlot(this->slot);
-	if (slot) {
+	if (slot && Store::artifacts.contains(slot)) {
 		auto &artifact = Store::artifacts.at(slot);
 		if (this->equippedCharacter) {
 			auto otherCharacter = this->equippedCharacter;

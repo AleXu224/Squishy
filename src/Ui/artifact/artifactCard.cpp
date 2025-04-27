@@ -22,6 +22,7 @@
 
 
 #include "ranges"
+#include "theme.hpp"
 
 using namespace squi;
 
@@ -224,6 +225,7 @@ UI::ArtifactCard::operator squi::Child() const {
 				return Child{};
 			}
 			auto &artifact = Store::artifacts.at(key);
+			auto _ = ThemeManager::pushTheme(Theme{.accent = Misc::rarityToColor.at(artifact.rarity)});
 			return Card{
 				.widget{
 					.padding = Padding{1.f},

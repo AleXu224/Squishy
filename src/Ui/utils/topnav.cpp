@@ -8,6 +8,7 @@
 #include "row.hpp"
 #include "stack.hpp"
 #include "text.hpp"
+#include "theme.hpp"
 #include <GLFW/glfw3.h>
 
 
@@ -65,7 +66,7 @@ struct TopNavButton {
 									readyObserver.notify();
 								},
 							},
-							.color{0x60CDFFFF},
+							.color{ThemeManager::getTheme().accent},
 							.borderRadius{2.f},
 						},
 					},

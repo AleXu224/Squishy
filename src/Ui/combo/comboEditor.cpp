@@ -119,7 +119,8 @@ namespace {
 		}
 	};
 
-	Child createComboOptionEntries(Combo::Entry &entry, std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx) {
+	Child createComboOptionEntries(Combo::Entry &entry, std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, Theme theme) {
+		auto _ = ThemeManager::pushTheme(theme);
 		Children ret = [&entry, storage, ctx]() mutable {
 			std::vector<Combo::Option> store;
 			ctx.optionStore = &store;
@@ -221,7 +222,8 @@ namespace {
 		};
 	}
 
-	Child comboEditorEntries(std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, Character::InstanceKey characterKey, VoidObservable nodeListChangedEvent) {
+	Child comboEditorEntries(std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, Character::InstanceKey characterKey, VoidObservable nodeListChangedEvent, Theme theme) {
+		auto _ = ThemeManager::pushTheme(theme);
 		VoidObservable dmgValueUpdateEvent;
 		Children ret;
 
@@ -316,7 +318,8 @@ namespace {
 			auto addOptionOverride = Button{
 				.text = "Add option",
 				.style = ButtonStyle::Standard(),
-				.onClick = [characterKey = characterKey, ctx = ctx, &entry](GestureDetector::Event event) {
+				.onClick = [characterKey = characterKey, ctx = ctx, &entry, theme](GestureDetector::Event event) {
+					auto _ = ThemeManager::pushTheme(theme);
 					event.widget.addOverlay(UI::OptionPicker{
 						.characterKey = characterKey,
 						.ctx = ctx,
@@ -445,7 +448,7 @@ namespace {
 				},
 				.expandedContent = Rebuilder{
 					.rebuildEvent = entry.optionUpdateEvent,
-					.buildFunc = std::bind(createComboOptionEntries, std::ref(entry), storage, ctx),
+					.buildFunc = std::bind(createComboOptionEntries, std::ref(entry), storage, ctx, theme),
 				},
 			});
 		}
@@ -502,7 +505,7 @@ UI::ComboEditor::operator squi::Child() const {
 				},
 				Rebuilder{
 					.rebuildEvent = nodeListChangedEvent,
-					.buildFunc = std::bind(comboEditorEntries, storage, ctx, characterKey, nodeListChangedEvent),
+					.buildFunc = std::bind(comboEditorEntries, storage, ctx, characterKey, nodeListChangedEvent, ThemeManager::getTheme()),
 				},
 			},
 		},

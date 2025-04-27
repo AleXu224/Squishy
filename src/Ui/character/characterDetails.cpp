@@ -3,6 +3,7 @@
 #include "Ui/artifact/artifactCard.hpp"
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
+#include "Ui/elementToColor.hpp"
 #include "Ui/optimization/optimization.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/grid.hpp"
@@ -17,6 +18,7 @@
 #include "ranges"
 #include "rebuilder.hpp"
 #include "store.hpp"
+#include "theme.hpp"
 
 
 #include "formula/stat.hpp"// IWYU pragma: keep
@@ -69,7 +71,9 @@ namespace {
 		return ret;
 	}
 
-	Child makeMainContent(Character::InstanceKey characterKey, std::optional<Team::InstanceKey> teamKey, Enemy::Key enemyKey) {
+	Child makeMainContent(Character::InstanceKey characterKey, std::optional<Team::InstanceKey> teamKey, Enemy::Key enemyKey, Theme theme) {
+		auto _ = ThemeManager::pushTheme(theme);
+
 		auto &character = ::Store::characters.at(characterKey);
 		auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 		auto &enemy = ::Store::enemies.at(enemyKey);
@@ -288,6 +292,10 @@ namespace {
 }// namespace
 
 UI::CharacterDetails::operator squi::Child() const {
+	auto theme = ThemeManager::getTheme();
+	auto &element = ::Store::characters.at(characterKey).loadout.character.base.element;
+	theme.accent = Utils::elementToColor(element);
+	auto _ = ThemeManager::pushTheme(theme);
 	// TODO: make each item rebuild individually
 	return ScrollableFrame{
 		.scrollableWidget{
@@ -306,7 +314,7 @@ UI::CharacterDetails::operator squi::Child() const {
 			},
 			Rebuilder{
 				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
-				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey),
+				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey, theme),
 			},
 			UI::Optimization{
 				.characterKey = characterKey,

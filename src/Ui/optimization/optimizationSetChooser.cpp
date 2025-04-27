@@ -14,6 +14,7 @@
 #include "rebuilder.hpp"
 #include "row.hpp"
 #include "text.hpp"
+#include "theme.hpp"
 #include "widgets/toggleButton.hpp"
 
 
@@ -234,7 +235,9 @@ UI::OptimizationSetChooser::operator squi::Child() const {
 				helperButtons,
 				Rebuilder{
 					.rebuildEvent = character.updateEvent,
-					.buildFunc = [&twoPcSets = twoPcSets, &fourPcSets = fourPcSets, &character = character, ctx = ctx]() -> Child {
+					.buildFunc = [&twoPcSets = twoPcSets, &fourPcSets = fourPcSets, &character = character, ctx = ctx, theme = ThemeManager::getTheme()]() -> Child {
+						auto _ = ThemeManager::pushTheme(theme);
+						
 						return Grid{
 							.spacing = 4.f,
 							.columnCount = Grid::MinSize{250.f},

@@ -9,6 +9,7 @@
 #include "row.hpp"
 #include "store.hpp"
 #include "text.hpp"
+#include "theme.hpp"
 
 using namespace squi;
 
@@ -25,16 +26,18 @@ struct ToggleBox {
 	operator squi::Child() const {
 		auto storage = std::make_shared<Storage>();
 
+		auto accent = ThemeManager::getTheme().accent;
+
 		return Box{
 			.widget{
 				.width = 20.f,
 				.height = 20.f,
-				.onInit = [switchEvent = switchEvent, readyEvent = readyEvent](Widget &w) {
-					w.customState.add(switchEvent.observe([&w](bool active) {
+				.onInit = [switchEvent = switchEvent, readyEvent = readyEvent, accent](Widget &w) {
+					w.customState.add(switchEvent.observe([&w, accent](bool active) {
 						auto &box = w.as<Box::Impl>();
 						if (active) {
 							box.setBorderWidth(0.f);
-							box.setColor(Color{0x60CDFFFF});
+							box.setColor(accent);
 						} else {
 							box.setBorderWidth(1.f);
 							box.setColor(Color{0.f, 0.f, 0.f, 0.1f});

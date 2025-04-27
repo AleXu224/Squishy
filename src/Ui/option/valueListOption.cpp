@@ -78,6 +78,8 @@ UI::ValueListOption::operator squi::Child() const {
 		return style;
 	};
 
+	auto accentStyle = ButtonStyle::Accent();
+
 	return Column{
 		.widget = widget,
 		.children{
@@ -88,14 +90,14 @@ UI::ValueListOption::operator squi::Child() const {
 					.sizeConstraints{
 						.minHeight = 32.f,
 					},
-					.onInit = [readyEvent, internalValueChangedEvent, valueChangedEvent = valueChangedEvent, &option = option, borderRadiusFunc](Widget &w) {
+					.onInit = [readyEvent, internalValueChangedEvent, valueChangedEvent = valueChangedEvent, &option = option, borderRadiusFunc, accentStyle](Widget &w) {
 						observe("valueChangedEvent", w, valueChangedEvent, [internalValueChangedEvent](std::optional<uint32_t> value, std::optional<uint32_t> index) {
 							internalValueChangedEvent.notify(value, index);
 						});
-						w.customState.add(internalValueChangedEvent.observe([&w, borderRadiusFunc](std::optional<uint32_t> newVal, std::optional<uint32_t> index) {
+						w.customState.add(internalValueChangedEvent.observe([&w, borderRadiusFunc, accentStyle](std::optional<uint32_t> newVal, std::optional<uint32_t> index) {
 							auto style = ButtonStyle::Standard();
 
-							if (newVal.has_value()) style = ButtonStyle::Accent();
+							if (newVal.has_value()) style = accentStyle;
 							Button::State::style.of(w) = borderRadiusFunc(style);
 						}));
 						w.customState.add(readyEvent.observe([internalValueChangedEvent, &option]() {
@@ -103,7 +105,7 @@ UI::ValueListOption::operator squi::Child() const {
 						}));
 					},
 				},
-				.style = option.getValue().has_value() ? borderRadiusFunc(ButtonStyle::Accent()) : borderRadiusFunc(ButtonStyle::Standard()),
+				.style = option.getValue().has_value() ? borderRadiusFunc(accentStyle) : borderRadiusFunc(ButtonStyle::Standard()),
 				.onClick = [valueChangedEvent = valueChangedEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event event) {
 					event.widget.addOverlay(ContextMenu{
 						.position = event.widget.getPos().withYOffset(event.widget.getSize().y),

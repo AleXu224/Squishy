@@ -1,4 +1,5 @@
 #include "character.hpp"
+#include "store.hpp"
 
 Serialization::Save::Character Serialization::Save::Character::fromInstance(const ::Character::Instance &character) {
 	return {
@@ -35,6 +36,12 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 	instance.loadout.artifact.equipped.sands = artifactSands;
 	instance.loadout.artifact.equipped.goblet = artifactGoblet;
 	instance.loadout.artifact.equipped.circlet = artifactCirclet;
+
+	for (const auto &slot: ::Artifact::slots) {
+		auto &equipped = instance.loadout.artifact.equipped.fromSlot(slot);
+		if (!equipped) continue;
+		if (!::Store::artifacts.contains(equipped)) equipped.clear();
+	}
 
 	optionsToInstance(options, instance.loadout.options);
 	instance.combos = comboToInstance(combos);

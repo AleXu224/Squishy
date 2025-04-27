@@ -25,6 +25,7 @@
 #include "weapons/StarcallersWatch.hpp"
 #include "weapons/SymphonistOfScents.hpp"
 #include "weapons/ThrillingTalesOfDragonSlayers.hpp"
+#include "weapons/TomeOfTheEternalFlow.hpp"
 #include "weapons/WasterGreatsword.hpp"
 
 
@@ -55,6 +56,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::starcallersWatch.key, Weapon::Datas::starcallersWatch},
 		{Weapon::Datas::symphonistOfScents.key, Weapon::Datas::symphonistOfScents},
 		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},
+		{Weapon::Datas::tomeOfTheEternalFlow.key, Weapon::Datas::tomeOfTheEternalFlow},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};
 }
