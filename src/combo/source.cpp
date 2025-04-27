@@ -54,7 +54,7 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 }
 
 Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Character::list.at(key).data->nodes.fromEntry(slot).at(index);
+	auto &ret = ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;
@@ -69,7 +69,7 @@ Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Opti
 }
 
 Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Weapon::list.at(key).data->nodes.at(index);
+	auto &ret = ::Weapon::list.at(key).data.nodes.at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;
@@ -84,7 +84,7 @@ Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option>
 }
 
 Node::Instance Combo::Source::Artifact::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Artifact::sets.at(key).data->fromSetSlot(slot).nodes.at(index);
+	auto &ret = ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;

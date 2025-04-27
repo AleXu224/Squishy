@@ -125,7 +125,7 @@ UI::NodePicker::operator squi::Child() const {
 				for (const auto &slot: Node::characterSlots) {
 					if (!Utils::slotToCondition(slot).eval(ctx)) continue;
 					Children entryRet{};
-					const auto &nodeList = character.loadout.character.data.data->nodes.fromEntry(slot);
+					const auto &nodeList = character.loadout.character.data.data.nodes.fromEntry(slot);
 					for (const auto &[index, node]: nodeList | std::views::enumerate) {
 						if (!Node::getOptimizable(node.data)) continue;
 						entryRet.emplace_back(NodePickerEntry{
@@ -150,7 +150,7 @@ UI::NodePicker::operator squi::Child() const {
 				}
 
 				Children weaponRet{};
-				for (const auto &[index, node]: character.loadout.weapon->data->data->nodes | std::views::enumerate) {
+				for (const auto &[index, node]: character.loadout.weapon->data->data.nodes | std::views::enumerate) {
 					if (!Node::getOptimizable(node.data)) continue;
 					weaponRet.emplace_back(NodePickerEntry{
 						.node = node,

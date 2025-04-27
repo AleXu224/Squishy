@@ -86,6 +86,6 @@ void Stats::CharacterSheet::init(Stats::Loadout &stats) {
 	this->talents.fromTalent(stats.character.base.c5Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));
 
 	// Infusion
-	infusion = Formula::CharacterTeamInfusion(stats.character.data.data->mods.infusion);
-	teamInfusion = stats.character.data.data->mods.teamInfusion;
+	infusion = Formula::CharacterTeamInfusion(stats.character.data.data.mods.infusion);
+	teamInfusion = stats.character.data.data.mods.teamInfusion;
 }

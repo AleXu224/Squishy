@@ -7,12 +7,15 @@
 
 namespace Modifiers::Weapon {
 	using namespace Formula::Operators;
+	using namespace Formula::Compiled::Operators;
 	struct DisplayFrm {
-		const Formula::FloatNode &weaponPassivePre;
-		const Formula::FloatNode &weaponPassivePost;
-		const Formula::FloatNode &weaponInstance;
+		Formula::FloatNode weaponPassivePre;
+		Formula::FloatNode weaponPassivePost;
+		Formula::FloatNode weaponInstance;
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return (weaponPassivePre + weaponPassivePost + weaponInstance).compile(context);
+			return weaponPassivePre.compile(context)
+				 + weaponPassivePost.compile(context)
+				 + weaponInstance.compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {

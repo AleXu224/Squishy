@@ -7,11 +7,13 @@
 namespace Modifiers::Artifact {
 	using namespace Formula::Operators;
 	struct DisplayStatsFrm {
-		const Formula::FloatNode &sheetPre;
-		const Formula::FloatNode &sheetPost;
+		Formula::FloatNode sheetPre;
+		Formula::FloatNode sheetPost;
 
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return (sheetPre + sheetPost).compile(context);
+			using namespace Formula::Compiled::Operators;
+			return sheetPre.compile(context)
+				 + sheetPost.compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -19,7 +21,8 @@ namespace Modifiers::Artifact {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return (sheetPre + sheetPost).eval(context);
+			return sheetPre.eval(context)
+				 + sheetPost.eval(context);
 		}
 	};
 

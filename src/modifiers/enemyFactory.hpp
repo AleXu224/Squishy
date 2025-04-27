@@ -68,7 +68,7 @@ namespace Modifiers {
 	};
 
 	template<class T, class Formula>
-	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(const auto &...params) {
+	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(auto... params) {
 		return {
 			.level = Formula(params.level...),
 			.DEFReduction = Formula(params.DEFReduction...),

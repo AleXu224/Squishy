@@ -22,16 +22,14 @@ namespace Weapon {
 		Stats::WeaponBase baseStats;
 		std::function<Setup(void)> setup;
 
-		mutable std::unique_ptr<const Setup> data = nullptr;
-
-		void init() const {
-			data = std::make_unique<Setup>(setup());
-		}
+		Setup data = [](const std::function<Setup(void)> &setup) {
+			return setup();
+		}(setup);
 
 		void getOpts(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
-				data->opts
+				data.opts
 			);
 		}
 	};

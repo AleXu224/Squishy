@@ -71,8 +71,8 @@ namespace {
 					auto instanceKey = character.instanceKey;
 
 					auto opt_lists = std::vector{
-						std::ref(data.data->twoPc.opts),
-						std::ref(data.data->fourPc.opts),
+						std::ref(data.data.twoPc.opts),
+						std::ref(data.data.fourPc.opts),
 					};
 
 					for (auto &opt_list: opt_lists) {

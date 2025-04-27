@@ -24,10 +24,10 @@ namespace Character {
 
 	using EntryType = Utils::EntryType;
 
-	inline const auto &preMods = Modifiers::preMods();
-	inline const auto &total = Modifiers::total();
-	inline const auto &totalActive = Modifiers::totalActive();
-	inline const auto &totalEnemy = Modifiers::totalEnemy();
-	inline const auto &totalTalents = Modifiers::totalTalents();
+	static inline const auto &preMods = Modifiers::preMods();
+	static inline const auto &total = Modifiers::total();
+	static inline const auto &totalActive = Modifiers::totalActive();
+	static inline const auto &totalEnemy = Modifiers::totalEnemy();
+	static inline const auto &totalTalents = Modifiers::totalTalents();
 };// namespace Character
 using namespace Formula;

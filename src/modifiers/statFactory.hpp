@@ -207,7 +207,7 @@ namespace Modifiers {
 	}
 
 	template<class T, class Formula, class... Params>
-	[[nodiscard]] inline Stats::Sheet<T> statFactory(const Params &...params) {
+	[[nodiscard]] inline Stats::Sheet<T> statFactory(Params... params) {
 		return Stats::Sheet<T>{
 			.hp = Formula(params.hp...),
 			.hp_ = Formula(params.hp_...),

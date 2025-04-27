@@ -9,10 +9,12 @@ namespace Modifiers::Artifact::Set {
 	using namespace Formula::Operators;
 	template<class Ret>
 	struct SetFormula {
-		const Ret &sheet1;
-		const Ret &sheet2;
+		Ret sheet1;
+		Ret sheet2;
 		[[nodiscard]] auto compile(const Formula::Context &context) const {
-			return (sheet1 + sheet2).compile(context);
+			using namespace Formula::Compiled::Operators;
+			return sheet1.compile(context)
+				 + sheet2.compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -20,7 +22,8 @@ namespace Modifiers::Artifact::Set {
 		}
 
 		[[nodiscard]] constexpr RetType<Ret> eval(const Formula::Context &context) const {
-			return (sheet1 + sheet2).eval(context);
+			return sheet1.eval(context)
+				 + sheet2.eval(context);
 		}
 	};
 

@@ -30,20 +30,18 @@ namespace Artifact {
 
 		std::function<Setup(void)> setup;
 
-		mutable std::unique_ptr<const Setup> data = nullptr;
-
-		void init() const {
-			data = std::make_unique<Setup>(setup());
-		}
+		Setup data = [](const std::function<Setup(void)> &setup) {
+			return setup();
+		}(setup);
 
 		void getOptions(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
-				data->twoPc.opts
+				data.twoPc.opts
 			);
 			Option::mapOptions(
 				options,
-				data->fourPc.opts
+				data.fourPc.opts
 			);
 		}
 	};

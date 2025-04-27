@@ -23,8 +23,4 @@ extern void Character::initCharacters() {
 		{Character::Datas::nahida.key, Character::Datas::nahida},
 		{Character::Datas::xilonen.key, Character::Datas::xilonen},
 	};
-
-	for (const auto &character: list) {
-		character.second.init();
-	}
 }

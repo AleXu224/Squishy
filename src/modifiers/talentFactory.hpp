@@ -28,7 +28,7 @@ namespace Modifiers {
 	};
 
 	template<class T, class Formula>
-	[[nodiscard]] inline Talents<T> talentFactory(const auto &...params) {
+	[[nodiscard]] inline Talents<T> talentFactory(auto... params) {
 		return {
 			.normal = Formula(params.normal...),
 			.skill = Formula(params.skill...),

@@ -57,8 +57,4 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
 	};
-
-	for (const auto &weapon: list) {
-		weapon.second.init();
-	}
 }

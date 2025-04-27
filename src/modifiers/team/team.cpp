@@ -14,9 +14,9 @@ namespace Modifiers::Team {
 	using namespace Formula::Operators;
 	template<class T>
 	struct Frm {
-		const T &characterStat;
-		const T &weaponStat;
-		const T &artifactStat;
+		T characterStat;
+		T weaponStat;
+		T artifactStat;
 		using Ret = RetType<T>;
 		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
 			Formula::Compiled::NodeType<Ret> ret = Formula::Compiled::Constant<Ret>{};
@@ -24,7 +24,10 @@ namespace Modifiers::Team {
 				using namespace Formula::Compiled::Operators;
 				if (!character) continue;// Val is a constant of 0 by default, no need to do anything
 				auto newContext = context.withSource(character->loadout);
-				ret = ret + (characterStat + weaponStat + artifactStat).compile(newContext);
+				ret = ret
+					+ characterStat.compile(newContext)
+					+ weaponStat.compile(newContext)
+					+ artifactStat.compile(newContext);
 			}
 			return ret;
 		}
@@ -39,7 +42,9 @@ namespace Modifiers::Team {
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
 				auto newContext = context.withSource(character->loadout);
-				total += (characterStat + weaponStat + artifactStat).eval(newContext);
+				total += characterStat.eval(newContext)
+					   + weaponStat.eval(newContext)
+					   + artifactStat.eval(newContext);
 			}
 			return total;
 		}

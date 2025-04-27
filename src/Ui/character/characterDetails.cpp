@@ -107,14 +107,14 @@ namespace {
 			.modsGenerator = std::make_shared<UI::ModsGenerator>(),
 		};
 
-		auto weaponOpts = makeOpts(character.loadout.weapon->data->data->opts, character.loadout.options);
+		auto weaponOpts = makeOpts(character.loadout.weapon->data->data.opts, character.loadout.options);
 
 		auto weaponStats = UI::DetailsSkill{
 			.name = character.loadout.weapon->data->name,
 			.subtitle = "Weapon",
 			.instanceKey = keyParam,
 			.ctx = ctx,
-			.nodes = character.loadout.weapon->data->data->nodes,
+			.nodes = character.loadout.weapon->data->data.nodes,
 			.options = weaponOpts,
 			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Weapon::displayStats()),
 		};
@@ -179,12 +179,12 @@ namespace {
 
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
-			const auto &optList = std::invoke(optPtr, character.loadout.character.data.data->opts);
+			const auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
 			characterOpts.emplace_back(makeOpts(optList, character.loadout.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {
-			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data->nodes));
+			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
 		}
 
 		for (const auto &[nodeWrapper, options, slot]: std::views::zip(nodes, characterOpts, Node::characterSlots)) {

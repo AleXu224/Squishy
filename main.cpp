@@ -5,12 +5,9 @@
 #include "weapon/weapons.hpp"
 
 #include "Ui/home/homePage.hpp"
-#include "modifiers/total/total.hpp"
 
 #include "window.hpp"
 #include <GLFW/glfw3.h>
-
-inline auto dd = Modifiers::total().hp;
 
 int main() {
 	Weapon::initWeapons();
@@ -32,23 +29,22 @@ int main() {
 
 	enemy.first->second.stats.sheet.level.constant = 100.f;
 
-	auto &cyno = Store::characters.at({3});
-	auto &team = Store::teams.at({2});
+	// auto &cyno = Store::characters.at({3});
+	// auto &team = Store::teams.at({2});
 
-	auto ctx = Formula::Context{
-		.source = cyno.loadout,
-		.active = cyno.loadout,
-		.team = team.stats,
-		.enemy = enemy.first->second.stats,
-	};
+	// auto ctx = Formula::Context{
+	// 	.source = cyno.loadout,
+	// 	.active = cyno.loadout,
+	// 	.team = team.stats,
+	// 	.enemy = enemy.first->second.stats,
+	// };
 
 	// auto source = Combo::Source::Character{.key{cyno.dataKey}, .slot = Node::CharacterSlot::burst, .index = 0};
 	// auto resolved = source.resolve({});
 	// auto compiled = resolved.formula.compile(ctx);
 	// std::println("{}", compiled.print());
 	// std::println("{}", compiled.eval(ctx));
-
-	std::println("{}", dd.eval(ctx));
+	// std::println("{}", resolved.formula.eval(ctx));
 
 	using namespace squi;
 	Window window{WindowOptions{
