@@ -158,8 +158,9 @@ UI::Optimization::operator squi::Child() const {
 					},
 					Column{
 						.widget{
-							.onInit = [solutionsEvent, characterKey = characterKey](Widget &w) {
-								observe(w, solutionsEvent, [&w, characterKey](::Optimization::Solutions solutions) {
+							.onInit = [solutionsEvent, characterKey = characterKey, theme](Widget &w) {
+								observe(w, solutionsEvent, [&w, characterKey, theme](::Optimization::Solutions solutions) {
+									auto _ = ThemeManager::pushTheme(theme);
 									Children ret;
 									uint32_t counter = 1;
 									for (const auto &solution: solutions.solutions) {
