@@ -1,6 +1,7 @@
 #include "characters.hpp"
 
 #include "character/characters/Bennett.hpp"
+#include "character/characters/Chasca.hpp"
 #include "character/characters/Citlali.hpp"
 #include "character/characters/Cyno.hpp"
 #include "character/characters/Escoffier.hpp"
@@ -15,6 +16,7 @@
 extern void Character::initCharacters() {
 	list = {
 		{Character::Datas::bennett.key, Character::Datas::bennett},
+		{Character::Datas::chasca.key, Character::Datas::chasca},
 		{Character::Datas::citlali.key, Character::Datas::citlali},
 		{Character::Datas::cyno.key, Character::Datas::cyno},
 		{Character::Datas::escoffier.key, Character::Datas::escoffier},

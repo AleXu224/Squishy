@@ -123,6 +123,7 @@ const Character::Data Character::Datas::mavuika{
 					Option::ValueList{
 						.key = "mavuikaA4",
 						.prefix = "Time since burst used",
+						.teamBuff = true,
 						.displayCondition = burstActive,
 						.values = std::views::iota(0) | std::views::take(20) | std::ranges::to<std::vector<uint32_t>>(),
 						.mods{
@@ -147,6 +148,7 @@ const Character::Data Character::Datas::mavuika{
 					Option::Boolean{
 						.key = "mavuikaC2Ring",
 						.name = "Ring of Searing Radiance active",
+						.teamBuff = true,
 						.displayCondition = !c2Flamestrider,
 						.mods{
 							.preMod{
@@ -160,6 +162,7 @@ const Character::Data Character::Datas::mavuika{
 					Option::Boolean{
 						.key = "mavuikaC2Flamestrider",
 						.name = "Flamestrider active",
+						.teamBuff = true,
 						.displayCondition = !c2Ring,
 						.mods{
 							.preMod{
