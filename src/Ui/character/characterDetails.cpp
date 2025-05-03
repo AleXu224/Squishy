@@ -78,8 +78,8 @@ namespace {
 		auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 		auto &enemy = ::Store::enemies.at(enemyKey);
 		Formula::Context ctx{
-			.source = character.loadout,
-			.active = character.loadout,
+			.source = character.state,
+			.active = character.state,
 			.team = team.stats,
 			.enemy = enemy.stats,
 		};
@@ -111,45 +111,45 @@ namespace {
 			.modsGenerator = std::make_shared<UI::ModsGenerator>(),
 		};
 
-		auto weaponOpts = makeOpts(character.loadout.weapon->data->data.opts, character.loadout.options);
+		auto weaponOpts = makeOpts(character.state.loadout().weapon->data->data.opts, character.state.options);
 
 		auto weaponStats = UI::DetailsSkill{
-			.name = character.loadout.weapon->data->name,
+			.name = character.state.loadout().weapon->data->name,
 			.subtitle = "Weapon",
 			.instanceKey = keyParam,
 			.ctx = ctx,
-			.nodes = character.loadout.weapon->data->data.nodes,
+			.nodes = character.state.loadout().weapon->data->data.nodes,
 			.options = weaponOpts,
 			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Weapon::displayStats()),
 		};
 
 		std::optional<MakeOptsRet> artifactOpts1;
-		if (character.loadout.artifact.bonus1.has_value())
-			artifactOpts1 = makeArtifactOpts(character.loadout.artifact.bonus1->bonusPtr.opts, character.loadout.options);
+		if (character.state.loadout().artifact.bonus1.has_value())
+			artifactOpts1 = makeArtifactOpts(character.state.loadout().artifact.bonus1->bonusPtr->opts, character.state.options);
 
 		std::optional<MakeOptsRet> artifactOpts2;
-		if (character.loadout.artifact.bonus2.has_value())
-			artifactOpts2 = makeArtifactOpts(character.loadout.artifact.bonus2->bonusPtr.opts, character.loadout.options);
+		if (character.state.loadout().artifact.bonus2.has_value())
+			artifactOpts2 = makeArtifactOpts(character.state.loadout().artifact.bonus2->bonusPtr->opts, character.state.options);
 
-		Child artifactStats1 = character.loadout.artifact.bonus1.has_value()
+		Child artifactStats1 = character.state.loadout().artifact.bonus1.has_value()
 								 ? UI::DetailsSkill{
-									   .name = character.loadout.artifact.bonus1->setPtr.name,
+									   .name = character.state.loadout().artifact.bonus1->setPtr->name,
 									   .subtitle = "Artifact",
 									   .instanceKey = keyParam,
 									   .ctx = ctx,
-									   .nodes = character.loadout.artifact.bonus1->bonusPtr.nodes,
+									   .nodes = character.state.loadout().artifact.bonus1->bonusPtr->nodes,
 									   .options = artifactOpts1,
 									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display1()),
 								   }
 								 : Child{};
 
-		Child artifactStats2 = character.loadout.artifact.bonus2.has_value()
+		Child artifactStats2 = character.state.loadout().artifact.bonus2.has_value()
 								 ? UI::DetailsSkill{
-									   .name = character.loadout.artifact.bonus2->setPtr.name,
+									   .name = character.state.loadout().artifact.bonus2->setPtr->name,
 									   .subtitle = "Artifact",
 									   .instanceKey = keyParam,
 									   .ctx = ctx,
-									   .nodes = character.loadout.artifact.bonus2->bonusPtr.nodes,
+									   .nodes = character.state.loadout().artifact.bonus2->bonusPtr->nodes,
 									   .options = artifactOpts2,
 									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display2()),
 								   }
@@ -183,12 +183,12 @@ namespace {
 
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
-			const auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
-			characterOpts.emplace_back(makeOpts(optList, character.loadout.options));
+			const auto &optList = std::invoke(optPtr, character.state.stats.data.data.opts);
+			characterOpts.emplace_back(makeOpts(optList, character.state.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {
-			nodes.emplace_back(std::invoke(nodePtr, character.loadout.character.data.data.nodes));
+			nodes.emplace_back(std::invoke(nodePtr, character.state.stats.data.data.nodes));
 		}
 
 		for (const auto &[nodeWrapper, options, slot]: std::views::zip(nodes, characterOpts, Node::characterSlots)) {
@@ -258,21 +258,31 @@ namespace {
 				.children = [&]() {
 					Children ret;
 					ret.emplace_back(UI::WeaponCard{
-						.weapon = ::Store::weapons.at(character.weaponInstanceKey),
+						.weapon = ::Store::weapons.at(character.state.loadout().weaponInstanceKey),
 						.actions = UI::WeaponCard::Actions::character,
 					});
-					for (const auto &slot: Artifact::slots) {
-						auto &key = character.loadout.artifact.equipped.fromSlot(slot);
-						if (!key) {
-							ret.emplace_back(UI::Card{});
-							continue;
-						}
-						auto &artifact = ::Store::artifacts.at(key);
-						ret.emplace_back(UI::ArtifactCard{
-							.artifact = artifact,
-							.actions = UI::ArtifactCard::Actions::character,
-						});
-					}
+					std::visit(
+						Utils::overloaded{
+							[&](const Stats::Artifact::Slotted &artifacts) {
+								for (const auto &slot: Artifact::slots) {
+									auto &key = artifacts.fromSlot(slot);
+									if (!key) {
+										ret.emplace_back(UI::Card{});
+										continue;
+									}
+									auto &artifact = ::Store::artifacts.at(key);
+									ret.emplace_back(UI::ArtifactCard{
+										.artifact = artifact,
+										.actions = UI::ArtifactCard::Actions::character,
+									});
+								}
+							},
+							[&](const Stats::Artifact::Theorycraft &stats) {
+								// FIXME: add display for theorycraft display
+							},
+						},
+						character.state.loadout().artifact.equipped
+					);
 					return ret;
 				}(),
 			};
@@ -293,7 +303,7 @@ namespace {
 
 UI::CharacterDetails::operator squi::Child() const {
 	auto theme = ThemeManager::getTheme();
-	auto &element = ::Store::characters.at(characterKey).loadout.character.base.element;
+	auto &element = ::Store::characters.at(characterKey).state.stats.base.element;
 	theme.accent = Utils::elementToColor(element);
 	auto _ = ThemeManager::pushTheme(theme);
 	// TODO: make each item rebuild individually

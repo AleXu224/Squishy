@@ -21,7 +21,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
-			return context.source.character.sheet.level;
+			return context.source.stats.sheet.level;
 		}
 	};
 
@@ -35,7 +35,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
-			return context.source.character.sheet.constellation;
+			return context.source.stats.sheet.constellation;
 		}
 	};
 
@@ -49,7 +49,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
-			return context.source.character.sheet.ascension;
+			return context.source.stats.sheet.ascension;
 		}
 	};
 
@@ -65,7 +65,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.source.character.base.weaponType == type;
+			return context.source.stats.base.weaponType == type;
 		}
 	};
 
@@ -81,7 +81,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.character.base.weaponType == type;
+			return context.active.stats.base.weaponType == type;
 		}
 	};
 
@@ -97,7 +97,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.source.character.data.key.key == id;
+			return context.source.stats.data.key.key == id;
 		}
 	};
 
@@ -113,7 +113,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.character.data.key.key == id;
+			return context.active.stats.data.key.key == id;
 		}
 	};
 
@@ -129,7 +129,7 @@ namespace Formula {
 
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
-				ret = Compiled::Max{.val1 = ret, .val2 = formula.compile(context.withSource(character->loadout))}.wrap();
+				ret = Compiled::Max{.val1 = ret, .val2 = formula.compile(context.withSource(character->state))}.wrap();
 			}
 
 			return ret;
@@ -140,7 +140,7 @@ namespace Formula {
 			Character::Instance *maxCharacter = nullptr;
 			for (auto &character: context.team.characters) {
 				if (!character) continue;
-				auto val = formula.eval(context.withSource(character->loadout));
+				auto val = formula.eval(context.withSource(character->state));
 				if (val > ret) {
 					ret = val;
 					maxCharacter = character;
@@ -149,14 +149,14 @@ namespace Formula {
 
 			if (!maxCharacter) return "";
 
-			return fmt::format("Max Team {}", formula.print(context.withSource(maxCharacter->loadout), prevStep));
+			return fmt::format("Max Team {}", formula.print(context.withSource(maxCharacter->state), prevStep));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
 			RetType ret{};
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
-				ret = std::max(ret, formula.eval(context.withSource(character->loadout)));
+				ret = std::max(ret, formula.eval(context.withSource(character->state)));
 			}
 			return ret;
 		}

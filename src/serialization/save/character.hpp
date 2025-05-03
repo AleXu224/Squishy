@@ -1,32 +1,27 @@
 #pragma once
 
-#include "artifact/key.hpp"
 #include "character/instance.hpp"
 #include "character/key.hpp"
 #include "combo.hpp"
 #include "optimization.hpp"
 #include "option.hpp"
-#include "weapon/key.hpp"
-
+#include "loadout.hpp"
 
 namespace Serialization::Save {
 	struct Character {
 		::Character::InstanceKey instanceKey;
 		::Character::DataKey dataKey;
-		::Weapon::InstanceKey weaponInstanceKey;
 		uint8_t constellation;
 		uint8_t level;
 		uint8_t ascension;
 		int32_t normalLevel;
 		int32_t skillLevel;
 		int32_t burstLevel;
-		::Artifact::InstanceKey artifactFlower;
-		::Artifact::InstanceKey artifactPlume;
-		::Artifact::InstanceKey artifactSands;
-		::Artifact::InstanceKey artifactGoblet;
-		::Artifact::InstanceKey artifactCirclet;
+		std::optional<uint32_t> loadoutIndex;
+		Serialization::Save::Loadout equippedLoadout;
 		std::vector<Serialization::Save::OptionTypes> options;
 		std::vector<Serialization::Save::Combo> combos;
+		std::vector<Serialization::Save::Loadout> loadouts;
 		Optimization optimizationOptions;
 
 		static Character fromInstance(const ::Character::Instance &);

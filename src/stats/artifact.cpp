@@ -11,8 +11,7 @@ void Stats::Artifact::Slotted::unequipAll() {
 		auto &slot = std::invoke(member, *this);
 
 		if (!slot) continue;
-		auto &artifact = ::Store::artifacts.at(slot);
-		artifact.equippedCharacter.clear();
+		slot.clear();
 	}
 }
 
@@ -37,6 +36,14 @@ namespace {
 	};
 }// namespace
 
+Stats::Artifact::Slotted &Stats::Artifact::getSlotted() {
+	return std::get<Stats::Artifact::Slotted>(equipped);
+}
+
+const Stats::Artifact::Slotted &Stats::Artifact::getSlotted() const {
+	return std::get<Stats::Artifact::Slotted>(equipped);
+}
+
 void Stats::Artifact::refreshStats() {
 	OccurenceMapper mapper{};
 	bonus1 = std::nullopt;
@@ -45,37 +52,46 @@ void Stats::Artifact::refreshStats() {
 		artifact = std::nullopt;
 	}
 
-	for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(0, 5))) {
-		auto artId = std::invoke(artPtr, equipped);
-		if (!artId) continue;
-		auto &artifact = Store::artifacts.at(artId);
-		mapper.get(artifact.set).count++;
-		sheet.equippedArtifacts.at(index) = std::make_optional(&artifact.stats);
-	}
-	for (auto &occurence: mapper.occurences) {
-		if (!occurence.set) break;
-		if (occurence.count >= 2) {
-			// Cache the ArtifactData to avoid doing two accesses
-			const ::Artifact::Set &artifactData = ::Artifact::sets.at(occurence.set);
+	std::visit(
+		Utils::overloaded{
+			[&](const Stats::Artifact::Slotted &slotted) {
+				for (const auto &[artPtr, index]: std::views::zip(Stats::Artifact::Slotted::getMembers(), std::views::iota(0, 5))) {
+					auto artId = std::invoke(artPtr, slotted);
+					if (!artId) continue;
+					auto &artifact = Store::artifacts.at(artId);
+					mapper.get(artifact.set).count++;
+					sheet.equippedArtifacts.at(index) = std::make_optional(&artifact.stats);
+				}
 
-			auto &targetBonus = [&]() -> std::optional<Stats::ArtifactBonus> & {
-				if (!bonus1.has_value()) return bonus1;
+				for (auto &occurence: mapper.occurences) {
+					if (!occurence.set) break;
+					if (occurence.count >= 2) {
+						// Cache the ArtifactData to avoid doing two accesses
+						const ::Artifact::Set &artifactData = ::Artifact::sets.at(occurence.set);
 
-				return bonus2;
-			}();
-			targetBonus.emplace(Stats::ArtifactBonus{
-				.setPtr = artifactData,
-				.bonusPtr = artifactData.data.twoPc,
-			});
+						auto &targetBonus = [&]() -> std::optional<Stats::ArtifactBonus> & {
+							if (!bonus1.has_value()) return bonus1;
 
-			// The second check should not be be outside since a four set can only happen
-			// only if there is a two set
-			if (occurence.count >= 4) {
-				bonus2.emplace(Stats::ArtifactBonus{
-					.setPtr = artifactData,
-					.bonusPtr = artifactData.data.fourPc,
-				});
-			}
-		}
-	}
+							return bonus2;
+						}();
+						targetBonus.emplace(Stats::ArtifactBonus{
+							.setPtr = &artifactData,
+							.bonusPtr = &artifactData.data.twoPc,
+						});
+
+						// The second check should not be be outside since a four set can only happen
+						// only if there is a two set
+						if (occurence.count >= 4) {
+							bonus2.emplace(Stats::ArtifactBonus{
+								.setPtr = &artifactData,
+								.bonusPtr = &artifactData.data.fourPc,
+							});
+						}
+					}
+				}
+			},
+			[&](const Stats::Artifact::Theorycraft &theorycraft) {}
+		},
+		equipped
+	);
 }

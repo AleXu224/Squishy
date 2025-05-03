@@ -23,8 +23,8 @@ UI::Optimization::operator squi::Child() const {
 	auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 	auto &enemy = ::Store::enemies.at(enemyKey);
 	Formula::Context ctx{
-		.source = character.loadout,
-		.active = character.loadout,
+		.source = character.state,
+		.active = character.state,
 		.team = team.stats,
 		.enemy = enemy.stats,
 	};

@@ -9,9 +9,8 @@ std::vector<Serialization::Good::IWeapon> Serialization::Good::IWeapon::fromInst
 	auto equippedCharacters = [&]() {
 		std::vector<std::string_view> ret;
 
-		for (const auto &[_, character]: Store::characters) {
-			if (character.weaponInstanceKey == weapon.instanceKey)
-				ret.emplace_back(character.loadout.character.data.goodKey);
+		for (const auto &characterKey: weapon.equippedOn()) {
+			ret.emplace_back(Store::characters.at(characterKey).state.stats.data.goodKey);
 		}
 
 		// Add an empty string for unequipped weapons
@@ -71,7 +70,7 @@ void Serialization::Good::IWeapon::writeToInstance(Weapon::Instance &weapon) con
 
 	Character::InstanceKey equippedCharacter{};
 	for (const auto &[_, character]: ::Store::characters) {
-		if (character.loadout.character.data.goodKey == location) {
+		if (character.state.stats.data.goodKey == location && character.state.equippedLoadout.weaponInstanceKey != weapon.instanceKey) {
 			equippedCharacter = character.instanceKey;
 			break;
 		}

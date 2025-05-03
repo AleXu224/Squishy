@@ -45,7 +45,8 @@ UI::CharacterList::operator squi::Child() const {
 					Store::weapons.emplace(Store::lastWeaponId, Weapon::Instance(Weapon::defaultWeapons.at(characterData.baseStats.weaponType), {Store::lastWeaponId}));
 
 					++Store::lastCharacterId;
-					Store::characters.emplace(Store::lastCharacterId, Character::Instance({Store::lastCharacterId}, dataKey, {Store::lastWeaponId}));
+					auto character = Store::characters.emplace(Store::lastCharacterId, Character::Instance({Store::lastCharacterId}, dataKey));
+					character.first->second.state.equippedLoadout.swapWeapon({Store::lastWeaponId});
 
 					Store::weaponListUpdateEvent.notify();
 					Store::characterListUpdateEvent.notify();

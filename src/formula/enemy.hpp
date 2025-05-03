@@ -28,7 +28,7 @@ namespace Formula {
 	struct EnemyDefMultiplier {
 		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
 			using namespace Compiled::Operators;
-			const auto characterLevel = Compiled::ConstantFloat{.value = static_cast<float>(context.source.character.sheet.level)}.wrap();
+			const auto characterLevel = Compiled::ConstantFloat{.value = static_cast<float>(context.source.stats.sheet.level)}.wrap();
 			const auto enemyLevel = Modifiers::totalEnemy().level.compile(context);
 			const auto k = (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy().DEFReduction.compile(context)) * (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy().DEFIgnored.compile(context));
 
@@ -40,7 +40,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
-			const auto characterLevel = static_cast<float>(context.source.character.sheet.level);
+			const auto characterLevel = static_cast<float>(context.source.stats.sheet.level);
 			const auto enemyLevel = Modifiers::totalEnemy().level.eval(context);
 			const auto k = (1.f - Modifiers::totalEnemy().DEFReduction.eval(context)) * (1.f - Modifiers::totalEnemy().DEFIgnored.eval(context));
 

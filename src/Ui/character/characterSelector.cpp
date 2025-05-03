@@ -55,7 +55,7 @@ struct CharacterSelectorCharacterCard {
 					.lineWrap = true,
 				},
 				Text{
-					.text = fmt::format("Lvl {}/{}", character.loadout.character.sheet.level, Misc::ascensions.at(character.loadout.character.sheet.ascension).maxLevel),
+					.text = fmt::format("Lvl {}/{}", character.state.stats.sheet.level, Misc::ascensions.at(character.state.stats.sheet.ascension).maxLevel),
 				},
 				stars,
 			},

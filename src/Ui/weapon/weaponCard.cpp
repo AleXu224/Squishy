@@ -127,31 +127,30 @@ struct WeaponCardContent {
 								instance.stats = weapon.stats;
 								instance.updateEvent.notify();
 								for (auto &[_, character]: Store::characters) {
-									if (character.weaponInstanceKey == weapon.instanceKey) {
-										instance.stats.data->getOpts(character.loadout.options);
-										character.updateEvent.notify();
-									}
+									if (!weapon.isUsedOn(character.instanceKey)) continue;
+									instance.stats.data->getOpts(character.state.options);
+									character.updateEvent.notify();
 								}
 							},
 						});
 					},
 				},
-				actions == UI::WeaponCard::Actions::list ? Button{
-															   .text = "Delete",
-															   .style = ButtonStyle::Standard(),
-															   .onClick = [key = weapon.instanceKey](GestureDetector::Event) {
-																   for (const auto &[_, instance]: Store::characters) {
-																	   if (instance.weaponInstanceKey == key) {
-																		   std::println("Cannot delete a used weapon");
-																		   return;
-																	   }
-																   }
+				actions == UI::WeaponCard::Actions::list//
+					? Button{
+						  .text = "Delete",
+						  .style = ButtonStyle::Standard(),
+						  .onClick = [key = weapon.instanceKey](GestureDetector::Event) {
+							  auto &weapon = Store::weapons.at(key);
+							  if (!weapon.usedOn().empty()) {
+								  std::println("Cannot delete a used weapon");
+								  return;
+							  }
 
-																   Store::weapons.erase(key);
-																   Store::weaponListUpdateEvent.notify();
-															   },
-														   }
-														 : Child{},
+							  Store::weapons.erase(key);
+							  Store::weaponListUpdateEvent.notify();
+						  },
+					  }
+					: Child{},
 			},
 		};
 		return Column{

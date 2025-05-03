@@ -23,7 +23,6 @@ namespace Artifact {
 		std::array<StatValue, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
-		Character::InstanceKey equippedCharacter{};
 
 		Stats::Sheet<float> stats{};
 
@@ -45,7 +44,13 @@ namespace Artifact {
 			}
 		}
 
-		void unequip();
-		void equipOn(Character::InstanceKey characterKey);
+		void unequip() const;
+		void equipOn(Character::InstanceKey characterKey, std::optional<uint32_t> loadout = std::nullopt) const;
+		// Characters that have this artifact equipped
+		[[nodiscard]] Character::InstanceKey equippedOn() const;
+		// Characters that have this artifact in a build
+		[[nodiscard]] std::vector<Character::InstanceKey> usedOn() const;
+
+		void refreshUsages() const;
 	};
 }// namespace Artifact

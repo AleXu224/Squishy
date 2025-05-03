@@ -57,7 +57,7 @@ UI::TeamEditor::operator squi::Child() const {
 																   .value_or(nullptr);
 						if (instanceKey) {
 							Button::State::style.of(w) = ButtonStyle::Accent();
-							Button::State::updateText.of(w).notify(std::string(Store::characters.at(instanceKey.value()).loadout.character.data.name));
+							Button::State::updateText.of(w).notify(std::string(Store::characters.at(instanceKey.value()).state.stats.data.name));
 						} else {
 							Button::State::style.of(w) = ButtonStyle::Standard();
 							Button::State::updateText.of(w).notify("None");
@@ -65,7 +65,7 @@ UI::TeamEditor::operator squi::Child() const {
 					});
 				},
 			},
-			.text = character ? character->loadout.character.data.name : "None",
+			.text = character ? character->state.stats.data.name : "None",
 			.style = character ? ButtonStyle::Accent() : ButtonStyle::Standard(),
 			.onClick = [characterChangeEvent, i](GestureDetector::Event event) {
 				event.widget.addOverlay(CharacterSelector{

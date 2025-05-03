@@ -41,12 +41,12 @@ struct Contents {
 						.padding = Padding{4.f},
 						.onInit = [characterKey = characterKey](Widget &w) {
 							auto &character = ::Store::characters.at(characterKey);
-							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.loadout.character.base.element)}};
+							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.state.stats.base.element)}};
 							Team::Instance placeholderTeam{};
 							placeholderTeam.stats.characters.at(0) = &character;
 							Formula::Context ctx{
-								.source = character.loadout,
-								.active = character.loadout,
+								.source = character.state,
+								.active = character.state,
 								.team = placeholderTeam.stats,
 								.enemy = ::Store::enemies.at(0).stats,
 							};
@@ -80,7 +80,7 @@ struct Contents {
 									.character = character,
 									.onSubmit = [](const Character::Instance &character) {
 										auto &instance = Store::characters.at(character.instanceKey);
-										instance.loadout.character.sheet = character.loadout.character.sheet;
+										instance.state.stats.sheet = character.state.stats.sheet;
 										instance.updateEvent.notify();
 									},
 								});
@@ -91,7 +91,7 @@ struct Contents {
 							.style = ButtonStyle::Standard(),
 							.onClick = [characterKey = characterKey](GestureDetector::Event) {
 								auto &character = Store::characters.at(characterKey);
-								character.loadout.artifact.equipped.unequipAll();
+								std::get<Stats::Artifact::Slotted>(character.state.equippedLoadout.artifact.equipped).unequipAll();
 								Store::characters.erase(characterKey);
 								Store::characterListUpdateEvent.notify();
 							},

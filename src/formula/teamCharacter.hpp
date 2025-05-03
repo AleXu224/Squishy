@@ -16,10 +16,10 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character) return "";
-			auto &stats = character->loadout;
+			auto &stats = character->state;
 			return fmt::format(
 				"{} {}",
-				stats.character.data.name,
+				stats.stats.data.name,
 				formula.print(context, prevStep)
 			);
 		}
@@ -27,7 +27,7 @@ namespace Formula {
 		[[nodiscard]] float eval(const Context &context) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character) return 0.f;
-			return formula.eval(context.withSource(character->loadout));
+			return formula.eval(context.withSource(character->state));
 		}
 	};
 
@@ -50,7 +50,7 @@ namespace Formula {
 			const auto &character3 = context.team.characters.at(2);
 			const auto &character4 = context.team.characters.at(3);
 			auto getInfusion = [&](Character::Instance *character) -> Utils::JankyOptional<Misc::Element> {
-				if (character && character->loadout.character.sheet.teamInfusion.hasValue()) return character->loadout.character.sheet.teamInfusion.eval(context);
+				if (character && character->state.stats.sheet.teamInfusion.hasValue()) return character->state.stats.sheet.teamInfusion.eval(context);
 				return {};
 			};
 			auto infusion1 = getInfusion(character1);

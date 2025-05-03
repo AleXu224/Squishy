@@ -23,7 +23,7 @@ namespace Modifiers::Team {
 			for (const auto &character: context.team.characters) {
 				using namespace Formula::Compiled::Operators;
 				if (!character) continue;// Val is a constant of 0 by default, no need to do anything
-				auto newContext = context.withSource(character->loadout);
+				auto newContext = context.withSource(character->state);
 				ret = ret
 					+ characterStat.compile(newContext)
 					+ weaponStat.compile(newContext)
@@ -41,7 +41,7 @@ namespace Modifiers::Team {
 			Ret total = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
-				auto newContext = context.withSource(character->loadout);
+				auto newContext = context.withSource(character->state);
 				total += characterStat.eval(newContext)
 					   + weaponStat.eval(newContext)
 					   + artifactStat.eval(newContext);

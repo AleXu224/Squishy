@@ -14,14 +14,14 @@ namespace Formula {
 		if (element.has_value()) return element.value();
 		switch (attackSource) {
 			case Misc::AttackSource::charged:
-				if (context.source.character.base.weaponType == Misc::WeaponType::bow) return context.source.character.base.element;
+				if (context.source.stats.base.weaponType == Misc::WeaponType::bow) return context.source.stats.base.element;
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::plunge:
-				if (context.source.character.base.weaponType == Misc::WeaponType::catalyst) return context.source.character.base.element;
-				return context.source.character.sheet.infusion.eval(context).value_or(Misc::Element::physical);
+				if (context.source.stats.base.weaponType == Misc::WeaponType::catalyst) return context.source.stats.base.element;
+				return context.source.stats.sheet.infusion.eval(context).value_or(Misc::Element::physical);
 			case Misc::AttackSource::skill:
 			case Misc::AttackSource::burst:
-				return context.source.character.base.element;
+				return context.source.stats.base.element;
 		}
 		std::unreachable();
 	}
@@ -41,7 +41,7 @@ namespace Formula {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (!character) continue;
-				if (character->loadout.character.base.element == element) ret++;
+				if (character->state.stats.base.element == element) ret++;
 			}
 			return ret;
 		}
@@ -61,8 +61,8 @@ namespace Formula {
 		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
-				if (!character || &character->loadout == &context.source) continue;
-				if (character->loadout.character.base.element == element) ret++;
+				if (!character || &character->state == &context.source) continue;
+				if (character->state.stats.base.element == element) ret++;
 			}
 			return ret;
 		}
@@ -81,8 +81,8 @@ namespace Formula {
 		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
-				if (!character || &character->loadout == &context.source) continue;
-				if (character->loadout.character.base.element == context.source.character.base.element) ret++;
+				if (!character || &character->state == &context.source) continue;
+				if (character->state.stats.base.element == context.source.stats.base.element) ret++;
 			}
 
 			return ret;
@@ -101,8 +101,8 @@ namespace Formula {
 		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
-				if (!character || &character->loadout == &context.source) continue;
-				if (character->loadout.character.base.element != context.source.character.base.element) ret++;
+				if (!character || &character->state == &context.source) continue;
+				if (character->state.stats.base.element != context.source.stats.base.element) ret++;
 			}
 
 			return ret;
@@ -121,8 +121,8 @@ namespace Formula {
 		[[nodiscard]] int32_t eval(const Context &context) const {
 			uint32_t ret = 0;
 			for (const auto &character: context.team.characters) {
-				if (!character || &character->loadout == &context.source) continue;
-				switch (character->loadout.character.base.element) {
+				if (!character || &character->state == &context.source) continue;
+				switch (character->state.stats.base.element) {
 					case Misc::Element::pyro:
 					case Misc::Element::hydro:
 					case Misc::Element::electro:
@@ -149,7 +149,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.source.character.base.element == element;
+			return context.source.stats.base.element == element;
 		}
 	};
 
@@ -165,7 +165,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.character.base.element == element;
+			return context.active.stats.base.element == element;
 		}
 	};
 }// namespace Formula

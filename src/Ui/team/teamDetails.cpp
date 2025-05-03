@@ -7,7 +7,6 @@
 #include "navigationView.hpp"
 #include "store.hpp"
 #include "teamBuffs.hpp"
-#include "wrapper.hpp"
 
 
 using namespace squi;
@@ -33,14 +32,14 @@ UI::TeamDetails::operator squi::Child() const {
 			for (auto &character: team.stats.characters) {
 				if (character) {
 					pages.emplace_back(NavigationView::Page{
-						.name = character->loadout.character.data.name,
+						.name = character->state.stats.data.name,
 						.icon = Image{
 							.widget{
 								.width = 16.f,
 								.height = 16.f,
 							},
 							.fit = squi::Image::Fit::contain,
-							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->loadout.character.data.name)),
+							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->state.stats.data.name)),
 						},
 						.content = CharacterDetails{
 							.characterKey = character->instanceKey,

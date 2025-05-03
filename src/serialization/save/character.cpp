@@ -1,53 +1,72 @@
 #include "character.hpp"
 #include "store.hpp"
+#include "weapon/data.hpp"
 
 Serialization::Save::Character Serialization::Save::Character::fromInstance(const ::Character::Instance &character) {
 	return {
 		.instanceKey = character.instanceKey,
 		.dataKey = character.dataKey,
-		.weaponInstanceKey = character.weaponInstanceKey,
-		.constellation = character.loadout.character.sheet.constellation,
-		.level = character.loadout.character.sheet.level,
-		.ascension = character.loadout.character.sheet.ascension,
-		.normalLevel = character.loadout.character.sheet.talents.normal.constant,
-		.skillLevel = character.loadout.character.sheet.talents.skill.constant,
-		.burstLevel = character.loadout.character.sheet.talents.burst.constant,
-		.artifactFlower = character.loadout.artifact.equipped.flower,
-		.artifactPlume = character.loadout.artifact.equipped.plume,
-		.artifactSands = character.loadout.artifact.equipped.sands,
-		.artifactGoblet = character.loadout.artifact.equipped.goblet,
-		.artifactCirclet = character.loadout.artifact.equipped.circlet,
-		.options = optionsFromInstance(character.loadout.options),
+		.constellation = character.state.stats.sheet.constellation,
+		.level = character.state.stats.sheet.level,
+		.ascension = character.state.stats.sheet.ascension,
+		.normalLevel = character.state.stats.sheet.talents.normal.constant,
+		.skillLevel = character.state.stats.sheet.talents.skill.constant,
+		.burstLevel = character.state.stats.sheet.talents.burst.constant,
+		.loadoutIndex = character.state.loadoutIndex,
+		.equippedLoadout = Serialization::Save::Loadout::fromInstance(character.state.equippedLoadout),
+		.options = optionsFromInstance(character.state.options),
 		.combos = comboFromInstance(character.combos),
+		.loadouts = [&]() {
+			std::vector<::Serialization::Save::Loadout> ret;
+			for (const auto &loadout: character.state.loadouts) {
+				ret.emplace_back(::Serialization::Save::Loadout::fromInstance(loadout));
+			}
+			return ret;
+		}(),
 		.optimizationOptions = Optimization::fromInstance(*character.optimizationOptions),
 	};
 }
 
 ::Character::Instance Serialization::Save::Character::toInstance() const {
-	auto instance = ::Character::Instance(instanceKey, dataKey, weaponInstanceKey);
-	instance.loadout.character.sheet.constellation = constellation;
-	instance.loadout.character.sheet.level = level;
-	instance.loadout.character.sheet.ascension = ascension;
-	instance.loadout.character.sheet.talents.normal.constant = normalLevel;
-	instance.loadout.character.sheet.talents.skill.constant = skillLevel;
-	instance.loadout.character.sheet.talents.burst.constant = burstLevel;
-	instance.loadout.artifact.equipped.flower = artifactFlower;
-	instance.loadout.artifact.equipped.plume = artifactPlume;
-	instance.loadout.artifact.equipped.sands = artifactSands;
-	instance.loadout.artifact.equipped.goblet = artifactGoblet;
-	instance.loadout.artifact.equipped.circlet = artifactCirclet;
+	auto instance = ::Character::Instance(instanceKey, dataKey);
+
+	instance.state.stats.sheet.constellation = constellation;
+	instance.state.stats.sheet.level = level;
+	instance.state.stats.sheet.ascension = ascension;
+	instance.state.stats.sheet.talents.normal.constant = normalLevel;
+	instance.state.stats.sheet.talents.skill.constant = skillLevel;
+	instance.state.stats.sheet.talents.burst.constant = burstLevel;
+	instance.state.equippedLoadout = equippedLoadout.toInstance(instance.state.stats.base.weaponType);
 
 	for (const auto &slot: ::Artifact::slots) {
-		auto &equipped = instance.loadout.artifact.equipped.fromSlot(slot);
+		auto &equipped = instance.state.equippedLoadout.artifact.getSlotted().fromSlot(slot);
 		if (!equipped) continue;
 		if (!::Store::artifacts.contains(equipped)) equipped.clear();
 	}
 
-	optionsToInstance(options, instance.loadout.options);
 	instance.combos = comboToInstance(combos);
 	instance.optimizationOptions = std::make_shared<::Optimization::Options>(optimizationOptions.toInstance());
 
-	instance.loadout.artifact.refreshStats();
+	instance.state.equippedLoadout.artifact.refreshStats();
+
+	std::vector<::Stats::Loadout> loadouts{};
+	for (const auto &loadout: this->loadouts) {
+		auto &entry = loadouts.emplace_back(loadout.toInstance(instance.state.stats.base.weaponType));
+		entry.weapon->data->getOpts(instance.state.options);
+
+		// Check if the artifact exists
+		if (!std::holds_alternative<::Stats::Artifact::Slotted>(entry.artifact.equipped)) continue;
+		auto &slotted = std::get<::Stats::Artifact::Slotted>(entry.artifact.equipped);
+		for (const auto &slot: ::Artifact::slots) {
+			auto &equipped = slotted.fromSlot(slot);
+			if (!equipped) continue;
+			if (!::Store::artifacts.contains(equipped)) equipped.clear();
+		}
+	}
+	instance.state.loadouts = loadouts;
+
+	instance.state.init();
+	optionsToInstance(options, instance.state.options);
 
 	return instance;
 }

@@ -3,7 +3,6 @@
 #include "artifact/instance.hpp"
 #include "artifact/key.hpp"
 #include "artifact/slot.hpp"
-#include "character/key.hpp"
 #include "stats/stat.hpp"
 #include <optional>
 
@@ -22,7 +21,6 @@ namespace Serialization::Save {
 		std::array<std::optional<ArtifactSubStat>, 4> subStats{};
 		uint8_t level{};
 		uint8_t rarity = 5;
-		::Character::InstanceKey equippedCharacter{};
 
 		static Artifact fromInstance(const ::Artifact::Instance &);
 		::Artifact::Instance toInstance() const;

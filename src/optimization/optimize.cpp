@@ -51,12 +51,12 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		ArtifactFilter pattern{};
 		auto &set = Artifact::sets.at(key);
 		pattern.bonus1.emplace(Stats::ArtifactBonus{
-			.setPtr = set,
-			.bonusPtr = set.data.twoPc,
+			.setPtr = &set,
+			.bonusPtr = &set.data.twoPc,
 		});
 		pattern.bonus2.emplace(Stats::ArtifactBonus{
-			.setPtr = set,
-			.bonusPtr = set.data.fourPc,
+			.setPtr = &set,
+			.bonusPtr = &set.data.fourPc,
 		});
 		for (auto &entry: pattern.filters) {
 			entry.set = key;
@@ -90,8 +90,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				if (counts.at(key.key).at(j) == 0) continue;
 				ArtifactFilter ret{};
 				ret.bonus1.emplace(Stats::ArtifactBonus{
-					.setPtr = set,
-					.bonusPtr = set.data.twoPc,
+					.setPtr = &set,
+					.bonusPtr = &set.data.twoPc,
 				});
 				ret.filters.at(i).set = key;
 				ret.filters.at(j).set = key;
@@ -116,8 +116,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 					if (key == key2) continue;
 					auto &set2 = Artifact::sets.at(key2);
 					ret.bonus2.emplace(Stats::ArtifactBonus{
-						.setPtr = set2,
-						.bonusPtr = set2.data.twoPc,
+						.setPtr = &set2,
+						.bonusPtr = &set2.data.twoPc,
 					});
 					for (size_t k = 0; k < 5; k++) {
 						if (k == i || k == j) continue;
@@ -127,8 +127,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 						if (k < i) {
 							retSwapped.bonus2.emplace(retSwapped.bonus1.value());
 							retSwapped.bonus1.emplace(Stats::ArtifactBonus{
-								.setPtr = set2,
-								.bonusPtr = set2.data.twoPc,
+								.setPtr = &set2,
+								.bonusPtr = &set2.data.twoPc,
 							});
 						}
 						for (size_t l = k + 1; l < 5; l++) {
@@ -152,21 +152,23 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
 	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
 	auto start_sorting = std::chrono::high_resolution_clock::now();
-	auto prevLoadout = character.loadout.artifact.equipped;
+	auto prevLoadout = character.state.loadout().artifact.getSlotted();
 
 	auto initialArtifacts = ArtifactFilter{}.filter(artifacts);
 	std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
 	auto compiledNode = optimizedNode.compile(ctx);
+
+	auto &loadout = character.state.loadout();
 	// Roughly sort the artifact based on potential. Helps a lot when splitting
 	for (size_t i = 0; i < 5; i++) {
 		auto &artis = initialArtifacts.entries[i];
 		for (size_t index = 0; index < 5; index++) {
-			character.loadout.artifact.sheet.equippedArtifacts[index] = &statsForSlot[index];
+			loadout.artifact.sheet.equippedArtifacts[index] = &statsForSlot[index];
 		}
 		std::sort(artis.begin(), artis.end(), [&](Artifact::Instance *art1, Artifact::Instance *art2) -> bool {
-			character.loadout.artifact.sheet.equippedArtifacts[i] = &art1->stats;
+			loadout.artifact.sheet.equippedArtifacts[i] = &art1->stats;
 			auto val1 = compiledNode.eval(ctx);
-			character.loadout.artifact.sheet.equippedArtifacts[i] = &art2->stats;
+			loadout.artifact.sheet.equippedArtifacts[i] = &art2->stats;
 			auto val2 = compiledNode.eval(ctx);
 			return val1 < val2;
 		});
@@ -198,8 +200,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			}
 			std::vector<Combo::Option> optionStore;
 			auto ctx = Formula::Context{
-				.source = character.loadout,
-				.active = character.loadout,
+				.source = character.state,
+				.active = character.state,
 				.team = team.stats,
 				.enemy = initialCtx.enemy,
 				.reaction = initialCtx.reaction,
@@ -210,10 +212,10 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			// This however could help in figuring out the single best solution when a single build is requested
 			// filtered.removeInferior();
 			for (auto [slotPtr, filtered]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
-				auto &slot = std::invoke(slotPtr, character.loadout.artifact.equipped);
+				auto &slot = std::invoke(slotPtr, character.state.loadout().artifact.getSlotted());
 				if (!filtered.empty()) slot = filtered.front()->key;
 			}
-			character.loadout.artifact.refreshStats();
+			character.state.loadout().artifact.refreshStats();
 			auto node = optimizedNode.compile(ctx);
 
 			bnb(filtered, solutions, character, ctx, node, filter.bonus1, filter.bonus2, {});
@@ -223,8 +225,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		}
 	);
 
-	character.loadout.artifact.equipped = prevLoadout;
-	character.loadout.artifact.refreshStats();
+	character.state.loadout().artifact.equipped = prevLoadout;
+	character.state.loadout().artifact.refreshStats();
 	// for (const auto &solution: solutions.solutions) {
 	// 	std::println("------------------------------------------------");
 	// 	std::println("Solution dmg: {}", solution.score);

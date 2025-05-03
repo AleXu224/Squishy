@@ -34,28 +34,28 @@ namespace Modifiers::Artifact::Set {
 			using Ret = RetType<typename StatMember::RetType>;
 
 			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
-				const auto &bonus = std::invoke(location2, context.source.artifact);
+				const auto &bonus = std::invoke(location2, context.source.loadout().artifact);
 				if (!bonus) return Formula::Compiled::Constant<Ret>{};
 				const auto &val = bonus.value();
-				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr->mods));
 				if (!mod.hasValue()) return Formula::Compiled::Constant<Ret>{};
 				return mod.compile(context);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				const auto &bonus = std::invoke(location2, context.source.artifact);
+				const auto &bonus = std::invoke(location2, context.source.loadout().artifact);
 				if (!bonus) return std::string();
 				const auto &val = bonus.value();
-				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr->mods));
 				if (!mod.hasValue()) return std::string();
 				return mod.print(context);
 			}
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-				const auto &bonus = std::invoke(location2, context.source.artifact);
+				const auto &bonus = std::invoke(location2, context.source.loadout().artifact);
 				if (!bonus) return Ret{};
 				const auto &val = bonus.value();
-				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr.mods));
+				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr->mods));
 				if (!mod.hasValue()) return Ret{};
 				return mod.eval(context);
 			}

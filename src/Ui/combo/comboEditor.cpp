@@ -92,7 +92,7 @@ namespace {
 							.spacing = 4.f,
 							.children{
 								Text{
-									.text = ::Store::characters.at(option.key).loadout.character.data.name,
+									.text = ::Store::characters.at(option.key).state.stats.data.name,
 									.lineWrap = true,
 								},
 								UI::Tag{.sourceStr = getSourceName(source)},
@@ -138,9 +138,9 @@ namespace {
 							for (const auto &character: ctx.team.characters) {
 								if (!character) continue;
 								if (character->instanceKey != opt.key) continue;
-								if (!character->loadout.options.contains(opt.hash)) continue;
+								if (!character->state.options.contains(opt.hash)) continue;
 
-								auto optPtr = std::make_shared<Option::Types>(character->loadout.options.at(opt.hash));
+								auto optPtr = std::make_shared<Option::Types>(character->state.options.at(opt.hash));
 								std::visit(
 									Utils::overloaded{
 										[&](bool value) {
@@ -164,7 +164,7 @@ namespace {
 													.option = optRef,
 													.instanceKey = character->instanceKey,
 													.switchEvent = switchEvent,
-													.ctx = ctx.withSource(character->loadout),
+													.ctx = ctx.withSource(character->state),
 												},
 											});
 										},
@@ -189,7 +189,7 @@ namespace {
 													.option = optRef,
 													.instanceKey = character->instanceKey,
 													.valueChangedEvent = valueChangedEvent,
-													.ctx = ctx.withSource(character->loadout),
+													.ctx = ctx.withSource(character->state),
 												},
 											});
 										},

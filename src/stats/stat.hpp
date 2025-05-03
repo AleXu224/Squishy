@@ -112,6 +112,20 @@ namespace Stats {
 			Stat::shield_,
 		}
 	};
+	const inline std::vector subStats{
+		std::vector{
+			Stat::hp,
+			Stat::hp_,
+			Stat::atk,
+			Stat::atk_,
+			Stat::def,
+			Stat::def_,
+			Stat::er,
+			Stat::em,
+			Stat::cr,
+			Stat::cd,
+		}
+	};
 
 	[[maybe_unused]] constexpr Stat fromElement(const Misc::Element &element) {
 		switch (element) {

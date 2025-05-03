@@ -19,7 +19,7 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 		.title = "Transformative Reactions",
 		.children = [&]() -> Children {
 			Children ret;
-			const auto &loadout = ctx.active;
+			const auto &state = ctx.active;
 			// auto reactions = Reaction::List::Transformative::getMembers();
 
 			auto reactions = std::tuple{
@@ -37,7 +37,7 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 				&Reaction::List::Transformative::hyperbloom,
 			};
 
-			std::vector elements{loadout.character.data.baseStats.element};
+			std::vector elements{state.stats.data.baseStats.element};
 
 			bool transparent = true;
 			squi::utils::iterateTuple(reactions, [&](auto &&val) {

@@ -15,7 +15,7 @@ using namespace squi;
 namespace {
 	Child teamCharacterBuffsCardBuildFunc(Character::Instance &character, Team::Instance &team) {
 		return UI::DisplayCard{
-			.title = character.loadout.character.data.name,
+			.title = character.state.stats.data.name,
 			.children{
 				UI::CharacterCardBanner{
 					.characterKey = character.instanceKey,
@@ -25,8 +25,8 @@ namespace {
 				Children ret{};
 
 				Formula::Context ctx{
-					.source = character.loadout,
-					.active = character.loadout,
+					.source = character.state,
+					.active = character.state,
 					.team = team.stats,
 					.enemy = Store::enemies.at(0).stats,
 				};
@@ -63,9 +63,9 @@ namespace {
 					);
 				};
 
-				for (auto &opt: character.loadout.weapon->data->data.opts) {
+				for (auto &opt: character.state.loadout().weapon->data->data.opts) {
 					if (!isTeamBuff(opt)) continue;
-					parseOption(character.loadout.options.at(
+					parseOption(character.state.options.at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;
@@ -75,10 +75,10 @@ namespace {
 					));
 				}
 
-				if (character.loadout.artifact.bonus1.has_value()) {
-					for (auto &opt: character.loadout.artifact.bonus1->bonusPtr.opts) {
+				if (character.state.loadout().artifact.bonus1.has_value()) {
+					for (auto &opt: character.state.loadout().artifact.bonus1->bonusPtr->opts) {
 						if (!isTeamBuff(opt)) continue;
-						parseOption(character.loadout.options.at(
+						parseOption(character.state.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;
@@ -88,10 +88,10 @@ namespace {
 						));
 					}
 				}
-				if (character.loadout.artifact.bonus2.has_value()) {
-					for (auto &opt: character.loadout.artifact.bonus2->bonusPtr.opts) {
+				if (character.state.loadout().artifact.bonus2.has_value()) {
+					for (auto &opt: character.state.loadout().artifact.bonus2->bonusPtr->opts) {
 						if (!isTeamBuff(opt)) continue;
-						parseOption(character.loadout.options.at(
+						parseOption(character.state.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;
@@ -104,7 +104,7 @@ namespace {
 
 				for (const auto &[optPtr, condition]: Option::CharacterList::getMembersAndConditions()) {
 					if (!condition.eval(ctx)) continue;
-					auto &optList = std::invoke(optPtr, character.loadout.character.data.data.opts);
+					auto &optList = std::invoke(optPtr, character.state.stats.data.data.opts);
 					for (auto &optionData: optList) {
 						bool isTeamBuff = std::visit(
 							[](auto &&opt) {
@@ -113,7 +113,7 @@ namespace {
 							optionData
 						);
 						if (!isTeamBuff) continue;
-						parseOption(character.loadout.options.at(
+						parseOption(character.state.options.at(
 							std::visit(
 								[](auto &&opt) {
 									return opt.key.hash;

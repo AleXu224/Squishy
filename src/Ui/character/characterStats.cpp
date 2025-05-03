@@ -25,8 +25,8 @@ UI::CharacterStats::operator squi::Child() const {
 
 	return UI::DisplayCard{
 		.widget = widget,
-		.borderColor = Utils::elementToColor(ctx.active.character.base.element),
-		.title = ctx.active.character.data.name,
+		.borderColor = Utils::elementToColor(ctx.active.stats.base.element),
+		.title = ctx.active.stats.data.name,
 		.children = [&]() {
 			const auto &loadout = ctx.source;
 			Children ret{};
@@ -37,7 +37,7 @@ UI::CharacterStats::operator squi::Child() const {
 				.children{
 					Image{
 						.fit = Image::Fit::contain,
-						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.active.character.data.name)),
+						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.active.stats.data.name)),
 					},
 					Align{
 						.xAlign = 0.f,
@@ -50,14 +50,14 @@ UI::CharacterStats::operator squi::Child() const {
 							},
 							.spacing = 4.f,
 							.children{
-								UI::Tag{.sourceStr = std::format("Lvl {}", loadout.character.sheet.level)},
-								UI::Tag{.sourceStr = std::format("C{}", loadout.character.sheet.constellation)},
+								UI::Tag{.sourceStr = std::format("Lvl {}", loadout.stats.sheet.level)},
+								UI::Tag{.sourceStr = std::format("C{}", loadout.stats.sheet.constellation)},
 							},
 						},
 					},
 				},
 			});
-			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(loadout.character.base.element)}};
+			std::array displayStats{Stats::characterDisplayStats, std::vector{Stats::fromElement(loadout.stats.base.element)}};
 
 			Children ret2{};
 
@@ -99,7 +99,7 @@ UI::CharacterStats::operator squi::Child() const {
 						.character = character,
 						.onSubmit = [](const Character::Instance &character) {
 							auto &instance = Store::characters.at(character.instanceKey);
-							instance.loadout.character.sheet = character.loadout.character.sheet;
+							instance.state.stats.sheet = character.state.stats.sheet;
 							instance.updateEvent.notify();
 						},
 					});

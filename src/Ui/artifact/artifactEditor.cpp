@@ -134,7 +134,7 @@ UI::ArtifactEditor::operator squi::Child() const {
 			},
 			.style = ButtonStyle::Standard(),
 			.text = Utils::Stringify(storage->artifact.slot),
-			.disabled = (storage->artifact.equippedCharacter.key != 0),
+			.disabled = !storage->artifact.usedOn().empty(),
 			.items = [&]() {
 				std::vector<ContextMenu::Item> ret{};
 				ret.reserve(Artifact::slots.size());

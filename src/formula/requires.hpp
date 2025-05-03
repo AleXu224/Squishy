@@ -72,7 +72,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.ascension >= 1;
+			return context.source.stats.sheet.ascension >= 1;
 		}
 	} passive1{};
 	static constexpr struct impl_Passive2 {
@@ -85,7 +85,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.ascension >= 4;
+			return context.source.stats.sheet.ascension >= 4;
 		}
 	} passive2{};
 	static constexpr struct impl_Constellation1 {
@@ -98,7 +98,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 1;
+			return context.source.stats.sheet.constellation >= 1;
 		}
 	} constellation1{};
 	static constexpr struct impl_Constellation2 {
@@ -111,7 +111,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 2;
+			return context.source.stats.sheet.constellation >= 2;
 		}
 	} constellation2{};
 	static constexpr struct impl_Constellation3 {
@@ -124,7 +124,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 3;
+			return context.source.stats.sheet.constellation >= 3;
 		}
 	} constellation3{};
 	static constexpr struct impl_Constellation4 {
@@ -137,7 +137,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 4;
+			return context.source.stats.sheet.constellation >= 4;
 		}
 	} constellation4{};
 	static constexpr struct impl_Constellation5 {
@@ -150,7 +150,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 5;
+			return context.source.stats.sheet.constellation >= 5;
 		}
 	} constellation5{};
 	static constexpr struct impl_Constellation6 {
@@ -163,7 +163,7 @@ namespace Requirement {
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
-			return context.source.character.sheet.constellation >= 6;
+			return context.source.stats.sheet.constellation >= 6;
 		}
 	} constellation6{};
 }// namespace Requirement

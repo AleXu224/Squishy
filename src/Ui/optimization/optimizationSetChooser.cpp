@@ -97,7 +97,7 @@ namespace {
 										});
 									},
 								},
-								character.loadout.options.at(
+								character.state.options.at(
 									std::visit(
 										[](auto &&val) {
 											return val.key;
@@ -237,7 +237,7 @@ UI::OptimizationSetChooser::operator squi::Child() const {
 					.rebuildEvent = character.updateEvent,
 					.buildFunc = [&twoPcSets = twoPcSets, &fourPcSets = fourPcSets, &character = character, ctx = ctx, theme = ThemeManager::getTheme()]() -> Child {
 						auto _ = ThemeManager::pushTheme(theme);
-						
+
 						return Grid{
 							.spacing = 4.f,
 							.columnCount = Grid::MinSize{250.f},

@@ -20,7 +20,6 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		.subStats = subStats,
 		.level = artifact.level,
 		.rarity = artifact.rarity,
-		.equippedCharacter = artifact.equippedCharacter,
 	};
 }
 
@@ -42,7 +41,6 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		.subStats = subStats,
 		.level = level,
 		.rarity = rarity,
-		.equippedCharacter = equippedCharacter,
 	};
 	instance.updateStats();
 

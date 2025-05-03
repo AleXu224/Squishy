@@ -45,15 +45,18 @@ UI::OptimizationResult::operator squi::Child() const {
 				.style = ButtonStyle::Accent(),
 				.onClick = [characterKey = characterKey, solution = solution](GestureDetector::Event event) {
 					auto &character = ::Store::characters.at(characterKey);
+
 					for (const auto &slot: Artifact::slots) {
 						auto &artifactKey = solution.artifacts.fromSlot(slot);
-						if (!artifactKey && character.loadout.artifact.equipped.fromSlot(slot)) {
-							::Store::artifacts.at(character.loadout.artifact.equipped.fromSlot(slot)).unequip();
+
+						if (!artifactKey && character.state.loadout().artifact.getSlotted().fromSlot(slot)) {
+							character.state.loadout().artifact.getSlotted().fromSlot(slot).clear();
 						}
+
 						auto &artifact = ::Store::artifacts.at(artifactKey);
-						artifact.equipOn(characterKey);
+						artifact.equipOn(characterKey, character.state.loadoutIndex);
 					}
-					character.loadout.artifact.refreshStats();
+					character.state.loadout().artifact.refreshStats();
 					character.updateEvent.notify();
 				},
 			},

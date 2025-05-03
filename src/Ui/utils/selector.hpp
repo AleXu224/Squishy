@@ -118,7 +118,7 @@ namespace UI {
 			return LevelSelector<Stats::CharacterSheet>{
 				.titlePrefix = "Character Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::CharacterSheet & {
-					return Store::characters.at(characterKey).loadout.character.sheet;
+					return Store::characters.at(characterKey).state.stats.sheet;
 				},
 				.characterKey = characterKey,
 			};
@@ -133,7 +133,7 @@ namespace UI {
 			return LevelSelector<Stats::WeaponSheet>{
 				.titlePrefix = "Weapon Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::WeaponSheet & {
-					return Store::characters.at(characterKey).loadout.weapon->sheet;
+					return Store::characters.at(characterKey).state.loadout().weapon->sheet;
 				},
 				.characterKey = characterKey,
 			};
@@ -151,12 +151,12 @@ namespace UI {
 				.titlePrefix = "Constellation",
 				.valuePrefix = "Constellation",
 				.getter = [characterKey = characterKey]() {
-					auto &sheet = Store::characters.at(characterKey).loadout.character.sheet;
+					auto &sheet = Store::characters.at(characterKey).state.stats.sheet;
 					return sheet.constellation;
 				},
 				.setter = [characterKey = characterKey](const Type &val) {
 					auto &character = Store::characters.at(characterKey);
-					auto &sheet = character.loadout.character.sheet;
+					auto &sheet = character.state.stats.sheet;
 					sheet.constellation = val;
 					character.updateEvent.notify();
 				},
@@ -178,12 +178,12 @@ namespace UI {
 				.titlePrefix = "Refinement",
 				.valuePrefix = "Refinement",
 				.getter = [characterKey = characterKey]() {
-					auto &sheet = Store::characters.at(characterKey).loadout.weapon->sheet;
+					auto &sheet = Store::characters.at(characterKey).state.loadout().weapon->sheet;
 					return sheet.refinement;
 				},
 				.setter = [characterKey = characterKey](const Type &val) {
 					auto &character = Store::characters.at(characterKey);
-					auto &sheet = character.loadout.weapon->sheet;
+					auto &sheet = character.state.loadout().weapon->sheet;
 					sheet.refinement = val;
 					character.updateEvent.notify();
 				},
@@ -209,12 +209,12 @@ namespace UI {
 				.valuePrefix = "Level",
 				.getter = [characterKey = characterKey, talent = talent]() {
 					auto &character = Store::characters.at(characterKey);
-					auto &sheet = character.loadout.character.sheet;
+					auto &sheet = character.state.stats.sheet;
 					return std::invoke(talent, sheet.talents).constant;
 				},
 				.setter = [characterKey = characterKey, talent = talent](const Type &val) {
 					auto &character = Store::characters.at(characterKey);
-					auto &sheet = character.loadout.character.sheet;
+					auto &sheet = character.state.stats.sheet;
 					std::invoke(talent, sheet.talents).constant = val;
 					character.updateEvent.notify();
 				},

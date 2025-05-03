@@ -45,10 +45,9 @@ UI::WeaponPage::operator squi::Child() const {
 							instance.stats = weapon.stats;
 							instance.updateEvent.notify();
 							for (auto &[_, character]: Store::characters) {
-								if (character.weaponInstanceKey == weapon.instanceKey) {
-									instance.stats.data->getOpts(character.loadout.options);
-									character.updateEvent.notify();
-								}
+								if (!instance.isUsedOn(character.instanceKey)) continue;
+								instance.stats.data->getOpts(character.state.options);
+								character.updateEvent.notify();
 							}
 						},
 					});

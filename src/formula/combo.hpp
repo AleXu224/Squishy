@@ -59,7 +59,7 @@ namespace Formula {
 				for (const auto &character: context.team.characters) {
 					if (!character) continue;
 					if (character->instanceKey != override.key) continue;
-					if (auto it = character->loadout.options.find(override.hash); it != character->loadout.options.end()) {
+					if (auto it = character->state.options.find(override.hash); it != character->state.options.end()) {
 						decltype(::Combo::Option::value) val;
 						std::visit(
 							Utils::overloaded{
@@ -96,11 +96,11 @@ namespace Formula {
 						Utils::overloaded{
 							[&](bool val) {
 								// std::println("restoring {}", val);
-								std::get<::Option::Boolean>(character->loadout.options.at(override.hash)).active = val;
+								std::get<::Option::Boolean>(character->state.options.at(override.hash)).active = val;
 							},
 							[&](std::optional<uint8_t> val) {
 								// std::println("restoring {}", val.value_or(255));
-								std::get<::Option::ValueList>(character->loadout.options.at(override.hash)).currentIndex = val;
+								std::get<::Option::ValueList>(character->state.options.at(override.hash)).currentIndex = val;
 							},
 						},
 						override.value

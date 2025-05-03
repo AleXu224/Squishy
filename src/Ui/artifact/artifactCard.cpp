@@ -86,7 +86,7 @@ struct ArtifactHeader {
 						.margin = Margin{}.withRight(64.f),
 					},
 					.fit = squi::Image::Fit::contain,
-					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", ::Store::characters.at(equippedCharacter).loadout.character.data.name))
+					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", ::Store::characters.at(equippedCharacter).state.stats.data.name))
 				},
 			};
 		}();
@@ -124,7 +124,7 @@ struct ArtifactCardContent {
 			},
 			.rarity = artifact.rarity,
 			.level = artifact.level,
-			.equippedCharacter = artifact.equippedCharacter,
+			.equippedCharacter = artifact.equippedOn(),
 		};
 		auto subStats = Column{
 			.widget{
@@ -144,12 +144,13 @@ struct ArtifactCardContent {
 			},
 		};
 
+		auto equippedCharacter = artifact.equippedOn();
 		auto equippedButton = Button{
 			.widget{
 				.width = Size::Expand,
 			},
-			.text = artifact.equippedCharacter ? Store::characters.at(artifact.equippedCharacter).loadout.character.data.name : "Unequipped",
-			.style = artifact.equippedCharacter ? ButtonStyle::Accent() : ButtonStyle::Standard(),
+			.text = equippedCharacter ? Store::characters.at(equippedCharacter).state.stats.data.name : "Unequipped",
+			.style = equippedCharacter ? ButtonStyle::Accent() : ButtonStyle::Standard(),
 			.onClick = [&artifact = artifact](GestureDetector::Event event) {
 				event.widget.addOverlay(UI::CharacterSelector{
 					.onSelect = [&artifact](Character::InstanceKey instanceKey) {
@@ -177,32 +178,25 @@ struct ArtifactCardContent {
 								artifact.key = key;
 								artifact.updateStats();
 								Store::artifacts[key] = artifact;
-								if (artifact.equippedCharacter.key != 0) {
-									auto &character = Store::characters.at(artifact.equippedCharacter);
-									character.loadout.artifact.refreshStats();
-									character.updateEvent.notify();
-								}
+								artifact.refreshUsages();
 								artifact.updateEvent.notify();
 							},
 						});
 					},
 				},
-				actions == UI::ArtifactCard::Actions::list ? Button{
-																 .text = "Delete",
-																 .style = ButtonStyle::Standard(),
-																 .onClick = [key = artifact.key](GestureDetector::Event) {
-																	 auto &artifact = Store::artifacts.at(key);
-																	 if (artifact.equippedCharacter.key) {
-																		 auto &character = Store::characters.at(artifact.equippedCharacter);
-																		 character.loadout.artifact.equipped.fromSlot(artifact.slot) = {};
-																		 character.loadout.artifact.refreshStats();
-																	 }
+				actions == UI::ArtifactCard::Actions::list//
+					? Button{
+						  .text = "Delete",
+						  .style = ButtonStyle::Standard(),
+						  .onClick = [key = artifact.key](GestureDetector::Event) {
+							  auto &artifact = Store::artifacts.at(key);
+							  artifact.unequip();
 
-																	 Store::artifacts.erase(key);
-																	 Store::artifactListUpdateEvent.notify();
-																 },
-															 }
-														   : Child{},
+							  Store::artifacts.erase(key);
+							  Store::artifactListUpdateEvent.notify();
+						  },
+					  }
+					: Child{},
 			},
 		};
 		return Column{

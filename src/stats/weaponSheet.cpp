@@ -18,10 +18,10 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 		"Weapon Base",
 		Formula::Custom(
 			[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
-				return Formula::Compiled::ConstantFloat{.value = getWeaponAtk(*context.source.weapon)};
+				return Formula::Compiled::ConstantFloat{.value = getWeaponAtk(*context.source.loadout().weapon)};
 			},
 			[](const Formula::Context &context) {
-				return getWeaponAtk(*context.source.weapon);
+				return getWeaponAtk(*context.source.loadout().weapon);
 			}
 		)
 	);
@@ -31,10 +31,10 @@ Stats::WeaponSheet::WeaponSheet(const WeaponBase &base) {
 			"Weapon Base",
 			Formula::Custom(
 				[](const Formula::Context &context) -> Formula::Compiled::FloatNode {
-					return Formula::Compiled::ConstantFloat{.value = getWeaponSubstat(*context.source.weapon)};
+					return Formula::Compiled::ConstantFloat{.value = getWeaponSubstat(*context.source.loadout().weapon)};
 				},
 				[](const Formula::Context &context) {
-					return getWeaponSubstat(*context.source.weapon);
+					return getWeaponSubstat(*context.source.loadout().weapon);
 				},
 				Utils::isPercentage(base.subStat.value().stat.stat)
 			)

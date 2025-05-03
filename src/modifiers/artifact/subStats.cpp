@@ -10,7 +10,7 @@ namespace Modifiers::Artifact {
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
-			for (const auto &artifact: context.source.artifact.sheet.equippedArtifacts) {
+			for (const auto &artifact: context.source.loadout().artifact.sheet.equippedArtifacts) {
 				if (!artifact.has_value()) continue;
 				total += stat.resolve(*artifact.value());
 			}
@@ -38,9 +38,9 @@ namespace Modifiers::Artifact {
 			return Formula::Percentage("Artifact Substat", eval(context), member.isPercentage());
 		}
 
-		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
+		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
-			for (const auto &artifact: context.source.artifact.sheet.equippedArtifacts) {
+			for (const auto &artifact: context.source.loadout().artifact.sheet.equippedArtifacts) {
 				if (!artifact.has_value()) continue;
 				total += stat.resolve(*artifact.value());
 			}

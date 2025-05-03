@@ -15,24 +15,25 @@ namespace {
 		const auto &weaponData = Weapon::list.begin()->second;
 		const auto &characterData = Character::list.begin()->second;
 		const auto &artifactData = Artifact::sets.begin()->second;
-		Weapon::InstanceKey weaponKey{0};
-		Character::InstanceKey characterKey{0};
+		Weapon::InstanceKey weaponKey{1};
+		Character::InstanceKey characterKey{1};
 		auto &weapon = Store::weapons.insert({weaponKey, Weapon::Instance(weaponData.key, weaponKey)}).first->second;
 		weapon.stats.sheet.level = 90;
 		weapon.stats.sheet.ascension = 6;
 		weapon.stats.sheet.refinement = 1;
-		auto &character = Store::characters.insert({characterKey, Character::Instance(characterKey, characterData.key, weaponKey)}).first->second;
-		character.loadout.character.sheet.level = 90;
-		character.loadout.character.sheet.ascension = 6;
-		character.loadout.character.sheet.talents.burst.constant = 9;
-		character.loadout.character.sheet.talents.skill.constant = 9;
-		character.loadout.character.sheet.constellation = 0;
+		auto &character = Store::characters.insert({characterKey, Character::Instance(characterKey, characterData.key)}).first->second;
+		character.state.equippedLoadout.swapWeapon(weaponKey);
+		character.state.stats.sheet.level = 90;
+		character.state.stats.sheet.ascension = 6;
+		character.state.stats.sheet.talents.burst.constant = 9;
+		character.state.stats.sheet.talents.skill.constant = 9;
+		character.state.stats.sheet.constellation = 0;
 		Artifact::InstanceKey artiKey1{1};
 		Artifact::InstanceKey artiKey2{2};
 		Artifact::InstanceKey artiKey3{3};
 		Artifact::InstanceKey artiKey4{4};
 		Artifact::InstanceKey artiKey5{5};
-		character.loadout.artifact.equipped = {.flower = artiKey1, .plume = artiKey2, .sands = artiKey3, .goblet = artiKey4, .circlet = artiKey5};
+		character.state.loadout().artifact.equipped = Stats::Artifact::Slotted{.flower = artiKey1, .plume = artiKey2, .sands = artiKey3, .goblet = artiKey4, .circlet = artiKey5};
 
 		Store::artifacts.insert({
 			{Store::lastArtifactId},
@@ -48,7 +49,6 @@ namespace {
 					StatValue{.stat = Stat::er, .value = 0.123f},
 				},
 				.level = 20,
-				.equippedCharacter = characterKey,
 			},
 		});
 		Store::artifacts.insert({
@@ -65,7 +65,6 @@ namespace {
 					StatValue{.stat = Stat::cr, .value = 0.132f},
 				},
 				.level = 20,
-				.equippedCharacter = characterKey,
 			},
 		});
 		Store::artifacts.insert({
@@ -82,7 +81,6 @@ namespace {
 					StatValue{.stat = Stat::def_, .value = 0.139f},
 				},
 				.level = 20,
-				.equippedCharacter = characterKey,
 			},
 		});
 		Store::artifacts.insert({
@@ -99,7 +97,6 @@ namespace {
 					StatValue{.stat = Stat::cd, .value = 0.124f},
 				},
 				.level = 20,
-				.equippedCharacter = characterKey,
 			},
 		});
 		Store::artifacts.insert({
@@ -116,17 +113,17 @@ namespace {
 					StatValue{.stat = Stat::em, .value = 47.f},
 				},
 				.level = 20,
-				.equippedCharacter = characterKey,
 			},
 		});
 
-		character.loadout.artifact.refreshStats();
+		character.state.loadout().artifact.refreshStats();
+		character.state.init();
 
 		return character;
 	}
 
 	[[nodiscard]] const Node::Instance &getNode(Character::Instance &character) {
-		return character.loadout.character.data.data.nodes.burst.at(0);
+		return character.state.stats.data.data.nodes.burst.at(0);
 	}
 
 	void formulaCalc(benchmark::State &state) {
@@ -155,8 +152,8 @@ namespace {
 		enemy.sheet.level.constant = 100.f;
 
 		Formula::Context ctx{
-			.source = character.loadout,
-			.active = character.loadout,
+			.source = character.state,
+			.active = character.state,
 			.team = team,
 			.enemy = enemy,
 		};
@@ -165,8 +162,8 @@ namespace {
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
-			// (void) compiledNode.eval(ctx);
-			benchmark::DoNotOptimize(node.formula.compile(ctx));
+			(void) compiledNode.eval(ctx);
+			// benchmark::DoNotOptimize(node.formula.compile(ctx));
 			// character.getArtifactStats();
 			benchmark::DoNotOptimize(compiledNode);
 		}

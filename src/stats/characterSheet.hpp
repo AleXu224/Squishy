@@ -6,6 +6,7 @@
 
 namespace Stats {
 	struct Loadout;
+	struct State;
 	struct CharacterSheet {
 		Formula::ElementNode infusion;
 		Formula::ElementNode teamInfusion;
@@ -22,6 +23,6 @@ namespace Stats {
 		};
 		Talents<Stats::Value<int32_t, 1>> talents{};
 
-		void init(Stats::Loadout &stats);
+		void init(Stats::State &stats);
 	};
 }// namespace Stats

@@ -16,7 +16,8 @@ Character::Instance &Store::createCharacter(Character::DataKey dataKey, Weapon::
 	}
 
 	++lastCharacterId;
-	auto entry = characters.emplace(lastCharacterId, Character::Instance(lastCharacterId, dataKey, weapon));
+	auto entry = characters.emplace(lastCharacterId, Character::Instance(lastCharacterId, dataKey));
+	entry.first->second.state.equippedLoadout.swapWeapon(weapon);
 
 	return entry.first->second;
 }
@@ -93,12 +94,14 @@ namespace {
 			maxArtifactKey = std::max(maxArtifactKey, artifact.instanceKey.key);
 			::Store::artifacts.emplace(artifact.instanceKey, artifact.toInstance());
 		}
+		::Store::lastArtifactId = maxArtifactKey;
 
 		uint32_t maxWeaponKey = 1;
 		for (const auto &weapon: save.weapons) {
 			maxWeaponKey = std::max(maxWeaponKey, weapon.instanceKey.key);
 			::Store::weapons.emplace(weapon.instanceKey, weapon.toInstance());
 		}
+		::Store::lastWeaponId = maxWeaponKey;
 
 		uint32_t maxCharacterKey = 1;
 		uint32_t maxComboKey = 1;
@@ -109,18 +112,15 @@ namespace {
 			}
 			::Store::characters.emplace(character.instanceKey, character.toInstance());
 		}
+		::Store::lastCharacterId = maxCharacterKey;
+		::Store::lastComboId = maxComboKey;
 
 		uint32_t maxTeamKey = 1;
 		for (const auto &team: save.teams) {
 			maxTeamKey = std::max(maxTeamKey, team.instanceKey.key);
 			::Store::teams.emplace(team.instanceKey, team.toInstance());
 		}
-
-		::Store::lastArtifactId = maxArtifactKey;
-		::Store::lastWeaponId = maxWeaponKey;
-		::Store::lastCharacterId = maxCharacterKey;
 		::Store::lastTeamId = maxTeamKey;
-		::Store::lastComboId = maxComboKey;
 
 		::Store::windowWidth = save.window.width;
 		::Store::windowHeight = save.window.height;

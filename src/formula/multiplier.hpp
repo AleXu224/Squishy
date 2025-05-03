@@ -65,7 +65,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
-			return Reaction::CharacterLevelMultiplier.at(context.source.character.sheet.level);
+			return Reaction::CharacterLevelMultiplier.at(context.source.stats.sheet.level);
 		}
 	};
 

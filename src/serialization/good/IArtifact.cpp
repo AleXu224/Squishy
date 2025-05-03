@@ -9,6 +9,7 @@
 
 
 Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(const Artifact::Instance &artifact) {
+	auto equippedCharacter = artifact.equippedOn();
 	return {
 		.setKey{::Artifact::sets.at(artifact.set).goodKey},
 		.slotKey = Serialization::Good::keySlot.at(artifact.slot),
@@ -16,8 +17,8 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 		.rarity = artifact.rarity,
 		.mainStatKey = keyStat.at(artifact.mainStat),
 		.location{
-			artifact.equippedCharacter
-				? ::Store::characters.at(artifact.equippedCharacter).loadout.character.data.goodKey
+			equippedCharacter
+				? ::Store::characters.at(equippedCharacter).state.stats.data.goodKey
 				: ""
 		},
 		.substats = [&]() {
@@ -125,7 +126,7 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 
 	Character::InstanceKey equippedCharacter{};
 	for (auto &[_, character]: ::Store::characters) {
-		if (character.loadout.character.data.goodKey == location) {
+		if (character.state.stats.data.goodKey == location) {
 			equippedCharacter = character.instanceKey;
 			break;
 		}

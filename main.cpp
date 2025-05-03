@@ -35,8 +35,8 @@ int main() {
 	// auto &team = Store::teams.at({2});
 
 	// auto ctx = Formula::Context{
-	// 	.source = cyno.loadout,
-	// 	.active = cyno.loadout,
+	// 	.source = cyno.state,
+	// 	.active = cyno.state,
 	// 	.team = team.stats,
 	// 	.enemy = enemy.first->second.stats,
 	// };

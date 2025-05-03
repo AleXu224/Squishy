@@ -115,7 +115,7 @@ UI::OptionPicker::operator squi::Child() const {
 					Children characterRet;
 					for (const auto &[memberCond, slot]: std::views::zip(Option::CharacterList::getMembersAndConditions(), Node::characterSlots)) {
 						auto &[optListPtr, cond] = memberCond;
-						auto &optList = std::invoke(optListPtr, character->loadout.character.data.data.opts);
+						auto &optList = std::invoke(optListPtr, character->state.stats.data.data.opts);
 						Children categoryRet;
 						for (const auto &opt: optList) {
 							auto [teamBuff, condition] = std::visit(
@@ -125,7 +125,7 @@ UI::OptionPicker::operator squi::Child() const {
 								opt
 							);
 							if (character->instanceKey != characterKey && !teamBuff) continue;
-							auto newCtx = ctx.withSource(character->loadout);
+							auto newCtx = ctx.withSource(character->state);
 							if (condition && !condition->eval(newCtx)) continue;
 							if (!cond.eval(newCtx)) continue;
 							if (existingOptions.contains(
@@ -180,7 +180,7 @@ UI::OptionPicker::operator squi::Child() const {
 					}
 					if (!characterRet.empty()) {
 						ret.emplace_back(DisplayCard{
-							.title = character->loadout.character.data.name,
+							.title = character->state.stats.data.name,
 							.children = characterRet,
 						});
 					}

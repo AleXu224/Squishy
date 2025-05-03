@@ -10,7 +10,7 @@ namespace Modifiers::Weapon {
 		SheetMember<Stats::Sheet<Stats::Value<float, 1>>> stat;
 		SheetMemberIdentifier member;
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.source.weapon->sheet.stats).compile(context);
+			return stat.resolve(context.source.loadout().weapon->sheet.stats).compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
@@ -18,7 +18,7 @@ namespace Modifiers::Weapon {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return stat.resolve(context.source.weapon->sheet.stats).get(context);
+			return stat.resolve(context.source.loadout().weapon->sheet.stats).get(context);
 		}
 	};
 

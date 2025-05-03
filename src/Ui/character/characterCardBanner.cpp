@@ -41,7 +41,7 @@ UI::CharacterCardBanner::operator squi::Child() const {
 								.fontSize = 24.f,
 							},
 							Text{
-								.text = std::format("Lvl {} C{}", character.loadout.character.sheet.level, character.loadout.character.sheet.constellation),
+								.text = std::format("Lvl {} C{}", character.state.stats.sheet.level, character.state.stats.sheet.constellation),
 							},
 						},
 					},

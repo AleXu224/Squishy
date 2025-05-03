@@ -6,13 +6,13 @@
 Serialization::Good::ICharacter Serialization::Good::ICharacter::fromInstance(const Character::Instance &character) {
 	return {
 		.key = std::string(Character::list.at(character.dataKey).goodKey),
-		.level = character.loadout.character.sheet.level,
-		.constellation = character.loadout.character.sheet.constellation,
-		.ascension = character.loadout.character.sheet.ascension,
+		.level = character.state.stats.sheet.level,
+		.constellation = character.state.stats.sheet.constellation,
+		.ascension = character.state.stats.sheet.ascension,
 		.talent{
-			.auto_ = character.loadout.character.sheet.talents.normal.constant + 1,
-			.skill = character.loadout.character.sheet.talents.skill.constant + 1,
-			.burst = character.loadout.character.sheet.talents.burst.constant + 1,
+			.auto_ = character.state.stats.sheet.talents.normal.constant + 1,
+			.skill = character.state.stats.sheet.talents.skill.constant + 1,
+			.burst = character.state.stats.sheet.talents.burst.constant + 1,
 		},
 	};
 }
@@ -46,10 +46,10 @@ std::expected<std::reference_wrapper<Character::Instance>, std::string> Serializ
 }
 
 void Serialization::Good::ICharacter::writeToInstance(Character::Instance &character) const {
-	character.loadout.character.sheet.level = level;
-	character.loadout.character.sheet.constellation = constellation;
-	character.loadout.character.sheet.ascension = ascension;
-	character.loadout.character.sheet.talents.normal.constant = talent.auto_ - 1;
-	character.loadout.character.sheet.talents.skill.constant = talent.skill - 1;
-	character.loadout.character.sheet.talents.burst.constant = talent.burst - 1;
+	character.state.stats.sheet.level = level;
+	character.state.stats.sheet.constellation = constellation;
+	character.state.stats.sheet.ascension = ascension;
+	character.state.stats.sheet.talents.normal.constant = talent.auto_ - 1;
+	character.state.stats.sheet.talents.skill.constant = talent.skill - 1;
+	character.state.stats.sheet.talents.burst.constant = talent.burst - 1;
 }

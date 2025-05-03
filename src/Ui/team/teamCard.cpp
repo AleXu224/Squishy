@@ -33,7 +33,7 @@ struct TeamAvatar {
 			.child = character
 					   ? Image{
 							 .fit = Image::Fit::contain,
-							 .image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->loadout.character.data.name))
+							 .image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->state.stats.data.name))
 						 }
 					   : Child{},
 		};
