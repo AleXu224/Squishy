@@ -11,10 +11,14 @@ void Stats::State::init() {
 	const auto &characterData = stats.data;
 	characterData.getOpts(options);
 
-	loadout().init(options);
+	equippedLoadout.init(options);
 
 	for (auto &loadout: loadouts) {
 		loadout.init(options);
+	}
+
+	for (const auto &[setKey, set]: ::Artifact::sets) {
+		set.getOptions(options);
 	}
 
 	stats.sheet.init(*this);
@@ -26,9 +30,7 @@ void Stats::Loadout::init(Option::TypesMap &options) {
 		weaponData->getOpts(options);
 	}
 
-	for (const auto &[setKey, set]: ::Artifact::sets) {
-		set.getOptions(options);
-	}
+	artifact.refreshStats();
 }
 
 void Stats::Loadout::swapWeapon(::Weapon::InstanceKey weaponInstanceKey) {

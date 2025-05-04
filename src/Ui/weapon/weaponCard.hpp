@@ -1,12 +1,13 @@
 #pragma once
 
+#include "cstdint"
 #include "weapon/instance.hpp"
 #include "widget.hpp"
 
 
 namespace UI {
 	struct WeaponCard {
-		enum class Actions {
+		enum class Actions : uint8_t {
 			list,
 			character,
 			showcase,

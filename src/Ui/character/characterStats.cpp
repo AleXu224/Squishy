@@ -11,6 +11,7 @@
 #include "button.hpp"
 #include "character/data.hpp"
 #include "characterEditor.hpp"
+#include "characterLoadouts.hpp"
 #include "formula/stat.hpp"
 #include "store.hpp"
 
@@ -18,10 +19,12 @@
 #include "row.hpp"
 #include "stack.hpp"
 #include "stats/loadout.hpp"
+#include "theme.hpp"
 
 using namespace squi;
 UI::CharacterStats::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
+	auto theme = ThemeManager::getTheme();
 
 	return UI::DisplayCard{
 		.widget = widget,
@@ -88,21 +91,39 @@ UI::CharacterStats::operator squi::Child() const {
 			return ret;
 		}(),
 		.footer{
-			Button{
-				.widget{
-					.width = Size::Expand,
-				},
-				.text = "Edit",
-				.onClick = [characterKey = characterKey](GestureDetector::Event event) {
-					auto &character = ::Store::characters.at(characterKey);
-					event.widget.addOverlay(UI::CharacterEditor{
-						.character = character,
-						.onSubmit = [](const Character::Instance &character) {
-							auto &instance = Store::characters.at(character.instanceKey);
-							instance.state.stats.sheet = character.state.stats.sheet;
-							instance.updateEvent.notify();
+			Row{
+				.spacing = 4.f,
+				.children{
+					Button{
+						.widget{
+							.width = Size::Expand,
 						},
-					});
+						.text = "Edit",
+						.onClick = [characterKey = characterKey, theme](GestureDetector::Event event) {
+							auto &character = ::Store::characters.at(characterKey);
+							auto _ = ThemeManager::pushTheme(theme);
+							event.widget.addOverlay(UI::CharacterEditor{
+								.character = character,
+								.onSubmit = [](const Character::Instance &character) {
+									auto &instance = Store::characters.at(character.instanceKey);
+									instance.state.stats.sheet = character.state.stats.sheet;
+									instance.updateEvent.notify();
+								},
+							});
+						},
+					},
+					Button{
+						.widget{
+							.width = Size::Expand,
+						},
+						.text = "Loadouts",
+						.onClick = [characterKey = characterKey, theme](GestureDetector::Event event) {
+							auto _ = ThemeManager::pushTheme(theme);
+							event.widget.addOverlay(UI::CharacterLoadouts{
+								.characterKey = characterKey,
+							});
+						},
+					},
 				},
 			},
 		},

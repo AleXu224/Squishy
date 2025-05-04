@@ -1,12 +1,13 @@
 #pragma once
 
 #include "artifact/instance.hpp"
+#include "cstdint"
 #include "widget.hpp"
 
 
 namespace UI {
 	struct ArtifactCard {
-		enum class Actions {
+		enum class Actions : uint8_t {
 			list,
 			character,
 			showcase,

@@ -213,6 +213,7 @@ UI::ArtifactCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return Rebuilder{
+		.widget = widget,
 		.rebuildEvent = artifact.updateEvent,
 		.buildFunc = [key = artifact.key, actions = actions]() -> Child {
 			if (!Store::artifacts.contains(key)) {

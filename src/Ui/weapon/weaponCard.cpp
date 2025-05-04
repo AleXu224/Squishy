@@ -31,7 +31,7 @@ struct WeaponHeader {
 
 		return Box{
 			.widget{
-				.height = 128.f,
+				.height = 137.f,
 			},
 			.color = Color::css(0xffffff, 0.0419f),
 			.borderRadius{7.f, 7.f, 0.f, 0.f},
@@ -167,6 +167,7 @@ UI::WeaponCard::operator squi::Child() const {
 	auto storage = std::make_shared<Storage>();
 
 	return Rebuilder{
+		.widget = widget,
 		.rebuildEvent = weapon.updateEvent,
 		.buildFunc = [key = weapon.instanceKey, actions = actions]() -> Child {
 			if (!Store::weapons.contains(key)) {
@@ -183,24 +184,6 @@ UI::WeaponCard::operator squi::Child() const {
 					.actions = actions,
 				},
 			};
-		},
-	};
-
-	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
-		.child = Rebuilder{
-			.rebuildEvent = weapon.updateEvent,
-			.buildFunc = [key = weapon.instanceKey, actions = actions]() -> Child {
-				if (!Store::weapons.contains(key)) {
-					return Child{};
-				}
-				return WeaponCardContent{
-					.weapon = Store::weapons.at(key),
-					.actions = actions,
-				};
-			},
 		},
 	};
 }

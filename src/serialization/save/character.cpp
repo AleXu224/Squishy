@@ -18,6 +18,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 		.combos = comboFromInstance(character.combos),
 		.loadouts = [&]() {
 			std::vector<::Serialization::Save::Loadout> ret;
+			ret.reserve(character.state.loadouts.size());
 			for (const auto &loadout: character.state.loadouts) {
 				ret.emplace_back(::Serialization::Save::Loadout::fromInstance(loadout));
 			}
@@ -36,6 +37,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 	instance.state.stats.sheet.talents.normal.constant = normalLevel;
 	instance.state.stats.sheet.talents.skill.constant = skillLevel;
 	instance.state.stats.sheet.talents.burst.constant = burstLevel;
+	instance.state.loadoutIndex = loadoutIndex;
 	instance.state.equippedLoadout = equippedLoadout.toInstance(instance.state.stats.base.weaponType);
 
 	for (const auto &slot: ::Artifact::slots) {
