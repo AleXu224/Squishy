@@ -26,14 +26,14 @@ const Weapon::Data Weapon::Datas::mistsplitterReforged{
 		auto multiplier3 = WeaponMultiplier(true, {0.1600, 0.2000, 0.2400, 0.2800, 0.3200});
 		auto multiplier4 = WeaponMultiplier(true, {0.2800, 0.3500, 0.4200, 0.4900, 0.5600});
 
-		auto condVal = GetInt("mistsplitterCond");
+		auto condVal = GetIndex("mistsplitterCond");
 		auto cond = IsActive("mistsplitterCond");
 
 		auto buff = Requires(
 			cond,
 			Evaluator(
 				Index{
-					.index = condVal - ConstantInt(1),
+					.index = condVal,
 					.indexable = std::array{multiplier2, multiplier3, multiplier4},
 				},
 				true

@@ -9,6 +9,7 @@
 #include "weapons/ApprenticeSNotes.hpp"
 #include "weapons/AquilaFavonia.hpp"
 #include "weapons/AstralVulturesCrimsonPlumage.hpp"
+#include "weapons/Azurelight.hpp"
 #include "weapons/BeginnerSProtector.hpp"
 #include "weapons/Deathmatch.hpp"
 #include "weapons/DullBlade.hpp"
@@ -23,6 +24,7 @@
 #include "weapons/SacrificialFragments.hpp"
 #include "weapons/SacrificialGreatsword.hpp"
 #include "weapons/SacrificialSword.hpp"
+#include "weapons/StaffOfHoma.hpp"
 #include "weapons/StarcallersWatch.hpp"
 #include "weapons/SymphonistOfScents.hpp"
 #include "weapons/ThrillingTalesOfDragonSlayers.hpp"
@@ -41,6 +43,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
 		{Weapon::Datas::aquilaFavonia.key, Weapon::Datas::aquilaFavonia},
 		{Weapon::Datas::astralVulturesCrimsonPlumage.key, Weapon::Datas::astralVulturesCrimsonPlumage},
+		{Weapon::Datas::azurelight.key, Weapon::Datas::azurelight},
 		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
 		{Weapon::Datas::deathmatch.key, Weapon::Datas::deathmatch},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},
@@ -55,6 +58,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::sacrificialFragments.key, Weapon::Datas::sacrificialFragments},
 		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},
 		{Weapon::Datas::sacrificialSword.key, Weapon::Datas::sacrificialSword},
+		{Weapon::Datas::staffOfHoma.key, Weapon::Datas::staffOfHoma},
 		{Weapon::Datas::starcallersWatch.key, Weapon::Datas::starcallersWatch},
 		{Weapon::Datas::symphonistOfScents.key, Weapon::Datas::symphonistOfScents},
 		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},

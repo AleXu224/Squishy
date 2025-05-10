@@ -15,6 +15,7 @@ namespace Artifact {
 	using IsActive = Formula::impl_IsActive;
 	using GetFloat = Formula::impl_GetFloat;
 	using GetInt = Formula::impl_GetInt;
+	using GetIndex = Formula::impl_GetIndex;
 
 	static constexpr struct Character {
 		static constexpr Formula::CharacterLevel level{};

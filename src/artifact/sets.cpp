@@ -6,6 +6,7 @@
 #include "artifact/sets/CrimsonWitchOfFlames.hpp"
 #include "artifact/sets/DeepwoodMemories.hpp"
 #include "artifact/sets/EmblemOfSeveredFate.hpp"
+#include "artifact/sets/FinaleOfTheDeepGalleries.hpp"
 #include "artifact/sets/FragmentOfHarmonicWhimsy.hpp"
 #include "artifact/sets/GildedDreams.hpp"
 #include "artifact/sets/GladiatorsFinale.hpp"
@@ -36,6 +37,7 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::crimsonWitchOfFlames.key, Artifact::Sets::crimsonWitchOfFlames},
 		{Artifact::Sets::deepwoodMemories.key, Artifact::Sets::deepwoodMemories},
 		{Artifact::Sets::emblemOfSeveredFate.key, Artifact::Sets::emblemOfSeveredFate},
+		{Artifact::Sets::finaleOfTheDeepGalleries.key, Artifact::Sets::finaleOfTheDeepGalleries},
 		{Artifact::Sets::fragmentOfHarmonicWhimsy.key, Artifact::Sets::fragmentOfHarmonicWhimsy},
 		{Artifact::Sets::gildedDreams.key, Artifact::Sets::gildedDreams},
 		{Artifact::Sets::gladiatorsFinale.key, Artifact::Sets::gladiatorsFinale},

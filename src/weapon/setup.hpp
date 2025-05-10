@@ -15,6 +15,7 @@ namespace Weapon {
 	using IsActive = Formula::impl_IsActive;
 	using GetFloat = Formula::impl_GetFloat;
 	using GetInt = Formula::impl_GetInt;
+	using GetIndex = Formula::impl_GetIndex;
 
 	using SubStat = Stats::WeaponBase::SubStat;
 

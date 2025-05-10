@@ -71,4 +71,21 @@ namespace Formula {
 			return ::Option::getInt(context.source.options, name, defaultValue);
 		}
 	};
+
+	struct impl_GetIndex {
+		Utils::HashedString name;
+		uint32_t defaultValue = 0;
+
+		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
+			return Compiled::ConstantInt{.value = eval(context)};
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{} {}", name.str, eval(context));
+		}
+
+		[[nodiscard]] int32_t eval(const Context &context) const {
+			return ::Option::getIndex(context.source.options, name, defaultValue);
+		}
+	};
 }// namespace Formula

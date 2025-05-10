@@ -36,6 +36,10 @@ namespace Option {
 		return std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue);
 	}
 
+	inline uint32_t getIndex(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
+		return std::get<Option::ValueList>(options.at(key.hash)).currentIndex.value_or(defaultValue);
+	}
+
 	struct CharacterList {
 		std::vector<Types> normal{};
 		std::vector<Types> charged{};
