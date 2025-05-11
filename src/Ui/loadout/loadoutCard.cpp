@@ -4,6 +4,7 @@
 #include "Ui/utils/tooltip.hpp"
 #include "Ui/weapon/weaponCard.hpp"
 #include "button.hpp"
+#include "container.hpp"
 #include "expander.hpp"
 #include "row.hpp"
 #include "store.hpp"
@@ -19,7 +20,7 @@ UI::LoadoutCard::operator squi::Child() const {
 		.heading = loadoutIndex.has_value() ? "Loadout name" : "Equipped",
 		.alwaysExpanded = true,
 		.actions{
-			loadoutIndex.has_value()//
+			loadoutIndex.has_value() && std::holds_alternative<Stats::Artifact::Slotted>(loadout.artifact.equipped)//
 				? Tooltip{
 					  .message = "Sets the equipped build to this build. If any of the artifacts in this build are equipped on other characters, they will be swapped with this character's.",
 					  .child = Button{
@@ -43,6 +44,7 @@ UI::LoadoutCard::operator squi::Child() const {
 				.onClick = [&character, loadoutIndex = loadoutIndex](GestureDetector::Event) {
 					character.state.loadoutIndex = loadoutIndex;
 					character.updateEvent.notify();
+					character.loadoutChangedEvent.notify();
 				},
 			},
 			loadoutIndex.has_value()//
@@ -56,6 +58,7 @@ UI::LoadoutCard::operator squi::Child() const {
 						  }
 						  character.state.loadouts.erase(character.state.loadouts.begin() + loadoutIndex.value());
 						  character.updateEvent.notify();
+						  character.loadoutChangedEvent.notify();
 					  },
 				  }
 				: Child{},
@@ -75,19 +78,31 @@ UI::LoadoutCard::operator squi::Child() const {
 					},
 				};
 
-				for (const auto &slot: Artifact::slots) {
-					auto &arti = loadout.artifact.getSlotted().fromSlot(slot);
-					if (!arti) {
-						ret.emplace_back(Card{});
-						continue;
-					}
+				std::visit(
+					Utils::overloaded{
+						[&](const Stats::Artifact::Slotted &slotted) {
+							for (const auto &slot: Artifact::slots) {
+								const auto &arti = slotted.fromSlot(slot);
+								if (!arti) {
+									ret.emplace_back(Card{});
+									continue;
+								}
 
-					ret.emplace_back(ArtifactCard{
-						.widget{.width = Size::Expand, .height = Size::Expand},
-						.artifact = Store::artifacts.at(arti),
-						.actions = ArtifactCard::Actions::showcase,
-					});
-				}
+								ret.emplace_back(ArtifactCard{
+									.widget{.width = Size::Expand, .height = Size::Expand},
+									.artifact = Store::artifacts.at(arti),
+									.actions = ArtifactCard::Actions::showcase,
+								});
+							}
+						},
+						[&](const Stats::Artifact::Theorycraft &) {
+							for (const auto &_: Artifact::slots) {
+								ret.emplace_back(Container{});
+							}
+						},
+					},
+					loadout.artifact.equipped
+				);
 
 				return ret;
 			}(),

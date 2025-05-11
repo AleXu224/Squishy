@@ -47,7 +47,18 @@ namespace {
 							},
 							ContextMenu::Item{
 								.text = "TC Build",
-								.content = []() {},
+								.content = [characterKey = characterKey]() {
+									auto &character = ::Store::characters.at(characterKey);
+									auto &weapon = Store::createWeapon(Weapon::defaultWeapons.at(character.state.stats.base.weaponType));
+									character.state.loadouts.emplace_back(Stats::Loadout{
+										.weaponInstanceKey = weapon.instanceKey,
+										.weapon = &weapon.stats,
+										.artifact{
+											.equipped = Stats::Artifact::Theorycraft{},
+										},
+									});
+									character.updateEvent.notify();
+								},
 							},
 						},
 					},

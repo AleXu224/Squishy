@@ -13,6 +13,7 @@
 Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto start_artifactDuplication = std::chrono::high_resolution_clock::now();
 	std::vector<Artifact::Instance> artifacts;
+	artifacts.reserve(::Store::artifacts.size());
 	for (const auto &[_, artifact]: ::Store::artifacts) {
 		artifacts.emplace_back(artifact);
 	}
@@ -49,7 +50,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	// 4pc filters
 	for (const auto &key: enabledFourPiece) {
 		ArtifactFilter pattern{};
-		auto &set = Artifact::sets.at(key);
+		const auto &set = Artifact::sets.at(key);
 		pattern.bonus1.emplace(Stats::ArtifactBonus{
 			.setPtr = &set,
 			.bonusPtr = &set.data.twoPc,
@@ -83,7 +84,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	// 2pc filters
 	for (auto it = enabledTwoPiece.begin(); it != enabledTwoPiece.end(); it++) {
 		auto key = *it;
-		auto &set = Artifact::sets.at(key);
+		const auto &set = Artifact::sets.at(key);
 		for (size_t i = 0; i < 5; i++) {
 			if (counts.at(key.key).at(i) == 0) continue;
 			for (size_t j = i + 1; j < 5; j++) {
@@ -114,7 +115,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				for (auto it2 = std::next(it); it2 != enabledTwoPiece.end(); it2++) {
 					auto key2 = *it2;
 					if (key == key2) continue;
-					auto &set2 = Artifact::sets.at(key2);
+					const auto &set2 = Artifact::sets.at(key2);
 					ret.bonus2.emplace(Stats::ArtifactBonus{
 						.setPtr = &set2,
 						.bonusPtr = &set2.data.twoPc,
@@ -161,14 +162,14 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto &loadout = character.state.loadout();
 	// Roughly sort the artifact based on potential. Helps a lot when splitting
 	for (size_t i = 0; i < 5; i++) {
-		auto &artis = initialArtifacts.entries[i];
+		auto &artis = initialArtifacts.entries.at(i);
 		for (size_t index = 0; index < 5; index++) {
-			loadout.artifact.sheet.equippedArtifacts[index] = &statsForSlot[index];
+			loadout.artifact.sheet.equippedArtifacts.at(index) = &statsForSlot.at(index);
 		}
 		std::sort(artis.begin(), artis.end(), [&](Artifact::Instance *art1, Artifact::Instance *art2) -> bool {
-			loadout.artifact.sheet.equippedArtifacts[i] = &art1->stats;
+			loadout.artifact.sheet.equippedArtifacts.at(i) = &art1->stats;
 			auto val1 = compiledNode.eval(ctx);
-			loadout.artifact.sheet.equippedArtifacts[i] = &art2->stats;
+			loadout.artifact.sheet.equippedArtifacts.at(i) = &art2->stats;
 			auto val2 = compiledNode.eval(ctx);
 			return val1 < val2;
 		});

@@ -5,6 +5,7 @@
 #include "Ui/combo/comboDisplay.hpp"
 #include "Ui/elementToColor.hpp"
 #include "Ui/optimization/optimization.hpp"
+#include "Ui/optimization/tcOptimization.hpp"
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/grid.hpp"
 #include "Ui/utils/masonry.hpp"
@@ -246,7 +247,7 @@ namespace {
 		squi::Widget::Args widget{};
 		Character::InstanceKey characterKey;
 
-		static inline Child makeContent(Character::InstanceKey characterKey) {
+		static Child makeContent(Character::InstanceKey characterKey) {
 			auto &character = ::Store::characters.at(characterKey);
 
 			return UI::Grid{
@@ -265,7 +266,7 @@ namespace {
 						Utils::overloaded{
 							[&](const Stats::Artifact::Slotted &artifacts) {
 								for (const auto &slot: Artifact::slots) {
-									auto &key = artifacts.fromSlot(slot);
+									const auto &key = artifacts.fromSlot(slot);
 									if (!key) {
 										ret.emplace_back(UI::Card{});
 										continue;
@@ -302,8 +303,9 @@ namespace {
 }// namespace
 
 UI::CharacterDetails::operator squi::Child() const {
+	auto &character = Store::characters.at(characterKey);
 	auto theme = ThemeManager::getTheme();
-	auto &element = ::Store::characters.at(characterKey).state.stats.base.element;
+	const auto &element = ::Store::characters.at(characterKey).state.stats.base.element;
 	theme.accent = Utils::elementToColor(element);
 	auto _ = ThemeManager::pushTheme(theme);
 	// TODO: make each item rebuild individually
@@ -326,10 +328,30 @@ UI::CharacterDetails::operator squi::Child() const {
 				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
 				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey, theme),
 			},
-			UI::Optimization{
-				.characterKey = characterKey,
-				.teamKey = teamKey,
-				.enemyKey = enemyKey,
+			Rebuilder{
+				.rebuildEvent = character.loadoutChangedEvent,
+				.buildFunc = [theme, &character, characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey]() -> Child {
+					auto _ = ThemeManager::pushTheme(theme);
+					return std::visit(
+						Utils::overloaded{
+							[&](const Stats::Artifact::Slotted &lotted) -> Child {
+								return UI::Optimization{
+									.characterKey = characterKey,
+									.teamKey = teamKey,
+									.enemyKey = enemyKey,
+								};
+							},
+							[&](const Stats::Artifact::Theorycraft &theorycraft) -> Child {
+								return UI::TCOptimization{
+									.characterKey = characterKey,
+									.teamKey = teamKey,
+									.enemyKey = enemyKey,
+								};
+							},
+						},
+						character.state.loadout().artifact.equipped
+					);
+				},
 			},
 		},
 	};

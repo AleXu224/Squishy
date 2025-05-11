@@ -22,6 +22,9 @@ namespace Serialization::Save {
 	};
 
 	struct ArtifactTC {
+		::Stats::Artifact::Theorycraft::Set set1;
+		::Artifact::SetKey set2;
+
 		struct MainStat {
 			Stat stat;
 			uint8_t level = 20;

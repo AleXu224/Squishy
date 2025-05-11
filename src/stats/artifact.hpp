@@ -59,17 +59,29 @@ namespace Stats {
 		};
 
 		struct Theorycraft {
+			struct Set {
+				enum class Type : uint8_t {
+					twoPc,
+					fourPc,
+				};
+
+				::Artifact::SetKey key;
+				Type type = Type::twoPc;
+			};
+			Set set1;
+			::Artifact::SetKey set2;
+
 			struct MainStat {
 				Stat stat;
 				uint8_t level = 20;
 				uint8_t rarity = 5;
 			};
 			std::array<MainStat, 5> mainStats{
-				MainStat{Stat::hp},
-				MainStat{Stat::atk},
-				MainStat{Stat::atk_},
-				MainStat{Stat::atk_},
-				MainStat{Stat::atk_},
+				MainStat{.stat = Stat::hp},
+				MainStat{.stat = Stat::atk},
+				MainStat{.stat = Stat::atk_},
+				MainStat{.stat = Stat::atk_},
+				MainStat{.stat = Stat::atk_},
 			};
 			uint8_t hp = 0;
 			uint8_t hp_ = 0;
@@ -81,6 +93,8 @@ namespace Stats {
 			uint8_t em = 0;
 			uint8_t cr = 0;
 			uint8_t cd = 0;
+
+			Stats::Sheet<float> sheet{};
 
 			[[nodiscard]] auto &fromStat(this auto &self, ::Stat stat) {
 				switch (stat) {
@@ -108,12 +122,32 @@ namespace Stats {
 						return self.hp;
 				}
 			}
+
+			[[nodiscard]] Stats::Sheet<float> getSheet() const {
+				Stats::Sheet<float> ret{};
+				for (const auto &stat: subStats) {
+					ret.fromStat(stat) = static_cast<float>(fromStat(stat)) * Values::averageSubStat.at(stat).at(4);
+				}
+				for (const auto &mainStat: mainStats) {
+					ret.fromStat(mainStat.stat) += Values::mainStat.at(mainStat.stat).at(mainStat.rarity - 1).at(mainStat.level);
+				}
+
+				return ret;
+			}
+
+			void updateStats() {
+				this->sheet = getSheet();
+			}
 		};
 
 		std::variant<Slotted, Theorycraft> equipped{};
 
 		Slotted &getSlotted();
 		const Slotted &getSlotted() const;
+		Theorycraft &getTheorycraft();
+		const Theorycraft &getTheorycraft() const;
+
+		bool isTheorycraft() const;
 
 		static inline std::vector subStats{
 			Stat::hp,
@@ -205,3 +239,16 @@ namespace Stats {
 		void refreshStats();
 	};
 }// namespace Stats
+
+namespace Utils {
+	template<>
+	constexpr std::string Stringify<>(const Stats::Artifact::Theorycraft::Set::Type &type) {
+		switch (type) {
+			case Stats::Artifact::Theorycraft::Set::Type::twoPc:
+				return "2pc";
+			case Stats::Artifact::Theorycraft::Set::Type::fourPc:
+				return "4pc";
+		}
+		std::unreachable();
+	}
+}// namespace Utils

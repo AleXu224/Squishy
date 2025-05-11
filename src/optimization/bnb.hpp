@@ -44,13 +44,13 @@ namespace Optimization {
 				varianceFunc(0);
 				continue;
 			}
-			auto &artis = artifacts.entries[i];
+			auto &artis = artifacts.entries.at(i);
 			float maxVal = 0;
 			float minVal = std::numeric_limits<float>::max();
 
 			artis.erase(
 				std::remove_if(artis.begin(), artis.end(), [&](Artifact::Instance *artifact) {
-					loadout.artifact.sheet.equippedArtifacts[i] = &artifact->stats;
+					loadout.artifact.sheet.equippedArtifacts.at(i) = &artifact->stats;
 
 					auto val = node.eval(ctx);
 					if (val > solutions.minScore) {
@@ -62,7 +62,7 @@ namespace Optimization {
 				}),
 				artis.end()
 			);
-			loadout.artifact.sheet.equippedArtifacts[i] = &statsForSlot[i];
+			loadout.artifact.sheet.equippedArtifacts.at(i) = &statsForSlot.at(i);
 
 			auto variance = maxVal - minVal;
 			varianceFunc(variance);
@@ -96,7 +96,7 @@ namespace Optimization {
 		// size_t biggestSlotIndex = 0;
 		if (maxVariance == 0) {
 			for (size_t i = 0; i < 5; i++) {
-				auto size = artifacts.entries[i].size();
+				auto size = artifacts.entries.at(i).size();
 				if (size > biggestSlot) {
 					biggestSlot = size;
 					maxVarianceSlot = i;
@@ -106,13 +106,13 @@ namespace Optimization {
 
 		std::optional<uint32_t> splitSlotRet = maxVarianceSlot;
 
-		auto &chosenSplitSlot = artifacts.entries[maxVarianceSlot];
+		auto &chosenSplitSlot = artifacts.entries.at(maxVarianceSlot);
 		auto midPoint = std::midpoint(size_t(0), chosenSplitSlot.size());
 		auto copy1 = artifacts;
 		auto copy2 = artifacts;
-		auto &maxVarianceEntry = artifacts.entries[maxVarianceSlot];
-		copy1.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin(), maxVarianceEntry.begin() + midPoint);
-		copy2.entries[maxVarianceSlot] = std::vector(maxVarianceEntry.begin() + midPoint, maxVarianceEntry.end());
+		auto &maxVarianceEntry = artifacts.entries.at(maxVarianceSlot);
+		copy1.entries.at(maxVarianceSlot) = std::vector(maxVarianceEntry.begin(), std::next(maxVarianceEntry.begin(), static_cast<int32_t>(midPoint)));
+		copy2.entries.at(maxVarianceSlot) = std::vector(std::next(maxVarianceEntry.begin(), static_cast<int32_t>(midPoint)), maxVarianceEntry.end());
 
 		bnb(copy1, solutions, character, ctx, node, bonus1, bonus2, splitSlotRet);
 		bnb(copy2, solutions, character, ctx, node, bonus1, bonus2, splitSlotRet);

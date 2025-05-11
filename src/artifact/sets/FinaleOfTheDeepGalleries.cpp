@@ -18,8 +18,6 @@ const Artifact::Set Artifact::Sets::finaleOfTheDeepGalleries{
 				.mods{
 					.preMod{
 						.cryo{.DMG = Constant(0.15f)},
-						.normal{.DMG = normalBuff},
-						.burst{.DMG = burstBuff},
 					},
 				},
 			},

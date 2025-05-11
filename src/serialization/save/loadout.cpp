@@ -28,6 +28,8 @@ namespace Serialization::Save {
 
 	ArtifactTC ArtifactTC::fromInstance(const ::Stats::Artifact::Theorycraft &instance) {
 		return {
+			.set1 = instance.set1,
+			.set2 = instance.set2,
 			.mainStats = [&]() {
 				std::array<MainStat, 5> ret;
 				for (const auto &[val1, val2]: std::views::zip(ret, instance.mainStats)) {
@@ -41,6 +43,7 @@ namespace Serialization::Save {
 			}(),
 			.subStats = [&]() {
 				std::vector<RollCount> ret;
+				ret.reserve(::Stats::subStats.size());
 				for (const auto &stat: ::Stats::subStats) {
 					ret.emplace_back(RollCount{
 						.stat = stat,
@@ -54,6 +57,8 @@ namespace Serialization::Save {
 
 	::Stats::Artifact::Theorycraft ArtifactTC::toInstance() const {
 		::Stats::Artifact::Theorycraft ret{
+			.set1 = set1,
+			.set2 = set2,
 			.mainStats = [&]() {
 				std::array<::Stats::Artifact::Theorycraft::MainStat, 5> ret;
 				for (const auto &[val1, val2]: std::views::zip(ret, mainStats)) {
@@ -70,6 +75,8 @@ namespace Serialization::Save {
 		for (const auto &stat: subStats) {
 			ret.fromStat(stat.stat) = stat.count;
 		}
+
+		ret.updateStats();
 
 		return ret;
 	}

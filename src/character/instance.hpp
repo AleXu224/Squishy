@@ -15,6 +15,7 @@ namespace Character {
 		Stats::State state;
 		std::unordered_map<Combo::InstanceKey, Combo::Combo> combos;
 		squi::VoidObservable updateEvent{};
+		squi::VoidObservable loadoutChangedEvent{};
 		std::shared_ptr<Optimization::Options> optimizationOptions = std::make_shared<Optimization::Options>();
 
 		explicit Instance(const InstanceKey &instanceKey, const DataKey &dataKey);

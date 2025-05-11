@@ -44,6 +44,18 @@ const Stats::Artifact::Slotted &Stats::Artifact::getSlotted() const {
 	return std::get<Stats::Artifact::Slotted>(equipped);
 }
 
+Stats::Artifact::Theorycraft &Stats::Artifact::getTheorycraft() {
+	return std::get<Stats::Artifact::Theorycraft>(equipped);
+}
+
+const Stats::Artifact::Theorycraft &Stats::Artifact::getTheorycraft() const {
+	return std::get<Stats::Artifact::Theorycraft>(equipped);
+}
+
+bool Stats::Artifact::isTheorycraft() const {
+	return std::holds_alternative<Stats::Artifact::Theorycraft>(equipped);
+}
+
 void Stats::Artifact::refreshStats() {
 	OccurenceMapper mapper{};
 	bonus1 = std::nullopt;
@@ -90,7 +102,29 @@ void Stats::Artifact::refreshStats() {
 					}
 				}
 			},
-			[&](const Stats::Artifact::Theorycraft &theorycraft) {}
+			[&](Stats::Artifact::Theorycraft &theorycraft) {
+				if (theorycraft.set1.key) {
+					const auto &set = ::Artifact::sets.at(theorycraft.set1.key);
+					bonus1 = ArtifactBonus{
+						.setPtr = &set,
+						.bonusPtr = &set.data.twoPc,
+					};
+					if (theorycraft.set1.type == Theorycraft::Set::Type::fourPc) {
+						bonus2 = ArtifactBonus{
+							.setPtr = &set,
+							.bonusPtr = &set.data.fourPc,
+						};
+					}
+				}
+				if (theorycraft.set2 && theorycraft.set1.key && theorycraft.set1.type == Theorycraft::Set::Type::twoPc) {
+					const auto &set = ::Artifact::sets.at(theorycraft.set2);
+					bonus2 = ArtifactBonus{
+						.setPtr = &set,
+						.bonusPtr = &set.data.twoPc,
+					};
+				}
+				sheet.equippedArtifacts.at(0).emplace(&theorycraft.sheet);
+			}
 		},
 		equipped
 	);
