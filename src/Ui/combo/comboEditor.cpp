@@ -24,6 +24,7 @@
 #include "text.hpp"
 #include "textBox.hpp"
 #include "utils/overloaded.hpp"
+#include "weapon/data.hpp"
 #include "widgets/iconButton.hpp"
 
 
@@ -66,13 +67,54 @@ namespace {
 			source
 		);
 	}
+	[[nodiscard]] std::string getOptionSourceName(Character::InstanceKey key, uint32_t hash) {
+		const auto &character = Store::characters.at(key);
+		const auto &charOpts = character.state.stats.data.data.opts;
+		for (const auto &slot: Node::characterSlots) {
+			const auto &optList = charOpts.fromCharacterSlot(slot);
+			for (const auto &opt: optList) {
+				auto key = std::visit(
+					[](auto &&val) {
+						return val.key;
+					},
+					opt
+				);
+				if (key.hash == hash) return Utils::Stringify(slot);
+			}
+		}
+		const auto &weaponOpts = character.state.loadout().weapon->data->data.opts;
+		for (const auto &opt: weaponOpts) {
+			auto key = std::visit(
+				[](auto &&val) {
+					return val.key;
+				},
+				opt
+			);
+			if (key.hash == hash) return Utils::Stringify(character.state.loadout().weapon->data->name);
+		}
+		const auto &artifactOpts1 = character.state.loadout().artifact.bonus1;
+		const auto &artifactOpts2 = character.state.loadout().artifact.bonus2;
+		for (const auto &bonus: {artifactOpts1, artifactOpts2}) {
+			if (!bonus) continue;
+			for (const auto &opt: bonus->bonusPtr->opts) {
+				auto key = std::visit(
+					[](auto &&val) {
+						return val.key;
+					},
+					opt
+				);
+				if (key.hash == hash) return Utils::Stringify(character.state.loadout().weapon->data->name);
+			}
+		}
+
+		return "Unknown";
+	}
 
 	struct ComboEditorOptionContainer {
 		// Args
 		squi::Widget::Args widget{};
-		::Combo::Entry &entry;
+		::Combo::EntryTypes &entry;
 		::Combo::Option option;
-		::Combo::Source::Types source;
 		Child child;
 
 		operator squi::Child() const {
@@ -95,19 +137,22 @@ namespace {
 									.text = ::Store::characters.at(option.key).state.stats.data.name,
 									.lineWrap = true,
 								},
-								UI::Tag{.sourceStr = getSourceName(source)},
+								UI::Tag{.sourceStr = getOptionSourceName(option.key, option.hash)},
 								Container{},
 								IconButton{
 									.icon = 0xe5cd,
 									.style = ButtonStyle::Subtle(),
 									.onClick = [&entry = entry, hash = option.hash](GestureDetector::Event event) {
-										entry.options.erase(
-											std::remove_if(entry.options.begin(), entry.options.end(), [&](const Combo::Option &val) {
-												return val.hash == hash;
-											}),
-											entry.options.end()
-										);
-										entry.optionUpdateEvent.notify();
+										std::visit([&hash](auto &&entry) {
+											entry.options.erase(
+												std::remove_if(entry.options.begin(), entry.options.end(), [&](const Combo::Option &val) {
+													return val.hash == hash;
+												}),
+												entry.options.end()
+											);
+											entry.optionUpdateEvent.notify();
+										},
+												   entry);
 									},
 								},
 							},
@@ -119,22 +164,26 @@ namespace {
 		}
 	};
 
-	Child createComboOptionEntries(Combo::Entry &entry, std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, Theme theme) {
+	Child createComboOptionEntries(Combo::EntryTypes &entry, std::shared_ptr<UI::ComboEditor::Storage> storage, Formula::Context ctx, VoidObservable nodeListChangedEvent, Theme theme) {
 		auto _ = ThemeManager::pushTheme(theme);
-		Children ret = [&entry, storage, ctx]() mutable {
+		Children ret = [&entry, storage, ctx, nodeListChangedEvent]() mutable {
 			std::vector<Combo::Option> store;
 			ctx.optionStore = &store;
 
 			Children ret;
+			auto [options, optionUpdateEvent] = std::visit([](auto &&entry) {
+				return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
+			},
+														   entry);
 
 			auto node = Formula::ComboOptionOverride{
-				.overrides = entry.options,
+				.overrides = options,
 				.node = Formula::Custom{
 					.compileFunc = [](const Formula::Context &ctx) {
 						return Formula::Compiled::ConstantFloat{.value = 0.f}.wrap();
 					},
 					.func = [&](const Formula::Context &ctx) {
-						for (auto &opt: entry.options) {
+						for (auto &opt: options) {
 							for (const auto &character: ctx.team.characters) {
 								if (!character) continue;
 								if (character->instanceKey != opt.key) continue;
@@ -150,13 +199,22 @@ namespace {
 											ret.emplace_back(ComboEditorOptionContainer{
 												.entry = entry,
 												.option = opt,
-												.source = entry.source,
 												.child = UI::ToggleOption{
 													.widget{
-														.onInit = [switchEvent, &opt, &entry](Widget &w) {
-															observe(w, switchEvent, [&opt, &entry](bool value) {
+														.onInit = [switchEvent, &opt, &entry, storage, nodeListChangedEvent](Widget &w) {
+															observe(w, switchEvent, [&opt, &entry, storage, nodeListChangedEvent](bool value) {
 																opt.value = value;
-																entry.optionUpdateEvent.notify();
+																std::visit(
+																	Utils::overloaded{
+																		[](const ::Combo::Entry &entry) {
+																			entry.optionUpdateEvent.notify();
+																		},
+																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &entry) {
+																			nodeListChangedEvent.notify();
+																		},
+																	},
+																	entry
+																);
 															});
 														},
 														.onUpdate = [optPtr](Widget &) {},
@@ -175,13 +233,22 @@ namespace {
 											ret.emplace_back(ComboEditorOptionContainer{
 												.entry = entry,
 												.option = opt,
-												.source = entry.source,
 												.child = UI::ValueListOption{
 													.widget{
-														.onInit = [valueChangedEvent, &opt, &entry](Widget &w) {
-															observe(w, valueChangedEvent, [&opt, &entry](std::optional<uint32_t>, std::optional<uint32_t> index) {
+														.onInit = [valueChangedEvent, &opt, &entry, storage, nodeListChangedEvent](Widget &w) {
+															observe(w, valueChangedEvent, [&opt, &entry, storage, nodeListChangedEvent](std::optional<uint32_t>, std::optional<uint32_t> index) {
 																opt.value = index;
-																entry.optionUpdateEvent.notify();
+																std::visit(
+																	Utils::overloaded{
+																		[](const ::Combo::Entry &entry) {
+																			entry.optionUpdateEvent.notify();
+																		},
+																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &entry) {
+																			nodeListChangedEvent.notify();
+																		},
+																	},
+																	entry
+																);
 															});
 														},
 														.onUpdate = [optPtr](Widget &) {},
@@ -227,106 +294,182 @@ namespace {
 		VoidObservable dmgValueUpdateEvent;
 		Children ret;
 
+		std::vector<::Combo::Option> optionStack;
+
 		for (auto it = storage->combo.entries.begin(); it != storage->combo.entries.end(); it++) {
 			auto &entry = *it;
-			const auto &node = std::visit(
-				[&](auto &&val) {
-					return val.resolve(entry.options);
-				},
-				entry.source
-			);
+			Child multiplierBox;
+			Child captionText;
+			std::string reactionName;
+			DropdownButton reactionSelector;
 
-			std::optional<Misc::Element> element = std::nullopt;
-
+			std::string entryName;
+			std::string sourceName;
+			Color entryColor = Color::white;
 			std::visit(
 				Utils::overloaded{
-					[&](const Node::AtkData &data) {
-						element = Formula::getElement(
-							data.source,
-							data.element,
-							ctx
+					[&](::Combo::Entry &entry) {
+						const auto &node = std::visit(
+							[&](auto &&val) {
+								return val.resolve(entry.options);
+							},
+							entry.source
 						);
+
+						entryName = node.name;
+						sourceName = getSourceName(entry.source);
+						entryColor = Node::getColor(node.data, ctx);
+
+						std::optional<Misc::Element> element = std::nullopt;
+
+						std::visit(
+							Utils::overloaded{
+								[&](const Node::AtkData &data) {
+									element = Formula::getElement(
+										data.source,
+										data.element,
+										ctx
+									);
+								},
+								[&](const Node::CustomAtkData &data) {
+									element = data.element;
+								},
+								[](const Node::InfoData &data) {},
+								[](const Node::HealData &data) {},
+								[](const Node::ShieldData &data) {},
+							},
+							node.data
+						);
+
+						decltype(DropdownButton::textUpdater) textUpdater{};
+
+						reactionName = getReactionName(Reaction::List::fromNodeReaction(entry.reaction));
+
+						Observable<ButtonStyle> reactionSelectorStyleEvent;
+						reactionSelector = DropdownButton{
+							.widget{
+								.onInit = [reactionSelectorStyleEvent](Widget &w) {
+									observe(w, reactionSelectorStyleEvent, [&w](ButtonStyle style) {
+										Button::State::style.of(w) = style;
+									});
+								},
+							},
+							.style = entry.reaction == Misc::NodeReaction::none ? ButtonStyle::Standard() : ButtonStyle::Accent(),
+							.text = reactionName,
+							.items = [&]() {
+								std::vector<ContextMenu::Item> ret;
+
+								ret.emplace_back(ContextMenu::Item{
+									.text = "No reaction",
+									.content = [&entry, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent]() {
+										entry.reaction = Misc::NodeReaction::none;
+										reactionSelectorStyleEvent.notify(ButtonStyle::Standard());
+										textUpdater.notify("No reaction");
+										dmgValueUpdateEvent.notify();
+									},
+								});
+
+								for (const auto &reaction: ::Reaction::List::amplifyingList) {
+									if (!element || reaction->trigger != element.value()) continue;
+									ret.emplace_back(ContextMenu::Item{
+										.text = std::string{reaction->name},
+										.content = [&entry, reaction, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent, theme]() {
+											entry.reaction = reaction->nodeReaction;
+											auto _ = ThemeManager::pushTheme(theme);
+											reactionSelectorStyleEvent.notify(ButtonStyle::Accent());
+											textUpdater.notify(std::string{reaction->name});
+											dmgValueUpdateEvent.notify();
+										},
+									});
+								}
+								for (const auto &reaction: ::Reaction::List::additiveList) {
+									if (!element || reaction->trigger != element.value()) continue;
+									ret.emplace_back(ContextMenu::Item{
+										.text = std::string{reaction->name},
+										.content = [&entry, reaction, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent, theme]() {
+											entry.reaction = reaction->nodeReaction;
+											auto _ = ThemeManager::pushTheme(theme);
+											reactionSelectorStyleEvent.notify(ButtonStyle::Accent());
+											textUpdater.notify(std::string{reaction->name});
+											dmgValueUpdateEvent.notify();
+										},
+									});
+								}
+
+								return ret;
+							}(),
+							.textUpdater = textUpdater,
+						};
+						multiplierBox = NumberBox{
+							.widget{
+								.width = 48.f,
+							},
+							.value = entry.multiplier,
+							.onChange = [&entry](float newVal) {
+								entry.multiplier = newVal;
+							},
+						};
+						auto makeCaptionStr = [&entry, ctx, optionStack]() {
+							std::vector<::Combo::Option> store;
+							auto newCtx = ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction));
+							const auto &node = std::visit(
+								[&](auto &&val) {
+									auto options = optionStack;
+									options.insert(options.end(), entry.options.begin(), entry.options.end());
+									return val.resolve(options);
+								},
+								entry.source
+							);
+							newCtx.optionStore = &store;
+							return std::format("{:.1f}", node.formula.eval(newCtx));
+						};
+						auto captionStr = makeCaptionStr();
+
+						captionText = Text{
+							.widget{
+								.onInit = [dmgValueUpdateEvent, makeCaptionStr, &entry](Widget &w) {
+									observe("dmgValueUpdateEvent", w, dmgValueUpdateEvent, [&w, makeCaptionStr]() {
+										auto captionStr = makeCaptionStr();
+
+										w.as<Text::Impl>().setText(captionStr);
+									});
+									observe("optionUpdateevent", w, entry.optionUpdateEvent, [dmgValueUpdateEvent]() {
+										dmgValueUpdateEvent.notify();
+									});
+								},
+							},
+							.text = captionStr,
+							.fontSize = 12.f,
+							.lineWrap = true,
+							.color = 0xFFFFFFC8,
+						};
 					},
-					[&](const Node::CustomAtkData &data) {
-						element = data.element;
+					[&](const ::Combo::StateChangeEntry &entry) {
+						entryName = "Option override";
+						optionStack.insert(optionStack.end(), entry.options.begin(), entry.options.end());
 					},
-					[](const Node::InfoData &data) {},
-					[](const Node::HealData &data) {},
-					[](const Node::ShieldData &data) {},
 				},
-				node.data
+				entry
 			);
-
-			decltype(DropdownButton::textUpdater) textUpdater{};
-
-			auto reactionName = getReactionName(Reaction::List::fromNodeReaction(entry.reaction));
-
-			Observable<ButtonStyle> reactionSelectorStyleEvent;
-			auto reactionSelector = DropdownButton{
-				.widget{
-					.onInit = [reactionSelectorStyleEvent](Widget &w) {
-						observe(w, reactionSelectorStyleEvent, [&w](ButtonStyle style) {
-							Button::State::style.of(w) = style;
-						});
-					},
-				},
-				.style = entry.reaction == Misc::NodeReaction::none ? ButtonStyle::Standard() : ButtonStyle::Accent(),
-				.text = reactionName,
-				.items = [&]() {
-					std::vector<ContextMenu::Item> ret;
-
-					ret.emplace_back(ContextMenu::Item{
-						.text = "No reaction",
-						.content = [&entry, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent]() {
-							entry.reaction = Misc::NodeReaction::none;
-							reactionSelectorStyleEvent.notify(ButtonStyle::Standard());
-							textUpdater.notify("No reaction");
-							dmgValueUpdateEvent.notify();
-						},
-					});
-
-					for (const auto &reaction: ::Reaction::List::amplifyingList) {
-						if (!element || reaction->trigger != element.value()) continue;
-						ret.emplace_back(ContextMenu::Item{
-							.text = std::string{reaction->name},
-							.content = [&entry, reaction, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent]() {
-								entry.reaction = reaction->nodeReaction;
-								reactionSelectorStyleEvent.notify(ButtonStyle::Accent());
-								textUpdater.notify(std::string{reaction->name});
-								dmgValueUpdateEvent.notify();
-							},
-						});
-					}
-					for (const auto &reaction: ::Reaction::List::additiveList) {
-						if (!element || reaction->trigger != element.value()) continue;
-						ret.emplace_back(ContextMenu::Item{
-							.text = std::string{reaction->name},
-							.content = [&entry, reaction, textUpdater, reactionSelectorStyleEvent, dmgValueUpdateEvent]() {
-								entry.reaction = reaction->nodeReaction;
-								reactionSelectorStyleEvent.notify(ButtonStyle::Accent());
-								textUpdater.notify(std::string{reaction->name});
-								dmgValueUpdateEvent.notify();
-							},
-						});
-					}
-
-					return ret;
-				}(),
-				.textUpdater = textUpdater,
-			};
 
 			auto addOptionOverride = Button{
 				.text = "Add option",
 				.style = ButtonStyle::Standard(),
 				.onClick = [characterKey = characterKey, ctx = ctx, &entry, theme](GestureDetector::Event event) {
 					auto _ = ThemeManager::pushTheme(theme);
+					auto [options, optionUpdateEvent] = std::visit(
+						[](auto &&entry) -> auto {
+							return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
+						},
+						entry
+					);
 					event.widget.addOverlay(UI::OptionPicker{
 						.characterKey = characterKey,
 						.ctx = ctx,
-						.options = entry.options,
-						.onSelect = [&entry](Combo::Option option) {
-							entry.options.emplace_back(option);
-							entry.optionUpdateEvent.notify();
+						.options = options,
+						.onSelect = [&options, &optionUpdateEvent](Combo::Option option) {
+							options.emplace_back(option);
+							optionUpdateEvent.notify();
 						},
 					});
 				},
@@ -336,7 +479,7 @@ namespace {
 				.icon = 0xe5cd,
 				.style = ButtonStyle::Subtle(),
 				.onClick = [storage, entryPtr = &entry, nodeListChangedEvent](GestureDetector::Event event) {
-					storage->combo.entries.remove_if([entryPtr, nodeListChangedEvent](const Combo::Entry &entry) {
+					storage->combo.entries.remove_if([entryPtr, nodeListChangedEvent](const Combo::EntryTypes &entry) {
 						return &entry == entryPtr;
 					});
 					nodeListChangedEvent.notify();
@@ -370,49 +513,6 @@ namespace {
 				},
 			};
 
-			auto multiplierBox = NumberBox{
-				.widget{
-					.width = 48.f,
-				},
-				.value = entry.multiplier,
-				.onChange = [&entry](float newVal) {
-					entry.multiplier = newVal;
-				},
-			};
-
-			auto makeCaptionStr = [&entry, ctx]() {
-				std::vector<::Combo::Option> store;
-				auto newCtx = ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction));
-				const auto &node = std::visit(
-					[&](auto &&val) {
-						return val.resolve(entry.options);
-					},
-					entry.source
-				);
-				newCtx.optionStore = &store;
-				return std::format("{:.1f}", node.formula.eval(newCtx));
-			};
-			auto captionStr = makeCaptionStr();
-
-			auto captionText = Text{
-				.widget{
-					.onInit = [dmgValueUpdateEvent, makeCaptionStr, &entry](Widget &w) {
-						observe("dmgValueUpdateEvent", w, dmgValueUpdateEvent, [&w, makeCaptionStr]() {
-							auto captionStr = makeCaptionStr();
-
-							w.as<Text::Impl>().setText(captionStr);
-						});
-						observe("optionUpdateevent", w, entry.optionUpdateEvent, [dmgValueUpdateEvent]() {
-							dmgValueUpdateEvent.notify();
-						});
-					},
-				},
-				.text = captionStr,
-				.fontSize = 12.f,
-				.lineWrap = true,
-				.color = 0xFFFFFFC8,
-			};
-
 
 			ret.emplace_back(Expander{
 				.icon = Row{
@@ -432,11 +532,11 @@ namespace {
 					.spacing = 8.f,
 					.children{
 						Text{
-							.text = node.name,
+							.text = entryName,
 							.lineWrap = true,
-							.color = Node::getColor(node.data, ctx),
+							.color = entryColor,
 						},
-						UI::Tag{.sourceStr = getSourceName(entry.source)},
+						sourceName.empty() ? Child{} : UI::Tag{.sourceStr = sourceName},
 					},
 				},
 				.caption = captionText,
@@ -447,8 +547,13 @@ namespace {
 					deleteButton,
 				},
 				.expandedContent = Rebuilder{
-					.rebuildEvent = entry.optionUpdateEvent,
-					.buildFunc = std::bind(createComboOptionEntries, std::ref(entry), storage, ctx, theme),
+					.rebuildEvent = std::visit(//
+						[](auto &&entry) {
+							return entry.optionUpdateEvent;
+						},
+						entry
+					),
+					.buildFunc = std::bind(createComboOptionEntries, std::ref(entry), storage, ctx, nodeListChangedEvent, theme),
 				},
 			});
 		}
@@ -478,7 +583,8 @@ UI::ComboEditor::operator squi::Child() const {
 					.actions{
 						Button{
 							.text = "Add node",
-							.onClick = [characterKey = characterKey, storage, nodeListChangedEvent, ctx = ctx](GestureDetector::Event event) {
+							.onClick = [characterKey = characterKey, storage, nodeListChangedEvent, ctx = ctx, theme = ThemeManager::getTheme()](GestureDetector::Event event) {
+								auto _ = ThemeManager::pushTheme(theme);
 								event.widget.addOverlay(NodePicker{
 									.characterKey = characterKey,
 									.enableCombos = false,
@@ -491,6 +597,13 @@ UI::ComboEditor::operator squi::Child() const {
 										nodeListChangedEvent.notify();
 									},
 								});
+							},
+						},
+						Button{
+							.text = "Add override",
+							.onClick = [storage, nodeListChangedEvent](GestureDetector::Event event) {
+								storage->combo.entries.emplace_back(Combo::StateChangeEntry{});
+								nodeListChangedEvent.notify();
 							},
 						},
 						TextBox{

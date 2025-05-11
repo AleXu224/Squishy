@@ -20,16 +20,31 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 	auto &combo = ::Store::characters.at(characterKey).combos.at(comboKey);
 
 	std::vector<Formula::Combo::Entry> nodes;
+	std::vector<::Combo::Option> optionStack{};
 	for (auto &entry: combo.entries) {
-		nodes.emplace_back(Formula::Combo::Entry{
-			.multiplier = entry.multiplier,
-			.reaction = Reaction::List::fromNodeReaction(entry.reaction),
-			.node = std::visit([&](auto &&val) {
-						return val.resolve(entry.options);
-					},
-							   entry.source)
-						.formula,
-		});
+		std::visit(
+			Utils::overloaded{
+				[&](const ::Combo::Entry &entry) {
+					std::vector<::Combo::Option> retOptions = optionStack;
+					retOptions.insert(retOptions.end(), entry.options.begin(), entry.options.end());
+					nodes.emplace_back(Formula::Combo::Entry{
+						.multiplier = entry.multiplier,
+						.reaction = Reaction::List::fromNodeReaction(entry.reaction),
+						.node = std::visit(//
+									[&](auto &&val) {
+										return val.resolve(retOptions);
+									},
+									entry.source
+						)
+									.formula,
+					});
+				},
+				[&](const ::Combo::StateChangeEntry &entry) {
+					optionStack.insert(optionStack.end(), entry.options.begin(), entry.options.end());
+				},
+			},
+			entry
+		);
 	}
 
 

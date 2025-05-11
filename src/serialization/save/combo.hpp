@@ -64,12 +64,34 @@ namespace Serialization::Save {
 		Misc::NodeReaction reaction;
 		ComboSourceTypes source;
 		std::vector<ComboOption> options;
+
+		bool operator==(auto &&other) const {
+			return false;
+		}
+
+		bool operator<(auto &&other) const {
+			return false;
+		}
 	};
+
+	struct ComboStateChangeEntry {
+		std::vector<ComboOption> options;
+
+		bool operator==(auto &&other) const {
+			return false;
+		}
+
+		bool operator<(auto &&other) const {
+			return false;
+		}
+	};
+
+	using ComboEntryTypes = std::variant<ComboEntry, ComboStateChangeEntry>;
 
 	struct Combo {
 		::Combo::InstanceKey instanceKey;
 		std::string name;
-		std::vector<ComboEntry> entries;
+		std::vector<ComboEntryTypes> entries;
 	};
 
 	std::vector<Serialization::Save::Combo> comboFromInstance(const std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> &combos);
@@ -117,5 +139,20 @@ struct glz::meta<Serialization::Save::ComboOptionValueList> {
 };
 template<>
 struct glz::meta<Serialization::Save::ComboOptionTypes> {
+	static constexpr std::string_view tag = "type";
+};
+
+template<>
+struct glz::meta<Serialization::Save::ComboEntry> {
+	using T = Serialization::Save::ComboEntry;
+	static constexpr auto value = object(&T::multiplier, &T::reaction, &T::source, &T::options);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboStateChangeEntry> {
+	using T = Serialization::Save::ComboStateChangeEntry;
+	static constexpr auto value = object(&T::options);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboEntryTypes> {
 	static constexpr std::string_view tag = "type";
 };

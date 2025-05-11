@@ -234,12 +234,12 @@ const Character::Data Character::Datas::skirk{
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {0.6393, 0.6914, 0.7434, 0.8177, 0.8698, 0.9293, 1.0110, 1.0928, 1.1746, 1.2638, 1.3530, 1.4422, 1.5314, 1.6206, 1.7098}),
 					},
 					Node::Atk{
-						.name = "Low/High Plunge DMG",
+						.name = "Low Plunge DMG",
 						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {1.2784, 1.3824, 1.4865, 1.6351, 1.7392, 1.8581, 2.0216, 2.1851, 2.3486, 2.5270, 2.7054, 2.8838, 3.0622, 3.2405, 3.4189}),
 					},
 					Node::Atk{
-						.name = "Low/High Plunge DMG",
+						.name = "High Plunge DMG",
 						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {1.5968, 1.7267, 1.8567, 2.0424, 2.1723, 2.3209, 2.5251, 2.7293, 2.9336, 3.1564, 3.3792, 3.6020, 3.8248, 4.0476, 4.2704}),
 					},
@@ -318,6 +318,7 @@ const Character::Data Character::Datas::skirk{
 					},
 					Node::Atk{
 						.name = "High Plunge DMG",
+						.element = Misc::Element::cryo,
 						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::skill, {1.5968, 1.7267, 1.8567, 2.0424, 2.1723, 2.3209, 2.5251, 2.7293, 2.9336, 3.1564, 3.3792, 3.6020, 3.8248, 4.0476, 4.2704}),
 					},

@@ -14,4 +14,11 @@ namespace Combo {
 		squi::VoidObservable optionUpdateEvent{};
 		std::vector<Combo::Option> options{};
 	};
+	struct StateChangeEntry {
+		float multiplier = 1.f;
+		squi::VoidObservable optionUpdateEvent{};
+		std::vector<Combo::Option> options{};
+	};
+
+	using EntryTypes = std::variant<Entry, StateChangeEntry>;
 }// namespace Combo

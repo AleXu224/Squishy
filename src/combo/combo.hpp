@@ -10,7 +10,7 @@ namespace Combo {
 		InstanceKey instanceKey;
 		std::string name;
 		squi::VoidObservable updateEvent{};
-		std::list<Entry> entries{};
+		std::list<EntryTypes> entries{};
 
 		[[nodiscard]] float eval(const Formula::Context &context) const;
 	};

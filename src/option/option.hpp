@@ -57,6 +57,33 @@ namespace Option {
 			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};
 		}
 
+		[[nodiscard]] inline const std::vector<Types> &fromCharacterSlot(Node::CharacterSlot slot) const {
+			switch (slot) {
+				case Node::CharacterSlot::normal:
+					return normal;
+				case Node::CharacterSlot::charged:
+					return charged;
+				case Node::CharacterSlot::plunge:
+					return plunge;
+				case Node::CharacterSlot::skill:
+					return skill;
+				case Node::CharacterSlot::burst:
+					return burst;
+				case Node::CharacterSlot::passive1:
+					return passive1;
+				case Node::CharacterSlot::passive2:
+					return passive2;
+				case Node::CharacterSlot::constellation1:
+					return constellation1;
+				case Node::CharacterSlot::constellation2:
+					return constellation2;
+				case Node::CharacterSlot::constellation4:
+					return constellation4;
+				case Node::CharacterSlot::constellation6:
+					return constellation6;
+			}
+		}
+
 		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 11> getMembersAndConditions();
 	};
 
