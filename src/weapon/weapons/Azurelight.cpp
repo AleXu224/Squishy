@@ -9,12 +9,12 @@ const Weapon::Data Weapon::Datas::azurelight{
 	.baseStats{
 		.type = Misc::WeaponType::sword,
 		.rarity = 5,
-		.baseAtk = 45.936,
-		.atkCurve = Curves::WeaponGrow::ATTACK_301,
+		.baseAtk = 47.537,
+		.atkCurve = Curves::WeaponGrow::ATTACK_302,
 		.subStat = SubStat{
 			.stat{
 				.stat = Stat::cr,
-				.value = 0.072,
+				.value = 0.048,
 			},
 			.curve = Curves::WeaponGrow::CRITICAL_301,
 		},
