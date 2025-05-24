@@ -137,6 +137,7 @@ namespace Stats {
 			case Misc::SkillStat::critDMG:
 				return sheet.critDMG;
 		}
+		std::unreachable();
 	}
 
 	template<auto Skill, class RetType = Formula::FloatNode>
@@ -153,6 +154,7 @@ namespace Stats {
 			case Misc::SkillStat::critDMG:
 				return Skill.critDMG;
 		}
+		std::unreachable();
 	}
 	template<auto Skill>
 	[[nodiscard]] constexpr auto evalSkillStat(Misc::SkillStat skillStat, const Formula::Context &ctx) {
@@ -291,6 +293,7 @@ namespace Stats {
 			case Misc::Reaction::hyperbloom:
 				return fromSkillStat<Sheet.hyperbloom, RetType>(skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<SheetLike T, class RetType = Formula::FloatNode>
@@ -323,6 +326,7 @@ namespace Stats {
 			case Misc::Reaction::hyperbloom:
 				return fromSkillStat(sheet.hyperbloom, skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<auto Sheet, Misc::AttackSource attackSource>
@@ -348,6 +352,7 @@ namespace Stats {
 			case Misc::AttackSource::burst:
 				return fromSkillStat<Sheet.burst, RetType>(skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<SheetLike T, class RetType = Formula::FloatNode>
@@ -364,6 +369,7 @@ namespace Stats {
 			case Misc::AttackSource::burst:
 				return fromSkillStat(sheet.burst, skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<auto Sheet, Misc::Element element>
@@ -398,6 +404,7 @@ namespace Stats {
 			case Misc::Element::physical:
 				return sheet.physical;
 		}
+		std::unreachable();
 	}
 
 	template<SheetLike T, class RetType = Formula::FloatNode>
@@ -424,6 +431,7 @@ namespace Stats {
 			case Misc::DamageElement::allElemental:
 				return fromSkillStat(sheet.allElemental, skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
@@ -450,6 +458,7 @@ namespace Stats {
 			case Misc::DamageElement::allElemental:
 				return fromSkillStat<Sheet.allElemental, RetType>(skillStat);
 		}
+		std::unreachable();
 	}
 
 	template<auto Skill, Misc::SkillStat skillStat>
@@ -481,6 +490,7 @@ namespace Stats {
 			case Misc::Element::physical:
 				return sheet.physical;
 		}
+		std::unreachable();
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
@@ -503,6 +513,7 @@ namespace Stats {
 			case Misc::Element::physical:
 				return Sheet.physical;
 		}
+		std::unreachable();
 	}
 	template<auto Sheet>
 	[[nodiscard]] constexpr auto evalEnemyResElement(Misc::Element element, const Formula::Context &ctx) {
@@ -524,6 +535,7 @@ namespace Stats {
 			case Misc::Element::physical:
 				return Sheet.physical.eval(ctx);
 		}
+		std::unreachable();
 	}
 	template<auto Sheet>
 	[[nodiscard]] constexpr auto compileEnemyResElement(Misc::Element element, const Formula::Context &ctx) {
@@ -545,5 +557,6 @@ namespace Stats {
 			case Misc::Element::physical:
 				return Sheet.physical.compile(ctx);
 		}
+		std::unreachable();
 	}
 }// namespace Stats

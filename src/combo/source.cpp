@@ -141,6 +141,7 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const std::vector<
 			case Misc::TransformativeReaction::hyperbloom:
 				return {Reaction::List::Transformative::hyperbloom.formula, "Hyperbloom", Reaction::List::Transformative::hyperbloom.damageElement};
 		}
+		std::unreachable();
 	}();
 
 	auto ret = Node::Instance(NodeInfo{

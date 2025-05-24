@@ -15,6 +15,7 @@ namespace Formula {
 		switch (attackSource) {
 			case Misc::AttackSource::charged:
 				if (context.source.stats.base.weaponType == Misc::WeaponType::bow) return context.source.stats.base.element;
+				[[fallthrough]];
 			case Misc::AttackSource::normal:
 			case Misc::AttackSource::plunge:
 				if (context.source.stats.base.weaponType == Misc::WeaponType::catalyst) return context.source.stats.base.element;

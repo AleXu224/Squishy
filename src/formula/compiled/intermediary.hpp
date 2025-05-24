@@ -10,25 +10,25 @@
 namespace Formula::Compiled {
 	template<class T>
 	concept FloatFormula = requires(T t) {
-		std::same_as<typename T::Type, float>;
+		requires std::same_as<typename T::Type, float>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<float>;
 		{ t.getType() } -> std::same_as<Type>;
 	};
 	template<class T>
 	concept BoolFormula = requires(T t) {
-		std::same_as<typename T::Type, bool>;
+		requires std::same_as<typename T::Type, bool>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<bool>;
 		{ t.getType() } -> std::same_as<Type>;
 	};
 	template<class T>
 	concept IntFormula = requires(T t) {
-		std::same_as<typename T::Type, int32_t>;
+		requires std::same_as<typename T::Type, int32_t>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<int32_t>;
 		{ t.getType() } -> std::same_as<Type>;
 	};
 	template<class T>
 	concept ElementFormula = requires(T t) {
-		std::same_as<typename T::Type, Utils::JankyOptional<Misc::Element>>;
+		requires std::same_as<typename T::Type, Utils::JankyOptional<Misc::Element>>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<Utils::JankyOptional<Misc::Element>>;
 		{ t.getType() } -> std::same_as<Type>;
 	};

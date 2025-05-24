@@ -2,6 +2,7 @@
 
 #include "format"
 #include "formula/percentage.hpp"
+#include <utility>
 
 namespace Utils {
 	enum class EntryType {
@@ -21,5 +22,6 @@ namespace Utils {
 			case EntryType::energy:
 				return std::format("{:.0f}", value);
 		}
+		std::unreachable();
 	}
 }// namespace Utils

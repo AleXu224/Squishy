@@ -32,5 +32,6 @@ namespace Reaction::List {
 			case Misc::NodeReaction::spread:
 				return &Reaction::List::Additive::spread;
 		}
+		std::unreachable();
 	}
 }// namespace Reaction::List

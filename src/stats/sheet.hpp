@@ -91,6 +91,7 @@ namespace Stats {
 					case Misc::SkillStat::critDMG:
 						return critDMG;
 				}
+				std::unreachable();
 			}
 		};
 		_Value hp{};

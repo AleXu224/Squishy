@@ -74,6 +74,7 @@ namespace Node {
 				case CharacterSlot::constellation6:
 					return constellation6;
 			}
+			std::unreachable();
 		}
 	};
 

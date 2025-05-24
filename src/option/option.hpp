@@ -82,6 +82,7 @@ namespace Option {
 				case Node::CharacterSlot::constellation6:
 					return constellation6;
 			}
+			std::unreachable();
 		}
 
 		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 11> getMembersAndConditions();
