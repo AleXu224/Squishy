@@ -20,28 +20,28 @@ namespace Formula {
 			interface &operator=(const interface &) = delete;
 			interface &operator=(interface &&) = delete;
 
-			[[nodiscard]] constexpr virtual Compiled::NodeType<RetType> compile(const Context &) const = 0;
-			[[nodiscard]] constexpr virtual std::string print(const Context &, Step) const = 0;
-			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
-			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
-			constexpr virtual ~interface() = default;
+			[[nodiscard]] virtual Compiled::NodeType<RetType> compile(const Context &) const = 0;
+			[[nodiscard]] virtual std::string print(const Context &, Step) const = 0;
+			[[nodiscard]] virtual RetType eval(const Context &) const = 0;
+			[[nodiscard]] virtual std::unique_ptr<interface> clone() const = 0;
+			virtual ~interface() = default;
 		};
 
 		template<class Fn>
 		struct implementation final : interface {
-			constexpr explicit(true) implementation(Fn fn) : fn{fn} {}
+			explicit(true) implementation(Fn fn) : fn{fn} {}
 
-			[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const override {
+			[[nodiscard]] Compiled::NodeType<RetType> compile(const Context &context) const override {
 				auto compiled = fn.compile(context);
 				return compiled;
 			}
-			[[nodiscard]] constexpr std::string print(const Context &context, Step step) const override {
+			[[nodiscard]] std::string print(const Context &context, Step step) const override {
 				return fn.print(context, step);
 			}
-			[[nodiscard]] constexpr RetType eval(const Context &context) const override {
+			[[nodiscard]] RetType eval(const Context &context) const override {
 				return fn.eval(context);
 			}
-			[[nodiscard]] constexpr std::unique_ptr<interface> clone() const override {
+			[[nodiscard]] std::unique_ptr<interface> clone() const override {
 				return std::make_unique<implementation<Fn>>(fn);
 			}
 
@@ -50,17 +50,17 @@ namespace Formula {
 		};
 
 		template<class T>
-		constexpr NodeType(const T &t)
+		NodeType(const T &t)
 			: fn(std::make_unique<implementation<T>>(t)) {
 		}
 
-		constexpr NodeType(const NodeType &other) {
+		NodeType(const NodeType &other) {
 			if (!other.fn)
 				fn.reset();
 			else
 				fn = other.fn->clone();
 		}
-		constexpr NodeType &operator=(const NodeType &other) {
+		NodeType &operator=(const NodeType &other) {
 			if (this != &other) {
 				if (!other.fn)
 					fn.reset();
@@ -69,21 +69,21 @@ namespace Formula {
 			}
 			return *this;
 		}
-		constexpr NodeType &operator=(NodeType &&other) noexcept {
+		NodeType &operator=(NodeType &&other) noexcept {
 			if (this != &other) {
 				fn = std::move(other.fn);
 			}
 			return *this;
 		}
-		constexpr NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
+		NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
 
-		[[nodiscard]] constexpr Compiled::NodeType<RetType> compile(const Context &context) const {
+		[[nodiscard]] Compiled::NodeType<RetType> compile(const Context &context) const {
 			return fn->compile(context);
 		}
-		[[nodiscard]] constexpr std::string print(const Context &context, Step step = Step::none) const {
+		[[nodiscard]] std::string print(const Context &context, Step step = Step::none) const {
 			return fn->print(context, step);
 		}
-		[[nodiscard]] constexpr RetType eval(const Context &context) const {
+		[[nodiscard]] RetType eval(const Context &context) const {
 			return fn->eval(context);
 		}
 
@@ -91,7 +91,7 @@ namespace Formula {
 
 		~NodeType() = default;
 
-		[[nodiscard]] constexpr bool hasValue() const {
+		[[nodiscard]] bool hasValue() const {
 			return fn != nullptr;
 		}
 

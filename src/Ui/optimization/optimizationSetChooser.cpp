@@ -81,7 +81,7 @@ namespace {
 							std::visit(
 								Utils::overloaded{
 									[&](Option::Boolean &opt) {
-										if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
+										if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
 										ret.emplace_back(UI::ToggleOption{
 											.option = opt,
 											.instanceKey = instanceKey,
@@ -89,7 +89,7 @@ namespace {
 										});
 									},
 									[&](Option::ValueList &opt) {
-										if (opt.displayCondition && !opt.displayCondition.value().eval(ctx)) return;
+										if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
 										ret.emplace_back(UI::ValueListOption{
 											.option = opt,
 											.instanceKey = instanceKey,

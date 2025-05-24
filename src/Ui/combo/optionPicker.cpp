@@ -126,7 +126,7 @@ UI::OptionPicker::operator squi::Child() const {
 							);
 							if (character->instanceKey != characterKey && !teamBuff) continue;
 							auto newCtx = ctx.withSource(character->state);
-							if (condition && !condition->eval(newCtx)) continue;
+							if (condition.hasValue() && !condition.eval(newCtx)) continue;
 							if (!cond.eval(newCtx)) continue;
 							if (existingOptions.contains(
 									std::visit(

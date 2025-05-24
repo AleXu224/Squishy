@@ -5,7 +5,6 @@
 #include "stats/sheet.hpp"
 #include "string_view"
 #include "utils/hashedString.hpp"
-#include <optional>
 
 
 namespace Option {
@@ -13,7 +12,7 @@ namespace Option {
 		Utils::HashedString key;
 		std::string_view name;
 		bool teamBuff = false;
-		std::optional<Formula::BoolNode> displayCondition = std::nullopt;
+		Formula::BoolNode displayCondition{};
 		bool active = false;
 		Stats::ModsSheet mods{};
 		std::vector<Node::Types> nodes{};

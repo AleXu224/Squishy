@@ -13,26 +13,25 @@ namespace Combo {
 				if (!character) continue;
 				if (character->instanceKey != override.key) continue;
 				if (auto it = character->state.options.find(override.hash); it != character->state.options.end()) {
-					decltype(::Combo::Option::value) val;
+					::Combo::Option ret{
+						.key = override.key,
+						.hash = override.hash,
+					};
 					std::visit(
 						Utils::overloaded{
 							[&](::Option::Boolean &opt) {
-								val = opt.active;
+								ret.value = opt.active;
 								opt.active = std::get<bool>(override.value);
 							},
 							[&](::Option::ValueList &opt) {
 								// std::println("pushing {}, using {}", opt.currentIndex.value_or(255), std::get<std::optional<uint8_t>>(override.value).value_or(255));
-								val = opt.currentIndex;
+								ret.value = opt.currentIndex;
 								opt.currentIndex = std::get<std::optional<uint8_t>>(override.value);
 							},
 						},
 						it->second
 					);
-					context.optionStore->emplace_back(::Combo::Option{
-						.key = override.key,
-						.hash = override.hash,
-						.value = val,
-					});
+					context.optionStore->emplace_back(ret);
 					count++;
 				}
 			}
