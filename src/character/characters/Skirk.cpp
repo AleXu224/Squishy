@@ -26,7 +26,7 @@ const Character::Data Character::Datas::skirk{
 		.ascensionStatUpgrade = {0.000, 0.000, 0.096, 0.192, 0.192, 0.288, 0.384},
 	},
 	.setup = []() -> Data::Setup {
-		auto serpentsSubtletyBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.1663, 0.1787, 0.1912, 0.2078, 0.2203, 0.2328, 0.2494, 0.2660, 0.2826, 0.2993, 0.3159, 0.3325, 0.3533, 0.3741, 0.3949});
+		auto serpentsSubtletyBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.1932, 0.2077, 0.2222, 0.2415, 0.2560, 0.2705, 0.2898, 0.3092, 0.3285, 0.3478, 0.3671, 0.3865, 0.4106, 0.4348, 0.4589});
 		auto burstStacksUsed = IfElse{
 			Requirement::constellation2,
 			GetFloat("skirkBurstStacksUsedC2"),
@@ -86,9 +86,9 @@ const Character::Data Character::Datas::skirk{
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.atk_ = c4AtkBuff,
+					.atk_ = c4AtkBuff + c2Buff,
 					.normal{
-						.DMG = burstNaBuff + c2Buff,
+						.DMG = burstNaBuff,
 					},
 					.burst{
 						.additiveDMG = burstBuff,
@@ -174,9 +174,7 @@ const Character::Data Character::Datas::skirk{
 						.name = "In the Seven-Phase Flash mode",
 						.mods{
 							.preMod{
-								.normal{
-									.DMG = c2Buff,
-								},
+								.atk_ = c2Buff,
 							},
 						},
 					},
@@ -334,20 +332,20 @@ const Character::Data Character::Datas::skirk{
 					Node::Info{
 						.name = "CD",
 						.type = Utils::EntryType::seconds,
-						.formula = Multiplier(Utils::EntryType::seconds, LevelableTalent::skill, {9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000, 9.0000}),
+						.formula = Multiplier(Utils::EntryType::seconds, LevelableTalent::skill, {8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000, 8.0000}),
 					},
 				},
 				.burst{
 					Node::Atk{
 						.name = "Skill DMG",
 						.source = Misc::AttackSource::burst,
-						.formula = Multiplier(total.atk, LevelableTalent::burst, {1.3812, 1.4848, 1.5884, 1.7265, 1.8301, 1.9337, 2.0718, 2.2099, 2.3480, 2.4862, 2.6243, 2.7624, 2.9350, 3.1077, 3.2803}),
+						.formula = Multiplier(total.atk, LevelableTalent::burst, {1.2276, 1.3197, 1.4117, 1.5345, 1.6266, 1.7186, 1.8414, 1.9642, 2.0869, 2.2097, 2.3324, 2.4552, 2.6086, 2.7621, 2.9156}),
 						.modifier{.multiplicativeDMG = a4BurstMult},
 					},
 					Node::Atk{
 						.name = "Skill Final Attack DMG",
 						.source = Misc::AttackSource::burst,
-						.formula = Multiplier(total.atk, LevelableTalent::burst, {2.3020, 2.4747, 2.6473, 2.8775, 3.0501, 3.2228, 3.4530, 3.6832, 3.9134, 4.1436, 4.3738, 4.6040, 4.8918, 5.1795, 5.4672}),
+						.formula = Multiplier(total.atk, LevelableTalent::burst, {2.0460, 2.1995, 2.3529, 2.5575, 2.7109, 2.8644, 3.0690, 3.2736, 3.4782, 3.6828, 3.8874, 4.0920, 4.3477, 4.6035, 4.8593}),
 						.modifier{.multiplicativeDMG = a4BurstMult},
 					},
 					Node::Info{
@@ -386,7 +384,7 @@ const Character::Data Character::Datas::skirk{
 						.name = "Crystal Blade DMG",
 						.element = Misc::Element::cryo,
 						.source = Misc::AttackSource::charged,
-						.formula = Requires(Requirement::passive1, total.atk * 5.f),
+						.formula = Requires(Requirement::passive1 && Requirement::constellation1, total.atk * 5.f),
 					},
 				},
 				.constellation6{
