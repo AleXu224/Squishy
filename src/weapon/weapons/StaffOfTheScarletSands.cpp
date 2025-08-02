@@ -26,7 +26,7 @@ const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 
 		return Data::Setup{
 			.mods{
-				.preMod{
+				.postMod{
 					.atk = WeaponMultiplier(preMods.em, {0.52, 0.65, 0.78, 0.91, 1.04})
 						 + eHitsAtk,
 				},
@@ -38,7 +38,7 @@ const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 					.teamBuff = true,
 					.values{1, 2, 3},
 					.mods{
-						.preMod{
+						.postMod{
 							.atk = eHitsAtk,
 						},
 					},

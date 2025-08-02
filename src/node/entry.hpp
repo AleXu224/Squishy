@@ -15,6 +15,7 @@ namespace Node {
 		burst,
 		passive1,
 		passive2,
+		passive3,
 		constellation1,
 		constellation2,
 		constellation4,
@@ -29,6 +30,7 @@ namespace Node {
 		CharacterSlot::burst,
 		CharacterSlot::passive1,
 		CharacterSlot::passive2,
+		CharacterSlot::passive3,
 		CharacterSlot::constellation1,
 		CharacterSlot::constellation2,
 		CharacterSlot::constellation4,
@@ -54,6 +56,8 @@ namespace Utils {
 				return "Passive 1";
 			case Node::CharacterSlot::passive2:
 				return "Passive 2";
+			case Node::CharacterSlot::passive3:
+				return "Passive 3";
 			case Node::CharacterSlot::constellation1:
 				return "Constellation 1";
 			case Node::CharacterSlot::constellation2:

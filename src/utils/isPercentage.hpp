@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include <stdexcept>
+#include <typeinfo>
 
 namespace Utils {
 	template<class T>

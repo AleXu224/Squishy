@@ -28,6 +28,7 @@ namespace Node {
 		std::vector<Node::Types> burst;
 		std::vector<Node::Types> passive1{};
 		std::vector<Node::Types> passive2{};
+		std::vector<Node::Types> passive3{};
 		std::vector<Node::Types> constellation1{};
 		std::vector<Node::Types> constellation2{};
 		std::vector<Node::Types> constellation4{};
@@ -42,6 +43,7 @@ namespace Node {
 				&CharacterList::burst,
 				&CharacterList::passive1,
 				&CharacterList::passive2,
+				&CharacterList::passive3,
 				&CharacterList::constellation1,
 				&CharacterList::constellation2,
 				&CharacterList::constellation4,
@@ -65,6 +67,8 @@ namespace Node {
 					return passive1;
 				case CharacterSlot::passive2:
 					return passive2;
+				case CharacterSlot::passive3:
+					return passive3;
 				case CharacterSlot::constellation1:
 					return constellation1;
 				case CharacterSlot::constellation2:

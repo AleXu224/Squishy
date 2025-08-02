@@ -23,6 +23,8 @@ namespace Utils {
 				return Requirement::passive1;
 			case Node::CharacterSlot::passive2:
 				return Requirement::passive2;
+			case Node::CharacterSlot::passive3:
+				return Requirement::passive3;
 			case Node::CharacterSlot::constellation1:
 				return Requirement::constellation1;
 			case Node::CharacterSlot::constellation2:

@@ -88,6 +88,19 @@ namespace Requirement {
 			return context.source.stats.sheet.ascension >= 4;
 		}
 	} passive2{};
+	static constexpr struct impl_Passive3 {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
+		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
+			return "Passive 3";
+		}
+
+		[[nodiscard]] static bool eval(const Formula::Context &context) {
+			return true;
+		}
+	} passive3{};
 	static constexpr struct impl_Constellation1 {
 		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
 			return Formula::Compiled::ConstantBool{.value = eval(context)};

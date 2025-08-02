@@ -261,6 +261,7 @@ namespace Stats {
 		if constexpr (reaction == Misc::Reaction::bloom) return Sheet.bloom;
 		if constexpr (reaction == Misc::Reaction::burgeon) return Sheet.burgeon;
 		if constexpr (reaction == Misc::Reaction::hyperbloom) return Sheet.hyperbloom;
+		if constexpr (reaction == Misc::Reaction::lunarCharged) return Sheet.lunarCharged;
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>

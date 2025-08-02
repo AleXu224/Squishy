@@ -48,13 +48,27 @@ namespace Option {
 		std::vector<Types> burst{};
 		std::vector<Types> passive1{};
 		std::vector<Types> passive2{};
+		std::vector<Types> passive3{};
 		std::vector<Types> constellation1{};
 		std::vector<Types> constellation2{};
 		std::vector<Types> constellation4{};
 		std::vector<Types> constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
-			return std::array{&CharacterList::normal, &CharacterList::charged, &CharacterList::plunge, &CharacterList::skill, &CharacterList::burst, &CharacterList::passive1, &CharacterList::passive2, &CharacterList::constellation1, &CharacterList::constellation2, &CharacterList::constellation4, &CharacterList::constellation6};
+			return std::array{
+				&CharacterList::normal,
+				&CharacterList::charged,
+				&CharacterList::plunge,
+				&CharacterList::skill,
+				&CharacterList::burst,
+				&CharacterList::passive1,
+				&CharacterList::passive2,
+				&CharacterList::passive3,
+				&CharacterList::constellation1,
+				&CharacterList::constellation2,
+				&CharacterList::constellation4,
+				&CharacterList::constellation6,
+			};
 		}
 
 		[[nodiscard]] inline const std::vector<Types> &fromCharacterSlot(Node::CharacterSlot slot) const {
@@ -73,6 +87,8 @@ namespace Option {
 					return passive1;
 				case Node::CharacterSlot::passive2:
 					return passive2;
+				case Node::CharacterSlot::passive3:
+					return passive3;
 				case Node::CharacterSlot::constellation1:
 					return constellation1;
 				case Node::CharacterSlot::constellation2:
@@ -85,7 +101,7 @@ namespace Option {
 			std::unreachable();
 		}
 
-		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 11> getMembersAndConditions();
+		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 12> getMembersAndConditions();
 	};
 
 	using WeaponList = std::vector<Types>;

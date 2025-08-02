@@ -198,7 +198,7 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.burgeon...> burgeon{};
 		static constexpr _SkillValue<Params.hyperbloom...> hyperbloom{};
 
-		static constexpr _SkillValue<Params.electroCharged...> lunarCharged{};
+		static constexpr _SkillValue<Params.lunarCharged...> lunarCharged{};
 	};
 
 	template<class T, class Formula>

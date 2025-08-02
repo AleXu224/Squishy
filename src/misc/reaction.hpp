@@ -69,6 +69,8 @@ namespace Misc {
 		Reaction::bloom,
 		Reaction::burgeon,
 		Reaction::hyperbloom,
+
+		Reaction::lunarCharged,
 	};
 
 	const inline std::vector<TransformativeReaction> transformativeReactions{

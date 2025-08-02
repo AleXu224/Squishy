@@ -19,6 +19,7 @@
 #include "weapons/FavoniusLance.hpp"
 #include "weapons/FavoniusSword.hpp"
 #include "weapons/FavoniusWarbow.hpp"
+#include "weapons/FracturedHalo.hpp"
 #include "weapons/HunterSBow.hpp"
 #include "weapons/MistsplitterReforged.hpp"
 #include "weapons/SacrificialBow.hpp"
@@ -54,6 +55,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusLance.key, Weapon::Datas::favoniusLance},
 		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
+		{Weapon::Datas::fracturedHalo.key, Weapon::Datas::fracturedHalo},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
 		{Weapon::Datas::mistsplitterReforged.key, Weapon::Datas::mistsplitterReforged},
 		{Weapon::Datas::sacrificialBow.key, Weapon::Datas::sacrificialBow},
