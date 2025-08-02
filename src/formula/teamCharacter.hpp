@@ -3,15 +3,26 @@
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "fmt/core.h"
+#include "formula/compiled/teamCharacter.hpp"
+#include "formula/constant.hpp"
+#include "formula/operators.hpp"
 #include "intermediary.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
+#include <algorithm>
+
 
 namespace Formula {
 	template<FloatFormula T>
 	struct TeamCharacter {
 		size_t index = 0;
 		T formula;
+
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+			const auto &character = context.team.characters.at(index);
+			if (!character) return Compiled::ConstantFloat{.value = 0.f};
+			return formula.compile(context.withSource(character->state));
+		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(index);
@@ -20,7 +31,7 @@ namespace Formula {
 			return fmt::format(
 				"{} {}",
 				stats.stats.data.name,
-				formula.print(context, prevStep)
+				formula.print(context.withSource(stats), prevStep)
 			);
 		}
 
@@ -104,6 +115,66 @@ namespace Formula {
 			if (characterInfusion.has_value()) return characterInfusion;
 
 			return context.team.infusion.eval(context);
+		}
+	};
+
+	struct LunarDmgDistribution {
+		Formula::FloatNode formula;
+
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+			return Compiled::LunarDmgDistribution{
+				.char1 = TeamCharacter{.index = 0, .formula = formula}.compile(context),
+				.char2 = TeamCharacter{.index = 1, .formula = formula}.compile(context),
+				.char3 = TeamCharacter{.index = 2, .formula = formula}.compile(context),
+				.char4 = TeamCharacter{.index = 3, .formula = formula}.compile(context),
+			}
+				.wrap();
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step step) const {
+			std::array values{
+				std::pair{
+					TeamCharacter{.index = 0, .formula = formula},
+					TeamCharacter{.index = 0, .formula = formula}.eval(context),
+				},
+				std::pair{
+					TeamCharacter{.index = 1, .formula = formula},
+					TeamCharacter{.index = 1, .formula = formula}.eval(context),
+				},
+				std::pair{
+					TeamCharacter{.index = 2, .formula = formula},
+					TeamCharacter{.index = 2, .formula = formula}.eval(context),
+				},
+				std::pair{
+					TeamCharacter{.index = 3, .formula = formula},
+					TeamCharacter{.index = 3, .formula = formula}.eval(context),
+				},
+			};
+
+			std::sort(values.begin(), values.end(), [](auto &&val1, auto &&val2) {
+				return val1.second > val2.second;
+			});
+
+			using namespace Formula::Operators;
+
+			return (values.at(0).first
+					+ values.at(1).first * Constant(0.5f)
+					+ values.at(2).first * Constant(1.f / 12.f)
+					+ values.at(3).first * Constant(1.f / 12.f))
+				.print(context, step);
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			std::array<float, 4> values{
+				TeamCharacter{.index = 0, .formula = formula}.eval(context),
+				TeamCharacter{.index = 1, .formula = formula}.eval(context),
+				TeamCharacter{.index = 2, .formula = formula}.eval(context),
+				TeamCharacter{.index = 3, .formula = formula}.eval(context),
+			};
+
+			std::sort(values.begin(), values.end(), std::greater<float>());
+
+			return values.at(0) + values.at(1) * 0.5f + (values.at(2) + values.at(3)) * (1.f / 6.f);
 		}
 	};
 }// namespace Formula

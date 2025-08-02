@@ -35,6 +35,7 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 				&Reaction::List::Transformative::bloom,
 				&Reaction::List::Transformative::burgeon,
 				&Reaction::List::Transformative::hyperbloom,
+				&Reaction::List::Transformative::lunarCharged,
 			};
 
 			std::vector elements{state.stats.data.baseStats.element};

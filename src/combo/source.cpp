@@ -140,6 +140,8 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const std::vector<
 				return {Reaction::List::Transformative::burgeon.formula, "Burgeon", Reaction::List::Transformative::burgeon.damageElement};
 			case Misc::TransformativeReaction::hyperbloom:
 				return {Reaction::List::Transformative::hyperbloom.formula, "Hyperbloom", Reaction::List::Transformative::hyperbloom.damageElement};
+			case Misc::TransformativeReaction::lunarCharged:
+				return {Reaction::List::Transformative::lunarCharged.formula, "Lunar-Charged", Reaction::List::Transformative::lunarCharged.damageElement};
 		}
 		std::unreachable();
 	}();

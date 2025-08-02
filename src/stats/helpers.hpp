@@ -292,6 +292,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.burgeon, RetType>(skillStat);
 			case Misc::Reaction::hyperbloom:
 				return fromSkillStat<Sheet.hyperbloom, RetType>(skillStat);
+			case Misc::Reaction::lunarCharged:
+				return fromSkillStat<Sheet.lunarCharged, RetType>(skillStat);
 		}
 		std::unreachable();
 	}
@@ -325,6 +327,8 @@ namespace Stats {
 				return fromSkillStat(sheet.burgeon, skillStat);
 			case Misc::Reaction::hyperbloom:
 				return fromSkillStat(sheet.hyperbloom, skillStat);
+			case Misc::Reaction::lunarCharged:
+				return fromSkillStat(sheet.lunarCharged, skillStat);
 		}
 		std::unreachable();
 	}

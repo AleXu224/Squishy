@@ -68,6 +68,8 @@ namespace Modifiers {
 		static constexpr auto bloom = Skill<&TT::bloom>();
 		static constexpr auto burgeon = Skill<&TT::burgeon>();
 		static constexpr auto hyperbloom = Skill<&TT::hyperbloom>();
+
+		static constexpr auto lunarCharged = Skill<&TT::lunarCharged>();
 	};
 
 	struct StatNameFactory {
@@ -130,6 +132,8 @@ namespace Modifiers {
 		static constexpr auto bloom = Skill<Misc::Reaction::bloom>();
 		static constexpr auto burgeon = Skill<Misc::Reaction::burgeon>();
 		static constexpr auto hyperbloom = Skill<Misc::Reaction::hyperbloom>();
+
+		static constexpr auto lunarCharged = Skill<Misc::Reaction::lunarCharged>();
 	};
 
 	template<template<auto...> class Formula, auto... Params>
@@ -193,6 +197,8 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.bloom...> bloom{};
 		static constexpr _SkillValue<Params.burgeon...> burgeon{};
 		static constexpr _SkillValue<Params.hyperbloom...> hyperbloom{};
+
+		static constexpr _SkillValue<Params.electroCharged...> lunarCharged{};
 	};
 
 	template<class T, class Formula>
@@ -259,6 +265,8 @@ namespace Modifiers {
 			.bloom = statSkillValueFactory<T, Formula>(params.bloom...),
 			.burgeon = statSkillValueFactory<T, Formula>(params.burgeon...),
 			.hyperbloom = statSkillValueFactory<T, Formula>(params.hyperbloom...),
+
+			.lunarCharged = statSkillValueFactory<T, Formula>(params.lunarCharged...),
 		};
 	}
 

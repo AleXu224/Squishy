@@ -18,6 +18,17 @@ namespace Reaction {
 		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate, 0.f, 1.f) * modifier.critDMG;
 		return Formula::Constant(multiplier) * levelMultiplier * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
 	}
+
+	[[nodiscard]] static Formula::FloatNode makeLunarTransformativeFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Element element) {
+		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
+		auto emBonus = (Formula::ConstantFlat(6.f) * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
+		auto reactionBaseMultiplier = modifier.multiplicativeDMG;
+		auto reactionBonus = modifier.DMG;
+		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
+		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate + Modifiers::total().cr, 0.f, 1.f) * (modifier.critDMG + Modifiers::total().cd);
+		return Formula::Constant(multiplier) * levelMultiplier * (1.f + reactionBaseMultiplier) * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
+	}
+
 	struct Transformative {
 		std::string_view name;
 		float multiplier{};
@@ -147,6 +158,19 @@ namespace Reaction {
 				.triggers{
 					Misc::Element::electro,
 				},
+			};
+
+			// Lunar
+			const static inline Reaction::Transformative lunarCharged = Reaction::Transformative{
+				.name = "Lunar-Charged",
+				.multiplier = 1.8f,
+				.damageElement = Misc::Element::electro,
+				.modifier = Modifiers::total().lunarCharged,
+				.triggers{
+					Misc::Element::electro,
+					Misc::Element::hydro,
+				},
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCharged, 1.8f, Misc::Element::electro),
 			};
 		};
 	}// namespace List

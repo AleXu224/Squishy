@@ -42,6 +42,8 @@ namespace Formula {
 					return Stats::fromSkillStat(Modifiers::total().burgeon, skillStat).compile(context);
 				case Misc::Reaction::hyperbloom:
 					return Stats::fromSkillStat(Modifiers::total().hyperbloom, skillStat).compile(context);
+				case Misc::Reaction::lunarCharged:
+					return Stats::fromSkillStat(Modifiers::total().lunarCharged, skillStat).compile(context);
 			}
 			std::unreachable();
 		}
@@ -78,6 +80,8 @@ namespace Formula {
 					return Stats::fromSkillStat(Modifiers::total().burgeon, skillStat).eval(context);
 				case Misc::Reaction::hyperbloom:
 					return Stats::fromSkillStat(Modifiers::total().hyperbloom, skillStat).eval(context);
+				case Misc::Reaction::lunarCharged:
+					return Stats::fromSkillStat(Modifiers::total().lunarCharged, skillStat).eval(context);
 			}
 			std::unreachable();
 		}
