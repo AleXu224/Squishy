@@ -11,6 +11,8 @@ namespace Stats {
 		Formula::ElementNode infusion;
 		Formula::ElementNode teamInfusion;
 
+		Formula::IntNode moonsignLevel;
+
 		uint8_t constellation{};
 		uint8_t level{1};
 		uint8_t ascension{0};

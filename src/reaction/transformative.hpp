@@ -23,10 +23,16 @@ namespace Reaction {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
 		auto emBonus = (Formula::ConstantFlat(6.f) * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
 		auto reactionBaseMultiplier = modifier.multiplicativeDMG;
+		auto reactionElevation = modifier.elevation;
 		auto reactionBonus = modifier.DMG;
 		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
 		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate + Modifiers::total().cr, 0.f, 1.f) * (modifier.critDMG + Modifiers::total().cd);
-		return Formula::Constant(multiplier) * levelMultiplier * (1.f + reactionBaseMultiplier) * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
+		return Formula::Constant(multiplier)
+			 * levelMultiplier
+			 * (1.f + reactionBaseMultiplier)
+			 * (1.f + reactionElevation)
+			 * (1.f + emBonus + reactionBonus)
+			 * resMultiplier * critMultiplier;
 	}
 
 	struct Transformative {

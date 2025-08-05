@@ -2,6 +2,7 @@
 
 #include "Ui/option/toggleOption.hpp"
 #include "Ui/option/valueListOption.hpp"
+#include "Ui/utils/decodeModsSheet.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
 #include "Ui/utils/tooltip.hpp"
@@ -19,6 +20,13 @@ UI::DetailsSkill::operator squi::Child() const {
 		if (!nodes.empty()) {
 			Children ret2{};
 			for (const auto &node: nodes) {
+				if (std::holds_alternative<Node::ModsData>(node.data)) {
+					const auto &data = std::get<Node::ModsData>(node.data);
+					auto modsChildren = decodeModsSheet(data.mods, ctx, &transparent);
+					ret.insert(ret.end(), modsChildren.begin(), modsChildren.end());
+					continue;
+				}
+
 				if (node.formula.eval(ctx) == 0.f) continue;
 				ret2.emplace_back(UI::Tooltip{
 					.message = node.formula.print(ctx),

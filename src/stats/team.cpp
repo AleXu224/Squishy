@@ -6,7 +6,7 @@
 #include "formula/teamCharacter.hpp"
 
 
-Stats::Team::Team() : infusion(Formula::TeamInfusion{}) {
+Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::TeamMoonsignLevel{}) {
 	using namespace Formula::Operators;
 
 	using IsActive = Formula::impl_IsActivePassive;

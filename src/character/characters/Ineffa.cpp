@@ -51,12 +51,14 @@ const Character::Data Character::Datas::ineffa{
 				.teamPostMod{
 					.em = a4Buff,
 				},
+				.moonsignLevel = ConstantInt(1),
 			},
 			.opts{
 				.passive2{
 					Option::Boolean{
 						.key = "ineffaA4",
 						.name = "After using Elemental Burst",
+						.teamBuff = true,
 						.mods{
 							.teamPostMod{
 								.em = a4Buff,
@@ -68,6 +70,7 @@ const Character::Data Character::Datas::ineffa{
 					Option::Boolean{
 						.key = "ineffaC1",
 						.name = "After using Elemental Skill",
+						.teamBuff = true,
 						.mods{
 							.teamPreMod{
 								.lunarCharged{

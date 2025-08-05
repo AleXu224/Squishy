@@ -4,6 +4,7 @@
 #include "formula/formulaContext.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
+#include "stats/sheet.hpp"
 #include "utils/entryType.hpp"
 #include "utils/optional.hpp"
 #include "utils/overloaded.hpp"
@@ -32,7 +33,11 @@ namespace Node {
 		Utils::JankyOptional<Misc::Element> element{};
 	};
 
-	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ShieldData>;
+	struct ModsData {
+		Stats::ModsSheet mods;
+	};
+
+	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ShieldData, ModsData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
@@ -50,6 +55,9 @@ namespace Node {
 					return false;
 				},
 				[](const ShieldData &) {
+					return false;
+				},
+				[](const ModsData &) {
 					return false;
 				},
 			},

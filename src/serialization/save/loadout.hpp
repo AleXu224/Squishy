@@ -67,7 +67,7 @@ struct glz::meta<Serialization::Save::ArtifactSlotted> {
 template<>
 struct glz::meta<Serialization::Save::ArtifactTC> {
 	using T = Serialization::Save::ArtifactTC;
-	static constexpr auto value = object(&T::mainStats, &T::subStats);
+	static constexpr auto value = object(&T::set1, &T::set2, &T::mainStats, &T::subStats);
 };
 template<>
 struct glz::meta<Serialization::Save::ArtifactTypes> {

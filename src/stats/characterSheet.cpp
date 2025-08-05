@@ -87,4 +87,7 @@ void Stats::CharacterSheet::init(Stats::State &stats) {
 	// Infusion
 	infusion = Formula::CharacterTeamInfusion(stats.stats.data.data.mods.infusion);
 	teamInfusion = stats.stats.data.data.mods.teamInfusion;
+
+	// Moonsign
+	moonsignLevel = stats.stats.data.data.mods.moonsignLevel;
 }

@@ -12,6 +12,7 @@ namespace Misc {
 		DMG,
 		additiveDMG,
 		multiplicativeDMG,
+		elevation,
 		critRate,
 		critDMG,
 	};
@@ -20,6 +21,7 @@ namespace Misc {
 		SkillStat::DMG,
 		SkillStat::additiveDMG,
 		SkillStat::multiplicativeDMG,
+		SkillStat::elevation,
 		SkillStat::critRate,
 		SkillStat::critDMG,
 	};
@@ -45,6 +47,8 @@ namespace Utils {
 				return "Additional DMG";
 			case Misc::SkillStat::multiplicativeDMG:
 				return "Multiplicative DMG";
+			case Misc::SkillStat::elevation:
+				return "Elevation";
 			case Misc::SkillStat::critRate:
 				return "Crit Rate";
 			case Misc::SkillStat::critDMG:

@@ -5,6 +5,7 @@
 #include "character/characters/Citlali.hpp"
 #include "character/characters/Cyno.hpp"
 #include "character/characters/Escoffier.hpp"
+#include "character/characters/Flins.hpp"
 #include "character/characters/Furina.hpp"
 #include "character/characters/Ineffa.hpp"
 #include "character/characters/KamisatoAyaka.hpp"
@@ -22,6 +23,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::citlali.key, Character::Datas::citlali},
 		{Character::Datas::cyno.key, Character::Datas::cyno},
 		{Character::Datas::escoffier.key, Character::Datas::escoffier},
+		{Character::Datas::flins.key, Character::Datas::flins},
 		{Character::Datas::furina.key, Character::Datas::furina},
 		{Character::Datas::ineffa.key, Character::Datas::ineffa},
 		{Character::Datas::kamisatoAyaka.key, Character::Datas::kamisatoAyaka},

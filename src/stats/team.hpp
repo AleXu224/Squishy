@@ -17,6 +17,7 @@ namespace Stats {
 	struct Team {
 		std::array<::Character::Instance *, 4> characters{};
 		Formula::ElementNode infusion;
+		Formula::IntNode moonsignLevel;
 		Stats::Sheet<Stats::Value<float, 1>> resonances{};
 		Stats::EnemySheet<Stats::Value<float, 1>> resonancesEnemy{};
 		Option::TypesMap options{};

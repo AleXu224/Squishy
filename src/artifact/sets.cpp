@@ -16,12 +16,14 @@
 #include "artifact/sets/Lavawalker.hpp"
 #include "artifact/sets/MaidenBeloved.hpp"
 #include "artifact/sets/MarechausseeHunter.hpp"
+#include "artifact/sets/NightOfTheSkysUnveiling.hpp"
 #include "artifact/sets/NoblesseOblige.hpp"
 #include "artifact/sets/ObsidianCodex.hpp"
 #include "artifact/sets/OceanHuedClam.hpp"
 #include "artifact/sets/PaleFlame.hpp"
 #include "artifact/sets/ScrollOfTheHeroOfCinderCity.hpp"
 #include "artifact/sets/ShimenawasReminiscence.hpp"
+#include "artifact/sets/SilkenMoonsSerenade.hpp"
 #include "artifact/sets/TenacityOfTheMillelith.hpp"
 #include "artifact/sets/ThunderingFury.hpp"
 #include "artifact/sets/UnfinishedReverie.hpp"
@@ -47,12 +49,14 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::lavawalker.key, Artifact::Sets::lavawalker},
 		{Artifact::Sets::maidenBeloved.key, Artifact::Sets::maidenBeloved},
 		{Artifact::Sets::marechausseeHunter.key, Artifact::Sets::marechausseeHunter},
+		{Artifact::Sets::nightOfTheSkysUnveiling.key, Artifact::Sets::nightOfTheSkysUnveiling},
 		{Artifact::Sets::noblesseOblige.key, Artifact::Sets::noblesseOblige},
 		{Artifact::Sets::obsidianCodex.key, Artifact::Sets::obsidianCodex},
 		{Artifact::Sets::oceanHuedClam.key, Artifact::Sets::oceanHuedClam},
 		{Artifact::Sets::paleFlame.key, Artifact::Sets::paleFlame},
 		{Artifact::Sets::scrollOfTheHeroOfCinderCity.key, Artifact::Sets::scrollOfTheHeroOfCinderCity},
 		{Artifact::Sets::shimenawasReminiscence.key, Artifact::Sets::shimenawasReminiscence},
+		{Artifact::Sets::silkenMoonsSerenade.key, Artifact::Sets::silkenMoonsSerenade},
 		{Artifact::Sets::tenacityOfTheMillelith.key, Artifact::Sets::tenacityOfTheMillelith},
 		{Artifact::Sets::thunderingFury.key, Artifact::Sets::thunderingFury},
 		{Artifact::Sets::unfinishedReverie.key, Artifact::Sets::unfinishedReverie},

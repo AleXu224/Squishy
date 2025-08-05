@@ -8,18 +8,18 @@
 
 namespace Node {
 	enum class CharacterSlot : uint8_t {
-		normal,
-		charged,
-		plunge,
-		skill,
-		burst,
-		passive1,
-		passive2,
-		passive3,
-		constellation1,
-		constellation2,
-		constellation4,
-		constellation6,
+		normal = 0,
+		charged = 1,
+		plunge = 2,
+		skill = 3,
+		burst = 4,
+		passive1 = 5,
+		passive2 = 6,
+		passive3 = 11,
+		constellation1 = 7,
+		constellation2 = 8,
+		constellation4 = 9,
+		constellation6 = 10,
 	};
 
 	static inline std::vector<CharacterSlot> characterSlots{

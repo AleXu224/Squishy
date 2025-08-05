@@ -84,13 +84,16 @@ namespace Node {
 		auto totalDMG = _getCustomAtkTotal<Misc::SkillStat::DMG>(element, modifier.DMG);
 		auto totalAdditiveDMG = _getCustomAtkTotal<Misc::SkillStat::additiveDMG>(element, modifier.additiveDMG) + Formula::AdditiveMultiplier{};
 		auto totalMultiplicativeDMG = _getCustomAtkTotal<Misc::SkillStat::multiplicativeDMG>(element, modifier.multiplicativeDMG);
+		auto totalElevation = _getCustomAtkTotal<Misc::SkillStat::elevation>(element, modifier.elevation);
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
+		auto elevation = 1.0f + totalElevation;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier({}, element);
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return multiplier
+			 * elevation
 			 * dmgBonus
 			 * enemy
 			 * amplifyingMultiplier;

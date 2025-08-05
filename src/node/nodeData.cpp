@@ -21,6 +21,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const ShieldData &node) {
 				return Utils::elementToColor(node.element.value_or(Misc::Element::physical));
 			},
+			[&](const ModsData &) {
+				return Utils::elementToColor(Misc::Element::physical);
+			},
 		},
 		data
 	);
@@ -42,6 +45,9 @@ bool Node::getOptimizable(const Data &data) {
 			},
 			[&](const ShieldData &) {
 				return true;
+			},
+			[&](const ModsData &) {
+				return false;
 			},
 		},
 		data

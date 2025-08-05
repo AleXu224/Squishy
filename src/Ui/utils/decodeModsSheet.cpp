@@ -96,31 +96,41 @@ namespace {
 
 		return ret;
 	}
+
+	[[nodiscard]] Children decodeMoonsignLevelSheet(std::string_view prefix, bool &transparent, const Stats::ModsSheet &sheet, const Formula::Context &ctx) {
+		Children ret;
+
+		addItem(sheet.moonsignLevel, Modifiers::StatNameFactory::moonsignLevel, ret, ctx, transparent, prefix);
+		return ret;
+	}
 }// namespace
 
-squi::Children UI::decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Context &ctx) {
+squi::Children UI::decodeModsSheet(const Stats::ModsSheet &sheet, const Formula::Context &ctx, bool *transparent) {
 	Children ret{};
 
-	bool transparent;
+	bool transparentBackup;
+	if (!transparent) transparent = &transparentBackup;
 
-	auto preMod = decodeSheet("", transparent, sheet.preMod, ctx);
+	auto preMod = decodeSheet("", *transparent, sheet.preMod, ctx);
 	ret.insert(ret.end(), preMod.begin(), preMod.end());
-	auto postMod = decodeSheet("", transparent, sheet.postMod, ctx);
+	auto postMod = decodeSheet("", *transparent, sheet.postMod, ctx);
 	ret.insert(ret.end(), postMod.begin(), postMod.end());
-	auto teamPreMod = decodeSheet("Team ", transparent, sheet.teamPreMod, ctx);
+	auto teamPreMod = decodeSheet("Team ", *transparent, sheet.teamPreMod, ctx);
 	ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
-	auto teamPostMod = decodeSheet("Team ", transparent, sheet.teamPostMod, ctx);
+	auto teamPostMod = decodeSheet("Team ", *transparent, sheet.teamPostMod, ctx);
 	ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
-	auto enemy = decodeEnemySheet("Enemy ", transparent, sheet.enemy, ctx);
+	auto enemy = decodeEnemySheet("Enemy ", *transparent, sheet.enemy, ctx);
 	ret.insert(ret.end(), enemy.begin(), enemy.end());
-	auto talents = decodeTalentsSheet("", transparent, sheet.talents, ctx);
+	auto talents = decodeTalentsSheet("", *transparent, sheet.talents, ctx);
 	ret.insert(ret.end(), talents.begin(), talents.end());
-	auto teamTalents = decodeTalentsSheet("Team ", transparent, sheet.teamTalents, ctx);
+	auto teamTalents = decodeTalentsSheet("Team ", *transparent, sheet.teamTalents, ctx);
 	ret.insert(ret.end(), teamTalents.begin(), teamTalents.end());
-	auto infusion = decodeInfusionSheet("", transparent, sheet.infusion, ctx);
+	auto infusion = decodeInfusionSheet("", *transparent, sheet.infusion, ctx);
 	ret.insert(ret.end(), infusion.begin(), infusion.end());
-	auto teamInfusion = decodeInfusionSheet("", transparent, sheet.teamInfusion, ctx);
+	auto teamInfusion = decodeInfusionSheet("", *transparent, sheet.teamInfusion, ctx);
 	ret.insert(ret.end(), teamInfusion.begin(), teamInfusion.end());
+	auto teamMoonsignLevel = decodeMoonsignLevelSheet("Team ", *transparent, sheet, ctx);
+	ret.insert(ret.end(), teamMoonsignLevel.begin(), teamMoonsignLevel.end());
 
 	return ret;
 }
@@ -150,6 +160,8 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			ret.insert(ret.end(), infusion.begin(), infusion.end());
 			auto teamInfusion = decodeInfusionSheet("", transparent, opt.mods.teamInfusion, ctx);
 			ret.insert(ret.end(), teamInfusion.begin(), teamInfusion.end());
+			auto teamMoonsignLevel = decodeMoonsignLevelSheet("", transparent, opt.mods, ctx);
+			ret.insert(ret.end(), teamMoonsignLevel.begin(), teamMoonsignLevel.end());
 
 			for (const Node::Types &node: opt.nodes) {
 				auto value = node.formula.eval(ctx);

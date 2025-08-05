@@ -16,9 +16,9 @@ namespace Modifiers {
 	template<class T>
 	using StatType = T::_Value T::*;
 	template<class T>
-	struct SkillType{
-		T::_SkillValue T::* first;
-		T::_Value T::_SkillValue::* second;
+	struct SkillType {
+		T::_SkillValue T::*first;
+		T::_Value T::_SkillValue::*second;
 	};
 
 	template<class T>
@@ -73,6 +73,7 @@ namespace Modifiers {
 
 	struct SheetMemberIdentifier {
 		struct Infusion {};
+		struct MoonsignLevel {};
 		enum class Type : uint8_t {
 			stat,
 			attack,
@@ -82,6 +83,7 @@ namespace Modifiers {
 			enemyStat,
 			enemyRes,
 			infusion,
+			moonsignLevel,
 		} _type;
 		union _Uni {
 			::Stat stat;
@@ -92,6 +94,7 @@ namespace Modifiers {
 			::Misc::EnemyStat enemyStat;
 			std::pair<Misc::EnemyResistances, Misc::Element> enemyRes;
 			Infusion infusion;
+			MoonsignLevel moonsignLevel;
 		} _uni;
 
 		constexpr SheetMemberIdentifier(::Stat stat) : _type(Type::stat), _uni{.stat = stat} {}
@@ -102,8 +105,12 @@ namespace Modifiers {
 		constexpr SheetMemberIdentifier(Misc::EnemyStat enemyStat) : _type(Type::enemyStat), _uni{.enemyStat = enemyStat} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyResistances enemyRes, Misc::Element element) : _type(Type::enemyRes), _uni{.enemyRes{enemyRes, element}} {}
 		constexpr SheetMemberIdentifier(Infusion infusion) : _type(Type::infusion), _uni{.infusion{}} {}
+		constexpr SheetMemberIdentifier(MoonsignLevel infusion) : _type(Type::moonsignLevel), _uni{.moonsignLevel{}} {}
 		static constexpr SheetMemberIdentifier infusion() {
 			return Infusion{};
+		}
+		static constexpr SheetMemberIdentifier moonsignLevel() {
+			return MoonsignLevel{};
 		}
 
 		[[nodiscard]] std::string getName() const {
@@ -124,6 +131,8 @@ namespace Modifiers {
 					return fmt::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
 				case Type::infusion:
 					return "Infusion";
+				case Type::moonsignLevel:
+					return "Moonsign Level";
 			}
 			std::unreachable();
 		}
@@ -145,6 +154,8 @@ namespace Modifiers {
 				case Type::enemyRes:
 					return true;
 				case Type::infusion:
+					return false;
+				case Type::moonsignLevel:
 					return false;
 			}
 			std::unreachable();

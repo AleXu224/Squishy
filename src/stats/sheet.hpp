@@ -2,9 +2,11 @@
 
 #include "Talents.hpp"
 #include "array"
+#include "formula/constant.hpp"
 #include "formula/infusion.hpp"
 #include "formula/node.hpp"
 #include "stats/helpers.hpp"
+
 
 
 namespace Stats {
@@ -56,6 +58,7 @@ namespace Stats {
 			_Value DMG{};
 			_Value additiveDMG{};
 			_Value multiplicativeDMG{};
+			_Value elevation{};
 			_Value critRate{};
 			_Value critDMG{};
 
@@ -64,6 +67,7 @@ namespace Stats {
 					&_SkillValue::DMG,
 					&_SkillValue::additiveDMG,
 					&_SkillValue::multiplicativeDMG,
+					&_SkillValue::elevation,
 					&_SkillValue::critRate,
 					&_SkillValue::critDMG,
 				};
@@ -73,6 +77,7 @@ namespace Stats {
 				if (member == &_SkillValue::DMG) return true;
 				if (member == &_SkillValue::additiveDMG) return false;
 				if (member == &_SkillValue::multiplicativeDMG) return true;
+				if (member == &_SkillValue::elevation) return true;
 				if (member == &_SkillValue::critRate) return true;
 				if (member == &_SkillValue::critDMG) return true;
 				return false;
@@ -86,6 +91,8 @@ namespace Stats {
 						return additiveDMG;
 					case Misc::SkillStat::multiplicativeDMG:
 						return multiplicativeDMG;
+					case Misc::SkillStat::elevation:
+						return elevation;
 					case Misc::SkillStat::critRate:
 						return critRate;
 					case Misc::SkillStat::critDMG:
@@ -178,5 +185,7 @@ namespace Stats {
 
 		Formula::ElementNode infusion = Formula::NoInfusion{};
 		Formula::ElementNode teamInfusion = Formula::NoInfusion{};
+
+		Formula::IntNode moonsignLevel = Formula::ConstantInt{0};
 	};
 }// namespace Stats

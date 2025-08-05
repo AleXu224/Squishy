@@ -11,6 +11,7 @@
 #include "weapons/AstralVulturesCrimsonPlumage.hpp"
 #include "weapons/Azurelight.hpp"
 #include "weapons/BeginnerSProtector.hpp"
+#include "weapons/BloodsoakedRuins.hpp"
 #include "weapons/CalamityQueller.hpp"
 #include "weapons/Deathmatch.hpp"
 #include "weapons/DullBlade.hpp"
@@ -47,6 +48,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::astralVulturesCrimsonPlumage.key, Weapon::Datas::astralVulturesCrimsonPlumage},
 		{Weapon::Datas::azurelight.key, Weapon::Datas::azurelight},
 		{Weapon::Datas::beginnerSProtector.key, Weapon::Datas::beginnerSProtector},
+		{Weapon::Datas::bloodsoakedRuins.key, Weapon::Datas::bloodsoakedRuins},
 		{Weapon::Datas::calamityQueller.key, Weapon::Datas::calamityQueller},
 		{Weapon::Datas::deathmatch.key, Weapon::Datas::deathmatch},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},

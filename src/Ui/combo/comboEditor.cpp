@@ -337,6 +337,7 @@ namespace {
 								[](const Node::InfoData &data) {},
 								[](const Node::HealData &data) {},
 								[](const Node::ShieldData &data) {},
+								[](const Node::ModsData &data) {},
 							},
 							node.data
 						);

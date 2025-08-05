@@ -3,6 +3,7 @@
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "fmt/core.h"
+#include "formula/character.hpp"
 #include "formula/compiled/teamCharacter.hpp"
 #include "formula/constant.hpp"
 #include "formula/operators.hpp"
@@ -13,14 +14,16 @@
 
 
 namespace Formula {
-	template<FloatFormula T>
+	template<FormulaLike T>
 	struct TeamCharacter {
 		size_t index = 0;
 		T formula;
 
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+		using RetType = FormulaType<T>;
+
+		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
 			const auto &character = context.team.characters.at(index);
-			if (!character) return Compiled::ConstantFloat{.value = 0.f};
+			if (!character) return Compiled::Constant<RetType>{.value = {}};
 			return formula.compile(context.withSource(character->state));
 		}
 
@@ -35,9 +38,9 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] float eval(const Context &context) const {
+		[[nodiscard]] RetType eval(const Context &context) const {
 			const auto &character = context.team.characters.at(index);
-			if (!character) return 0.f;
+			if (!character) return {};
 			return formula.eval(context.withSource(character->state));
 		}
 	};
@@ -73,6 +76,36 @@ namespace Formula {
 			if (infusion3.has_value()) return infusion3;
 			if (infusion4.has_value()) return infusion4;
 			return {};
+		}
+	};
+
+	struct TeamMoonsignLevel {
+		[[nodiscard]] static Compiled::IntNode compile(const Context &context) {
+			using namespace Formula::Operators;
+			return (TeamCharacter{.index = 0, .formula = CharacterMoonsignLevel{}}
+					+ TeamCharacter{.index = 1, .formula = CharacterMoonsignLevel{}}
+					+ TeamCharacter{.index = 2, .formula = CharacterMoonsignLevel{}}
+					+ TeamCharacter{.index = 3, .formula = CharacterMoonsignLevel{}})
+				.compile(context);
+		}
+
+		[[nodiscard]] static std::string print(const Context &context, Step) {
+			return fmt::format("Team Moonsign Level {}", eval(context));
+		}
+
+		[[nodiscard]] static int32_t eval(const Context &context) {
+			const auto &character1 = context.team.characters.at(0);
+			const auto &character2 = context.team.characters.at(1);
+			const auto &character3 = context.team.characters.at(2);
+			const auto &character4 = context.team.characters.at(3);
+
+			int32_t ret = 0;
+			if (character1) ret += character1->state.stats.sheet.moonsignLevel.eval(context.withSource(character1->state));
+			if (character2) ret += character2->state.stats.sheet.moonsignLevel.eval(context.withSource(character2->state));
+			if (character3) ret += character3->state.stats.sheet.moonsignLevel.eval(context.withSource(character3->state));
+			if (character4) ret += character4->state.stats.sheet.moonsignLevel.eval(context.withSource(character4->state));
+
+			return ret;
 		}
 	};
 

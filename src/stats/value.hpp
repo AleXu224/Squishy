@@ -60,6 +60,7 @@ namespace Stats {
 		_Value DMG{};
 		_Value additiveDMG{};
 		_Value multiplicativeDMG{};
+		_Value elevation{};
 		_Value critRate{};
 		_Value critDMG{};
 
@@ -68,6 +69,7 @@ namespace Stats {
 				&SkillValue::DMG,
 				&SkillValue::additiveDMG,
 				&SkillValue::multiplicativeDMG,
+				&SkillValue::elevation,
 				&SkillValue::critRate,
 				&SkillValue::critDMG,
 			};
@@ -77,6 +79,7 @@ namespace Stats {
 			if (member == &SkillValue::DMG) return true;
 			if (member == &SkillValue::additiveDMG) return false;
 			if (member == &SkillValue::multiplicativeDMG) return true;
+			if (member == &SkillValue::elevation) return true;
 			if (member == &SkillValue::critRate) return true;
 			if (member == &SkillValue::critDMG) return true;
 			return false;

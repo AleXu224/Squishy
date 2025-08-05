@@ -14,6 +14,7 @@ namespace Modifiers {
 			static constexpr auto DMG = SkillType{V, &TT::_SkillValue::DMG};
 			static constexpr auto additiveDMG = SkillType{V, &TT::_SkillValue::additiveDMG};
 			static constexpr auto multiplicativeDMG = SkillType{V, &TT::_SkillValue::multiplicativeDMG};
+			static constexpr auto elevation = SkillType{V, &TT::_SkillValue::elevation};
 			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
 			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
 		};
@@ -78,6 +79,7 @@ namespace Modifiers {
 			static constexpr auto DMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::DMG);
 			static constexpr auto additiveDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::additiveDMG);
 			static constexpr auto multiplicativeDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::multiplicativeDMG);
+			static constexpr auto elevation = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::elevation);
 			static constexpr auto critRate = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critRate);
 			static constexpr auto critDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critDMG);
 		};
@@ -134,6 +136,8 @@ namespace Modifiers {
 		static constexpr auto hyperbloom = Skill<Misc::Reaction::hyperbloom>();
 
 		static constexpr auto lunarCharged = Skill<Misc::Reaction::lunarCharged>();
+
+		static constexpr auto moonsignLevel = Modifiers::SheetMemberIdentifier::moonsignLevel();
 	};
 
 	template<template<auto...> class Formula, auto... Params>
@@ -143,6 +147,7 @@ namespace Modifiers {
 			static constexpr Formula<V.DMG...> DMG{};
 			static constexpr Formula<V.additiveDMG...> additiveDMG{};
 			static constexpr Formula<V.multiplicativeDMG...> multiplicativeDMG{};
+			static constexpr Formula<V.elevation...> elevation{};
 			static constexpr Formula<V.critRate...> critRate{};
 			static constexpr Formula<V.critDMG...> critDMG{};
 		};
@@ -207,6 +212,7 @@ namespace Modifiers {
 			.DMG = Formula(params.DMG...),
 			.additiveDMG = Formula(params.additiveDMG...),
 			.multiplicativeDMG = Formula(params.multiplicativeDMG...),
+			.elevation = Formula(params.elevation...),
 			.critRate = Formula(params.critRate...),
 			.critDMG = Formula(params.critDMG...),
 		};

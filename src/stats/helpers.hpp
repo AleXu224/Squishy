@@ -132,6 +132,8 @@ namespace Stats {
 				return sheet.additiveDMG;
 			case Misc::SkillStat::multiplicativeDMG:
 				return sheet.multiplicativeDMG;
+			case Misc::SkillStat::elevation:
+				return sheet.elevation;
 			case Misc::SkillStat::critRate:
 				return sheet.critRate;
 			case Misc::SkillStat::critDMG:
@@ -149,6 +151,8 @@ namespace Stats {
 				return Skill.additiveDMG;
 			case Misc::SkillStat::multiplicativeDMG:
 				return Skill.multiplicativeDMG;
+			case Misc::SkillStat::elevation:
+				return Skill.elevation;
 			case Misc::SkillStat::critRate:
 				return Skill.critRate;
 			case Misc::SkillStat::critDMG:
@@ -165,6 +169,8 @@ namespace Stats {
 				return Skill.additiveDMG.eval(ctx);
 			case Misc::SkillStat::multiplicativeDMG:
 				return Skill.multiplicativeDMG.eval(ctx);
+			case Misc::SkillStat::elevation:
+				return Skill.elevation.eval(ctx);
 			case Misc::SkillStat::critRate:
 				return Skill.critRate.eval(ctx);
 			case Misc::SkillStat::critDMG:
@@ -180,6 +186,8 @@ namespace Stats {
 				return Skill.additiveDMG.compile(ctx);
 			case Misc::SkillStat::multiplicativeDMG:
 				return Skill.multiplicativeDMG.compile(ctx);
+			case Misc::SkillStat::elevation:
+				return Skill.elevation.compile(ctx);
 			case Misc::SkillStat::critRate:
 				return Skill.critRate.compile(ctx);
 			case Misc::SkillStat::critDMG:
@@ -471,6 +479,7 @@ namespace Stats {
 		if constexpr (skillStat == Misc::SkillStat::DMG) return Skill.DMG;
 		if constexpr (skillStat == Misc::SkillStat::additiveDMG) return Skill.additiveDMG;
 		if constexpr (skillStat == Misc::SkillStat::multiplicativeDMG) return Skill.multiplicativeDMG;
+		if constexpr (skillStat == Misc::SkillStat::elevation) return Skill.elevation;
 		if constexpr (skillStat == Misc::SkillStat::critRate) return Skill.critRate;
 		if constexpr (skillStat == Misc::SkillStat::critDMG) return Skill.critDMG;
 	}

@@ -6,6 +6,6 @@
 
 
 namespace UI {
-	[[nodiscard]] squi::Children decodeModsSheet(Stats::ModsSheet &sheet, const Formula::Context &ctx);
+	[[nodiscard]] squi::Children decodeModsSheet(const Stats::ModsSheet &sheet, const Formula::Context &ctx, bool *transparent = nullptr);
 	[[nodiscard]] squi::Children decodeOption(const Option::Types &option, const Formula::Context &ctx);
 }// namespace UI

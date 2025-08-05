@@ -53,6 +53,20 @@ namespace Formula {
 		}
 	};
 
+	struct CharacterMoonsignLevel {
+		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
+			return context.source.stats.sheet.moonsignLevel.compile(context);
+		}
+
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("Character Moonsign Level {}", eval(context));
+		}
+
+		[[nodiscard]] inline int32_t eval(const Context &context) const {
+			return context.source.stats.sheet.moonsignLevel.eval(context);
+		}
+	};
+
 	struct IsCharacterWeaponType {
 		Misc::WeaponType type;
 

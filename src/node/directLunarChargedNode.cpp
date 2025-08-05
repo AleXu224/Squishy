@@ -16,16 +16,19 @@ namespace Node {
 	) {
 		auto totalDMG = modifier.DMG + Modifiers::total().lunarCharged.DMG;
 		auto totalMultiplicativeDMG = modifier.multiplicativeDMG + Modifiers::total().lunarCharged.multiplicativeDMG;
+		auto totalElevation = modifier.elevation + Modifiers::total().lunarCharged.elevation;
 		auto totalCritRate = Formula::Clamp(modifier.critRate + Modifiers::total().lunarCharged.critRate + Modifiers::total().cr, 0.f, 1.f);
 		auto totalCritDMG = modifier.critDMG + Modifiers::total().lunarCharged.critDMG + Modifiers::total().cd;
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula;
+		auto elevation = 1.0f + totalElevation;
 		auto emBonus = (6.f * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
 		auto dmgBonus = (1.0f + emBonus + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 		auto enemy = Formula::EnemyResMultiplier(Misc::AttackSource::burst, element);
 
 		return multiplier
+			 * elevation
 			 * dmgBonus
 			 * crit
 			 * enemy

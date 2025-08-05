@@ -130,16 +130,19 @@ namespace Node {
 		auto totalDMG = _getTotal<Misc::SkillStat::DMG>(element, source, modifier.DMG);
 		auto totalAdditiveDMG = _getTotal<Misc::SkillStat::additiveDMG>(element, source, modifier.additiveDMG) + Formula::AdditiveMultiplier{};
 		auto totalMultiplicativeDMG = _getTotal<Misc::SkillStat::multiplicativeDMG>(element, source, modifier.multiplicativeDMG);
+		auto totalElevation = _getTotal<Misc::SkillStat::elevation>(element, source, modifier.elevation);
 		auto totalCritRate = Formula::Clamp(_getTotal<Misc::SkillStat::critRate>(element, source, modifier.critRate) + Modifiers::total().cr, 0.f, 1.f);
 		auto totalCritDMG = _getTotal<Misc::SkillStat::critDMG>(element, source, modifier.critDMG) + Modifiers::total().cd;
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
+		auto elevation = 1.0f + totalElevation;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier(source, element);
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return multiplier
+			 * elevation
 			 * dmgBonus
 			 * crit
 			 * enemy
