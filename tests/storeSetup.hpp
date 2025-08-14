@@ -13,22 +13,23 @@
 		Character::list = {{::testCharacter.key, ::testCharacter}};
 		Weapon::list = {{::testWeapon.key, ::testWeapon}};
 
-		Character::InstanceKey characterKey{0};
-		Weapon::InstanceKey weaponKey{0};
+		Character::InstanceKey characterKey{1};
+		Weapon::InstanceKey weaponKey{1};
 
-		Store::weapons.insert({weaponKey, Weapon::Instance(::testWeapon.key, weaponKey)});
-		Store::characters.insert({characterKey, Character::Instance(characterKey, ::testCharacter.key, weaponKey)});
-		Store::teams.insert({{0}, Team::Instance{}});
-		Store::enemies.insert({0, Enemy::Instance{}});
+		auto weapIt = Store::weapons.insert({weaponKey, Weapon::Instance(::testWeapon.key, weaponKey)});
+		auto charIt = Store::characters.insert({characterKey, Character::Instance(characterKey, ::testCharacter.key)});
+		charIt.first->second.state.equippedLoadout.swapWeapon(weapIt.first->first);
+		Store::teams.insert({{1}, Team::Instance{}});
+		Store::enemies.insert({1, Enemy::Instance{}});
 
 		return true;
 	}();
 
 	return Formula::Context{
-		.source = Store::characters.at({0}).loadout,
-		.active = Store::characters.at({0}).loadout,
-		.team = Store::teams.at({0}).stats,
-		.enemy = Store::enemies.at(0).stats,
+		.source = Store::characters.at({1}).state,
+		.active = Store::characters.at({1}).state,
+		.team = Store::teams.at({1}).stats,
+		.enemy = Store::enemies.at(1).stats,
 	};
 }
 

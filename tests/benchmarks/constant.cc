@@ -28,12 +28,12 @@ TEST_CASE("Constant", "[Bench]") {
 		return stat.eval(ctx);
 	};
 
-	const auto &formulaTotalHp = Modifiers::total.hp;
+	const auto &formulaTotalHp = Modifiers::total().hp;
 	BENCHMARK("StatPtr") {
 		return formulaTotalHp.eval(ctx);
 	};
 
-	const auto &formulaSkillDMG = Modifiers::total.skill.DMG;
+	const auto &formulaSkillDMG = Modifiers::total().skill.DMG;
 	BENCHMARK("skillPtr") {
 		return formulaSkillDMG.eval(ctx);
 	};

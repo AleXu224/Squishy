@@ -12,13 +12,14 @@
 #include "character/data.hpp"
 #include "characterEditor.hpp"
 #include "characterLoadouts.hpp"
-#include "formula/stat.hpp"
 #include "store.hpp"
+
+#include "modifiers/total/total.hpp"
+#include "stats/loadout.hpp"
 
 #include "image.hpp"
 #include "row.hpp"
 #include "stack.hpp"
-#include "stats/loadout.hpp"
 #include "theme.hpp"
 
 using namespace squi;
@@ -65,12 +66,9 @@ UI::CharacterStats::operator squi::Child() const {
 			Children ret2{};
 
 			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				auto message = Formula::EvalStat(Modifiers::displayTotal(), stat, [&](auto &&val) {
-					return val.print(ctx, Formula::Step::none);
-				});
-				auto value = Formula::EvalStat(Modifiers::displayTotal(), stat, [&](auto &&val) {
-					return val.eval(ctx);
-				});
+				auto formula = Stats::fromStat(Modifiers::displayTotal(), stat);
+				auto message = formula.print(ctx);
+				auto value = formula.eval(ctx);
 				ret2.emplace_back(UI::Tooltip{
 					.message = message,
 					.child = UI::StatDisplay{
