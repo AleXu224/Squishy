@@ -4,10 +4,12 @@
 #include "character/instance.hpp"
 #include "fmt/core.h"
 #include "formula/character.hpp"
+#include "formula/clamp.hpp"
 #include "formula/compiled/teamCharacter.hpp"
 #include "formula/constant.hpp"
 #include "formula/operators.hpp"
 #include "intermediary.hpp"
+#include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 #include <algorithm>
@@ -148,6 +150,106 @@ namespace Formula {
 			if (characterInfusion.has_value()) return characterInfusion;
 
 			return context.team.infusion.eval(context);
+		}
+	};
+
+	struct NonMoonsignCharacterBuff {
+		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
+			using namespace Formula::Operators;
+
+			if (context.source.stats.sheet.moonsignLevel.eval(context) < 1) {
+				return Formula::Constant{0.0f}.compile(context);
+			}
+
+			Formula::NodeType<float> totalBuff = Formula::Constant{0.0f};
+
+			switch (context.source.stats.base.element) {
+				case Misc::Element::pyro:
+				case Misc::Element::electro:
+				case Misc::Element::cryo:
+					totalBuff = totalBuff + (Modifiers::total().atk * Formula::Constant{0.009f});
+					break;
+				case Misc::Element::hydro:
+					totalBuff = totalBuff + (Modifiers::total().hp * Formula::Constant{0.0006f});
+					break;
+				case Misc::Element::geo:
+					totalBuff = totalBuff + (Modifiers::total().def * Formula::Constant{0.01f});
+					break;
+				case Misc::Element::anemo:
+				case Misc::Element::dendro:
+					totalBuff = totalBuff + (Modifiers::total().em * Formula::Constant{0.0225f});
+					break;
+				default:
+					break;
+			}
+
+			return totalBuff.compile(context);
+		}
+
+		[[nodiscard]] std::string print(const Formula::Context &context, Step) const {
+			return fmt::format("Non-Moonsign Character Buff: {}", eval(context));
+		}
+
+		[[nodiscard]] float eval(const Formula::Context &context) const {
+			if (CharacterMoonsignLevel{}.eval(context) < 1) {
+				return 0.0f;
+			}
+
+			float totalBuff = 0.0f;
+
+			switch (context.source.stats.base.element) {
+				case Misc::Element::pyro:
+				case Misc::Element::electro:
+				case Misc::Element::cryo:
+					totalBuff += 0.009f * Modifiers::total().atk.eval(context);
+					break;
+				case Misc::Element::hydro:
+					totalBuff += 0.0006 * Modifiers::total().hp.eval(context);
+					break;
+				case Misc::Element::geo:
+					totalBuff += 0.01f * Modifiers::total().def.eval(context);
+					break;
+				case Misc::Element::anemo:
+				case Misc::Element::dendro:
+					totalBuff += 0.0225f * Modifiers::total().em.eval(context);
+					break;
+				default:
+					break;
+			}
+
+			return totalBuff;
+		}
+	};
+
+	struct NonMoonsignCharacterTeamBuff {
+		[[nodiscard]] static Compiled::FloatNode compile(const Context &context) {
+			using namespace Formula::Operators;
+			auto totalBuff = TeamCharacter{.index = 0, .formula = NonMoonsignCharacterBuff{}}
+						   + TeamCharacter{.index = 1, .formula = NonMoonsignCharacterBuff{}}
+						   + TeamCharacter{.index = 2, .formula = NonMoonsignCharacterBuff{}}
+						   + TeamCharacter{.index = 3, .formula = NonMoonsignCharacterBuff{}};
+
+			Formula::Min ret{
+				.val1 = totalBuff,
+				.val2 = 0.36f,
+			};
+			return ret.compile(context);
+		}
+
+		[[nodiscard]] static std::string print(const Context &context, Step step) {
+			return fmt::format("Non-Moonsign Character Team Buff: {}", eval(context));
+		}
+
+		[[nodiscard]] static float eval(const Context &context) {
+			float totalBuff = 0.f;
+			static constexpr auto formula = NonMoonsignCharacterBuff{};
+
+			for (const auto &character: context.team.characters) {
+				if (!character) continue;
+				totalBuff += formula.eval(context.withSource(character->state));
+			}
+
+			return std::min(totalBuff, 0.36f);
 		}
 	};
 

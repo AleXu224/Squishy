@@ -39,6 +39,14 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 			+ Formula::Requires(IsActive("teamDendroCond2"), Formula::ConstantFlat(20.f))
 	);
 
+	// Moonsign team effects
+	{
+		Formula::NonMoonsignCharacterTeamBuff moonsignBuff{};
+		resonances.lunarCharged.DMG.modifiers.at(0) = moonsignBuff;
+		resonances.lunarBloom.DMG.modifiers.at(0) = moonsignBuff;
+	}
+
+
 	options.insert({
 		Utils::HashedString("teamCryoCond"),
 		Option::Boolean{
