@@ -138,6 +138,12 @@ namespace Stats {
 			void updateStats() {
 				this->sheet = getSheet();
 			}
+
+			[[nodiscard]] std::pair<::Artifact::SetKey, ::Artifact::SetKey> getSets() const {
+				::Artifact::SetKey twoPc = this->set1.key;
+				::Artifact::SetKey fourPc = this->set1.type == Set::Type::fourPc ? this->set1.key : this->set2;
+				return {twoPc, fourPc};
+			}
 		};
 
 		std::variant<Slotted, Theorycraft> equipped{};

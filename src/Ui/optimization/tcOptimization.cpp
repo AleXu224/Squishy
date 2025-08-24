@@ -5,14 +5,12 @@
 #include "column.hpp"
 #include "container.hpp"
 #include "expander.hpp"
-#include "optimization/optimize.hpp"
+#include "optimization/optimizeTc.hpp"
+#include "rebuilder.hpp"
 #include "row.hpp"
 #include "store.hpp"
 #include "tcOptimizationSettings.hpp"
 #include "theme.hpp"
-
-
-#include "optimization/solution.hpp"
 
 
 using namespace squi;
@@ -28,7 +26,7 @@ UI::TCOptimization::operator squi::Child() const {
 		.enemy = enemy.stats,
 	};
 
-	Observable<::Optimization::Solutions> solutionsEvent;
+	VoidObservable applyNewSettingsEvent;
 
 	auto theme = ThemeManager::getTheme();
 
@@ -88,7 +86,7 @@ UI::TCOptimization::operator squi::Child() const {
 											ret.borderRadius = ret.borderRadius.withLeft(0.f);
 											return ret;
 										}(),
-										.onClick = [ctx, &character, storage = character.optimizationOptions, solutionsEvent](auto) {
+										.onClick = [ctx, &character, storage = character.optimizationOptions, applyNewSettingsEvent](auto) {
 											if (!storage->nodeSource.has_value()) return;
 											auto &&node = std::visit(
 												[&](auto &&node) {
@@ -98,23 +96,44 @@ UI::TCOptimization::operator squi::Child() const {
 												},
 												storage->nodeSource.value()
 											);
-											auto [twoPc, fourPc] = storage->makeEnabledSets();
-											::Optimization::Optimization optimization{
+											auto [twoPc, fourPc] = character.state.loadout().artifact.getTheorycraft().getSets();
+											::Optimization::TCOptimization optimization{
 												.character = character,
 												.ctx = ctx,
 												.optimizedNode = node,
-												.options = *storage,
+												.options{
+													.nodeSource = storage->nodeSource,
+													.twoPcSet = twoPc,
+													.fourPcSet = fourPc,
+												},
 											};
-											solutionsEvent.notify(optimization.optimize());
+											auto solution = optimization.optimize();
+
+											auto &loadout = character.state.loadout().artifact.getTheorycraft();
+											for (const auto &stat: Stats::subStats) {
+												loadout.fromStat(stat) = solution.artifacts.fromStat(stat);
+											}
+											loadout.updateStats();
+											character.state.loadout().artifact.refreshStats();
+											character.updateEvent.notify();
+
+											applyNewSettingsEvent.notify();
 										},
 									},
 								},
 							},
 						},
 					},
-					TCOptimizationSettings{
-						.character = character,
-						.ctx = ctx,
+					Rebuilder{
+						.rebuildEvent = applyNewSettingsEvent,
+						.buildFunc = [ctx = ctx, &character = character, theme]() -> Child {
+							auto _ = ThemeManager::pushTheme(theme);
+
+							return TCOptimizationSettings{
+								.character = character,
+								.ctx = ctx,
+							};
+						},
 					},
 				},
 			},
