@@ -1,4 +1,6 @@
 #include "directLunarChargedNode.hpp"
+
+#include <utility>
 #include "formula/clamp.hpp"
 #include "formula/enemy.hpp"
 #include "formula/operators.hpp"
@@ -12,7 +14,7 @@ namespace Node {
 	Formula::FloatNode DirectLunarCharged::_getFormula(
 		Misc::Element element,
 		Formula::FloatNode formula,
-		Formula::Modifier modifier
+		const Formula::Modifier &modifier
 	) {
 		auto totalDMG = modifier.DMG + Modifiers::total().lunarCharged.DMG;
 		auto totalMultiplicativeDMG = modifier.multiplicativeDMG + Modifiers::total().lunarCharged.multiplicativeDMG;
@@ -20,7 +22,7 @@ namespace Node {
 		auto totalCritRate = Formula::Clamp(modifier.critRate + Modifiers::total().lunarCharged.critRate + Modifiers::total().cr, 0.f, 1.f);
 		auto totalCritDMG = modifier.critDMG + Modifiers::total().lunarCharged.critDMG + Modifiers::total().cd;
 
-		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula;
+		auto multiplier = (1.0f + totalMultiplicativeDMG) * std::move(formula);
 		auto elevation = 1.0f + totalElevation;
 		auto emBonus = (6.f * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
 		auto dmgBonus = (1.0f + emBonus + totalDMG);

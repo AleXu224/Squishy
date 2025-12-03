@@ -112,16 +112,16 @@ namespace Formula {
 	};
 
 	struct TeamCharacterCount {
-		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
+		[[nodiscard]] static Compiled::IntNode compile(const Context &context) {
 			return Compiled::ConstantInt{.value = eval(context)};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Team character count {}", eval(context));
 		}
 
-		[[nodiscard]] int32_t eval(const Context &context) const {
-			uint32_t ret = 0;
+		[[nodiscard]] static int32_t eval(const Context &context) {
+			int32_t ret = 0;
 			for (const auto &character: context.team.characters) {
 				if (character) ret++;
 			}
@@ -154,7 +154,7 @@ namespace Formula {
 	};
 
 	struct NonMoonsignCharacterBuff {
-		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
+		[[nodiscard]] static Compiled::FloatNode compile(const Formula::Context &context) {
 			using namespace Formula::Operators;
 
 			if (context.source.stats.sheet.moonsignLevel.eval(context) < 1) {
@@ -186,11 +186,11 @@ namespace Formula {
 			return totalBuff.compile(context);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Step) const {
+		[[nodiscard]] static std::string print(const Formula::Context &context, Step) {
 			return fmt::format("Non-Moonsign Character Buff: {}", eval(context));
 		}
 
-		[[nodiscard]] float eval(const Formula::Context &context) const {
+		[[nodiscard]] static float eval(const Formula::Context &context) {
 			if (CharacterMoonsignLevel{}.eval(context) < 1) {
 				return 0.0f;
 			}
@@ -204,7 +204,7 @@ namespace Formula {
 					totalBuff += 0.009f * Modifiers::total().atk.eval(context);
 					break;
 				case Misc::Element::hydro:
-					totalBuff += 0.0006 * Modifiers::total().hp.eval(context);
+					totalBuff += 0.0006f * Modifiers::total().hp.eval(context);
 					break;
 				case Misc::Element::geo:
 					totalBuff += 0.01f * Modifiers::total().def.eval(context);
@@ -236,7 +236,7 @@ namespace Formula {
 			return ret.compile(context);
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step step) {
+		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Non-Moonsign Character Team Buff: {}", eval(context));
 		}
 
@@ -309,7 +309,9 @@ namespace Formula {
 
 			std::sort(values.begin(), values.end(), std::greater<float>());
 
-			return values.at(0) + values.at(1) * 0.5f + (values.at(2) + values.at(3)) * (1.f / 6.f);
+			return values.at(0)
+				 + (values.at(1) * 0.5f)
+				 + ((values.at(2) + values.at(3)) * (1.f / 12.f));
 		}
 	};
 }// namespace Formula

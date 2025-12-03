@@ -23,7 +23,9 @@ namespace Formula::Compiled {
 
 			std::sort(vals.begin(), vals.end(), std::greater<float>());
 
-			return vals.at(0) + vals.at(1) * 0.5f + (vals.at(2) + vals.at(3)) * (1.f / 6.f);
+			return vals.at(0)
+				 + (vals.at(1) * 0.5f)
+				 + ((vals.at(2) + vals.at(3)) * (1.f / 12.f));
 		}
 
 		[[nodiscard]] std::string print() const {

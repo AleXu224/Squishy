@@ -16,7 +16,7 @@ namespace Node {
 		[[nodiscard]] static Formula::FloatNode _getFormula(
 			Misc::Element element,
 			Formula::FloatNode formula,
-			Formula::Modifier modifier
+			const Formula::Modifier &modifier
 		);
 
 		Formula::FloatNode _formula = _getFormula(element, formula, modifier);
