@@ -104,8 +104,8 @@ namespace Modifiers {
 		constexpr SheetMemberIdentifier(LevelableTalent talent) : _type(Type::talent), _uni{.talent = talent} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyStat enemyStat) : _type(Type::enemyStat), _uni{.enemyStat = enemyStat} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyResistances enemyRes, Misc::Element element) : _type(Type::enemyRes), _uni{.enemyRes{enemyRes, element}} {}
-		constexpr SheetMemberIdentifier(Infusion infusion) : _type(Type::infusion), _uni{.infusion{}} {}
-		constexpr SheetMemberIdentifier(MoonsignLevel infusion) : _type(Type::moonsignLevel), _uni{.moonsignLevel{}} {}
+		constexpr SheetMemberIdentifier(Infusion) : _type(Type::infusion), _uni{.infusion{}} {}
+		constexpr SheetMemberIdentifier(MoonsignLevel) : _type(Type::moonsignLevel), _uni{.moonsignLevel{}} {}
 		static constexpr SheetMemberIdentifier infusion() {
 			return Infusion{};
 		}
@@ -154,7 +154,6 @@ namespace Modifiers {
 				case Type::enemyRes:
 					return true;
 				case Type::infusion:
-					return false;
 				case Type::moonsignLevel:
 					return false;
 			}

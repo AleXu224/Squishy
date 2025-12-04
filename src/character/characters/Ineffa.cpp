@@ -1,7 +1,6 @@
 #include "Ineffa.hpp"
 
 #include "character/setup.hpp"
-#include "node/directLunarChargedNode.hpp"
 
 const Character::Data Character::Datas::ineffa{
 	.key{10000116},
@@ -183,7 +182,7 @@ const Character::Data Character::Datas::ineffa{
 					},
 				},
 				.passive1{
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Birgitta Additional Attack",
 						.formula = 0.65f * total.atk,
 					},
@@ -197,13 +196,13 @@ const Character::Data Character::Datas::ineffa{
 					},
 				},
 				.constellation2{
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Punishment Edict DMG",
 						.formula = 3.f * total.atk,
 					},
 				},
 				.constellation6{
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "DMG",
 						.formula = 1.35f * total.atk,
 					},

@@ -4,7 +4,6 @@
 #include "formula/enemy.hpp"
 #include "formula/multiplier.hpp"
 #include "formula/operators.hpp"
-#include "formula/teamCharacter.hpp"
 #include "misc/element.hpp"
 #include "string_view"
 
@@ -177,9 +176,18 @@ namespace Reaction {
 					Misc::Element::electro,
 					Misc::Element::hydro,
 				},
-				.formula = Formula::LunarDmgDistribution{
-					.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCharged, 1.8f, Misc::Element::electro),
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCharged, 1.8f, Misc::Element::electro),
+			};
+			const static inline Reaction::Transformative lunarCrystalize = Reaction::Transformative{
+				.name = "Lunar-Crystalize",
+				.multiplier = .96f,
+				.damageElement = Misc::Element::geo,
+				.modifier = Modifiers::total().lunarCrystalize,
+				.triggers{
+					Misc::Element::geo,
+					Misc::Element::hydro,
 				},
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystalize, .96f, Misc::Element::geo),
 			};
 		};
 	}// namespace List

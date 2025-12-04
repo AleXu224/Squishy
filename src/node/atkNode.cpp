@@ -109,10 +109,10 @@ namespace Node {
 	};
 
 	template<Misc::SkillStat skillStat>
-	[[nodiscard]] constexpr auto _getTotal(
+	[[nodiscard]] static constexpr auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
 		Misc::AttackSource atkSource,
-		auto formula
+		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
 		auto elementStats = _NodeElement<skillStat>(attackElement, atkSource);
@@ -124,8 +124,8 @@ namespace Node {
 	Formula::FloatNode Atk::_getFormula(
 		const Utils::JankyOptional<Misc::Element> &element,
 		Misc::AttackSource source,
-		Formula::FloatNode formula,
-		Formula::Modifier modifier
+		const Formula::FloatNode &formula,
+		const Formula::Modifier &modifier
 	) {
 		auto totalDMG = _getTotal<Misc::SkillStat::DMG>(element, source, modifier.DMG);
 		auto totalAdditiveDMG = _getTotal<Misc::SkillStat::additiveDMG>(element, source, modifier.additiveDMG) + Formula::AdditiveMultiplier{};

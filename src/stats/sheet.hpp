@@ -154,6 +154,7 @@ namespace Stats {
 
 		_SkillValue lunarCharged{};
 		_SkillValue lunarBloom{};
+		_SkillValue lunarCrystalize{};
 
 		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);

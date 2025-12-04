@@ -4,6 +4,7 @@
 #include "formula/formulaContext.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/element.hpp"
+#include "misc/lunarDamageType.hpp"
 #include "stats/sheet.hpp"
 #include "utils/entryType.hpp"
 #include "utils/optional.hpp"
@@ -37,7 +38,11 @@ namespace Node {
 		Stats::ModsSheet mods;
 	};
 
-	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ShieldData, ModsData>;
+	struct DirectLunarData {
+		Misc::LunarDamageType damageType;
+	};
+
+	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ShieldData, ModsData, DirectLunarData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
@@ -58,6 +63,9 @@ namespace Node {
 					return false;
 				},
 				[](const ModsData &) {
+					return false;
+				},
+				[](const DirectLunarData &) {
 					return false;
 				},
 			},

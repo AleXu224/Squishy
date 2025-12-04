@@ -24,6 +24,17 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const ModsData &) {
 				return Utils::elementToColor(Misc::Element::physical);
 			},
+			[&](const DirectLunarData &node) {
+				switch (node.damageType) {
+					case Misc::LunarDamageType::lunarCharged:
+						return squi::Color::css(236, 184, 255);
+					case Misc::LunarDamageType::lunarBloom:
+						return Utils::elementToColor(Misc::Element::dendro);
+					case Misc::LunarDamageType::lunarCrystalize:
+						return Utils::elementToColor(Misc::Element::geo);
+				}
+				std::unreachable();
+			},
 		},
 		data
 	);
@@ -31,10 +42,10 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 bool Node::getOptimizable(const Data &data) {
 	return std::visit(
 		Utils::overloaded{
-			[&](const AtkData &node) {
+			[&](const AtkData &) {
 				return true;
 			},
-			[&](const CustomAtkData &node) {
+			[&](const CustomAtkData &) {
 				return true;
 			},
 			[&](const InfoData &info) {
@@ -48,6 +59,9 @@ bool Node::getOptimizable(const Data &data) {
 			},
 			[&](const ModsData &) {
 				return false;
+			},
+			[&](const DirectLunarData &) {
+				return true;
 			},
 		},
 		data

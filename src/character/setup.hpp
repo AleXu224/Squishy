@@ -6,6 +6,7 @@
 #include "modifiers/total/total.hpp" // IWYU pragma: export
 #include "node/atkNode.hpp"          // IWYU pragma: export
 #include "node/customAtkNode.hpp"    // IWYU pragma: export
+#include "node/directLunar.hpp"      // IWYU pragma: export
 #include "node/healNode.hpp"         // IWYU pragma: export
 #include "node/infoNode.hpp"         // IWYU pragma: export
 #include "node/modsNode.hpp"         // IWYU pragma: export

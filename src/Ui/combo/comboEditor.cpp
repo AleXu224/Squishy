@@ -51,16 +51,16 @@ namespace {
 				[](const Combo::Source::Character &source) -> std::string {
 					return Utils::Stringify(source.slot);
 				},
-				[](const Combo::Source::Weapon &source) -> std::string {
+				[](const Combo::Source::Weapon &) -> std::string {
 					return "Weapon";
 				},
-				[](const Combo::Source::Artifact &source) -> std::string {
+				[](const Combo::Source::Artifact &) -> std::string {
 					return "Artifact";
 				},
-				[](const Combo::Source::Combo &source) -> std::string {
+				[](const Combo::Source::Combo &) -> std::string {
 					return "Combo";
 				},
-				[](const Combo::Source::TransformativeReaction &source) -> std::string {
+				[](const Combo::Source::TransformativeReaction &) -> std::string {
 					return "Transformative reaction";
 				},
 			},
@@ -142,7 +142,7 @@ namespace {
 								IconButton{
 									.icon = 0xe5cd,
 									.style = ButtonStyle::Subtle(),
-									.onClick = [&entry = entry, hash = option.hash](GestureDetector::Event event) {
+									.onClick = [&entry = entry, hash = option.hash](GestureDetector::Event) {
 										std::visit([&hash](auto &&entry) {
 											entry.options.erase(
 												std::remove_if(entry.options.begin(), entry.options.end(), [&](const Combo::Option &val) {
@@ -179,7 +179,7 @@ namespace {
 			auto node = Formula::ComboOptionOverride{
 				.overrides = options,
 				.node = Formula::Custom{
-					.compileFunc = [](const Formula::Context &ctx) {
+					.compileFunc = [](const Formula::Context &) {
 						return Formula::Compiled::ConstantFloat{.value = 0.f}.wrap();
 					},
 					.func = [&](const Formula::Context &ctx) {
@@ -209,7 +209,7 @@ namespace {
 																		[](const ::Combo::Entry &entry) {
 																			entry.optionUpdateEvent.notify();
 																		},
-																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &entry) {
+																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &) {
 																			nodeListChangedEvent.notify();
 																		},
 																	},
@@ -243,7 +243,7 @@ namespace {
 																		[](const ::Combo::Entry &entry) {
 																			entry.optionUpdateEvent.notify();
 																		},
-																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &entry) {
+																		[nodeListChangedEvent](const ::Combo::StateChangeEntry &) {
 																			nodeListChangedEvent.notify();
 																		},
 																	},
@@ -338,6 +338,9 @@ namespace {
 								[](const Node::HealData &data) {},
 								[](const Node::ShieldData &data) {},
 								[](const Node::ModsData &data) {},
+								[&](const Node::DirectLunarData &data) {
+									element = Misc::lunarDamageTypeToElement(data.damageType);
+								},
 							},
 							node.data
 						);
@@ -479,7 +482,7 @@ namespace {
 			auto deleteButton = IconButton{
 				.icon = 0xe5cd,
 				.style = ButtonStyle::Subtle(),
-				.onClick = [storage, entryPtr = &entry, nodeListChangedEvent](GestureDetector::Event event) {
+				.onClick = [storage, entryPtr = &entry, nodeListChangedEvent](GestureDetector::Event) {
 					storage->combo.entries.remove_if([entryPtr, nodeListChangedEvent](const Combo::EntryTypes &entry) {
 						return &entry == entryPtr;
 					});
@@ -495,7 +498,7 @@ namespace {
 				.icon = 0xe316,
 				.style = ButtonStyle::Standard(),
 				.disabled = &entry == &storage->combo.entries.front(),
-				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
+				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event) {
 					std::swap(entry, *std::next(it, -1));
 					nodeListChangedEvent.notify();
 				},
@@ -508,7 +511,7 @@ namespace {
 				.icon = 0xe313,
 				.style = ButtonStyle::Standard(),
 				.disabled = &entry == &storage->combo.entries.back(),
-				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event event) {
+				.onClick = [it, &entry, nodeListChangedEvent](GestureDetector::Event) {
 					std::swap(entry, *std::next(it, 1));
 					nodeListChangedEvent.notify();
 				},
@@ -602,7 +605,7 @@ UI::ComboEditor::operator squi::Child() const {
 						},
 						Button{
 							.text = "Add override",
-							.onClick = [storage, nodeListChangedEvent](GestureDetector::Event event) {
+							.onClick = [storage, nodeListChangedEvent](GestureDetector::Event) {
 								storage->combo.entries.emplace_back(Combo::StateChangeEntry{});
 								nodeListChangedEvent.notify();
 							},

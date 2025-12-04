@@ -2,7 +2,6 @@
 
 #include "character/setup.hpp"
 #include "formula/teamCharacter.hpp"
-#include "node/directLunarChargedNode.hpp"
 
 const Character::Data Character::Datas::flins{
 	.key{10000120},
@@ -216,11 +215,11 @@ const Character::Data Character::Datas::flins{
 						.source = Misc::AttackSource::burst,
 						.formula = Multiplier(total.atk, LevelableTalent::burst, {2.5984, 2.7933, 2.9882, 3.2480, 3.4429, 3.6378, 3.8976, 4.1574, 4.4173, 4.6771, 4.9370, 5.1968, 5.5216, 5.8464, 6.1712}),
 					},
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Lunar-Charged DMG Per Phase",
 						.formula = Multiplier(total.atk, LevelableTalent::burst, {0.2598, 0.2793, 0.2988, 0.3248, 0.3443, 0.3638, 0.3898, 0.4157, 0.4417, 0.4677, 0.4937, 0.5197, 0.5522, 0.5846, 0.6171}),
 					},
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Final Phase Lunar-Charged DMG",
 						.formula = Multiplier(total.atk, LevelableTalent::burst, {1.2992, 1.3966, 1.4941, 1.6240, 1.7214, 1.8189, 1.9488, 2.0787, 2.2086, 2.3386, 2.4685, 2.5984, 2.7608, 2.9232, 3.0856}),
 					},
@@ -232,11 +231,11 @@ const Character::Data Character::Datas::flins{
 						.name = "CD",
 						.formula = Multiplier(LevelableTalent::burst, {18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000, 18.0000}),
 					},
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Thunderous Symphony DMG",
 						.formula = Multiplier(total.atk, LevelableTalent::burst, {0.7795, 0.8380, 0.8964, 0.9744, 1.0329, 1.0913, 1.1693, 1.2472, 1.3252, 1.4031, 1.4811, 1.5590, 1.6565, 1.7539, 1.8514}),
 					},
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "Thunderous Symphony Additional DMG",
 						.formula = Multiplier(total.atk, LevelableTalent::burst, {1.1693, 1.2570, 1.3447, 1.4616, 1.5493, 1.6370, 1.7539, 1.8708, 1.9878, 2.1047, 2.2216, 2.3386, 2.4847, 2.6309, 2.7770}),
 					},
@@ -271,7 +270,7 @@ const Character::Data Character::Datas::flins{
 					},
 				},
 				.constellation2{
-					Node::DirectLunarCharged{
+					Node::DirectLunar{
 						.name = "DMG",
 						.formula = 0.5f * total.atk,
 					},

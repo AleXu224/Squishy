@@ -69,7 +69,7 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 }
 
 Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
+	const auto &ret = ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;
@@ -84,7 +84,7 @@ Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Opti
 }
 
 Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Weapon::list.at(key).data.nodes.at(index);
+	const auto &ret = ::Weapon::list.at(key).data.nodes.at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;
@@ -99,7 +99,7 @@ Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option>
 }
 
 Node::Instance Combo::Source::Artifact::resolve(const std::vector<::Combo::Option> &options) const {
-	auto &ret = ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
+	const auto &ret = ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
 
 	if (!options.empty()) {
 		auto nodeCopy = ret;
@@ -142,6 +142,8 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const std::vector<
 				return {Reaction::List::Transformative::hyperbloom.formula, "Hyperbloom", Reaction::List::Transformative::hyperbloom.damageElement};
 			case Misc::TransformativeReaction::lunarCharged:
 				return {Reaction::List::Transformative::lunarCharged.formula, "Lunar-Charged", Reaction::List::Transformative::lunarCharged.damageElement};
+			case Misc::TransformativeReaction::lunarCrystalize:
+				return {Reaction::List::Transformative::lunarCrystalize.formula, "Lunar-Crystalize", Reaction::List::Transformative::lunarCrystalize.damageElement};
 		}
 		std::unreachable();
 	}();

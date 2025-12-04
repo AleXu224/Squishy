@@ -18,8 +18,8 @@ namespace Node {
 		[[nodiscard]] static Formula::FloatNode _getFormula(
 			const Utils::JankyOptional<Misc::Element> &element,
 			Misc::AttackSource source,
-			Formula::FloatNode formula,
-			Formula::Modifier modifier
+			const Formula::FloatNode &formula,
+			const Formula::Modifier &modifier
 		);
 
 		Formula::FloatNode _formula = _getFormula(element, source, formula, modifier);
