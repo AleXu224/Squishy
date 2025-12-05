@@ -182,12 +182,12 @@ namespace Reaction {
 				.name = "Lunar-Crystalize",
 				.multiplier = .96f,
 				.damageElement = Misc::Element::geo,
-				.modifier = Modifiers::total().lunarCrystalize,
+				.modifier = Modifiers::total().lunarCrystallize,
 				.triggers{
 					Misc::Element::geo,
 					Misc::Element::hydro,
 				},
-				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystalize, .96f, Misc::Element::geo),
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystallize, .96f, Misc::Element::geo),
 			};
 		};
 	}// namespace List

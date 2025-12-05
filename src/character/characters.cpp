@@ -3,6 +3,7 @@
 #include "character/characters/Bennett.hpp"
 #include "character/characters/Chasca.hpp"
 #include "character/characters/Citlali.hpp"
+#include "character/characters/Columbina.hpp"
 #include "character/characters/Cyno.hpp"
 #include "character/characters/Escoffier.hpp"
 #include "character/characters/Flins.hpp"
@@ -21,6 +22,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::bennett.key, Character::Datas::bennett},
 		{Character::Datas::chasca.key, Character::Datas::chasca},
 		{Character::Datas::citlali.key, Character::Datas::citlali},
+		{Character::Datas::columbina.key, Character::Datas::columbina},
 		{Character::Datas::cyno.key, Character::Datas::cyno},
 		{Character::Datas::escoffier.key, Character::Datas::escoffier},
 		{Character::Datas::flins.key, Character::Datas::flins},

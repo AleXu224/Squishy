@@ -30,7 +30,7 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 						return squi::Color::css(236, 184, 255);
 					case Misc::LunarDamageType::lunarBloom:
 						return Utils::elementToColor(Misc::Element::dendro);
-					case Misc::LunarDamageType::lunarCrystalize:
+					case Misc::LunarDamageType::lunarCrystallize:
 						return Utils::elementToColor(Misc::Element::geo);
 				}
 				std::unreachable();

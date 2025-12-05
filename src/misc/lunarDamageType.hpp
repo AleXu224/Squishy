@@ -10,13 +10,13 @@ namespace Misc {
 	enum class LunarDamageType : uint8_t {
 		lunarCharged,
 		lunarBloom,
-		lunarCrystalize,
+		lunarCrystallize,
 	};
 
 	static inline std::vector<LunarDamageType> lunarDamageTypes{
 		LunarDamageType::lunarCharged,
 		LunarDamageType::lunarBloom,
-		LunarDamageType::lunarCrystalize,
+		LunarDamageType::lunarCrystallize,
 	};
 
 	static inline Misc::Element lunarDamageTypeToElement(LunarDamageType type) {
@@ -25,7 +25,7 @@ namespace Misc {
 				return Misc::Element::electro;
 			case LunarDamageType::lunarBloom:
 				return Misc::Element::dendro;
-			case LunarDamageType::lunarCrystalize:
+			case LunarDamageType::lunarCrystallize:
 				return Misc::Element::geo;
 		}
 		std::unreachable();
@@ -40,7 +40,7 @@ namespace Utils {
 				return "Lunar-Charged";
 			case Misc::LunarDamageType::lunarBloom:
 				return "Lunar-Bloom";
-			case Misc::LunarDamageType::lunarCrystalize:
+			case Misc::LunarDamageType::lunarCrystallize:
 				return "Lunar-Crystalize";
 		}
 		std::unreachable();

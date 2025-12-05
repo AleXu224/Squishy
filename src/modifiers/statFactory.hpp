@@ -72,7 +72,7 @@ namespace Modifiers {
 
 		static constexpr auto lunarCharged = Skill<&TT::lunarCharged>();
 		static constexpr auto lunarBloom = Skill<&TT::lunarBloom>();
-		static constexpr auto lunarCrystalize = Skill<&TT::lunarCrystalize>();
+		static constexpr auto lunarCrystallize = Skill<&TT::lunarCrystallize>();
 	};
 
 	struct StatNameFactory {
@@ -139,7 +139,7 @@ namespace Modifiers {
 
 		static constexpr auto lunarCharged = Skill<Misc::Reaction::lunarCharged>();
 		static constexpr auto lunarBloom = Skill<Misc::Reaction::lunarBloom>();
-		static constexpr auto lunarCrystalize = Skill<Misc::Reaction::lunarCrystalize>();
+		static constexpr auto lunarCrystallize = Skill<Misc::Reaction::lunarCrystallize>();
 		static constexpr auto moonsignLevel = Modifiers::SheetMemberIdentifier::moonsignLevel();
 	};
 
@@ -208,7 +208,7 @@ namespace Modifiers {
 
 		static constexpr _SkillValue<Params.lunarCharged...> lunarCharged{};
 		static constexpr _SkillValue<Params.lunarBloom...> lunarBloom{};
-		static constexpr _SkillValue<Params.lunarCrystalize...> lunarCrystalize{};
+		static constexpr _SkillValue<Params.lunarCrystallize...> lunarCrystallize{};
 	};
 
 	template<class T, class Formula>
@@ -279,7 +279,7 @@ namespace Modifiers {
 
 			.lunarCharged = statSkillValueFactory<T, Formula>(params.lunarCharged...),
 			.lunarBloom = statSkillValueFactory<T, Formula>(params.lunarBloom...),
-			.lunarCrystalize = statSkillValueFactory<T, Formula>(params.lunarCrystalize...),
+			.lunarCrystallize = statSkillValueFactory<T, Formula>(params.lunarCrystallize...),
 		};
 	}
 

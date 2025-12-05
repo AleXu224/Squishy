@@ -20,8 +20,8 @@ namespace Node {
 					return Stats::fromSkillStat(Modifiers::total().lunarCharged, skillStat);
 				case Misc::LunarDamageType::lunarBloom:
 					return Stats::fromSkillStat(Modifiers::total().lunarBloom, skillStat);
-				case Misc::LunarDamageType::lunarCrystalize:
-					return Stats::fromSkillStat(Modifiers::total().lunarCrystalize, skillStat);
+				case Misc::LunarDamageType::lunarCrystallize:
+					return Stats::fromSkillStat(Modifiers::total().lunarCrystallize, skillStat);
 			}
 			std::unreachable();
 		}
@@ -55,7 +55,7 @@ namespace Node {
 				return 3.f;
 			case Misc::LunarDamageType::lunarBloom:
 				return 1.f;
-			case Misc::LunarDamageType::lunarCrystalize:
+			case Misc::LunarDamageType::lunarCrystallize:
 				return 1.6f;
 		}
 		std::unreachable();
