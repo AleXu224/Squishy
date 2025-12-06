@@ -31,7 +31,9 @@ namespace Node {
 		std::vector<Node::Types> passive3{};
 		std::vector<Node::Types> constellation1{};
 		std::vector<Node::Types> constellation2{};
+		std::vector<Node::Types> constellation3{};
 		std::vector<Node::Types> constellation4{};
+		std::vector<Node::Types> constellation5{};
 		std::vector<Node::Types> constellation6{};
 
 		[[nodiscard]] static auto getMembers() {
@@ -46,7 +48,9 @@ namespace Node {
 				&CharacterList::passive3,
 				&CharacterList::constellation1,
 				&CharacterList::constellation2,
+				&CharacterList::constellation3,
 				&CharacterList::constellation4,
+				&CharacterList::constellation5,
 				&CharacterList::constellation6,
 			};
 		}
@@ -73,8 +77,12 @@ namespace Node {
 					return constellation1;
 				case CharacterSlot::constellation2:
 					return constellation2;
+				case CharacterSlot::constellation3:
+					return constellation3;
 				case CharacterSlot::constellation4:
 					return constellation4;
+				case CharacterSlot::constellation5:
+					return constellation5;
 				case CharacterSlot::constellation6:
 					return constellation6;
 			}

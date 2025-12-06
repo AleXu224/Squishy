@@ -21,12 +21,16 @@ namespace Reaction {
 
 	[[nodiscard]] static Formula::FloatNode makeLunarTransformativeFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Element element) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
+
+		const auto &allLunar = Modifiers::total().allLunar;
+		const auto &elemental = Stats::fromElement(Modifiers::total(), element);
+
 		auto emBonus = (Formula::ConstantFlat(6.f) * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
-		auto reactionBaseMultiplier = modifier.multiplicativeDMG;
-		auto reactionElevation = modifier.elevation;
-		auto reactionBonus = modifier.DMG;
+		auto reactionBaseMultiplier = modifier.multiplicativeDMG + allLunar.multiplicativeDMG;
+		auto reactionElevation = modifier.elevation + allLunar.elevation;
+		auto reactionBonus = modifier.DMG + allLunar.DMG;
 		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
-		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate + Modifiers::total().cr, 0.f, 1.f) * (modifier.critDMG + Modifiers::total().cd);
+		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate + allLunar.critRate + elemental.critRate + Modifiers::total().cr, 0.f, 1.f) * (modifier.critDMG + allLunar.critDMG + elemental.critDMG + Modifiers::total().cd);
 		return Formula::Constant(multiplier)
 			 * levelMultiplier
 			 * (1.f + reactionBaseMultiplier)

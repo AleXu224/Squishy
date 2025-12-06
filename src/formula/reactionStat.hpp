@@ -46,8 +46,10 @@ namespace Formula {
 					return Stats::fromSkillStat(Modifiers::total().lunarCharged, skillStat);
 				case Misc::Reaction::lunarBloom:
 					return Stats::fromSkillStat(Modifiers::total().lunarBloom, skillStat);
-				case Misc::Reaction::lunarCrystalize:
+				case Misc::Reaction::lunarCrystallize:
 					return Stats::fromSkillStat(Modifiers::total().lunarCrystallize, skillStat);
+				case Misc::Reaction::allLunar:
+					return Stats::fromSkillStat(Modifiers::total().allLunar, skillStat);
 			}
 			std::unreachable();
 		}

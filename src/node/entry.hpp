@@ -18,7 +18,9 @@ namespace Node {
 		passive3 = 11,
 		constellation1 = 7,
 		constellation2 = 8,
+		constellation3 = 12,
 		constellation4 = 9,
+		constellation5 = 13,
 		constellation6 = 10,
 	};
 
@@ -33,7 +35,9 @@ namespace Node {
 		CharacterSlot::passive3,
 		CharacterSlot::constellation1,
 		CharacterSlot::constellation2,
+		CharacterSlot::constellation3,
 		CharacterSlot::constellation4,
+		CharacterSlot::constellation5,
 		CharacterSlot::constellation6,
 	};
 }// namespace Node
@@ -62,8 +66,12 @@ namespace Utils {
 				return "Constellation 1";
 			case Node::CharacterSlot::constellation2:
 				return "Constellation 2";
+			case Node::CharacterSlot::constellation3:
+				return "Constellation 3";
 			case Node::CharacterSlot::constellation4:
 				return "Constellation 4";
+			case Node::CharacterSlot::constellation5:
+				return "Constellation 5";
 			case Node::CharacterSlot::constellation6:
 				return "Constellation 6";
 		}

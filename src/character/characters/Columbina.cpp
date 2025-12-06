@@ -12,8 +12,8 @@ const Character::Data Character::Datas::columbina{
 		.baseDef = 40.086,
 		.ascensionStat = Stat::cr,
 		.rarity = 5,
-		.c3Talent = ConstellationTalent::burst,
-		.c5Talent = ConstellationTalent::skill,
+		.c3Talent = ConstellationTalent::skill,
+		.c5Talent = ConstellationTalent::burst,
 		.element = Misc::Element::hydro,
 		.weaponType = Misc::WeaponType::catalyst,
 		.hpCurve = Curves::CharacterGrow::HP_S5,
@@ -40,22 +40,131 @@ const Character::Data Character::Datas::columbina{
 			.ret = 0.05f * a1Cond,
 		};
 
+		auto p3Buff = Min{
+			.val1 = total.hp / ConstantFlat(1000.f) * 0.002f,
+			.val2 = 0.07f,
+		};
+
+		auto c1Elevation = Requires{
+			.requirement = Requirement::constellation1,
+			.ret = Constant(0.03f),
+		};
+
+		auto c2CondLunarCharged = IsActive("columbinaC2LunarBrillianceLunarCharged");
+		auto c2CondLunarBloom = IsActive("columbinaC2LunarBrillianceLunarBloom");
+		auto c2CondLunarCrystallize = IsActive("columbinaC2LunarBrillianceLunarCrystallize");
+		auto c2BuffLunarCharged = Requires{
+			.requirement = Requirement::constellation2 && c2CondLunarCharged && Requirement::ascendantGleam,
+			.ret = 0.007f * total.hp,
+		};
+		auto c2BuffLunarBloom = Requires{
+			.requirement = Requirement::constellation2 && c2CondLunarBloom && Requirement::ascendantGleam,
+			.ret = 0.0035f * total.hp,
+		};
+		auto c2BuffLunarCrystallize = Requires{
+			.requirement = Requirement::constellation2 && c2CondLunarCrystallize && Requirement::ascendantGleam,
+			.ret = 0.007f * total.hp,
+		};
+		auto c2HpBuff = Requires{
+			.requirement = Requirement::constellation2 && (c2CondLunarCharged || c2CondLunarBloom || c2CondLunarCrystallize),
+			.ret = Constant(0.20f),
+		};
+		auto c2Elevation = Requires{
+			.requirement = Requirement::constellation2,
+			.ret = Constant(0.03f),
+		};
+
+		auto c3Elevation = Requires{
+			.requirement = Requirement::constellation3,
+			.ret = Constant(0.03f),
+		};
+
+		auto c4CondLunarCharged = IsActive("columbinaC4KuuvahkiInterferenceLunarCharged");
+		auto c4CondLunarBloom = IsActive("columbinaC4KuuvahkiInterferenceLunarBloom");
+		auto c4CondLunarCrystallize = IsActive("columbinaC4KuuvahkiInterferenceLunarCrystallize");
+		auto c4BuffLunarCharged = Requires{
+			.requirement = Requirement::constellation4 && c4CondLunarCharged,
+			.ret = Constant(0.125f) * total.hp,
+		};
+		auto c4BuffLunarBloom = Requires{
+			.requirement = Requirement::constellation4 && c4CondLunarBloom,
+			.ret = Constant(0.025f) * total.hp,
+		};
+		auto c4BuffLunarCrystallize = Requires{
+			.requirement = Requirement::constellation4 && c4CondLunarCrystallize,
+			.ret = Constant(0.125f) * total.hp,
+		};
+		auto c4LunarBuff = Requires{
+			.requirement = Requirement::constellation4,
+			.ret = Constant(0.03f),
+		};
+		auto c4Elevation = Requires{
+			.requirement = Requirement::constellation4,
+			.ret = Constant(0.03f),
+		};
+
+		auto c5Elevation = Requires{
+			.requirement = Requirement::constellation5,
+			.ret = Constant(0.03f),
+		};
+
+		auto c6CondLunarCharged = IsActive("columbinaC6LunarCharged");
+		auto c6CondLunarBloom = IsActive("columbinaC6LunarBloom");
+		auto c6CondLunarCrystallize = IsActive("columbinaC6LunarCrystallize");
+		auto c6BuffLunarCharged = Requires{
+			.requirement = Requirement::constellation6 && c6CondLunarCharged,
+			.ret = Constant(0.8f),
+		};
+		auto c6BuffLunarBloom = Requires{
+			.requirement = Requirement::constellation6 && c6CondLunarBloom,
+			.ret = Constant(0.8f),
+		};
+		auto c6BuffLunarCrystallize = Requires{
+			.requirement = Requirement::constellation6 && c6CondLunarCrystallize,
+			.ret = Constant(0.8f),
+		};
+		auto c6HydroBuff = Requires{
+			.requirement = Requirement::constellation6 && (c6CondLunarCharged || c6CondLunarBloom || c6CondLunarCrystallize),
+			.ret = Constant(0.8f),
+		};
+		auto c6Elevation = Requires{
+			.requirement = Requirement::constellation6,
+			.ret = Constant(0.03f),
+		};
+
 		return Data::Setup{
 			.mods{
 				.preMod{
+					.hp_ = c2HpBuff,
 					.cr = a1Buff,
 				},
 				.teamPreMod{
-					.lunarCharged{.DMG = burstBuff},
-					.lunarBloom{.DMG = burstBuff},
-					.lunarCrystallize{.DMG = burstBuff},
+					.atk = c2BuffLunarCharged,
+					.def = c2BuffLunarCrystallize,
+					.em = c2BuffLunarBloom,
+					.hydro{.critDMG = c6HydroBuff},
+					.electro{.critDMG = c6BuffLunarCharged},
+					.dendro{.critDMG = c6BuffLunarBloom},
+					.geo{.critDMG = c6BuffLunarCrystallize},
+					.allLunar{
+						.DMG = burstBuff + c4LunarBuff,
+						.multiplicativeDMG = p3Buff,
+						.elevation = c1Elevation + c2Elevation + c3Elevation + c4Elevation + c5Elevation + c6Elevation,
+					},
 				},
+				.moonsignLevel = ConstantInt(1),
 			},
 			.opts{
 				.burst{
 					Option::Boolean{
 						.key = "columbinaBurstActive",
 						.name = "Character is within the Lunar Domain",
+						.teamBuff = true,
+						.mods{
+							.teamPreMod{
+								.allLunar{.DMG = burstBuff},
+							},
+						},
 					},
 				},
 				.passive1{
@@ -66,6 +175,102 @@ const Character::Data Character::Datas::columbina{
 						.mods{
 							.preMod{
 								.cr = a1Buff,
+							},
+						},
+					},
+				},
+				.constellation2{
+					Option::Boolean{
+						.key = "columbinaC2LunarBrillianceLunarCharged",
+						.name = "Lunar-Charged Kuuvahki Interference",
+						.teamBuff = true,
+						.mods{
+							.teamPreMod{
+								.atk = c2BuffLunarCharged,
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC2LunarBrillianceLunarBloom",
+						.name = "Lunar-Bloom Kuuvahki Interference",
+						.teamBuff = true,
+						.mods{
+							.teamPreMod{
+								.em = c2BuffLunarBloom,
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC2LunarBrillianceLunarCrystallize",
+						.name = "Lunar-Crystallize Kuuvahki Interference",
+						.teamBuff = true,
+						.mods{
+							.teamPreMod{
+								.def = c2BuffLunarCrystallize,
+							},
+						},
+					},
+				},
+				.constellation4{
+					Option::Boolean{
+						.key = "columbinaC4KuuvahkiInterferenceLunarCharged",
+						.name = "Lunar-Charged Kuuvahki Interference",
+						.nodes{
+							Node::Info{
+								.name = "Lunar-Charged Kuuvahki Interference DMG Bonus",
+								.type = Utils::EntryType::points,
+								.formula = c4BuffLunarCharged,
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC4KuuvahkiInterferenceLunarBloom",
+						.name = "Lunar-Bloom Kuuvahki Interference",
+						.nodes{
+							Node::Info{
+								.name = "Lunar-Bloom Kuuvahki Interference DMG Bonus",
+								.type = Utils::EntryType::points,
+								.formula = c4BuffLunarBloom,
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC4KuuvahkiInterferenceLunarCrystallize",
+						.name = "Lunar-Crystallize Kuuvahki Interference",
+						.nodes{
+							Node::Info{
+								.name = "Lunar-Crystallize Kuuvahki Interference DMG Bonus",
+								.type = Utils::EntryType::points,
+								.formula = c4BuffLunarCrystallize,
+							},
+						},
+					},
+				},
+				.constellation6{
+					Option::Boolean{
+						.key = "columbinaC6LunarCharged",
+						.name = "After triggering a Lunar-Charged reaction",
+						.mods{
+							.preMod{
+								.electro{.critDMG = c6BuffLunarCharged},
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC6LunarBloom",
+						.name = "After triggering a Lunar-Bloom reaction",
+						.mods{
+							.preMod{
+								.dendro{.critDMG = c6BuffLunarBloom},
+							},
+						},
+					},
+					Option::Boolean{
+						.key = "columbinaC6LunarCrystallize",
+						.name = "After triggering a Lunar-Crystallize reaction",
+						.mods{
+							.preMod{
+								.geo{.critDMG = c6BuffLunarCrystallize},
 							},
 						},
 					},
@@ -138,16 +343,25 @@ const Character::Data Character::Datas::columbina{
 						.name = "Moonreel: Lunar-Charged DMG",
 						.damageType = Misc::LunarDamageType::lunarCharged,
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0555, 0.0597, 0.0638, 0.0694, 0.0736, 0.0777, 0.0833, 0.0888, 0.0944, 0.0999, 0.1055, 0.1110, 0.1180, 0.1249, 0.1319}),
+						.modifier{
+							.additiveDMG = c4BuffLunarCharged,
+						},
 					},
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Bloom DMG (x5)",
 						.damageType = Misc::LunarDamageType::lunarBloom,
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0200, 0.0215, 0.0230, 0.0250, 0.0265, 0.0280, 0.0300, 0.0320, 0.0340, 0.0360, 0.0380, 0.0400, 0.0425, 0.0450, 0.0475}),
+						.modifier{
+							.additiveDMG = c4BuffLunarBloom,
+						},
 					},
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Crystallize DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
 						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.1042, 0.1120, 0.1198, 0.1302, 0.1380, 0.1458, 0.1562, 0.1667, 0.1771, 0.1875, 0.1979, 0.2083, 0.2213, 0.2344, 0.2474}),
+						.modifier{
+							.additiveDMG = c4BuffLunarCrystallize,
+						},
 					},
 					Node::Info{
 						.name = "Max Moonreel Charge",
@@ -190,6 +404,102 @@ const Character::Data Character::Datas::columbina{
 						.name = "Energy Cost",
 						.type = Utils::EntryType::points,
 						.formula = Multiplier(Utils::EntryType::points, LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
+					},
+				},
+				.passive3{
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.allLunar{
+									.multiplicativeDMG = p3Buff,
+								},
+							},
+						},
+					},
+				},
+				.constellation1{
+					Node::Shield{
+						.name = "Rainsea Shield",
+						.formula = total.hp * 0.12f,
+					},
+					Node::Shield{
+						.name = "Rainsea Shield (Hydro)",
+						.element = Misc::Element::hydro,
+						.formula = total.hp * 0.12f,
+						.modifier = ShieldModifier{
+							.elementBonus{2.5f},
+						},
+					},
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.allLunar{
+									.elevation = c1Elevation,
+								},
+							},
+						},
+					},
+				},
+				.constellation2{
+					Node::Mods{
+						.mods{
+							.preMod{
+								.hp_ = c2HpBuff,
+							},
+							.teamPreMod{
+								.allLunar{
+									.elevation = c2Elevation,
+								},
+							},
+						},
+					},
+				},
+				.constellation3{
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.allLunar{
+									.elevation = c3Elevation,
+								},
+							},
+						},
+					},
+				},
+				.constellation4{
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.allLunar{
+									.DMG = c4LunarBuff,
+									.elevation = c4Elevation,
+								},
+							},
+						},
+					},
+				},
+				.constellation5{
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.allLunar{
+									.elevation = c5Elevation,
+								},
+							},
+						},
+					},
+				},
+				.constellation6{
+					Node::Mods{
+						.mods{
+							.preMod{
+								.hydro{.critDMG = c6HydroBuff},
+							},
+							.teamPreMod{
+								.allLunar{
+									.elevation = c6Elevation,
+								},
+							},
+						},
 					},
 				},
 			},

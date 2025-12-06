@@ -16,7 +16,7 @@ namespace Formula {
 		RetType max = 1.f;
 		bool isPercentage = true;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
+		[[nodiscard]] auto compile(const Context &context) const {
 			return Compiled::MaxMaker(
 				Compiled::Constant<RetType>{.value = min}.wrap(),
 				Compiled::MinMaker(
@@ -26,13 +26,13 @@ namespace Formula {
 			);
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
 			if (val >= min && val <= max) return val1.print(context, prevStep);
 			return fmt::format("clamp({}, {}, {})", val1.print(context, Step::none), min, max);
 		}
 
-		[[nodiscard]] inline RetType eval(const Context &context) const {
+		[[nodiscard]] RetType eval(const Context &context) const {
 			return std::clamp(val1.eval(context), min, max);
 		}
 	};
@@ -44,20 +44,20 @@ namespace Formula {
 		RetType val2;
 		bool isPercentage = true;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
+		[[nodiscard]] auto compile(const Context &context) const {
 			return Compiled::MinMaker(
 				val1.compile(context),
 				Compiled::Constant<RetType>{.value = val2}.wrap()
 			);
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
 			if (val < val2) return val1.print(context, prevStep);
 			return fmt::format("min({}, {})", val1.print(context, Step::none), val2);
 		}
 
-		[[nodiscard]] inline RetType eval(const Context &context) const {
+		[[nodiscard]] RetType eval(const Context &context) const {
 			return std::min(val1.eval(context), val2);
 		}
 	};
@@ -69,20 +69,20 @@ namespace Formula {
 		RetType val2;
 		bool isPercentage = true;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
+		[[nodiscard]] auto compile(const Context &context) const {
 			return Compiled::MaxMaker(
 				val1.compile(context),
 				Compiled::Constant<RetType>{.value = val2}.wrap()
 			);
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step prevStep) const {
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
 			if (val > val2) return val1.print(context, prevStep);
 			return fmt::format("max({}, {})", val1.print(context, Step::none), val2);
 		}
 
-		[[nodiscard]] inline RetType eval(const Context &context) const {
+		[[nodiscard]] RetType eval(const Context &context) const {
 			return std::max(val1.eval(context), val2);
 		}
 	};

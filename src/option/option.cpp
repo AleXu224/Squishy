@@ -3,8 +3,8 @@
 #include "formula/constant.hpp"
 #include "formula/requires.hpp"
 
-std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 12> Option::CharacterList::getMembersAndConditions() {
-	return std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 12>{
+std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14> Option::CharacterList::getMembersAndConditions() {
+	return std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14>{
 		std::pair{&CharacterList::normal, Formula::ConstantBool(true)},
 		std::pair{&CharacterList::charged, Formula::ConstantBool(true)},
 		std::pair{&CharacterList::plunge, Formula::ConstantBool(true)},
@@ -15,7 +15,9 @@ std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, 
 		std::pair{&CharacterList::passive3, Requirement::passive3},
 		std::pair{&CharacterList::constellation1, Requirement::constellation1},
 		std::pair{&CharacterList::constellation2, Requirement::constellation2},
+		std::pair{&CharacterList::constellation3, Requirement::constellation3},
 		std::pair{&CharacterList::constellation4, Requirement::constellation4},
+		std::pair{&CharacterList::constellation5, Requirement::constellation5},
 		std::pair{&CharacterList::constellation6, Requirement::constellation6},
 	};
 }

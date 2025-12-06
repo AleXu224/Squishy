@@ -29,8 +29,12 @@ namespace Utils {
 				return Requirement::constellation1;
 			case Node::CharacterSlot::constellation2:
 				return Requirement::constellation2;
+			case Node::CharacterSlot::constellation3:
+				return Requirement::constellation3;
 			case Node::CharacterSlot::constellation4:
 				return Requirement::constellation4;
+			case Node::CharacterSlot::constellation5:
+				return Requirement::constellation5;
 			case Node::CharacterSlot::constellation6:
 				return Requirement::constellation6;
 		}

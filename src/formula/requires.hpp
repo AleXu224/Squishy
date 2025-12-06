@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "intermediary.hpp"
 #include "stats/loadout.hpp"
+#include "stats/team.hpp"
 
 
 namespace Formula {
@@ -179,4 +180,17 @@ namespace Requirement {
 			return context.source.stats.sheet.constellation >= 6;
 		}
 	} constellation6{};
+	static constexpr struct impl_AscendantGleam {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
+		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
+			return "Ascendant Gleam";
+		}
+
+		[[nodiscard]] static bool eval(const Formula::Context &context) {
+			return context.team.moonsignLevel.eval(context) >= 2;
+		}
+	} ascendantGleam{};
 }// namespace Requirement

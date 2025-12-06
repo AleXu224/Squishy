@@ -51,7 +51,9 @@ namespace Option {
 		std::vector<Types> passive3{};
 		std::vector<Types> constellation1{};
 		std::vector<Types> constellation2{};
+		std::vector<Types> constellation3{};
 		std::vector<Types> constellation4{};
+		std::vector<Types> constellation5{};
 		std::vector<Types> constellation6{};
 
 		[[nodiscard]] static inline auto getMembers() {
@@ -66,7 +68,9 @@ namespace Option {
 				&CharacterList::passive3,
 				&CharacterList::constellation1,
 				&CharacterList::constellation2,
+				&CharacterList::constellation3,
 				&CharacterList::constellation4,
+				&CharacterList::constellation5,
 				&CharacterList::constellation6,
 			};
 		}
@@ -93,15 +97,19 @@ namespace Option {
 					return constellation1;
 				case Node::CharacterSlot::constellation2:
 					return constellation2;
+				case Node::CharacterSlot::constellation3:
+					return constellation3;
 				case Node::CharacterSlot::constellation4:
 					return constellation4;
+				case Node::CharacterSlot::constellation5:
+					return constellation5;
 				case Node::CharacterSlot::constellation6:
 					return constellation6;
 			}
 			std::unreachable();
 		}
 
-		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 12> getMembersAndConditions();
+		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 14> getMembersAndConditions();
 	};
 
 	using WeaponList = std::vector<Types>;

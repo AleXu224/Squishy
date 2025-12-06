@@ -272,6 +272,7 @@ namespace Stats {
 		if constexpr (reaction == Misc::Reaction::lunarCharged) return Sheet.lunarCharged;
 		if constexpr (reaction == Misc::Reaction::lunarBloom) return Sheet.lunarBloom;
 		if constexpr (reaction == Misc::Reaction::lunarCrystallize) return Sheet.lunarCrystallize;
+		if constexpr (reaction == Misc::Reaction::allLunar) return Sheet.allLunar;
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
@@ -309,6 +310,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.lunarBloom, RetType>(skillStat);
 			case Misc::Reaction::lunarCrystallize:
 				return fromSkillStat<Sheet.lunarCrystallize, RetType>(skillStat);
+			case Misc::Reaction::allLunar:
+				return fromSkillStat<Sheet.allLunar, RetType>(skillStat);
 		}
 		std::unreachable();
 	}
@@ -348,6 +351,8 @@ namespace Stats {
 				return fromSkillStat(sheet.lunarBloom, skillStat);
 			case Misc::Reaction::lunarCrystallize:
 				return fromSkillStat(sheet.lunarCrystallize, skillStat);
+			case Misc::Reaction::allLunar:
+				return fromSkillStat(sheet.allLunar, skillStat);
 		}
 		std::unreachable();
 	}

@@ -8,7 +8,6 @@
 #include "stats/helpers.hpp"
 
 
-
 namespace Stats {
 	template<class T>
 	struct EnemySheet {
@@ -155,6 +154,8 @@ namespace Stats {
 		_SkillValue lunarCharged{};
 		_SkillValue lunarBloom{};
 		_SkillValue lunarCrystallize{};
+
+		_SkillValue allLunar{};
 
 		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);

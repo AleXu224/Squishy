@@ -27,6 +27,7 @@ namespace Misc {
 		lunarCharged,
 		lunarBloom,
 		lunarCrystallize,
+		allLunar,
 	};
 
 	enum class TransformativeReaction : uint8_t {
@@ -76,6 +77,7 @@ namespace Misc {
 		Reaction::lunarCharged,
 		Reaction::lunarBloom,
 		Reaction::lunarCrystallize,
+		Reaction::allLunar,
 	};
 
 	const inline std::vector<TransformativeReaction> transformativeReactions{
@@ -143,6 +145,8 @@ namespace Utils {
 				return "Lunar-Bloom";
 			case Misc::Reaction::lunarCrystallize:
 				return "Lunar-Crystalize";
+			case Misc::Reaction::allLunar:
+				return "All Lunar Reactions";
 		}
 		std::unreachable();
 	}
