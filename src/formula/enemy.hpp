@@ -49,7 +49,7 @@ namespace Formula {
 	};
 
 	struct EnemyResMultiplier {
-		Misc::AttackSource attackSource{};
+		Utils::JankyOptional<Misc::AttackSource> attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
 
 		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {

@@ -15,7 +15,7 @@
 namespace Node {
 	struct AtkData {
 		Utils::JankyOptional<Misc::Element> element{};
-		Misc::AttackSource source{};
+		Utils::JankyOptional<Misc::AttackSource> source{};
 	};
 
 	struct CustomAtkData {

@@ -13,7 +13,7 @@ namespace Misc {
 		charged,
 		plunge,
 		skill,
-		burst
+		burst,
 	};
 
 	static inline std::vector<AttackSource> attackSources{

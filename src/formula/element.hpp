@@ -10,9 +10,10 @@
 
 
 namespace Formula {
-	[[nodiscard]] constexpr auto getElement(Misc::AttackSource attackSource, Utils::JankyOptional<Misc::Element> element, const Formula::Context &context) {
+	[[nodiscard]] constexpr auto getElement(const Utils::JankyOptional<Misc::AttackSource> &attackSource, Utils::JankyOptional<Misc::Element> element, const Formula::Context &context) {
 		if (element.has_value()) return element.value();
-		switch (attackSource) {
+		if (!attackSource.has_value()) return element.value_or(Misc::Element::physical);
+		switch (attackSource.value()) {
 			case Misc::AttackSource::charged:
 				if (context.source.stats.base.weaponType == Misc::WeaponType::bow) return context.source.stats.base.element;
 				[[fallthrough]];

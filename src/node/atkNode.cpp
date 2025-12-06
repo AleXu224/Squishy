@@ -12,7 +12,7 @@ namespace Node {
 	template<Misc::SkillStat skillStat>
 	struct _NodeElement {
 		Utils::JankyOptional<Misc::Element> element{};
-		Misc::AttackSource source{};
+		Utils::JankyOptional<Misc::AttackSource> source{};
 
 		[[nodiscard]] auto compile(const Formula::Context &context) const {
 			switch (Formula::getElement(source, element, context)) {
@@ -111,19 +111,19 @@ namespace Node {
 	template<Misc::SkillStat skillStat>
 	[[nodiscard]] static constexpr auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
-		Misc::AttackSource atkSource,
+		const Utils::JankyOptional<Misc::AttackSource> &atkSource,
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
 		auto elementStats = _NodeElement<skillStat>(attackElement, atkSource);
-		auto skillStats = _NodeSkill<skillStat>(atkSource);
+		auto skillStats = atkSource.has_value() ? Formula::FloatNode(_NodeSkill<skillStat>(atkSource.value())) : Formula::Constant{0.f};
 
 		return allStats + elementStats + skillStats + formula;
 	}
 
 	Formula::FloatNode Atk::_getFormula(
 		const Utils::JankyOptional<Misc::Element> &element,
-		Misc::AttackSource source,
+		const Utils::JankyOptional<Misc::AttackSource> &source,
 		const Formula::FloatNode &formula,
 		const Formula::Modifier &modifier
 	) {

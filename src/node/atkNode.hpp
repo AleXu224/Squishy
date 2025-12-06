@@ -11,13 +11,13 @@ namespace Node {
 	struct Atk {
 		std::string_view name;
 		Utils::JankyOptional<Misc::Element> element{};
-		Misc::AttackSource source{};
+		Utils::JankyOptional<Misc::AttackSource> source{};
 		Formula::FloatNode formula;
 		Formula::Modifier modifier{};
 
 		[[nodiscard]] static Formula::FloatNode _getFormula(
 			const Utils::JankyOptional<Misc::Element> &element,
-			Misc::AttackSource source,
+			const Utils::JankyOptional<Misc::AttackSource> &source,
 			const Formula::FloatNode &formula,
 			const Formula::Modifier &modifier
 		);
