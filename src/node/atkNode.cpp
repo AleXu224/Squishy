@@ -15,96 +15,48 @@ namespace Node {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 
 		[[nodiscard]] auto compile(const Formula::Context &context) const {
-			switch (Formula::getElement(source, element, context)) {
-				case Misc::Element::pyro:
-					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).compile(context);
-				case Misc::Element::hydro:
-					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).compile(context);
-				case Misc::Element::cryo:
-					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).compile(context);
-				case Misc::Element::electro:
-					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).compile(context);
-				case Misc::Element::dendro:
-					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).compile(context);
-				case Misc::Element::anemo:
-					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).compile(context);
-				case Misc::Element::geo:
-					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).compile(context);
-				case Misc::Element::physical:
-					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).compile(context);
-			}
-			std::unreachable();
+			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
-		}
-
-		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
-			switch (element) {
-				case Misc::Element::pyro:
-					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).eval(context);
-				case Misc::Element::hydro:
-					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).eval(context);
-				case Misc::Element::cryo:
-					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).eval(context);
-				case Misc::Element::electro:
-					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).eval(context);
-				case Misc::Element::dendro:
-					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).eval(context);
-				case Misc::Element::anemo:
-					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).eval(context);
-				case Misc::Element::geo:
-					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).eval(context);
-				case Misc::Element::physical:
-					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).eval(context);
-			}
-			std::unreachable();
+			return Formula::Percentage(
+				fmt::format(
+					"{} {}",
+					Utils::Stringify(Formula::getElement(source, element, context)),
+					Utils::Stringify(skillStat)
+				),
+				eval(context), Utils::isPercentage(skillStat)
+			);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return switchElement(Formula::getElement(source, element, context), context);
+			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).eval(context);
 		}
 	};
 
 	template<Misc::SkillStat skillStat>
 	struct _NodeSkill {
-		Misc::AttackSource source{};
+		Utils::JankyOptional<Misc::AttackSource> source{};
 
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
-			switch (source) {
-				case Misc::AttackSource::normal:
-					return Stats::fromSkillStat(Modifiers::total().normal, skillStat).compile(context);
-				case Misc::AttackSource::charged:
-					return Stats::fromSkillStat(Modifiers::total().charged, skillStat).compile(context);
-				case Misc::AttackSource::plunge:
-					return Stats::fromSkillStat(Modifiers::total().plunge, skillStat).compile(context);
-				case Misc::AttackSource::skill:
-					return Stats::fromSkillStat(Modifiers::total().skill, skillStat).compile(context);
-				case Misc::AttackSource::burst:
-					return Stats::fromSkillStat(Modifiers::total().burst, skillStat).compile(context);
-			}
-			std::unreachable();
+		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+			if (!source.has_value()) return Formula::Compiled::ConstantFloat{.value = 0.f};
+			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(source), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
+			return Formula::Percentage(
+				fmt::format(
+					"{} {}",
+					Utils::Stringify(source),
+					Utils::Stringify(skillStat)
+				),
+				eval(context), Utils::isPercentage(skillStat)
+			);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			switch (source) {
-				case Misc::AttackSource::normal:
-					return Stats::fromSkillStat(Modifiers::total().normal, skillStat).eval(context);
-				case Misc::AttackSource::charged:
-					return Stats::fromSkillStat(Modifiers::total().charged, skillStat).eval(context);
-				case Misc::AttackSource::plunge:
-					return Stats::fromSkillStat(Modifiers::total().plunge, skillStat).eval(context);
-				case Misc::AttackSource::skill:
-					return Stats::fromSkillStat(Modifiers::total().skill, skillStat).eval(context);
-				case Misc::AttackSource::burst:
-					return Stats::fromSkillStat(Modifiers::total().burst, skillStat).eval(context);
-			}
-			std::unreachable();
+			if (!source.has_value()) return 0.f;
+			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).eval(context);
 		}
 	};
 
@@ -116,7 +68,7 @@ namespace Node {
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
 		auto elementStats = _NodeElement<skillStat>(attackElement, atkSource);
-		auto skillStats = atkSource.has_value() ? Formula::FloatNode(_NodeSkill<skillStat>(atkSource.value())) : Formula::Constant{0.f};
+		auto skillStats = _NodeSkill<skillStat>(atkSource);
 
 		return allStats + elementStats + skillStats + formula;
 	}
