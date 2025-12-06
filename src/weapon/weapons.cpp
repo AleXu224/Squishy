@@ -22,6 +22,7 @@
 #include "weapons/FavoniusWarbow.hpp"
 #include "weapons/FracturedHalo.hpp"
 #include "weapons/HunterSBow.hpp"
+#include "weapons/LightbearingMoonshard.hpp"
 #include "weapons/MistsplitterReforged.hpp"
 #include "weapons/NocturnesCurtainCall.hpp"
 #include "weapons/SacrificialBow.hpp"
@@ -60,6 +61,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
 		{Weapon::Datas::fracturedHalo.key, Weapon::Datas::fracturedHalo},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
+		{Weapon::Datas::lightbearingMoonshard.key, Weapon::Datas::lightbearingMoonshard},
 		{Weapon::Datas::mistsplitterReforged.key, Weapon::Datas::mistsplitterReforged},
 		{Weapon::Datas::nocturnesCurtainCall.key, Weapon::Datas::nocturnesCurtainCall},
 		{Weapon::Datas::sacrificialBow.key, Weapon::Datas::sacrificialBow},
