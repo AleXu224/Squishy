@@ -297,7 +297,7 @@ const Character::Data Character::Datas::columbina{
 				.charged{
 					Node::Atk{
 						.name = "Charged Attack DMG",
-						.source = Misc::AttackSource::normal,
+						.source = Misc::AttackSource::charged,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {1.1608, 1.2479, 1.3349, 1.4510, 1.5381, 1.6251, 1.7412, 1.8573, 1.9734, 2.0894, 2.2055, 2.3216, 2.4667, 2.6118, 2.7569}),
 					},
 					Node::Info{
@@ -314,17 +314,17 @@ const Character::Data Character::Datas::columbina{
 				.plunge{
 					Node::Atk{
 						.name = "Plunge DMG",
-						.source = Misc::AttackSource::normal,
+						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {0.5683, 0.6145, 0.6608, 0.7269, 0.7731, 0.8260, 0.8987, 0.9714, 1.0441, 1.1234, 1.2027, 1.2820, 1.3612, 1.4405, 1.5198}),
 					},
 					Node::Atk{
 						.name = "Low Plunge DMG",
-						.source = Misc::AttackSource::normal,
+						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {1.1363, 1.2288, 1.3213, 1.4535, 1.5459, 1.6517, 1.7970, 1.9423, 2.0877, 2.2462, 2.4048, 2.5634, 2.7219, 2.8805, 3.0390}),
 					},
 					Node::Atk{
 						.name = "High Plunge DMG",
-						.source = Misc::AttackSource::normal,
+						.source = Misc::AttackSource::plunge,
 						.formula = Multiplier(total.atk, LevelableTalent::normal, {1.4193, 1.5349, 1.6504, 1.8154, 1.9310, 2.0630, 2.2445, 2.4261, 2.6076, 2.8057, 3.0037, 3.2018, 3.3998, 3.5979, 3.7959}),
 					},
 				},
@@ -402,8 +402,8 @@ const Character::Data Character::Datas::columbina{
 					},
 					Node::Info{
 						.name = "Energy Cost",
-						.type = Utils::EntryType::points,
-						.formula = Multiplier(Utils::EntryType::points, LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
+						.type = Utils::EntryType::energy,
+						.formula = Multiplier(Utils::EntryType::energy, LevelableTalent::burst, {60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000, 60.0000}),
 					},
 				},
 				.passive3{

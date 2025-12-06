@@ -24,14 +24,14 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const ModsData &) {
 				return Utils::elementToColor(Misc::Element::physical);
 			},
-			[&](const DirectLunarData &node) {
+			[&](const DirectLunarData &node) -> squi::Color {
 				switch (node.damageType) {
 					case Misc::LunarDamageType::lunarCharged:
 						return squi::Color::css(236, 184, 255);
 					case Misc::LunarDamageType::lunarBloom:
 						return Utils::elementToColor(Misc::Element::dendro);
 					case Misc::LunarDamageType::lunarCrystallize:
-						return Utils::elementToColor(Misc::Element::geo);
+						return 0xFCD451FF;
 				}
 				std::unreachable();
 			},

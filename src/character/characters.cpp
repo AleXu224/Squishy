@@ -15,6 +15,7 @@
 #include "character/characters/Neuvillette.hpp"
 #include "character/characters/Skirk.hpp"
 #include "character/characters/Xilonen.hpp"
+#include "character/characters/Zibai.hpp"
 
 
 extern void Character::initCharacters() {
@@ -34,5 +35,6 @@ extern void Character::initCharacters() {
 		{Character::Datas::neuvillette.key, Character::Datas::neuvillette},
 		{Character::Datas::skirk.key, Character::Datas::skirk},
 		{Character::Datas::xilonen.key, Character::Datas::xilonen},
+		{Character::Datas::zibai.key, Character::Datas::zibai},
 	};
 }
