@@ -28,7 +28,11 @@ const Character::Data Character::Datas::zibai{
 		auto a1Cond = IsActive("zibaiA1Cond");
 		auto a1Buff = Requires{
 			.requirement = Requirement::passive1 && a1Cond,
-			.ret = Constant(0.4f) * total.def,
+			.ret = IfElse{
+				.requirement = Requirement::constellation2,
+				.trueVal = total.def,
+				.elseVal = Constant(0.4f) * total.def,
+			},
 		};
 
 		auto a4DefBuff = Requires{
@@ -55,10 +59,6 @@ const Character::Data Character::Datas::zibai{
 		auto c2Buff = Requires{
 			.requirement = Requirement::constellation2 && c2Cond,
 			.ret = Constant(0.5f),
-		};
-		auto c2A1AdditionalBuff = Requires{
-			.requirement = Requirement::constellation2,
-			.ret = total.def * 1.f,
 		};
 
 		auto c4Cond = IsActive("zibaiC4Cond");
@@ -239,7 +239,7 @@ const Character::Data Character::Datas::zibai{
 						.name = "Spirit Steed's Stride 1-Hit DMG",
 						.source = Misc::AttackSource::skill,
 						.formula = Multiplier(total.def, LevelableTalent::skill, {1.7253, 1.8547, 1.9841, 2.1566, 2.2860, 2.4154, 2.5879, 2.7604, 2.9330, 3.1055, 3.2780, 3.4506, 3.6662, 3.8819, 4.0975})
-								 + a1Buff + c2A1AdditionalBuff,
+								 + a1Buff,
 						.modifier{
 							.elevation = c6Buff,
 						},
@@ -248,7 +248,7 @@ const Character::Data Character::Datas::zibai{
 						.name = "Spirit Steed's Stride 2-Hit DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
 						.formula = Multiplier(total.def, LevelableTalent::skill, {1.4097, 1.5154, 1.6211, 1.7621, 1.8678, 1.9736, 2.1145, 2.2555, 2.3965, 2.5374, 2.6784, 2.8194, 2.9956, 3.1718, 3.3480})
-								 + a1Buff + c2A1AdditionalBuff + c4Buff,
+								 + a1Buff + c4Buff,
 						.modifier{
 							.DMG = c1Buff,
 							.elevation = c6Buff,
@@ -311,13 +311,6 @@ const Character::Data Character::Datas::zibai{
 								},
 							},
 						},
-					},
-				},
-				.constellation2{
-					Node::Info{
-						.name = "Spirit Steed's Stride DMG Increase",
-						.type = Utils::EntryType::points,
-						.formula = c2A1AdditionalBuff,
 					},
 				},
 			},
