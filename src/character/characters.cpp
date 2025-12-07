@@ -8,6 +8,7 @@
 #include "character/characters/Escoffier.hpp"
 #include "character/characters/Flins.hpp"
 #include "character/characters/Furina.hpp"
+#include "character/characters/Gorou.hpp"
 #include "character/characters/Illuga.hpp"
 #include "character/characters/Ineffa.hpp"
 #include "character/characters/KamisatoAyaka.hpp"
@@ -29,6 +30,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::escoffier.key, Character::Datas::escoffier},
 		{Character::Datas::flins.key, Character::Datas::flins},
 		{Character::Datas::furina.key, Character::Datas::furina},
+		{Character::Datas::gorou.key, Character::Datas::gorou},
 		{Character::Datas::illuga.key, Character::Datas::illuga},
 		{Character::Datas::ineffa.key, Character::Datas::ineffa},
 		{Character::Datas::kamisatoAyaka.key, Character::Datas::kamisatoAyaka},
