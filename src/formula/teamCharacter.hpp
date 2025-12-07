@@ -157,7 +157,7 @@ namespace Formula {
 		[[nodiscard]] static Compiled::FloatNode compile(const Formula::Context &context) {
 			using namespace Formula::Operators;
 
-			if (context.source.stats.sheet.moonsignLevel.eval(context) < 1) {
+			if (context.source.stats.sheet.moonsignLevel.eval(context) >= 1) {
 				return Formula::Constant{0.0f}.compile(context);
 			}
 
@@ -167,17 +167,17 @@ namespace Formula {
 				case Misc::Element::pyro:
 				case Misc::Element::electro:
 				case Misc::Element::cryo:
-					totalBuff = totalBuff + (Modifiers::total().atk * Formula::Constant{0.009f});
+					totalBuff = totalBuff + ((Modifiers::total().atk / Formula::ConstantFlat(100.f)) * Formula::Constant{0.009f});
 					break;
 				case Misc::Element::hydro:
-					totalBuff = totalBuff + (Modifiers::total().hp * Formula::Constant{0.0006f});
+					totalBuff = totalBuff + ((Modifiers::total().hp / Formula::ConstantFlat(1000.f)) * Formula::Constant{0.0006f});
 					break;
 				case Misc::Element::geo:
-					totalBuff = totalBuff + (Modifiers::total().def * Formula::Constant{0.01f});
+					totalBuff = totalBuff + ((Modifiers::total().def / Formula::ConstantFlat(100.f)) * Formula::Constant{0.01f});
 					break;
 				case Misc::Element::anemo:
 				case Misc::Element::dendro:
-					totalBuff = totalBuff + (Modifiers::total().em * Formula::Constant{0.0225f});
+					totalBuff = totalBuff + ((Modifiers::total().em / Formula::ConstantFlat(100.f)) * Formula::Constant{0.0225f});
 					break;
 				default:
 					break;
@@ -187,11 +187,11 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Formula::Context &context, Step) {
-			return fmt::format("Non-Moonsign Character Buff: {}", eval(context));
+			return fmt::format("Non-Moonsign Character Buff: {}", Percentage({}, eval(context), true));
 		}
 
 		[[nodiscard]] static float eval(const Formula::Context &context) {
-			if (CharacterMoonsignLevel{}.eval(context) < 1) {
+			if (CharacterMoonsignLevel{}.eval(context) >= 1) {
 				return 0.0f;
 			}
 
@@ -201,17 +201,17 @@ namespace Formula {
 				case Misc::Element::pyro:
 				case Misc::Element::electro:
 				case Misc::Element::cryo:
-					totalBuff += 0.009f * Modifiers::total().atk.eval(context);
+					totalBuff += 0.009f * (Modifiers::total().atk.eval(context) / 100.f);
 					break;
 				case Misc::Element::hydro:
-					totalBuff += 0.0006f * Modifiers::total().hp.eval(context);
+					totalBuff += 0.0006f * (Modifiers::total().hp.eval(context) / 1000.f);
 					break;
 				case Misc::Element::geo:
-					totalBuff += 0.01f * Modifiers::total().def.eval(context);
+					totalBuff += 0.01f * (Modifiers::total().def.eval(context) / 100.f);
 					break;
 				case Misc::Element::anemo:
 				case Misc::Element::dendro:
-					totalBuff += 0.0225f * Modifiers::total().em.eval(context);
+					totalBuff += 0.0225f * (Modifiers::total().em.eval(context) / 100.f);
 					break;
 				default:
 					break;

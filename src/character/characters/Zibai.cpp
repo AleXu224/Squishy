@@ -37,7 +37,7 @@ const Character::Data Character::Datas::zibai{
 		};
 		auto a4EmBuff = Requires{
 			.requirement = Requirement::passive2,
-			.ret = 60.f * ElementCountOthers{.element = Misc::Element::hydro}
+			.ret = ConstantFlat(60.f) * ElementCountOthers{.element = Misc::Element::hydro}
 		};
 
 		auto p3Buff = Min{
@@ -78,6 +78,11 @@ const Character::Data Character::Datas::zibai{
 				.preMod{
 					.def_ = a4DefBuff + c2Buff,
 					.em = a4EmBuff,
+				},
+				.teamPreMod{
+					.lunarCrystallize{
+						.multiplicativeDMG = p3Buff,
+					},
 				},
 				.moonsignLevel = ConstantInt(1),
 			},
@@ -233,19 +238,19 @@ const Character::Data Character::Datas::zibai{
 					Node::Atk{
 						.name = "Spirit Steed's Stride 1-Hit DMG",
 						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.def, LevelableTalent::skill, {1.7253, 1.8547, 1.9841, 2.1566, 2.2860, 2.4154, 2.5879, 2.7604, 2.9330, 3.1055, 3.2780, 3.4506, 3.6662, 3.8819, 4.0975}),
+						.formula = Multiplier(total.def, LevelableTalent::skill, {1.7253, 1.8547, 1.9841, 2.1566, 2.2860, 2.4154, 2.5879, 2.7604, 2.9330, 3.1055, 3.2780, 3.4506, 3.6662, 3.8819, 4.0975})
+								 + a1Buff + c2A1AdditionalBuff,
 						.modifier{
-							.additiveDMG = a1Buff + c2A1AdditionalBuff,
 							.elevation = c6Buff,
 						},
 					},
 					Node::DirectLunar{
 						.name = "Spirit Steed's Stride 2-Hit DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
-						.formula = Multiplier(total.def, LevelableTalent::skill, {1.4097, 1.5154, 1.6211, 1.7621, 1.8678, 1.9736, 2.1145, 2.2555, 2.3965, 2.5374, 2.6784, 2.8194, 2.9956, 3.1718, 3.3480}),
+						.formula = Multiplier(total.def, LevelableTalent::skill, {1.4097, 1.5154, 1.6211, 1.7621, 1.8678, 1.9736, 2.1145, 2.2555, 2.3965, 2.5374, 2.6784, 2.8194, 2.9956, 3.1718, 3.3480})
+								 + a1Buff + c2A1AdditionalBuff + c4Buff,
 						.modifier{
 							.DMG = c1Buff,
-							.additiveDMG = a1Buff + c2A1AdditionalBuff + c4Buff,
 							.elevation = c6Buff,
 						},
 					},
@@ -293,6 +298,17 @@ const Character::Data Character::Datas::zibai{
 							.preMod{
 								.def_ = a4DefBuff,
 								.em = a4EmBuff,
+							},
+						},
+					},
+				},
+				.passive3{
+					Node::Mods{
+						.mods{
+							.teamPreMod{
+								.lunarCrystallize{
+									.multiplicativeDMG = p3Buff,
+								},
 							},
 						},
 					},

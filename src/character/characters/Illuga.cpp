@@ -52,6 +52,10 @@ const Character::Data Character::Datas::illuga{
 				.elseVal = Constant(0.10f),
 			},
 		};
+		auto a1EmBuff = Requires{
+			.requirement = Requirement::passive1 && Requirement::ascendantGleam && a1Cond,
+			.ret = ConstantFlat(50.f),
+		};
 
 		auto a4Count = ElementCount{.element = Misc::Element::geo} + ElementCount{.element = Misc::Element::hydro};
 		auto a4GeoDmgIncrease = Requires{
@@ -89,13 +93,14 @@ const Character::Data Character::Datas::illuga{
 			.mods{
 				.teamPreMod{
 					.def = c4Buff,
+					.em = a1EmBuff,
 					.geo{
-						.additiveDMG = burstDmgIncrease,
+						.additiveDMG = burstDmgIncrease + a4GeoDmgIncrease,
 						.critRate = a1CrBuff,
 						.critDMG = a1CdBuff,
 					},
 					.lunarCrystallize{
-						.additiveDMG = burstDmgIncrease + burstLunarCrystallizeDmgIncrease,
+						.additiveDMG = burstLunarCrystallizeDmgIncrease + a4LunarCrystallizeDmgIncrease,
 					},
 				},
 				.moonsignLevel = ConstantInt(1),
@@ -113,7 +118,7 @@ const Character::Data Character::Datas::illuga{
 									.additiveDMG = burstDmgIncrease + a4GeoDmgIncrease,
 								},
 								.lunarCrystallize{
-									.additiveDMG = burstDmgIncrease + burstLunarCrystallizeDmgIncrease + a4LunarCrystallizeDmgIncrease,
+									.additiveDMG = burstLunarCrystallizeDmgIncrease + a4LunarCrystallizeDmgIncrease,
 								},
 							},
 						},
@@ -126,6 +131,7 @@ const Character::Data Character::Datas::illuga{
 						.teamBuff = true,
 						.mods{
 							.teamPreMod{
+								.em = a1EmBuff,
 								.geo{
 									.critRate = a1CrBuff,
 									.critDMG = a1CdBuff,

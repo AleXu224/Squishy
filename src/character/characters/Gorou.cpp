@@ -68,8 +68,9 @@ const Character::Data Character::Datas::gorou{
 			.mods{
 				.teamPreMod{
 					.def = burstDefIncrease,
+					.def_ = a1Buff,
 					.geo{
-						.DMG = burstGeoDMG + a1Buff,
+						.DMG = burstGeoDMG,
 						.critDMG = c6Buff,
 					},
 				},
@@ -95,7 +96,7 @@ const Character::Data Character::Datas::gorou{
 						.teamBuff = true,
 						.mods{
 							.teamPreMod{
-								.geo{.DMG = a1Buff},
+								.def_ = a1Buff,
 							},
 						},
 					},

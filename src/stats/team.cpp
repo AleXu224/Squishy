@@ -40,11 +40,12 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 	);
 
 	// Moonsign team effects
-	{
-		Formula::NonMoonsignCharacterTeamBuff moonsignBuff{};
-		resonances.lunarCharged.DMG.modifiers.at(0) = moonsignBuff;
-		resonances.lunarBloom.DMG.modifiers.at(0) = moonsignBuff;
-	}
+	auto moonsignCond = IsActive("teamLunarAscendantDream");
+	auto moonsignBuff = Formula::Requires{
+		.requirement = moonsignCond,
+		.ret = Formula::NonMoonsignCharacterTeamBuff{},
+	};
+	resonances.allLunar.DMG.modifiers.at(0) = moonsignBuff;
 
 
 	options.insert({
@@ -90,6 +91,15 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 			.name = "After triggering Aggravate, Spread, Hyperbloom, or Burgeon reactions",
 			.displayCondition = dendroCond,
 			.mods{.preMod{.em = Formula::Requires(dendroCond && IsActive("teamDendroCond2"), Formula::ConstantFlat(20.f))}},
+		},
+	});
+	options.insert({
+		Utils::HashedString("teamLunarAscendantDream"),
+		Option::Boolean{
+			.key = "teamLunarAscendantDream",
+			.name = "Elemental Skill or Elemental Burst casted by a non-Moonsign character",
+			.displayCondition = Requirement::ascendantGleam,
+			.mods{.preMod{.allLunar{.DMG = moonsignBuff}}},
 		},
 	});
 }

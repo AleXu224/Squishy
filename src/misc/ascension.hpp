@@ -27,7 +27,7 @@ namespace Misc {
 	static inline auto maxAscensionByRarity = std::unordered_map<uint8_t, uint8_t>{
 		{1, 4},
 		{2, 4},
-		{3, 4},
+		{3, 6},
 		{4, 6},
 		{5, 6},
 	};

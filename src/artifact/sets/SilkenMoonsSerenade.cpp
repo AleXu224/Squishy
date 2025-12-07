@@ -15,19 +15,16 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 			cond,
 			IfElse{
 				.requirement = moonsignLevel >= 2,
-				.trueVal = ConstantFlat(60.f),
+				.trueVal = ConstantFlat(120.f),
 				.elseVal = Requires{
 					.requirement = moonsignLevel >= 1,
-					.ret = ConstantFlat(120.f),
+					.ret = ConstantFlat(60.f),
 				},
 			}
 		};
 
-		auto condGleamingMoon = IsActive("silkenMoonsSerenadeGleamingMoonStack");
-		auto gleamingMoonBuff = Requires{
-			condGleamingMoon,
-			Constant(0.1f),
-		};
+		auto condGleamingMoon = GetFloat("silkenMoonsSerenadeGleamingMoonEffectCount");
+		auto gleamingMoonBuff = condGleamingMoon * Constant(0.1f);
 
 		return Set::Setup{
 			.twoPc{
@@ -42,20 +39,21 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 					Option::Boolean{
 						.key = "silkenMoonsSerenadeCond",
 						.name = "After dealing Elemental DMG",
+						.teamBuff = true,
 						.mods{
 							.teamPreMod{
 								.em = buff,
 							},
 						},
 					},
-					Option::Boolean{
-						.key = "silkenMoonsSerenadeGleamingMoonStack",
-						.name = "Gleaming Moon",
+					Option::ValueList{
+						.key = "silkenMoonsSerenadeGleamingMoonEffectCount",
+						.prefix = "Gleaming Moon effect count",
 						.teamBuff = true,
+						.values{1, 2, 3},
 						.mods{
 							.teamPreMod{
-								.lunarCharged{.DMG = gleamingMoonBuff},
-								.lunarBloom{.DMG = gleamingMoonBuff},
+								.allLunar{.DMG = gleamingMoonBuff},
 							},
 						},
 					},
@@ -63,8 +61,7 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 				.mods{
 					.teamPreMod{
 						.em = buff,
-						.lunarCharged{.DMG = gleamingMoonBuff},
-						.lunarBloom{.DMG = gleamingMoonBuff},
+						.allLunar{.DMG = gleamingMoonBuff},
 					},
 				},
 			},

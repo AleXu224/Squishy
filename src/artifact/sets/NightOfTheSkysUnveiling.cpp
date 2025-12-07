@@ -23,11 +23,8 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 			}
 		};
 
-		auto condGleamingMoon = IsActive("nightOfTheSkysUnveilingGleamingMoonStack");
-		auto gleamingMoonBuff = Requires{
-			condGleamingMoon,
-			Constant(0.1f),
-		};
+		auto condGleamingMoon = GetFloat("nightOfTheSkysUnveilingGleamingMoonEffectCount");
+		auto gleamingMoonBuff = condGleamingMoon * Constant(0.1f);
 
 		return Set::Setup{
 			.twoPc{
@@ -48,14 +45,14 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 							},
 						},
 					},
-					Option::Boolean{
-						.key = "nightOfTheSkysUnveilingGleamingMoonStack",
-						.name = "Gleaming Moon",
+					Option::ValueList{
+						.key = "nightOfTheSkysUnveilingGleamingMoonEffectCount",
+						.prefix = "Gleaming Moon effect count",
 						.teamBuff = true,
+						.values{1, 2, 3},
 						.mods{
 							.teamPreMod{
-								.lunarCharged{.DMG = gleamingMoonBuff},
-								.lunarBloom{.DMG = gleamingMoonBuff},
+								.allLunar{.DMG = gleamingMoonBuff},
 							},
 						},
 					},
@@ -65,8 +62,7 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 						.cr = buff,
 					},
 					.teamPreMod{
-						.lunarCharged{.DMG = gleamingMoonBuff},
-						.lunarBloom{.DMG = gleamingMoonBuff},
+						.allLunar{.DMG = gleamingMoonBuff},
 					},
 				},
 			},
