@@ -123,6 +123,7 @@ const Character::Data Character::Datas::illuga{
 					Option::Boolean{
 						.key = "illugaA1Cond",
 						.name = "After using Elemental Skill or Elemental Burst",
+						.teamBuff = true,
 						.mods{
 							.teamPreMod{
 								.geo{

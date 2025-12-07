@@ -79,6 +79,7 @@ const Character::Data Character::Datas::gorou{
 					Option::Boolean{
 						.key = "gorouSkillActive",
 						.name = "Gorou Skill Active",
+						.teamBuff = true,
 						.mods{
 							.teamPreMod{
 								.def = burstDefIncrease,
@@ -91,6 +92,7 @@ const Character::Data Character::Datas::gorou{
 					Option::Boolean{
 						.key = "gorouBurstActive",
 						.name = "Gorou Burst Active",
+						.teamBuff = true,
 						.mods{
 							.teamPreMod{
 								.geo{.DMG = a1Buff},

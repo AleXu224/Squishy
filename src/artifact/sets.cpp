@@ -1,6 +1,7 @@
 #include "sets.hpp"
 
 #include "artifact/sets/ArchaicPetra.hpp"
+#include "artifact/sets/AubadeOfMorningstarAndMoon.hpp"
 #include "artifact/sets/BlizzardStrayer.hpp"
 #include "artifact/sets/BloodstainedChivalry.hpp"
 #include "artifact/sets/CrimsonWitchOfFlames.hpp"
@@ -34,6 +35,7 @@
 void Artifact::initArtifacts() {
 	sets = {
 		{Artifact::Sets::archaicPetra.key, Artifact::Sets::archaicPetra},
+		{Artifact::Sets::aubadeOfMorningstarAndMoon.key, Artifact::Sets::aubadeOfMorningstarAndMoon},
 		{Artifact::Sets::bloodstainedChivalry.key, Artifact::Sets::bloodstainedChivalry},
 		{Artifact::Sets::blizzardStrayer.key, Artifact::Sets::blizzardStrayer},
 		{Artifact::Sets::crimsonWitchOfFlames.key, Artifact::Sets::crimsonWitchOfFlames},
