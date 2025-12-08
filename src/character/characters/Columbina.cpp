@@ -94,10 +94,6 @@ const Character::Data Character::Datas::columbina{
 			.requirement = Requirement::constellation4 && c4CondLunarCrystallize,
 			.ret = Constant(0.125f) * total.hp,
 		};
-		auto c4LunarBuff = Requires{
-			.requirement = Requirement::constellation4,
-			.ret = Constant(0.03f),
-		};
 		auto c4Elevation = Requires{
 			.requirement = Requirement::constellation4,
 			.ret = Constant(0.03f),
@@ -129,7 +125,7 @@ const Character::Data Character::Datas::columbina{
 		};
 		auto c6Elevation = Requires{
 			.requirement = Requirement::constellation6,
-			.ret = Constant(0.03f),
+			.ret = Constant(0.05f),
 		};
 
 		return Data::Setup{
@@ -147,7 +143,7 @@ const Character::Data Character::Datas::columbina{
 					.dendro{.critDMG = c6BuffLunarBloom},
 					.geo{.critDMG = c6BuffLunarCrystallize},
 					.allLunar{
-						.DMG = burstBuff + c4LunarBuff,
+						.DMG = burstBuff,
 						.multiplicativeDMG = p3Buff,
 						.elevation = c1Elevation + c2Elevation + c3Elevation + c4Elevation + c5Elevation + c6Elevation,
 					},
@@ -470,7 +466,6 @@ const Character::Data Character::Datas::columbina{
 						.mods{
 							.teamPreMod{
 								.allLunar{
-									.DMG = c4LunarBuff,
 									.elevation = c4Elevation,
 								},
 							},

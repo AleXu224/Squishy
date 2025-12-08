@@ -266,7 +266,7 @@ const Character::Data Character::Datas::illuga{
 					Node::Atk{
 						.name = "Gale DMG",
 						.element = Misc::Element::geo,
-						.formula = total.em * 4.f + total.def * 4.f,
+						.formula = total.em * 4.f + total.def * 2.f,
 					},
 				},
 			},
