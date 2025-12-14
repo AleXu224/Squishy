@@ -1,15 +1,17 @@
 #pragma once
 
 #include "stats/stat.hpp"
-#include "widgetArgs.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct StatDisplay {
+	using namespace squi;
+	struct StatDisplay : StatelessWidget {
 		// Args
+		Key key;
 		bool isTransparent;
 		StatValue stat;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 
 }// namespace UI

@@ -1,79 +1,44 @@
 #include "artifactPage.hpp"
 
 #include "Ui/artifact/artifactEditor.hpp"
-#include "Ui/utils/grid.hpp"
 #include "artifactCard.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "expander.hpp"
-#include "row.hpp"
-#include "scrollable.hpp"
-#include "scrollableFrame.hpp"
 #include "store.hpp"
-#include "text.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/grid.hpp"
 #include "widgets/liteFilter.hpp"
+#include "widgets/navigator.hpp"
 #include "widgets/paginator.hpp"
+#include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/text.hpp"
 
 
 using namespace squi;
 
 namespace {
-	struct ArtifactPageState {
-		// Data
-		std::unordered_map<Artifact::Slot, bool> slotFilter;
-		std::unordered_map<Stat, bool> mainStatFilter;
-		std::unordered_map<Stat, bool> subStatFilter;
-
-		std::vector<Artifact::Instance *> getFilteredList() const {
-			std::vector<Artifact::Instance *> ret;
-
-			for (auto &[_, artifact]: ::Store::artifacts) {
-				if (!slotFilter.at(artifact.slot)) continue;
-				if (!mainStatFilter.at(artifact.mainStat)) continue;
-				bool subStatFound = false;
-				for (const auto &substat: artifact.subStats) {
-					if (!substat.stat) continue;
-					if (subStatFilter.at(substat.stat.value())) subStatFound = true;
-				}
-				if (!subStatFound) continue;
-				ret.emplace_back(&artifact);
-			}
-
-			return ret;
-		}
-	};
-	[[nodiscard]] auto makeArtifacts(uint32_t offset, uint32_t count, std::shared_ptr<ArtifactPageState> storage) {
-		Children ret;
-		auto filteredList = storage->getFilteredList();
-		auto begin = std::next(filteredList.begin(), offset);
-		auto end = std::next(begin, count);
-		for (auto it = begin; it != end; it++) {
-			ret.emplace_back(UI::ArtifactCard{
-				.artifact = **it,
-			});
-		}
-		return ret;
-	}
-	struct ExpanderItem {
+	struct ExpanderItem : StatelessWidget {
 		// Args
-		std::string_view heading;
+		Key key;
+		std::string heading;
 		Child action;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) {
 			return Row{
 				.widget{
-					.sizeConstraints{.minHeight = 64.f},
+					.sizeConstraints = BoxConstraints{.minHeight = 64.f},
 					.padding = Padding{16.f, 0.f},
 				},
-				.alignment = squi::Row::Alignment::center,
+				.crossAxisAlignment = Flex::Alignment::center,
 				.spacing = 8.f,
 				.children{
 					Text{
 						.widget{.width = Size::Shrink},
 						.text = heading,
 					},
-					Container{},
+					Stack{},
 					action,
 				},
 			};
@@ -81,23 +46,29 @@ namespace {
 	};
 }// namespace
 
-UI::ArtifactPage::operator squi::Child() const {
-	auto storage = std::make_shared<ArtifactPageState>();
-	for (const auto &slot: Artifact::slots) {
-		storage->slotFilter[slot] = true;
-	}
-	for (const auto &stat: Stats::Artifact::mainStats) {
-		storage->mainStatFilter[stat] = true;
-	}
-	for (const auto &stat: Stats::Artifact::subStats) {
-		storage->subStatFilter[stat] = true;
+[[nodiscard]] std::vector<Artifact::Instance *> UI::ArtifactPage::State::getFilteredList() const {
+	std::vector<Artifact::Instance *> ret;
+
+	for (auto &[_, artifact]: ::Store::artifacts) {
+		if (!slotFilter.at(artifact.slot)) continue;
+		if (!mainStatFilter.at(artifact.mainStat)) continue;
+		bool subStatFound = false;
+		for (const auto &substat: artifact.subStats) {
+			if (!substat.stat) continue;
+			if (subStatFilter.at(substat.stat.value())) subStatFound = true;
+		}
+		if (!subStatFound) continue;
+		ret.emplace_back(&artifact);
 	}
 
+	return ret;
+}
+
+squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 	auto addArtifactButton = Button{
-		.text = "Add artifact",
-		.style = ButtonStyle::Accent(),
-		.onClick = [](GestureDetector::Event event) {
-			event.widget.addOverlay(ArtifactEditor{
+		.theme = Button::Theme::Accent(),
+		.onClick = [this]() {
+			Navigator::of(*this->element).pushOverlay(ArtifactEditor{
 				.onSubmit = [](Artifact::Instance artifact) {
 					artifact.key = Artifact::InstanceKey{++Store::lastArtifactId};
 					artifact.updateStats();
@@ -106,25 +77,23 @@ UI::ArtifactPage::operator squi::Child() const {
 				},
 			});
 		},
+		.child = "Add artifact",
 	};
 
 	auto slotFilter = LiteFilter{
-		.widget{
-			.width = Size::Shrink,
-			.height = Size::Shrink,
-		},
-		.multiSelect = true,
-		.items = [storage]() {
+		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 
+			ret.reserve(Artifact::slots.size());
 			for (const auto &slot: Artifact::slots) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(slot),
-					.onUpdate = [storage, slot](bool active) {
-						auto &status = storage->slotFilter.at(slot);
+					.onUpdate = [this, slot](bool active) {
+						auto &status = this->slotFilter.at(slot);
 						if (status != active) {
-							status = active;
-							::Store::artifactListUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -135,22 +104,19 @@ UI::ArtifactPage::operator squi::Child() const {
 	};
 
 	auto mainStatFilter = LiteFilter{
-		.widget{
-			.width = Size::Shrink,
-			.height = Size::Shrink,
-		},
-		.multiSelect = true,
-		.items = [storage]() {
+		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 
+			ret.reserve(Stats::Artifact::mainStats.size());
 			for (const auto &stat: Stats::Artifact::mainStats) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(stat),
-					.onUpdate = [storage, stat](bool active) {
-						auto &status = storage->mainStatFilter.at(stat);
+					.onUpdate = [this, stat](bool active) {
+						auto &status = this->mainStatFilter.at(stat);
 						if (status != active) {
-							status = active;
-							::Store::artifactListUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -161,22 +127,19 @@ UI::ArtifactPage::operator squi::Child() const {
 	};
 
 	auto subStatFilter = LiteFilter{
-		.widget{
-			.width = Size::Shrink,
-			.height = Size::Shrink,
-		},
-		.multiSelect = true,
-		.items = [storage]() {
+		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 
+			ret.reserve(Stats::Artifact::subStats.size());
 			for (const auto &stat: Stats::Artifact::subStats) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(stat),
-					.onUpdate = [storage, stat](bool active) {
-						auto &status = storage->subStatFilter.at(stat);
+					.onUpdate = [this, stat](bool active) {
+						auto &status = this->subStatFilter.at(stat);
 						if (status != active) {
-							status = active;
-							::Store::artifactListUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -186,46 +149,56 @@ UI::ArtifactPage::operator squi::Child() const {
 		}(),
 	};
 
-	return ScrollableFrame{
-		.scrollableWidget{
+	return ScrollView{
+		.scrollWidget{
 			.padding = 8.f,
 		},
-		.alignment = Scrollable::Alignment::center,
+		.alignment = Flex::Alignment::center,
 		.spacing = 8.f,
 		.children{
 			Expander{
 				.widget{
-					.sizeConstraints{
+					.sizeConstraints = BoxConstraints{
 						.maxWidth = 1520.f,
 					},
 				},
-				.heading = "Filters",
-				.actions{
-					addArtifactButton,
-				},
-				.expandedContent = Column{
-					.children{
-						ExpanderItem{
-							.heading = "Slot",
-							.action = slotFilter
+				.title = "Filters",
+				.action{
+					Button{
+						.theme = Button::Theme::Accent(),
+						.onClick = [&element]() {
+							Navigator::of(element).pushOverlay(ArtifactEditor{
+								.onSubmit = [](Artifact::Instance artifact) {
+									artifact.key = Artifact::InstanceKey{++Store::lastArtifactId};
+									artifact.updateStats();
+									Store::artifacts.insert({artifact.key, artifact});
+									Store::artifactListUpdateEvent.notify();
+								},
+							});
 						},
+						.child = "Add artifact",
+					},
+				},
+				.content = Column{
+					.children{
+						ExpanderItem{.heading = "Slot", .action = slotFilter},
 						ExpanderItem{
 							.heading = "Main stat",
-							.action = ScrollableFrame{
+							.action = ScrollView{
 								.widget{.width = Size::Wrap},
-								.scrollableWidget{.width = Size::Wrap},
-								.alignment = Scrollable::Alignment::center,
-								.direction = Scrollable::Direction::horizontal,
+								.scrollWidget{.width = Size::Wrap},
+								.alignment = Flex::Alignment::center,
+								.direction = Axis::Horizontal,
 								.children{mainStatFilter},
 							},
 						},
 						ExpanderItem{
 							.heading = "Sub stat",
-							.action = ScrollableFrame{
+							.action = ScrollView{
 								.widget{.width = Size::Wrap},
-								.scrollableWidget{.width = Size::Wrap},
-								.alignment = Scrollable::Alignment::center,
-								.direction = Scrollable::Direction::horizontal,
+								.scrollWidget{.width = Size::Wrap},
+								.alignment = Flex::Alignment::center,
+								.direction = Axis::Horizontal,
 								.children{subStatFilter},
 							},
 						},
@@ -233,21 +206,29 @@ UI::ArtifactPage::operator squi::Child() const {
 				},
 			},
 			Paginator{
-				.refreshItemsEvent = ::Store::artifactListUpdateEvent,
-				.getItemCount = [storage]() {
-					return storage->getFilteredList().size();
+				.getItemCount = [this]() {
+					return this->getFilteredList().size();
 				},
-				.builder = [storage](uint32_t offset, uint32_t count) {
+				.builder = [this](uint32_t offset, uint32_t count) {
+					Children ret;
+					auto filteredList = this->getFilteredList();
+					auto begin = std::next(filteredList.begin(), offset);
+					auto end = std::next(begin, count);
+					for (auto it = begin; it != end; it++) {
+						ret.emplace_back(UI::ArtifactCard{
+							.artifact = **it,
+						});
+					}
 					return Grid{
 						.widget{
 							.height = Size::Shrink,
-							.sizeConstraints{
+							.sizeConstraints = BoxConstraints{
 								.maxWidth = 1520.f,
 							},
 						},
-						.spacing = 2.f,
 						.columnCount = Grid::MinSize{256.f},
-						.children = makeArtifacts(offset, count, storage),
+						.spacing = 2.f,
+						.children = ret,
 					};
 				},
 			},

@@ -1,16 +1,16 @@
 #include "skillEntry.hpp"
+#include "widgets/box.hpp"
+#include "widgets/container.hpp"
+#include "widgets/row.hpp"
+#include "widgets/text.hpp"
 
-#include "box.hpp"
-#include "container.hpp"
-#include "row.hpp"
-#include "text.hpp"
 
 using namespace squi;
-UI::SkillEntry::operator squi::Child() const {
+[[nodiscard]] squi::core::Child UI::SkillEntry::build(const Element &) const {
 	return Box{
 		.widget{
 			.height = Size::Shrink,
-			.sizeConstraints{
+			.sizeConstraints = BoxConstraints{
 				.minHeight = 36.f,
 			},
 			.margin = Margin{0.f},
@@ -20,7 +20,7 @@ UI::SkillEntry::operator squi::Child() const {
 		.borderRadius{4.f},
 		.child{
 			Row{
-				.alignment = squi::Row::Alignment::center,
+				.crossAxisAlignment = Flex::Alignment::center,
 				.spacing = 4.f,
 				.children{
 					Container{
@@ -28,7 +28,7 @@ UI::SkillEntry::operator squi::Child() const {
 							.height = Size::Shrink,
 						},
 						.child = Text{
-							.text = name,
+							.text = std::string(name),
 							.lineWrap = true,
 							.color = color,
 						},

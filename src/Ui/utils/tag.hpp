@@ -1,12 +1,14 @@
 #pragma once
 
-#include "widgetArgs.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct Tag {
+	using namespace squi;
+	struct Tag : StatelessWidget {
 		// Args
+		Key key;
 		std::string sourceStr;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

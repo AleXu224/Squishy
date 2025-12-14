@@ -1,28 +1,33 @@
 #include "editorItem.hpp"
-#include "align.hpp"
-#include "container.hpp"
-#include "stack.hpp"
-#include "text.hpp"
+#include "widgets/container.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/text.hpp"
 
 using namespace squi;
 
-UI::EditorItem::operator Child() const {
+[[nodiscard]] squi::core::Child UI::EditorItem::build(const Element &) const {
+	auto newWidget = widget;
+	newWidget.height = newWidget.height.value_or(Size::Shrink);
+
 	return Stack{
-		.widget = widget.withDefaultHeight(Size::Shrink),
+		.widget = newWidget,
 		.children{
 			Container{
 				.widget{
 					.width = Size::Shrink,
 					.height = 32.f,
 				},
-				.child = Align{
-					.xAlign = 0.f,
-					.child = Text{.text = name},
+				.child = Text{
+					.widget{.alignment = Alignment::CenterLeft},
+					.text = name,
 				},
 			},
-			Align{
-				.xAlign = 1.f,
-				.yAlign = 0.f,
+			Container{
+				.widget{
+					.width = Size::Wrap,
+					.height = Size::Wrap,
+					.alignment = Alignment::CenterRight,
+				},
 				.child = child,
 			},
 		},

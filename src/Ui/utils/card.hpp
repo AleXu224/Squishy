@@ -1,15 +1,17 @@
 #pragma once
 
 #include "color.hpp"
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct Card {
+	using namespace squi;
+	struct Card : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget;
 		std::optional<squi::Color> borderColor{};
 		squi::Child child{};
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

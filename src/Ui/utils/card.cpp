@@ -1,9 +1,9 @@
 #include "card.hpp"
-#include "box.hpp"
+#include "widgets/box.hpp"
 
 using namespace squi;
 
-UI::Card::operator squi::Child() const {
+squi::core::Child UI::Card::build(const Element &) const {
 	return Box{
 		.widget = widget,
 		.color{1.f, 1.f, 1.f, 0.0512f},

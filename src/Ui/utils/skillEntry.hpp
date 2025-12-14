@@ -1,18 +1,20 @@
 #pragma once
 
 #include "color.hpp"
-#include "widgetArgs.hpp"
+#include "core/core.hpp"
 
 
 namespace UI {
-	struct SkillEntry {
+	using namespace squi;
+	struct SkillEntry : StatelessWidget {
 		// Args
+		Key key;
 		bool isTransparent;
 		std::string_view name;
 		std::optional<float> value{};
 		squi::Color color;
 		bool isPercentage = false;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

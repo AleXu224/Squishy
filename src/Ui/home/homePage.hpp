@@ -1,16 +1,12 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct homePage {
+	struct HomePage : squi::StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		squi::Key key;
 
-		struct Storage {
-			// Data
-		};
-
-		operator squi::Child() const;
+		squi::Child build(const squi::Element &) const;
 	};
 }// namespace UI

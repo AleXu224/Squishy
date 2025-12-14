@@ -4,7 +4,7 @@
 
 using namespace squi;
 
-UI::StatDisplay::operator squi::Child() const {
+[[nodiscard]] squi::core::Child UI::StatDisplay::build(const Element &) const {
 	if (!stat.stat.has_value()) return Child{};
 	return SkillEntry{
 		.isTransparent = isTransparent,

@@ -17,6 +17,21 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" ${PROJ
 
 file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h")
 
+list(FILTER all_files EXCLUDE REGEX "src/Ui/.*")
+
+list(APPEND all_files 
+  "src/Ui/home/homePage.cpp"
+  "src/Ui/artifact/artifactPage.cpp"
+  "src/Ui/artifact/artifactEditor.cpp"
+  "src/Ui/artifact/artifactCard.cpp"
+  "src/Ui/character/characterSelector.cpp"
+  "src/Ui/utils/card.cpp"
+  "src/Ui/utils/tag.cpp"
+  "src/Ui/utils/statDisplay.cpp"
+  "src/Ui/utils/editorItem.cpp"
+  "src/Ui/utils/skillEntry.cpp"
+)
+
 add_library(squishy_lib ${all_files})
 target_compile_features(squishy_lib PUBLIC cxx_std_23)
 set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
@@ -28,7 +43,7 @@ if (MSVC)
     target_compile_options(squishy_lib PUBLIC /std:c++latest /bigobj)
     target_compile_definitions(squishy_lib PUBLIC _DISABLE_STRING_ANNOTATION _DISABLE_VECTOR_ANNOTATION)
 else()
-    target_compile_options(squishy_lib PUBLIC -Wall -Wextra -Wno-unused-parameter -Werror)
+    target_compile_options(squishy_lib PUBLIC -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Werror)
     # target_link_options(squishy_lib PUBLIC -fsanitize=address,undefined)
     # target_link_options(squishy_lib PUBLIC -fsanitize=undefined,thread)
 endif()

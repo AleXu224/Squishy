@@ -1,5 +1,6 @@
 #include "artifact/sets.hpp"
 #include "character/characters.hpp"
+#include "core/app.hpp"
 #include "store.hpp"
 #include "utils/storageFolder.hpp"
 #include "weapon/weapons.hpp"
@@ -7,7 +8,6 @@
 #include "Ui/home/homePage.hpp"
 
 #include "theme.hpp"
-#include "window.hpp"
 #include <GLFW/glfw3.h>
 
 
@@ -55,24 +55,34 @@ int main() {
 		.accent = systemTheme.value_or(ThemeManager::getTheme().accent),
 	});
 
-	Window window{WindowOptions{
-		.name = "Squishy",
-		.width = ::Store::windowWidth,
-		.height = ::Store::windowHeight,
-		.maximized = ::Store::maximized,
-	}};
-	window.setMaximizeCallback([](bool maximized) {
-		::Store::maximized = maximized;
-	});
-	window.setResizeCallback([](uint32_t width, uint32_t height) {
-		if (!::Store::maximized) {
-			::Store::windowWidth = width;
-			::Store::windowHeight = height;
-		}
-	});
-	window.addChild(UI::homePage{});
+	App app{
+		.windowOptions{
+			.name = "Squishy",
+			.width = ::Store::windowWidth,
+			.height = ::Store::windowHeight,
+			.maximized = ::Store::maximized,
+		},
+		.child = UI::HomePage{}
+	};
+	app.run();
+	// Window window{WindowOptions{
+	// 	.name = "Squishy",
+	// 	.width = ::Store::windowWidth,
+	// 	.height = ::Store::windowHeight,
+	// 	.maximized = ::Store::maximized,
+	// }};
+	// window.setMaximizeCallback([](bool maximized) {
+	// 	::Store::maximized = maximized;
+	// });
+	// window.setResizeCallback([](uint32_t width, uint32_t height) {
+	// 	if (!::Store::maximized) {
+	// 		::Store::windowWidth = width;
+	// 		::Store::windowHeight = height;
+	// 	}
+	// });
+	// window.addChild(UI::homePage{});
 
-	Window::run();
+	// Window::run();
 
 	::Store::saveToFile(fileSavePath.string());
 }

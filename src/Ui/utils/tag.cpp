@@ -1,10 +1,11 @@
 #include "tag.hpp"
-#include "box.hpp"
-#include "text.hpp"
+
+#include "widgets/box.hpp"
+#include "widgets/text.hpp"
 
 using namespace squi;
 
-UI::Tag::operator squi::Child() const {
+[[nodiscard]] squi::core::Child UI::Tag::build(const Element &) const {
 	return Box{
 		.widget{
 			.width = Size::Shrink,

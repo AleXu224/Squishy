@@ -1,12 +1,13 @@
 #pragma once
 
 #include "artifact/instance.hpp"
+#include "core/core.hpp"
 #include "cstdint"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct ArtifactCard {
+	using namespace squi;
+	struct ArtifactCard : StatefulWidget {
 		enum class Actions : uint8_t {
 			list,
 			character,
@@ -14,14 +15,21 @@ namespace UI {
 		};
 
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget;
 		Artifact::Instance &artifact;
 		Actions actions = Actions::list;
 
-		struct Storage {
-			// Data
-		};
+		struct State : WidgetState<ArtifactCard> {
+			VoidObserver artifactUpdateObserver;
 
-		operator squi::Child() const;
+			void initState() override {
+				artifactUpdateObserver = widget->artifact.updateEvent.observe([this]() {
+					this->element->markNeedsRebuild();
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI
