@@ -36,6 +36,9 @@ struct ArtifactHeader : StatelessWidget {
 
 	[[nodiscard]] Child build(const Element &) const {
 		auto icon = Image{
+			.widget{
+				.alignment = Alignment::CenterRight,
+			},
 			.fit = squi::Image::Fit::contain,
 			.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 		};

@@ -10,7 +10,7 @@ namespace UI {
 		// Args
 		Key key;
 		bool isTransparent;
-		std::string_view name;
+		std::string name;
 		std::optional<float> value{};
 		squi::Color color;
 		bool isPercentage = false;
