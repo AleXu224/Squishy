@@ -32,7 +32,7 @@ const Character::Data Character::Datas::illuga{
 		};
 		auto burstLunarCrystallizeDmgIncrease = Requires{
 			.requirement = burstCond,
-			.ret = Multiplier(total.em, LevelableTalent::burst, {2.8240, 3.0358, 3.2476, 3.5300, 3.7418, 3.9536, 4.2360, 4.5184, 4.8008, 5.0832, 5.3656, 5.6480, 6.0010, 6.3540, 6.7070}),
+			.ret = Multiplier(total.atk, LevelableTalent::burst, {2.2592, 2.4286, 2.5981, 2.8240, 2.9934, 3.1629, 3.3888, 3.6147, 3.8406, 4.0666, 4.2925, 4.5184, 4.8008, 5.0832, 5.3656}),
 		};
 
 		auto a1Cond = IsActive("illugaA1Cond");
@@ -74,11 +74,11 @@ const Character::Data Character::Datas::illuga{
 			.requirement = Requirement::passive2 && burstCond,
 			.ret = IfElse{
 				.requirement = a4Count >= 3,
-				.trueVal = Constant(2.f) * total.em,
+				.trueVal = Constant(1.6f) * total.em,
 				.elseVal = IfElse{
 					.requirement = a4Count == 2,
-					.trueVal = Constant(1.2f) * total.em,
-					.elseVal = Constant(0.6f) * total.em,
+					.trueVal = Constant(0.96f) * total.em,
+					.elseVal = Constant(0.48f) * total.em,
 				},
 			},
 		};

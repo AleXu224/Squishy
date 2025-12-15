@@ -28,11 +28,11 @@ const Character::Data Character::Datas::zibai{
 		auto a1Cond = IsActive("zibaiA1Cond");
 		auto a1Buff = Requires{
 			.requirement = Requirement::passive1 && a1Cond,
-			.ret = IfElse{
-				.requirement = Requirement::constellation2,
-				.trueVal = total.def,
-				.elseVal = Constant(0.4f) * total.def,
-			},
+			.ret = total.def
+				 * (0.6 + Requires{
+						.requirement = Requirement::constellation2 && Requirement::ascendantGleam,
+						.ret = Constant(5.5f),
+					}),
 		};
 
 		auto a4DefBuff = Requires{
@@ -52,19 +52,19 @@ const Character::Data Character::Datas::zibai{
 		auto c1Cond = IsActive("zibaiC1Cond");
 		auto c1Buff = Requires{
 			.requirement = Requirement::constellation1 && c1Cond,
-			.ret = Constant(2.f),
+			.ret = Constant(2.2f),
 		};
 
 		auto c2Cond = IsActive("zibaiC2Cond");
 		auto c2Buff = Requires{
 			.requirement = Requirement::constellation2 && c2Cond,
-			.ret = Constant(0.5f),
+			.ret = Constant(0.3f),
 		};
 
 		auto c4Cond = IsActive("zibaiC4Cond");
 		auto c4Buff = Requires{
 			.requirement = Requirement::constellation4 && c4Cond,
-			.ret = total.def * 0.6f,
+			.ret = Constant(1.5f),
 		};
 
 		auto c6Cond = GetFloat("zibaiC6Cond");
@@ -76,11 +76,12 @@ const Character::Data Character::Datas::zibai{
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.def_ = a4DefBuff + c2Buff,
+					.def_ = a4DefBuff,
 					.em = a4EmBuff,
 				},
 				.teamPreMod{
 					.lunarCrystallize{
+						.DMG = c2Buff,
 						.multiplicativeDMG = p3Buff,
 					},
 				},
@@ -93,7 +94,7 @@ const Character::Data Character::Datas::zibai{
 						.name = "After casting the Elemental Skill or triggering Moondrift Harmony",
 						.nodes{
 							Node::Info{
-								.name = "Spirit Steed's Stride DMG Increase",
+								.name = "Spirit Steed's Stride 2nd hit DMG Increase",
 								.type = Utils::EntryType::points,
 								.formula = a1Buff,
 							},
@@ -117,9 +118,10 @@ const Character::Data Character::Datas::zibai{
 					Option::Boolean{
 						.key = "zibaiC2Cond",
 						.name = "In the Lunar Phase Shift mode",
+						.teamBuff = true,
 						.mods{
-							.preMod{
-								.def_ = c2Buff,
+							.teamPreMod{
+								.lunarCrystallize{.DMG = c2Buff},
 							},
 						},
 					},
@@ -130,9 +132,9 @@ const Character::Data Character::Datas::zibai{
 						.name = "Scattermoon Splendor",
 						.nodes{
 							Node::Info{
-								.name = "Spirit Steed's Stride DMG Increase",
-								.type = Utils::EntryType::points,
-								.formula = c4Buff,
+								.name = "Spirit Steed's Stride DMG Multiplier",
+								.type = Utils::EntryType::multiplier,
+								.formula = 1.f + c4Buff,
 							},
 						},
 					},
@@ -238,8 +240,7 @@ const Character::Data Character::Datas::zibai{
 					Node::Atk{
 						.name = "Spirit Steed's Stride 1-Hit DMG",
 						.source = Misc::AttackSource::skill,
-						.formula = Multiplier(total.def, LevelableTalent::skill, {1.7253, 1.8547, 1.9841, 2.1566, 2.2860, 2.4154, 2.5879, 2.7604, 2.9330, 3.1055, 3.2780, 3.4506, 3.6662, 3.8819, 4.0975})
-								 + a1Buff,
+						.formula = Multiplier(total.def, LevelableTalent::skill, {1.7253, 1.8547, 1.9841, 2.1566, 2.2860, 2.4154, 2.5879, 2.7604, 2.9330, 3.1055, 3.2780, 3.4506, 3.6662, 3.8819, 4.0975}),
 						.modifier{
 							.elevation = c6Buff,
 						},
@@ -247,10 +248,11 @@ const Character::Data Character::Datas::zibai{
 					Node::DirectLunar{
 						.name = "Spirit Steed's Stride 2-Hit DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
-						.formula = Multiplier(total.def, LevelableTalent::skill, {1.4097, 1.5154, 1.6211, 1.7621, 1.8678, 1.9736, 2.1145, 2.2555, 2.3965, 2.5374, 2.6784, 2.8194, 2.9956, 3.1718, 3.3480})
-								 + a1Buff + c4Buff,
+						.formula = Multiplier(total.def, LevelableTalent::skill, {1.4097, 1.5154, 1.6211, 1.7621, 1.8678, 1.9736, 2.1145, 2.2555, 2.3965, 2.5374, 2.6784, 2.8194, 2.9956, 3.1718, 3.3480}),
 						.modifier{
 							.DMG = c1Buff,
+							.additiveDMG = a1Buff,
+							.multiplicativeDMG = c4Buff,
 							.elevation = c6Buff,
 						},
 					},

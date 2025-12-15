@@ -47,7 +47,7 @@ const Character::Data Character::Datas::columbina{
 
 		auto c1Elevation = Requires{
 			.requirement = Requirement::constellation1,
-			.ret = Constant(0.03f),
+			.ret = Constant(0.015f),
 		};
 
 		auto c2CondLunarCharged = IsActive("columbinaC2LunarBrillianceLunarCharged");
@@ -55,7 +55,7 @@ const Character::Data Character::Datas::columbina{
 		auto c2CondLunarCrystallize = IsActive("columbinaC2LunarBrillianceLunarCrystallize");
 		auto c2BuffLunarCharged = Requires{
 			.requirement = Requirement::constellation2 && c2CondLunarCharged && Requirement::ascendantGleam,
-			.ret = 0.007f * total.hp,
+			.ret = 0.01f * total.hp,
 		};
 		auto c2BuffLunarBloom = Requires{
 			.requirement = Requirement::constellation2 && c2CondLunarBloom && Requirement::ascendantGleam,
@@ -63,20 +63,20 @@ const Character::Data Character::Datas::columbina{
 		};
 		auto c2BuffLunarCrystallize = Requires{
 			.requirement = Requirement::constellation2 && c2CondLunarCrystallize && Requirement::ascendantGleam,
-			.ret = 0.007f * total.hp,
+			.ret = 0.01f * total.hp,
 		};
 		auto c2HpBuff = Requires{
 			.requirement = Requirement::constellation2 && (c2CondLunarCharged || c2CondLunarBloom || c2CondLunarCrystallize),
-			.ret = Constant(0.20f),
+			.ret = Constant(0.40f),
 		};
 		auto c2Elevation = Requires{
 			.requirement = Requirement::constellation2,
-			.ret = Constant(0.03f),
+			.ret = Constant(0.07f),
 		};
 
 		auto c3Elevation = Requires{
 			.requirement = Requirement::constellation3,
-			.ret = Constant(0.03f),
+			.ret = Constant(0.015f),
 		};
 
 		auto c4CondLunarCharged = IsActive("columbinaC4KuuvahkiInterferenceLunarCharged");
@@ -96,7 +96,7 @@ const Character::Data Character::Datas::columbina{
 		};
 		auto c4Elevation = Requires{
 			.requirement = Requirement::constellation4,
-			.ret = Constant(0.03f),
+			.ret = Constant(0.015f),
 		};
 
 		auto c5Elevation = Requires{
@@ -125,7 +125,7 @@ const Character::Data Character::Datas::columbina{
 		};
 		auto c6Elevation = Requires{
 			.requirement = Requirement::constellation6,
-			.ret = Constant(0.05f),
+			.ret = Constant(0.07f),
 		};
 
 		return Data::Setup{
@@ -338,7 +338,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Charged DMG",
 						.damageType = Misc::LunarDamageType::lunarCharged,
-						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0555, 0.0597, 0.0638, 0.0694, 0.0736, 0.0777, 0.0833, 0.0888, 0.0944, 0.0999, 0.1055, 0.1110, 0.1180, 0.1249, 0.1319}),
+						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0470, 0.0506, 0.0541, 0.0588, 0.0623, 0.0659, 0.0706, 0.0753, 0.0800, 0.0847, 0.0894, 0.0941, 0.1000, 0.1058, 0.1117}),
 						.modifier{
 							.additiveDMG = c4BuffLunarCharged,
 						},
@@ -346,7 +346,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Bloom DMG (x5)",
 						.damageType = Misc::LunarDamageType::lunarBloom,
-						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0200, 0.0215, 0.0230, 0.0250, 0.0265, 0.0280, 0.0300, 0.0320, 0.0340, 0.0360, 0.0380, 0.0400, 0.0425, 0.0450, 0.0475}),
+						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0141, 0.0151, 0.0162, 0.0176, 0.0187, 0.0197, 0.0211, 0.0225, 0.0239, 0.0253, 0.0268, 0.0282, 0.0299, 0.0317, 0.0334}),
 						.modifier{
 							.additiveDMG = c4BuffLunarBloom,
 						},
@@ -354,7 +354,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Crystallize DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
-						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.1042, 0.1120, 0.1198, 0.1302, 0.1380, 0.1458, 0.1562, 0.1667, 0.1771, 0.1875, 0.1979, 0.2083, 0.2213, 0.2344, 0.2474}),
+						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0882, 0.0949, 0.1015, 0.1103, 0.1169, 0.1235, 0.1324, 0.1412, 0.1500, 0.1588, 0.1677, 0.1765, 0.1875, 0.1985, 0.2096}),
 						.modifier{
 							.additiveDMG = c4BuffLunarCrystallize,
 						},
