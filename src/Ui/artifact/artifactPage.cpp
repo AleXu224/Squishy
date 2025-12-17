@@ -5,6 +5,7 @@
 #include "store.hpp"
 #include "widgets/button.hpp"
 #include "widgets/column.hpp"
+#include "widgets/container.hpp"
 #include "widgets/expander.hpp"
 #include "widgets/grid.hpp"
 #include "widgets/liteFilter.hpp"
@@ -12,7 +13,6 @@
 #include "widgets/paginator.hpp"
 #include "widgets/row.hpp"
 #include "widgets/scrollview.hpp"
-#include "widgets/stack.hpp"
 #include "widgets/text.hpp"
 
 
@@ -38,8 +38,13 @@ namespace {
 						.widget{.width = Size::Shrink},
 						.text = heading,
 					},
-					Stack{},
-					action,
+					Container{
+						.widget{
+							.height = Size::Wrap,
+							.alignment = Alignment::CenterRight,
+						},
+						.child = action,
+					},
 				},
 			};
 		}
@@ -185,7 +190,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 						ExpanderItem{
 							.heading = "Main stat",
 							.action = ScrollView{
-								.widget{.width = Size::Wrap},
+								.widget{.width = Size::Wrap, .height = Size::Shrink},
 								.scrollWidget{.width = Size::Wrap},
 								.alignment = Flex::Alignment::center,
 								.direction = Axis::Horizontal,
@@ -195,7 +200,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 						ExpanderItem{
 							.heading = "Sub stat",
 							.action = ScrollView{
-								.widget{.width = Size::Wrap},
+								.widget{.width = Size::Wrap, .height = Size::Shrink},
 								.scrollWidget{.width = Size::Wrap},
 								.alignment = Flex::Alignment::center,
 								.direction = Axis::Horizontal,
@@ -216,6 +221,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 					auto end = std::next(begin, count);
 					for (auto it = begin; it != end; it++) {
 						ret.emplace_back(UI::ArtifactCard{
+							.key = IndexKey{(*it)->key.key},
 							.artifact = **it,
 						});
 					}
