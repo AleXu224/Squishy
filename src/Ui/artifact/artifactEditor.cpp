@@ -27,7 +27,7 @@ struct ArtifactEditorSubstat : StatelessWidget {
 
 	[[nodiscard]] Child build(const Element &) const {
 		auto newWidget = widget;
-		newWidget.width = newWidget.width.value_or(Size::Shrink);
+		newWidget.height = newWidget.height.value_or(Size::Shrink);
 
 		return Stack{
 			.widget = newWidget,
@@ -36,6 +36,7 @@ struct ArtifactEditorSubstat : StatelessWidget {
 					.widget{
 						.width = Size::Shrink,
 						.height = 32.f,
+						.alignment = Alignment::CenterLeft,
 					},
 					.child = Text{
 						.widget{.alignment = Alignment::CenterLeft},

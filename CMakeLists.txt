@@ -30,6 +30,10 @@ list(APPEND all_files
   "src/Ui/utils/statDisplay.cpp"
   "src/Ui/utils/editorItem.cpp"
   "src/Ui/utils/skillEntry.cpp"
+  "src/Ui/weapon/weaponEditor.cpp"
+  "src/Ui/weapon/weaponPage.cpp"
+  "src/Ui/weapon/weaponSelector.cpp"
+  "src/Ui/weapon/weaponCard.cpp"
 )
 
 add_library(squishy_lib ${all_files})

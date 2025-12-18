@@ -1,43 +1,53 @@
 #include "weaponSelector.hpp"
 
-#include "Ui/utils/grid.hpp"
-#include "align.hpp"
-#include "box.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "fontIcon.hpp"
-#include "image.hpp"
 #include "misc/weaponType.hpp"
-#include "modal.hpp"
 #include "observer.hpp"
 
 #include "misc/rarityToColor.hpp"
-#include "row.hpp"
-#include "scrollableFrame.hpp"
-#include "stack.hpp"
-#include "text.hpp"
 #include "weapon/weapons.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/fontIcon.hpp"
+#include "widgets/grid.hpp"
+#include "widgets/image.hpp"
 #include "widgets/liteFilter.hpp"
 
 
 #include "ranges"
+#include "widgets/modal.hpp"
+#include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
+#include "widgets/stack.hpp"
 
 using namespace squi;
 
-struct WeaponSelectorWeaponCard {
+struct WeaponSelectorWeaponCard : StatelessWidget {
 	// Args
-	squi::Widget::Args widget{};
+	Key key;
+	Args widget{};
 	const Weapon::Data &weapon;
 	VoidObservable closeEvent;
 	std::function<void(Weapon::DataKey)> notifySelection;
 
-	operator squi::Child() const {
+	[[nodiscard]] Child build(const Element &) const {
 		auto stars = Row{
 			.widget{
 				.width = Size::Shrink,
 				.height = Size::Shrink,
 			},
-			.children = childrenFactory(weapon.baseStats.rarity, FontIcon{.icon = 0xE838, .font = FontStore::defaultIconsFilled, .size = 16.f, .color = Color::orange}),
+			.children = [&]() {
+				Children ret;
+				for (int i = 0; i < weapon.baseStats.rarity; ++i) {
+					ret.emplace_back(FontIcon{
+						.size = 16.f,
+						.font = FontStore::defaultIconsFilled,
+						.color = Color::orange,
+						.icon = 0xE838,
+					});
+				}
+				return ret;
+			}(),
 		};
 
 		auto details = Column{
@@ -73,10 +83,7 @@ struct WeaponSelectorWeaponCard {
 			.spacing = 12.f,
 			.children{
 				image,
-				Align{
-					.xAlign = 0.f,
-					.child = details,
-				},
+				details,
 			},
 		};
 
@@ -86,8 +93,8 @@ struct WeaponSelectorWeaponCard {
 				.height = Size::Shrink,
 				.padding = 0.f,
 			},
-			.style = ButtonStyle::Standard(),
-			.onClick = [notifySelection = notifySelection, &weapon = weapon, closeEvent = closeEvent](GestureDetector::Event) {
+			.theme = Button::Theme::Standard(),
+			.onClick = [this]() {
 				if (notifySelection) notifySelection(weapon.key);
 				closeEvent.notify();
 			},
@@ -96,24 +103,20 @@ struct WeaponSelectorWeaponCard {
 	}
 };
 
-UI::WeaponSelector::operator Child() const {
-	auto storage = std::make_shared<Storage>();
-	if (type.has_value()) {
+squi::core::Child UI::WeaponSelector::State::build(const Element &element) {
+	if (widget->type.has_value()) {
 		for (const auto &weaponType: Misc::weaponTypes) {
-			storage->weaponTypes[weaponType] = false;
+			weaponTypes[weaponType] = false;
 		}
-		storage->weaponTypes[type.value()] = true;
+		weaponTypes[widget->type.value()] = true;
 	} else {
 		for (const auto &weaponType: Misc::weaponTypes) {
-			storage->weaponTypes[weaponType] = true;
+			weaponTypes[weaponType] = true;
 		}
 	}
 
-	VoidObservable closeEvent{};
-	VoidObservable filterUpdateEvent{};
 
 	auto typeFilter = LiteFilter{
-		.multiSelect = true,
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::weaponTypes.size());
@@ -121,11 +124,12 @@ UI::WeaponSelector::operator Child() const {
 			for (const auto &weaponType: Misc::weaponTypes) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(weaponType),
-					.onUpdate = [weaponType, storage, filterUpdateEvent](bool active) {
-						auto &status = storage->weaponTypes.at(weaponType);
+					.onUpdate = [this, weaponType](bool active) {
+						auto &status = weaponTypes.at(weaponType);
 						if (status != active) {
-							status = active;
-							filterUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -135,33 +139,25 @@ UI::WeaponSelector::operator Child() const {
 		}(),
 	};
 
-	auto makeWeaponList = [storage, closeEvent = closeEvent, onSelect = onSelect]() {
-		Children ret{};
-
-		for (const auto &[_, weapon]: Weapon::list | std::views::filter([&](auto &&iter) {
-										  const auto &[_, weapon] = iter;
-										  return storage->weaponTypes.at(weapon.baseStats.type);
-									  })) {
-			ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = onSelect});
-		}
-
-		return ret;
-	};
-	auto content = ScrollableFrame{
+	auto content = ScrollView{
 		.children{
 			Grid{
 				.widget{
 					.height = Size::Shrink,
 					.margin = Margin(24.f, 0.f),
-					.onInit = [filterUpdateEvent, makeWeaponList](Widget &w) {
-						observe(w, filterUpdateEvent, [&w, makeWeaponList]() {
-							w.setChildren(makeWeaponList());
-						});
-					},
 				},
-				.spacing = 8.f,
 				.columnCount = Grid::MinSize{200.f},
-				.children = makeWeaponList(),
+				.spacing = 8.f,
+				.children = [this]() {
+					Children ret{};
+					for (const auto &[_, weapon]: Weapon::list | std::views::filter([&](auto &&iter) {
+													  const auto &[_, weapon] = iter;
+													  return weaponTypes.at(weapon.baseStats.type);
+												  })) {
+						ret.emplace_back(WeaponSelectorWeaponCard{.weapon = weapon, .closeEvent = closeEvent, .notifySelection = widget->onSelect});
+					}
+					return ret;
+				}(),
 			},
 		},
 	};
@@ -175,28 +171,33 @@ UI::WeaponSelector::operator Child() const {
 		.children{
 			Stack{
 				.children{
-					Align{
-						.xAlign = 0.f,
-						.child = Text{.text = "Select weapon", .fontSize = 28.f, .font = FontStore::defaultFontBold},
+					Text{
+						.widget{
+							.alignment = Alignment::CenterLeft,
+						},
+						.text = "Select weapon",
+						.fontSize = 28.f,
+						.font = FontStore::defaultFontBold,
 					},
-					Align{
-						.xAlign = 1.f,
-						// FIXME: implement searching
-						// .child = TextBox{},
-					},
+					// Align{
+					// 	.xAlign = 1.f,
+					// 	// FIXME: implement searching
+					// 	// .child = TextBox{},
+					// },
 				},
 			},
-			type.has_value() ? nullptr : Child(typeFilter),
+			widget->type.has_value() ? nullptr : Child(typeFilter),
 		},
 	};
 
 	return Modal{
-		.widget = widget,
+		.widget = widget->widget,
 		.closeEvent = closeEvent,
 		.child = Box{
 			.widget{
 				.height = Size::Shrink,
-				.sizeConstraints{.maxWidth = 800.f},
+				.alignment = Alignment::Center,
+				.sizeConstraints = BoxConstraints{.maxWidth = 800.f},
 			},
 			.color = Color::css(0x2C2C2C),
 			.borderColor = Color::css(117, 117, 117, 0.4f),

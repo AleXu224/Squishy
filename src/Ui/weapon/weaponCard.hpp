@@ -1,12 +1,13 @@
 #pragma once
 
+#include "core/core.hpp"
 #include "cstdint"
 #include "weapon/instance.hpp"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct WeaponCard {
+	using namespace squi;
+	struct WeaponCard : StatefulWidget {
 		enum class Actions : uint8_t {
 			list,
 			character,
@@ -14,14 +15,21 @@ namespace UI {
 		};
 
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Weapon::Instance &weapon;
 		Actions actions = WeaponCard::Actions::list;
 
-		struct Storage {
-			// Data
-		};
+		struct State : WidgetState<WeaponCard> {
+			VoidObserver weaponUpdateObserver{};
 
-		operator squi::Child() const;
+			void initState() override {
+				weaponUpdateObserver = widget->weapon.updateEvent.observe([this]() {
+					setState([]() {});
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI
