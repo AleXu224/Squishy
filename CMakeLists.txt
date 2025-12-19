@@ -34,6 +34,7 @@ list(APPEND all_files
   "src/Ui/weapon/weaponPage.cpp"
   "src/Ui/weapon/weaponSelector.cpp"
   "src/Ui/weapon/weaponCard.cpp"
+  "src/Ui/settings/settingsPage.cpp"
 )
 
 add_library(squishy_lib ${all_files})

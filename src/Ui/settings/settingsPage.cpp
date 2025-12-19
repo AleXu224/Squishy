@@ -1,11 +1,12 @@
 #include "settingsPage.hpp"
 
-#include "button.hpp"
-#include "expander.hpp"
-#include "scrollableFrame.hpp"
 
 #include "glaze/glaze.hpp"// IWYU pragma: keep
 #include "nfd.hpp"
+
+#include "widgets/button.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/scrollview.hpp"
 
 #include "fstream"
 
@@ -14,28 +15,25 @@
 
 using namespace squi;
 
-UI::SettingsPage::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	return ScrollableFrame{
-		.scrollableWidget{
+squi::core::Child UI::SettingsPage::State::build(const Element &element) {
+	return ScrollView{
+		.scrollWidget{
 			.padding = 8.f,
 		},
-		.alignment = Scrollable::Alignment::center,
+		.alignment = Flex::Alignment::center,
 		.spacing = 8.f,
 		.children{
 			Expander{
 				.widget{
-					.sizeConstraints{
+					.sizeConstraints = BoxConstraints{
 						.maxWidth = 800.f,
 					},
 				},
-				.heading = "Save to GOOD format (genshin optimizer)",
-				.actions{
+				.title = "Save to GOOD format (genshin optimizer)",
+				.action{
 					Button{
-						.text = "Save",
-						.style = ButtonStyle::Standard(),
-						.onClick = [](GestureDetector::Event) {
+						.theme = Button::Theme::Standard(),
+						.onClick = []() {
 							NFD::Guard guard{};
 							NFD::UniquePath path{};
 							nfdu8filteritem_t filters[2] = {{"JSON File", "json"}};
@@ -53,21 +51,21 @@ UI::SettingsPage::operator squi::Child() const {
 								file.close();
 							}
 						},
+						.child = "Save",
 					},
 				},
 			},
 			Expander{
 				.widget{
-					.sizeConstraints{
+					.sizeConstraints = BoxConstraints{
 						.maxWidth = 800.f,
 					},
 				},
-				.heading = "Load GOOD format save (genshin optimizer)",
-				.actions{
+				.title = "Load GOOD format save (genshin optimizer)",
+				.action{
 					Button{
-						.text = "Load",
-						.style = ButtonStyle::Standard(),
-						.onClick = [](GestureDetector::Event) {
+						.theme = Button::Theme::Standard(),
+						.onClick = []() {
 							NFD::Guard guard{};
 							NFD::UniquePath path{};
 							nfdu8filteritem_t filters[2] = {{"JSON File", "json"}};
@@ -87,6 +85,7 @@ UI::SettingsPage::operator squi::Child() const {
 								Store::loadFromGOOD(dst);
 							}
 						},
+						.child = "Load",
 					},
 				},
 			},
