@@ -226,6 +226,7 @@ squi::core::Child UI::CharacterSelector::State::build(const Element &) {
 		.child = Box{
 			.widget{
 				.height = Size::Shrink,
+				.alignment = Alignment::Center,
 				.sizeConstraints = BoxConstraints{.maxWidth = 800.f},
 			},
 			.color = Color::css(0x2C2C2C),
