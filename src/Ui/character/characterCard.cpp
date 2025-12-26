@@ -3,33 +3,43 @@
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/trueFalse.hpp"
-#include "button.hpp"
 #include "characterCardBanner.hpp"
 #include "characterEditor.hpp"
 #include "characterPage.hpp"
 #include "formula/stat.hpp"
-#include "rebuilder.hpp"
 #include "store.hpp"
 
-#include "column.hpp"
-#include "row.hpp"
-
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/gestureDetector.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
 
 using namespace squi;
 
-struct Contents {
+struct CharacterCardsContents : StatelessWidget {
 	// Args
+	Key key;
 	Character::InstanceKey characterKey;
-	squi::Navigator::Controller controller;
 
-	operator squi::Child() const {
+	[[nodiscard]] Child build(const Element &element) const {
+		auto &character = ::Store::characters.at(characterKey);
+		auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.state.stats.base.element)}};
+		Team::Instance placeholderTeam{};
+		placeholderTeam.stats.characters.at(0) = &character;
+		Formula::Context ctx{
+			.source = character.state,
+			.active = character.state,
+			.team = placeholderTeam.stats,
+			.enemy = ::Store::enemies.at(0).stats,
+		};
+
 		return Column{
 			.children{
-				GestureDetector{
-					.onClick = [controller = controller, characterKey = characterKey](GestureDetector::Event) {
-						controller.push(UI::CharacterPage{
+				Gesture{
+					.onClick = [&](Gesture::State) {
+						Navigator::of(element).push(UI::CharacterPage{
 							.characterKey = characterKey,
-							.controller = controller,
 						});
 					},
 					.child = UI::CharacterCardBanner{
@@ -37,32 +47,20 @@ struct Contents {
 					},
 				},
 				Column{
-					.widget{
-						.padding = Padding{4.f},
-						.onInit = [characterKey = characterKey](Widget &w) {
-							auto &character = ::Store::characters.at(characterKey);
-							auto statsToDisplay = std::vector{Stats::characterDisplayStats, {Stats::fromElement(character.state.stats.base.element)}};
-							Team::Instance placeholderTeam{};
-							placeholderTeam.stats.characters.at(0) = &character;
-							Formula::Context ctx{
-								.source = character.state,
-								.active = character.state,
-								.team = placeholderTeam.stats,
-								.enemy = ::Store::enemies.at(0).stats,
-							};
-
-							for (const auto &[stat, transparent]: std::views::zip(
-									 std::views::join(statsToDisplay),
-									 Utils::trueFalse
-								 )) {
-								auto formula = Formula::Stat{stat};
-								w.addChild(UI::StatDisplay{
-									.isTransparent = transparent,
-									.stat = StatValue{.stat = stat, .value = formula.eval(ctx)},
-								});
-							}
-						},
-					},
+					.children = [&]() {
+						Children ret;
+						for (const auto &[stat, transparent]: std::views::zip(
+								 std::views::join(statsToDisplay),
+								 Utils::trueFalse
+							 )) {
+							auto formula = Formula::Stat{stat};
+							ret.emplace_back(UI::StatDisplay{
+								.isTransparent = transparent,
+								.stat = StatValue{.stat = stat, .value = formula.eval(ctx)},
+							});
+						}
+						return ret;
+					}(),
 				},
 				Row{
 					.widget{
@@ -72,11 +70,10 @@ struct Contents {
 					.spacing = 4.f,
 					.children{
 						Button{
-							.text = "Edit",
-							.style = ButtonStyle::Standard(),
-							.onClick = [characterKey = characterKey](GestureDetector::Event event) {
+							.theme = Button::Theme::Standard(),
+							.onClick = [this, &element]() {
 								auto &character = ::Store::characters.at(characterKey);
-								event.widget.addOverlay(UI::CharacterEditor{
+								Navigator::of(element).pushOverlay(UI::CharacterEditor{
 									.character = character,
 									.onSubmit = [](const Character::Instance &character) {
 										auto &instance = Store::characters.at(character.instanceKey);
@@ -85,16 +82,17 @@ struct Contents {
 									},
 								});
 							},
+							.child = "Edit",
 						},
 						Button{
-							.text = "Delete",
-							.style = ButtonStyle::Standard(),
-							.onClick = [characterKey = characterKey](GestureDetector::Event) {
+							.theme = Button::Theme::Standard(),
+							.onClick = [this]() {
 								auto &character = Store::characters.at(characterKey);
 								std::get<Stats::Artifact::Slotted>(character.state.equippedLoadout.artifact.equipped).unequipAll();
 								Store::characters.erase(characterKey);
 								Store::characterListUpdateEvent.notify();
 							},
+							.child = "Delete",
 						},
 					},
 				}
@@ -103,19 +101,10 @@ struct Contents {
 	}
 };
 
-UI::CharacterCard::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
+squi::core::Child UI::CharacterCard::State::build(const Element &element) {
 	return Card{
-		.widget = widget.withDefaultPadding(1.f),
-		.child = Rebuilder{
-			.rebuildEvent = ::Store::characters.at(characterKey).updateEvent,
-			.buildFunc = [characterKey = characterKey, controller = controller]() {
-				return Contents{
-					.characterKey = characterKey,
-					.controller = controller,
-				};
-			},
+		.child = CharacterCardsContents{
+			.characterKey = widget->characterKey,
 		},
 	};
 }

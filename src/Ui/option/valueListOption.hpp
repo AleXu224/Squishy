@@ -1,27 +1,24 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/key.hpp"
-#include "observer.hpp"
 #include "option/valueList.hpp"
 #include "team/key.hpp"
-#include "widgetArgs.hpp"
 
 
 namespace UI {
-	struct ValueListOption {
+	using namespace squi;
+	struct ValueListOption : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Option::ValueList &option;
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
-		squi::Observable<std::optional<uint32_t>, std::optional<uint32_t>> valueChangedEvent{};
 		Formula::Context ctx;
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<ValueListOption> {
+			Child build(const Element &element) override;
 		};
-
-		operator squi::Child() const;
 	};
 }// namespace UI

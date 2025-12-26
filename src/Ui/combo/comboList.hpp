@@ -1,21 +1,31 @@
 #pragma once
 
 #include "character/key.hpp"
+#include "core/core.hpp"
 #include "formula/formulaContext.hpp"
-#include "widget.hpp"
-
+#include "observer.hpp"
+#include "store.hpp"
 
 namespace UI {
-	struct ComboList {
+	using namespace squi;
+	struct ComboList : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		Formula::Context ctx;
 
-		struct Storage {
-			// Data
-		};
+		struct State : WidgetState<ComboList> {
+			VoidObservable closeEvent;
+			VoidObserver characterUpdatedEvent;
 
-		operator squi::Child() const;
+			void initState() override {
+				characterUpdatedEvent = ::Store::characters.at(widget->characterKey).updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

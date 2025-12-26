@@ -1,74 +1,77 @@
 #include "comboList.hpp"
 
-#include "button.hpp"
-#include "column.hpp"
 #include "comboEditor.hpp"
-#include "container.hpp"
-#include "dialog.hpp"
-#include "expander.hpp"
-#include "rebuilder.hpp"
 #include "store.hpp"
-#include "theme.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
 
 
 using namespace squi;
 
 namespace {
-	[[nodiscard]] Child comboListBuilder(const Character::InstanceKey &characterKey, const Formula::Context &ctx, VoidObservable combosModifiedEvent, Theme theme) {
-		auto _ = ThemeManager::pushTheme(theme);
-		return Column{
-			.spacing = 4.f,
-			.children = [&]() {
-				Children ret;
+	struct ComboListEntry : StatefulWidget {
+		// Args
+		Key key;
+		Combo::InstanceKey comboKey;
+		Combo::Combo &combo;
+		Character::InstanceKey characterKey;
+		Formula::Context ctx;
+		const Element &element;
 
-				auto &character = ::Store::characters.at(characterKey);
-				auto &combos = character.combos;
+		struct State : WidgetState<ComboListEntry> {
+			VoidObserver comboModifiedEvent;
 
-				for (auto &[key, combo]: combos) {
-					ret.emplace_back(Expander{
-						.heading = combo.name,
-						.actions{
+			void initState() override {
+				comboModifiedEvent = widget->combo.updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			Child build(const Element &element) override {
+				return Expander{
+					.title = widget->combo.name,
+					.action = Row{
+						.children{
 							Button{
-								.text = "Edit combo",
-								.style = ButtonStyle::Standard(),
-								.onClick = [&combo, characterKey, ctx, combosModifiedEvent, theme](GestureDetector::Event event) {
-									auto _ = ThemeManager::pushTheme(theme);
-									event.widget.addOverlay(UI::ComboEditor{
-										.combo = combo,
-										.characterKey = characterKey,
-										.ctx = ctx,
-										.onSave = [&combo, combosModifiedEvent](Combo::Combo newCombo) {
-											combo = newCombo;
-											combo.updateEvent.notify();
-											combosModifiedEvent.notify();
+								.theme = Button::Theme::Standard(),
+								.onClick = [this]() {
+									Navigator::of(widget->element).pushOverlay(UI::ComboEditor{
+										.combo = widget->combo,
+										.characterKey = widget->characterKey,
+										.ctx = widget->ctx,
+										.onSave = [this](Combo::Combo newCombo) {
+											setState([&]() {
+												widget->combo = newCombo;
+											});
+											widget->combo.updateEvent.notify();
 										},
 									});
 								},
+								.child = "Edit combo",
 							},
 							Button{
-								.text = "Delete",
-								.onClick = [&combos, combosModifiedEvent, &character, key](auto) {
-									combos.erase(key);
-									combosModifiedEvent.notify();
+								.onClick = [this]() {
+									auto &character = ::Store::characters.at(widget->characterKey);
+									auto &combos = character.combos;
+
+									combos.erase(widget->comboKey);
 									character.updateEvent.notify();
 								},
+								.child = "Delete",
 							},
 						},
-					});
-				}
-
-				return ret;
-			}(),
+					},
+				};
+			}
 		};
-	}
+	};
 }// namespace
 
-UI::ComboList::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	VoidObservable closeEvent{};
-	VoidObservable combosModifiedEvent{};
-
+squi::core::Child UI::ComboList::State::build(const Element &element) {
 	return Dialog{
 		.closeEvent = closeEvent,
 		.title = "Combo list",
@@ -76,38 +79,54 @@ UI::ComboList::operator squi::Child() const {
 			.spacing = 8.f,
 			.children{
 				Button{
-					.text = "Add combo",
-					.onClick = [characterKey = characterKey, combosModifiedEvent](GestureDetector::Event event) {
-						auto &character = ::Store::characters.at(characterKey);
-						::Store::lastComboId++;
-						character.combos.insert(
-							{
-								::Store::lastComboId,
-								Combo::Combo{
-									.instanceKey{::Store::lastComboId},
-									.name = "New combo",
-								},
-							}
-						);
+					.onClick = [this]() {
+						auto &character = ::Store::characters.at(widget->characterKey);
+						setState([&]() {
+							::Store::lastComboId++;
+							character.combos.insert(
+								{
+									::Store::lastComboId,
+									Combo::Combo{
+										.instanceKey{::Store::lastComboId},
+										.name = "New combo",
+									},
+								}
+							);
+						});
 						character.updateEvent.notify();
-						combosModifiedEvent.notify();
 					},
+					.child = "Add combo",
 				},
-				Rebuilder{
-					.rebuildEvent = combosModifiedEvent,
-					.buildFunc = std::bind(comboListBuilder, characterKey, ctx, combosModifiedEvent, ThemeManager::getTheme()),
-				}
+				Column{
+					.spacing = 4.f,
+					.children = [&]() {
+						Children ret;
+
+						auto &character = ::Store::characters.at(widget->characterKey);
+						auto &combos = character.combos;
+
+						for (auto &[key, combo]: combos) {
+							ret.emplace_back(ComboListEntry{
+								.combo = combo,
+								.characterKey = widget->characterKey,
+								.ctx = widget->ctx,
+								.element = element,
+							});
+						}
+
+						return ret;
+					}(),
+				},
 			},
 		},
 		.buttons{
-			Container{},
 			Button{
 				.widget{.width = Size::Expand},
-				.text = "Close",
-				.style = ButtonStyle::Standard(),
-				.onClick = [closeEvent](GestureDetector::Event) {
+				.theme = Button::Theme::Standard(),
+				.onClick = [this]() {
 					closeEvent.notify();
 				},
+				.child = "Close",
 			},
 		},
 	};

@@ -1,40 +1,36 @@
 #include "characterLoadouts.hpp"
 
 #include "Ui/loadout/loadoutCard.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "dialog.hpp"
-#include "dropdownButton.hpp"
-#include "expander.hpp"
-#include "gestureDetector.hpp"
 #include "observer.hpp"
 #include "ranges"
-#include "rebuilder.hpp"
 #include "store.hpp"
-#include "theme.hpp"
 #include "weapon/defaultWeapons.hpp"
+#include "widgets/column.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/dropdownButton.hpp"
+#include "widgets/expander.hpp"
 
 
 using namespace squi;
 
 namespace {
-	struct CharacterLoadoutsHeadingEntry {
+	struct CharacterLoadoutsHeadingEntry : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Expander{
-				.heading = "Add loadout",
+				.title = "Add loadout",
 				.alwaysExpanded = true,
-				.actions{
+				.action{
 					DropdownButton{
 						.text = "Add",
 						.items{
-							ContextMenu::Item{
+							ContextMenu::Button{
 								.text = "Build",
-								.content = [characterKey = characterKey]() {
+								.callback = [characterKey = characterKey]() {
 									auto &character = ::Store::characters.at(characterKey);
 									auto &weapon = Store::createWeapon(Weapon::defaultWeapons.at(character.state.stats.base.weaponType));
 									character.state.loadouts.emplace_back(Stats::Loadout{
@@ -45,9 +41,9 @@ namespace {
 									character.updateEvent.notify();
 								},
 							},
-							ContextMenu::Item{
+							ContextMenu::Button{
 								.text = "TC Build",
-								.content = [characterKey = characterKey]() {
+								.callback = [characterKey = characterKey]() {
 									auto &character = ::Store::characters.at(characterKey);
 									auto &weapon = Store::createWeapon(Weapon::defaultWeapons.at(character.state.stats.base.weaponType));
 									character.state.loadouts.emplace_back(Stats::Loadout{
@@ -68,47 +64,39 @@ namespace {
 	};
 }// namespace
 
-UI::CharacterLoadouts::operator Child() const {
-	VoidObservable closeEvent{};
-	auto &character = Store::characters.at(characterKey);
-	auto theme = ThemeManager::getTheme();
+squi::core::Child UI::CharacterLoadouts::State::build(const Element &element) {
+	auto &character = Store::characters.at(widget->characterKey);
 
-	auto content = Rebuilder{
-		.rebuildEvent = character.updateEvent,
-		.buildFunc = [characterKey = characterKey, theme]() -> Child {
-			auto _ = ThemeManager::pushTheme(theme);
-			return Column{
-				.spacing = 8.f,
-				.children = [&]() {
-					Children ret{
-						CharacterLoadoutsHeadingEntry{
-							.characterKey = characterKey,
-						},
-						LoadoutCard{
-							.characterKey = characterKey,
-						},
-					};
-
-					auto &character = Store::characters.at(characterKey);
-
-					for (const auto &[index, loadout]: std::views::enumerate(character.state.loadouts)) {
-						ret.emplace_back(LoadoutCard{.characterKey = characterKey, .loadoutIndex = index});
-					}
-
-					return ret;
-				}(),
+	Child content = Column{
+		.spacing = 8.f,
+		.children = [&]() {
+			Children ret{
+				CharacterLoadoutsHeadingEntry{
+					.characterKey = widget->characterKey,
+				},
+				LoadoutCard{
+					.characterKey = widget->characterKey,
+				},
 			};
-		},
+
+			for (const auto &[index, loadout]: std::views::enumerate(character.state.loadouts)) {
+				ret.emplace_back(LoadoutCard{.characterKey = widget->characterKey, .loadoutIndex = index});
+			}
+
+			return ret;
+		}(),
 	};
 
 	Children buttonFooter{
-		Container{},
 		Button{
-			.text = "Close",
-			.style = ButtonStyle::Standard(),
-			.onClick = [closeEvent](GestureDetector::Event) {
+			.widget{
+				.alignment = Alignment::CenterRight,
+			},
+			.theme = Button::Theme::Standard(),
+			.onClick = [this]() {
 				closeEvent.notify();
 			},
+			.child = "Close",
 		},
 	};
 

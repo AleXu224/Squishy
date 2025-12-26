@@ -3,39 +3,49 @@
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
 #include "Ui/utils/trueFalse.hpp"
-#include "button.hpp"
 #include "comboList.hpp"
 #include "ranges"
-#include "rebuilder.hpp"
 #include "store.hpp"
-#include "theme.hpp"
+#include "widgets/button.hpp"
+#include "widgets/navigator.hpp"
 
 
 using namespace squi;
+namespace UI {
+	struct ComboDisplayEntry : StatelessWidget {
+		// Args
+		Key key;
+		bool transparent;
+		const Combo::Combo &combo;
+		Formula::Context ctx;
+		Color color;
 
-UI::ComboDisplay::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
+		[[nodiscard]] Child build(const Element &) const {
+			return SkillEntry{
+				.isTransparent = transparent,
+				.name = combo.name,
+				.value = combo.eval(ctx),
+				.color = Utils::elementToColor(Misc::Element::physical),
+			};
+		}
+	};
+}// namespace UI
 
+[[nodiscard]] squi::core::Child UI::ComboDisplay::build(const Element &element) const {
 	return DisplayCard{
 		.title = "Combos",
-		.children = [characterKey = characterKey, ctx = ctx]() {
+		.children = [&]() {
 			Children ret;
 
 			auto &character = ::Store::characters.at(characterKey);
 
 			for (const auto &[comboPair, transparent]: std::views::zip(character.combos, Utils::trueFalse)) {
 				const auto &[comboKey, combo] = comboPair;
-				ret.emplace_back(Rebuilder{
-					.rebuildEvent = combo.updateEvent,
-					.buildFunc = [transparent, &combo, ctx, theme = ThemeManager::getTheme()]() {
-						auto _ = ThemeManager::pushTheme(theme);
-						return SkillEntry{
-							.isTransparent = transparent,
-							.name = combo.name,
-							.value = combo.eval(ctx),
-							.color = Utils::elementToColor(Misc::Element::physical),
-						};
-					},
+				ret.emplace_back(UI::ComboDisplayEntry{
+					.transparent = transparent,
+					.combo = combo,
+					.ctx = ctx,
+					.color = Utils::elementToColor(Misc::Element::physical),
 				});
 			}
 
@@ -43,14 +53,13 @@ UI::ComboDisplay::operator squi::Child() const {
 		}(),
 		.footer{
 			Button{
-				.text = "Edit",
-				.onClick = [characterKey = characterKey, ctx = ctx, theme = ThemeManager::getTheme()](GestureDetector::Event event) {
-					auto _ = ThemeManager::pushTheme(theme);
-					event.widget.addOverlay(ComboList{
+				.onClick = [&]() {
+					Navigator::of(element).pushOverlay(ComboList{
 						.characterKey = characterKey,
 						.ctx = ctx,
 					});
 				},
+				.child = "Edit",
 			},
 		},
 	};

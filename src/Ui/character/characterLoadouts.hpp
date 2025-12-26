@@ -1,15 +1,31 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/key.hpp"
+#include "observer.hpp"
+#include "store.hpp"
 
 namespace UI {
-	struct CharacterLoadouts {
+	using namespace squi;
+	struct CharacterLoadouts : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const;
+		struct State : WidgetState<CharacterLoadouts> {
+			VoidObservable closeEvent{};
+			VoidObserver characterUpdateEvent;
+
+			void initState() override {
+				auto &character = ::Store::characters.at(widget->characterKey);
+				characterUpdateEvent = character.updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

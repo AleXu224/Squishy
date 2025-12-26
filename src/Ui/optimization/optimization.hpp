@@ -1,19 +1,26 @@
 #pragma once
 
 #include "character/key.hpp"
+#include "core/core.hpp"
 #include "enemy/key.hpp"
+#include "optimization/solution.hpp"
 #include "team/key.hpp"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct Optimization {
+	using namespace squi;
+	struct Optimization : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		std::optional<Team::InstanceKey> teamKey{};
 		Enemy::Key enemyKey{};
 
-		operator squi::Child() const;
+		struct State : WidgetState<Optimization> {
+			::Optimization::Solutions solutions;
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

@@ -1,18 +1,20 @@
 #pragma once
 
 #include "character/key.hpp"
+#include "core/core.hpp"
 #include "optimization/solution.hpp"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct OptimizationResult {
+	using namespace squi;
+	struct OptimizationResult : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		::Optimization::Solution solution;
 		uint32_t entryIndex;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

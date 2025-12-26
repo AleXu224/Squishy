@@ -1,26 +1,23 @@
 #include "characterPage.hpp"
 
 #include "Ui/character/characterDetails.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/sideNav.hpp"
 
-#include "navigationView.hpp"
-#include "wrapper.hpp"
 
 
 using namespace squi;
 
-UI::CharacterPage::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	return NavigationView{
-		.expanded = false,
-		.backAction = [controller = controller]() {
-			controller.pop();
+squi::core::Child UI::CharacterPage::State::build(const Element &element) {
+	return SideNav{
+		.backAction = [this]() {
+			Navigator::of(this).popPage();
 		},
 		.pages{
-			NavigationView::Page{
+			SideNav::Page{
 				.name = "Details",
 				.content = CharacterDetails{
-					.characterKey = characterKey,
+					.characterKey = widget->characterKey,
 				},
 			},
 		},

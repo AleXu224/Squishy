@@ -1,19 +1,26 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "combo/source.hpp"
 #include "functional"
+#include "observer.hpp"
 
 namespace UI {
-	struct NodePicker {
+	using namespace squi;
+	struct NodePicker : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		bool enableCombos = false;
 		const Formula::Context &ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 
-		operator squi::Child() const;
+		struct State : WidgetState<NodePicker> {
+			VoidObservable closeEvent;
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

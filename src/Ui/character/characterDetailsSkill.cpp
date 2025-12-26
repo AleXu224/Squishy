@@ -5,12 +5,10 @@
 #include "Ui/utils/decodeModsSheet.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
-#include "Ui/utils/tooltip.hpp"
 
 using namespace squi;
-UI::DetailsSkill::operator squi::Child() const {
-	using namespace squi;
-	if (!displayCondition.eval(ctx)) return nullptr;
+[[nodiscard]] squi::core::Child UI::DetailsSkill::build(const Element &) const {
+	if (!displayCondition.eval(ctx)) return {};
 
 	auto entries = [&]() -> Children {
 		Children ret{};
@@ -29,10 +27,10 @@ UI::DetailsSkill::operator squi::Child() const {
 
 				if (node.formula.eval(ctx) == 0.f) continue;
 				ret2.emplace_back(UI::Tooltip{
-					.message = node.formula.print(ctx),
+					.text = node.formula.print(ctx),
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
-						.name = node.name,
+						.name = std::string(node.name),
 						.value = node.formula.eval(ctx),
 						.color = Node::getColor(node.data, ctx),
 						.isPercentage = Node::isPercentage(node.data),

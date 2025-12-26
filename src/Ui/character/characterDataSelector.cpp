@@ -5,41 +5,46 @@
 
 #include "character/characters.hpp"
 
-#include "Ui/utils/grid.hpp"
-#include "align.hpp"
-#include "box.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "fontIcon.hpp"
-#include "image.hpp"
-#include "modal.hpp"
 #include "observer.hpp"
-#include "row.hpp"
-#include "scrollableFrame.hpp"
-#include "stack.hpp"
-#include "text.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/fontIcon.hpp"
+#include "widgets/grid.hpp"
+#include "widgets/image.hpp"
 #include "widgets/liteFilter.hpp"
+#include "widgets/modal.hpp"
+#include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
+#include "widgets/stack.hpp"
 
 
 using namespace squi;
 
-struct CharacterDataSelectorCharacterCard {
+struct CharacterDataSelectorCharacterCard : StatelessWidget {
 	// Args
-	squi::Widget::Args widget{};
+	Key key;
+	Args widget{};
 	const Character::Data &character;
 	VoidObservable closeEvent;
 	std::function<void(Character::DataKey)> notifySelection;
 
-	operator squi::Child() const {
-		auto stars = Row{
+	[[nodiscard]] Child build(const Element &) const {
+		Child stars = Row{
 			.widget{
 				.width = Size::Shrink,
 				.height = Size::Shrink,
 			},
-			.children = childrenFactory(character.baseStats.rarity, FontIcon{.icon = 0xE838, .font = FontStore::defaultIconsFilled, .size = 16.f, .color = Color::orange}),
+			.children = [&]() {
+				Children ret;
+				for (int i = 0; i < character.baseStats.rarity; ++i) {
+					ret.emplace_back(FontIcon{.size = 16.f, .font = FontStore::defaultIconsFilled, .color = Color::orange, .icon = 0xE838});
+				}
+				return ret;
+			}(),
 		};
 
-		auto details = Column{
+		Child details = Column{
 			.widget{
 				.height = Size::Shrink,
 				.padding = Padding(0.f, 8.f).withRight(8.f),
@@ -47,7 +52,7 @@ struct CharacterDataSelectorCharacterCard {
 			.spacing = 12.f,
 			.children{
 				Text{
-					.text = character.name,
+					.text = std::string(character.name),
 					.fontSize = 14.f,
 					.lineWrap = true,
 				},
@@ -55,7 +60,7 @@ struct CharacterDataSelectorCharacterCard {
 			},
 		};
 
-		auto image = Box{
+		Child image = Box{
 			.widget{
 				.width = 96.f,
 				.height = 96.f,
@@ -68,14 +73,12 @@ struct CharacterDataSelectorCharacterCard {
 			},
 		};
 
-		auto content = Row{
+		Child content = Row{
+			.crossAxisAlignment = Row::Alignment::center,
 			.spacing = 12.f,
 			.children{
 				image,
-				Align{
-					.xAlign = 0.f,
-					.child = details,
-				},
+				details,
 			},
 		};
 
@@ -85,8 +88,7 @@ struct CharacterDataSelectorCharacterCard {
 				.height = Size::Shrink,
 				.padding = 0.f,
 			},
-			.style = ButtonStyle::Standard(),
-			.onClick = [notifySelection = notifySelection, &character = character, closeEvent = closeEvent](GestureDetector::Event) {
+			.onClick = [this]() {
 				if (notifySelection) notifySelection(character.key);
 				closeEvent.notify();
 			},
@@ -95,20 +97,8 @@ struct CharacterDataSelectorCharacterCard {
 	}
 };
 
-UI::CharacterDataSelector::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-	for (const auto &element: Misc::characterElements) {
-		storage->characterElements[element] = true;
-	}
-	for (const auto &weaponType: Misc::weaponTypes) {
-		storage->characterWeapon[weaponType] = true;
-	}
-
-	VoidObservable closeEvent{};
-	VoidObservable filterUpdateEvent{};
-
+squi::core::Child UI::CharacterDataSelector::State::build(const Element &element) {
 	auto elementFilter = LiteFilter{
-		.multiSelect = true,
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::characterElements.size());
@@ -116,11 +106,12 @@ UI::CharacterDataSelector::operator squi::Child() const {
 			for (const auto &characterElement: Misc::characterElements) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(characterElement),
-					.onUpdate = [characterElement, storage, filterUpdateEvent](bool active) {
-						auto &status = storage->characterElements.at(characterElement);
+					.onUpdate = [characterElement, this](bool active) {
+						auto &status = characterElements.at(characterElement);
 						if (status != active) {
-							status = active;
-							filterUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -130,7 +121,6 @@ UI::CharacterDataSelector::operator squi::Child() const {
 		}(),
 	};
 	auto weaponTypeFilter = LiteFilter{
-		.multiSelect = true,
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::weaponTypes.size());
@@ -138,11 +128,12 @@ UI::CharacterDataSelector::operator squi::Child() const {
 			for (const auto &weaponType: Misc::weaponTypes) {
 				ret.emplace_back(LiteFilter::Item{
 					.name = Utils::Stringify(weaponType),
-					.onUpdate = [weaponType, storage, filterUpdateEvent](bool active) {
-						auto &status = storage->characterWeapon.at(weaponType);
+					.onUpdate = [weaponType, this](bool active) {
+						auto &status = characterWeapon.at(weaponType);
 						if (status != active) {
-							status = active;
-							filterUpdateEvent.notify();
+							setState([&]() {
+								status = active;
+							});
 						}
 					},
 				});
@@ -152,32 +143,27 @@ UI::CharacterDataSelector::operator squi::Child() const {
 		}(),
 	};
 
-	auto makeCharacterList = [storage, closeEvent = closeEvent, onSelect = onSelect]() {
+	auto makeCharacterList = [this]() {
 		Children ret{};
 
 		for (const auto &[_, character]: Character::list | std::views::filter([&](auto &&iter) {
 											 const auto &[_, character] = iter;
-											 return storage->characterElements.at(character.baseStats.element) && storage->characterWeapon.at(character.baseStats.weaponType);
+											 return characterElements.at(character.baseStats.element) && characterWeapon.at(character.baseStats.weaponType);
 										 })) {
-			ret.emplace_back(CharacterDataSelectorCharacterCard{.character = character, .closeEvent = closeEvent, .notifySelection = onSelect});
+			ret.emplace_back(CharacterDataSelectorCharacterCard{.character = character, .closeEvent = closeEvent, .notifySelection = widget->onSelect});
 		}
 
 		return ret;
 	};
-	auto content = ScrollableFrame{
+	auto content = ScrollView{
 		.children{
 			Grid{
 				.widget{
 					.height = Size::Shrink,
 					.margin = Margin(24.f, 0.f),
-					.onInit = [filterUpdateEvent, makeCharacterList](Widget &w) {
-						observe(w, filterUpdateEvent, [&w, makeCharacterList]() {
-							w.setChildren(makeCharacterList());
-						});
-					},
 				},
-				.spacing = 8.f,
 				.columnCount = Grid::MinSize{200.f},
+				.spacing = 8.f,
 				.children = makeCharacterList(),
 			},
 		},
@@ -192,15 +178,19 @@ UI::CharacterDataSelector::operator squi::Child() const {
 		.children{
 			Stack{
 				.children{
-					Align{
-						.xAlign = 0.f,
-						.child = Text{.text = "Select character", .fontSize = 28.f, .font = FontStore::defaultFontBold},
+					Text{
+						.widget{
+							.alignment = Alignment::CenterLeft,
+						},
+						.text = "Select character",
+						.fontSize = 28.f,
+						.font = FontStore::defaultFontBold,
 					},
-					Align{
-						.xAlign = 1.f,
-						// FIXME: implement searching
-						// .child = TextBox{},
-					},
+					// Align{
+					// 	.xAlign = 1.f,
+					// 	// FIXME: implement searching
+					// 	// .child = TextBox{},
+					// },
 				},
 			},
 			Column{
@@ -215,12 +205,13 @@ UI::CharacterDataSelector::operator squi::Child() const {
 	};
 
 	return Modal{
-		.widget = widget,
+		.widget = widget->widget,
 		.closeEvent = closeEvent,
 		.child = Box{
 			.widget{
 				.height = Size::Shrink,
-				.sizeConstraints{.maxWidth = 800.f},
+				.alignment = Alignment::Center,
+				.sizeConstraints = BoxConstraints{.maxWidth = 800.f},
 			},
 			.color = Color::css(0x2C2C2C),
 			.borderColor = Color::css(117, 117, 117, 0.4f),

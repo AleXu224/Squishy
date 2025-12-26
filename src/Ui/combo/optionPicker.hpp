@@ -1,20 +1,27 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/key.hpp"
 #include "combo/option.hpp"
 #include "formula/formulaContext.hpp"
+#include "observer.hpp"
 
 namespace UI {
-	struct OptionPicker {
+	using namespace squi;
+	struct OptionPicker : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		const Formula::Context &ctx;
 		const std::vector<::Combo::Option> &options;
 		std::function<void(::Combo::Option)> onSelect;
 
-		operator squi::Child() const;
+		struct State : WidgetState<OptionPicker> {
+			VoidObservable closeEvent;
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

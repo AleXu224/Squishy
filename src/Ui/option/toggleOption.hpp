@@ -1,6 +1,6 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/key.hpp"
 #include "option/boolean.hpp"
@@ -8,19 +8,17 @@
 
 
 namespace UI {
-	struct ToggleOption {
+	using namespace squi;
+	struct ToggleOption : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Option::Boolean &option;
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
-		squi::Observable<bool> switchEvent{};
 		Formula::Context ctx;
 
-		struct Storage {
-			// Data
-			bool active;
+		struct State : WidgetState<ToggleOption> {
+			Child build(const Element &element) override;
 		};
-
-		operator squi::Child() const;
 	};
 }// namespace UI

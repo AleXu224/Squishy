@@ -1,69 +1,74 @@
 #include "loadoutCard.hpp"
 #include "Ui/artifact/artifactCard.hpp"
 #include "Ui/utils/card.hpp"
-#include "Ui/utils/tooltip.hpp"
 #include "Ui/weapon/weaponCard.hpp"
-#include "button.hpp"
-#include "container.hpp"
-#include "expander.hpp"
-#include "row.hpp"
 #include "store.hpp"
+#include "widgets/button.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/row.hpp"
+#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
 
-UI::LoadoutCard::operator squi::Child() const {
-	auto &character = Store::characters.at(characterKey);
-	auto &loadout = character.state.loadoutByIndex(loadoutIndex);
+squi::core::Child UI::LoadoutCard::State::build(const Element &element) {
+	auto &character = Store::characters.at(widget->characterKey);
+	auto &loadout = character.state.loadoutByIndex(widget->loadoutIndex);
 
 	return Expander{
-		.heading = loadoutIndex.has_value() ? "Loadout name" : "Equipped",
+		.title = widget->loadoutIndex.has_value() ? "Loadout name" : "Equipped",
 		.alwaysExpanded = true,
-		.actions{
-			loadoutIndex.has_value() && std::holds_alternative<Stats::Artifact::Slotted>(loadout.artifact.equipped)//
-				? Tooltip{
-					  .message = "Sets the equipped build to this build. If any of the artifacts in this build are equipped on other characters, they will be swapped with this character's.",
-					  .child = Button{
-						  .text = "Equip",
-						  .onClick = [&character, loadoutIndex = loadoutIndex](GestureDetector::Event) {
-							  auto &loadout = character.state.loadoutByIndex(loadoutIndex);
-							  character.state.equippedLoadout.swapWeapon(loadout.weaponInstanceKey);
-							  if (!std::holds_alternative<::Stats::Artifact::Slotted>(loadout.artifact.equipped)) return;
-							  auto &slotted = std::get<::Stats::Artifact::Slotted>(loadout.artifact.equipped);
-							  for (const auto &slot: Artifact::slots) {
-								  auto &art = slotted.fromSlot(slot);
-								  if (art) Store::artifacts.at(art).equipOn(character.instanceKey);
-							  }
+		.action = Row{
+			.children{
+				widget->loadoutIndex.has_value() && std::holds_alternative<Stats::Artifact::Slotted>(loadout.artifact.equipped)//
+					? Tooltip{
+						  .text = "Sets the equipped build to this build. If any of the artifacts in this build are equipped on other characters, they will be swapped with this character's.",
+						  .child = Button{
+							  .onClick = [this, &character]() {
+								  auto &loadout = character.state.loadoutByIndex(widget->loadoutIndex);
+								  setState([&]() {
+									  character.state.equippedLoadout.swapWeapon(loadout.weaponInstanceKey);
+									  if (!std::holds_alternative<::Stats::Artifact::Slotted>(loadout.artifact.equipped)) return;
+									  auto &slotted = std::get<::Stats::Artifact::Slotted>(loadout.artifact.equipped);
+									  for (const auto &slot: Artifact::slots) {
+										  auto &art = slotted.fromSlot(slot);
+										  if (art) Store::artifacts.at(art).equipOn(character.instanceKey);
+									  }
+								  });
+							  },
+							  .child = "Equip",
 						  },
-					  },
-				  }
-				: Child{},
-			Button{
-				.text = "Activate",
-				.disabled = character.state.loadoutIndex == loadoutIndex,
-				.onClick = [&character, loadoutIndex = loadoutIndex](GestureDetector::Event) {
-					character.state.loadoutIndex = loadoutIndex;
-					character.updateEvent.notify();
-					character.loadoutChangedEvent.notify();
+					  }
+					: Child{},
+				Button{
+					.disabled = character.state.loadoutIndex == widget->loadoutIndex,
+					.onClick = [this, &character]() {
+						character.state.loadoutIndex = widget->loadoutIndex;
+						character.updateEvent.notify();
+						character.loadoutChangedEvent.notify();
+					},
+					.child = "Activate",
 				},
+				widget->loadoutIndex.has_value()//
+					? Button{
+						  .theme = Button::Theme::Standard(),
+						  .disabled = character.state.loadoutIndex == widget->loadoutIndex,
+						  .onClick = [this, &character]() {
+							  setState([&]() {
+								  if (character.state.loadoutIndex.has_value() && character.state.loadoutIndex.value() > widget->loadoutIndex.value()) {
+									  character.state.loadoutIndex.value()--;
+								  }
+								  character.state.loadouts.erase(character.state.loadouts.begin() + widget->loadoutIndex.value());
+							  });
+							  character.updateEvent.notify();
+							  character.loadoutChangedEvent.notify();
+						  },
+						  .child = "Remove",
+					  }
+					: Child{},
 			},
-			loadoutIndex.has_value()//
-				? Button{
-					  .text = "Remove",
-					  .style = ButtonStyle::Standard(),
-					  .disabled = character.state.loadoutIndex == loadoutIndex,
-					  .onClick = [&character, loadoutIndex = loadoutIndex](GestureDetector::Event) {
-						  if (character.state.loadoutIndex.has_value() && character.state.loadoutIndex.value() > loadoutIndex.value()) {
-							  character.state.loadoutIndex.value()--;
-						  }
-						  character.state.loadouts.erase(character.state.loadouts.begin() + loadoutIndex.value());
-						  character.updateEvent.notify();
-						  character.loadoutChangedEvent.notify();
-					  },
-				  }
-				: Child{},
 		},
-		.expandedContent = Row{
+		.content = Row{
 			.widget{
 				.width = Size::Expand,
 				.padding = 8.f,
@@ -97,7 +102,7 @@ UI::LoadoutCard::operator squi::Child() const {
 						},
 						[&](const Stats::Artifact::Theorycraft &) {
 							for (const auto &_: Artifact::slots) {
-								ret.emplace_back(Container{});
+								ret.emplace_back(Child{});
 							}
 						},
 					},

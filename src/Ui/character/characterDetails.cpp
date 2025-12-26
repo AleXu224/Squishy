@@ -1,25 +1,20 @@
+
 #include "characterDetails.hpp"
 
 #include "Ui/artifact/artifactCard.hpp"
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
-#include "Ui/elementToColor.hpp"
 #include "Ui/optimization/optimization.hpp"
 #include "Ui/optimization/tcOptimization.hpp"
 #include "Ui/utils/card.hpp"
-#include "Ui/utils/grid.hpp"
 #include "Ui/utils/masonry.hpp"
 #include "Ui/weapon/weaponCard.hpp"
 #include "artifact/set.hpp"
 #include "character/data.hpp"
 #include "characterStats.hpp"
 #include "characterTransformativeReactions.hpp"
-#include "column.hpp"
-#include "expander.hpp"
 #include "ranges"
-#include "rebuilder.hpp"
 #include "store.hpp"
-#include "theme.hpp"
 
 
 #include "formula/stat.hpp"// IWYU pragma: keep
@@ -27,9 +22,12 @@
 #include "modifiers/artifact/displayStats.hpp"
 #include "modifiers/weapon/displayStats.hpp"
 
-#include "scrollableFrame.hpp"
 #include "utils/slotToCondition.hpp"
 #include "weapon/data.hpp"
+#include "widgets/column.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/grid.hpp"
+#include "widgets/scrollview.hpp"
 #include <map>
 
 using namespace squi;
@@ -72,9 +70,7 @@ namespace {
 		return ret;
 	}
 
-	Child makeMainContent(Character::InstanceKey characterKey, std::optional<Team::InstanceKey> teamKey, Enemy::Key enemyKey, Theme theme) {
-		auto _ = ThemeManager::pushTheme(theme);
-
+	Child makeMainContent(Character::InstanceKey characterKey, std::optional<Team::InstanceKey> teamKey, Enemy::Key enemyKey) {
 		auto &character = ::Store::characters.at(characterKey);
 		auto &team = teamKey ? ::Store::teams.at(teamKey.value()) : ::Store::defaultTeam;
 		auto &enemy = ::Store::enemies.at(enemyKey);
@@ -134,7 +130,7 @@ namespace {
 
 		Child artifactStats1 = character.state.loadout().artifact.bonus1.has_value()
 								 ? UI::DetailsSkill{
-									   .name = character.state.loadout().artifact.bonus1->setPtr->name,
+									   .name = std::string(character.state.loadout().artifact.bonus1->setPtr->name),
 									   .subtitle = "Artifact",
 									   .instanceKey = keyParam,
 									   .ctx = ctx,
@@ -146,7 +142,7 @@ namespace {
 
 		Child artifactStats2 = character.state.loadout().artifact.bonus2.has_value()
 								 ? UI::DetailsSkill{
-									   .name = character.state.loadout().artifact.bonus2->setPtr->name,
+									   .name = std::string(character.state.loadout().artifact.bonus2->setPtr->name),
 									   .subtitle = "Artifact",
 									   .instanceKey = keyParam,
 									   .ctx = ctx,
@@ -156,7 +152,7 @@ namespace {
 								   }
 								 : Child{};
 
-		Column leftColumn{
+		Child leftColumn = Column{
 			.spacing = 4.f,
 			.children{
 				teamStats,
@@ -168,19 +164,10 @@ namespace {
 			},
 		};
 
-		Child normalColumn = Column{.spacing = 4.f};
-		Child skillColumn = Column{.spacing = 4.f};
-		Child burstColumn = Column{.spacing = 4.f};
-		Child otherColumn = Column{.spacing = 4.f};
-
-		Children mainContent{
-			characterStats,
-			leftColumn,
-			normalColumn,
-			skillColumn,
-			burstColumn,
-			otherColumn,
-		};
+		Children normalColumnChildren{};
+		Children skillColumnChildren{};
+		Children burstColumnChildren{};
+		Children otherColumnChildren{};
 
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
@@ -210,149 +197,143 @@ namespace {
 				case Node::CharacterSlot::normal:
 				case Node::CharacterSlot::charged:
 				case Node::CharacterSlot::plunge:
-					normalColumn->addChild(ret);
+					normalColumnChildren.emplace_back(ret);
 					break;
 				case Node::CharacterSlot::skill:
-					skillColumn->addChild(ret);
+					skillColumnChildren.emplace_back(ret);
 					break;
 				case Node::CharacterSlot::burst:
-					burstColumn->addChild(ret);
+					burstColumnChildren.emplace_back(ret);
 					break;
 				default:
-					otherColumn->addChild(ret);
+					otherColumnChildren.emplace_back(ret);
 					break;
 			}
 		}
 
+		Child normalColumn = Column{.spacing = 4.f, .children = normalColumnChildren};
+		Child skillColumn = Column{.spacing = 4.f, .children = skillColumnChildren};
+		Child burstColumn = Column{.spacing = 4.f, .children = burstColumnChildren};
+		Child otherColumn = Column{.spacing = 4.f, .children = otherColumnChildren};
+
+		Children mainContent{
+			characterStats,
+			leftColumn,
+			normalColumn,
+			skillColumn,
+			burstColumn,
+			otherColumn,
+		};
+
 		return Column{
 			.widget{
 				.height = Size::Shrink,
-				.sizeConstraints{
+				.sizeConstraints = BoxConstraints{
 					.maxWidth = 1520.f,
 				},
 			},
 			.spacing = 4.f,
 			.children{
 				UI::Masonry{
-					.spacing = 4.f,
 					.columnCount = UI::Masonry::MinSize{250.f},
+					.spacing = 4.f,
 					.children = mainContent,
 				},
 			},
 		};
 	}
 
-	struct EquipmentExpander {
+	struct EquipmentExpander : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 
-		static Child makeContent(Character::InstanceKey characterKey) {
+		[[nodiscard]] Child build(const Element &) const {
 			auto &character = ::Store::characters.at(characterKey);
 
-			return UI::Grid{
-				.widget{
-					.padding = Padding{8.f, 8.f},
-				},
-				.spacing = 4.f,
-				.columnCount = UI::Grid::MinSize{250.f},
-				.children = [&]() {
-					Children ret;
-					ret.emplace_back(UI::WeaponCard{
-						.weapon = ::Store::weapons.at(character.state.loadout().weaponInstanceKey),
-						.actions = UI::WeaponCard::Actions::character,
-					});
-					std::visit(
-						Utils::overloaded{
-							[&](const Stats::Artifact::Slotted &artifacts) {
-								for (const auto &slot: Artifact::slots) {
-									const auto &key = artifacts.fromSlot(slot);
-									if (!key) {
-										ret.emplace_back(UI::Card{});
-										continue;
-									}
-									auto &artifact = ::Store::artifacts.at(key);
-									ret.emplace_back(UI::ArtifactCard{
-										.artifact = artifact,
-										.actions = UI::ArtifactCard::Actions::character,
-									});
-								}
-							},
-							[&](const Stats::Artifact::Theorycraft &stats) {
-								// FIXME: add display for theorycraft display
-							},
-						},
-						character.state.loadout().artifact.equipped
-					);
-					return ret;
-				}(),
-			};
-		}
-
-		operator squi::Child() const {
 			return Expander{
 				.widget = widget,
-				.heading = "Equipment",
-				.expandedContent = Rebuilder{
-					.rebuildEvent = ::Store::characters.at(characterKey).updateEvent,
-					.buildFunc = std::bind(makeContent, characterKey),
+				.title = "Equipment",
+				.content = Grid{
+					.widget{
+						.padding = Padding{8.f, 8.f},
+					},
+					.columnCount = UI::Grid::MinSize{250.f},
+					.spacing = 4.f,
+					.children = [&]() {
+						Children ret;
+						ret.emplace_back(UI::WeaponCard{
+							.weapon = ::Store::weapons.at(character.state.loadout().weaponInstanceKey),
+							.actions = UI::WeaponCard::Actions::character,
+						});
+						std::visit(
+							Utils::overloaded{
+								[&](const Stats::Artifact::Slotted &artifacts) {
+									for (const auto &slot: Artifact::slots) {
+										const auto &key = artifacts.fromSlot(slot);
+										if (!key) {
+											ret.emplace_back(UI::Card{});
+											continue;
+										}
+										auto &artifact = ::Store::artifacts.at(key);
+										ret.emplace_back(UI::ArtifactCard{
+											.artifact = artifact,
+											.actions = UI::ArtifactCard::Actions::character,
+										});
+									}
+								},
+								[&](const Stats::Artifact::Theorycraft &stats) {
+									// FIXME: add display for theorycraft display
+								},
+							},
+							character.state.loadout().artifact.equipped
+						);
+						return ret;
+					}(),
 				},
 			};
 		}
 	};
 }// namespace
 
-UI::CharacterDetails::operator squi::Child() const {
-	auto &character = Store::characters.at(characterKey);
-	auto theme = ThemeManager::getTheme();
-	const auto &element = ::Store::characters.at(characterKey).state.stats.base.element;
-	theme.accent = Utils::elementToColor(element);
-	auto _ = ThemeManager::pushTheme(theme);
-	// TODO: make each item rebuild individually
-	return ScrollableFrame{
-		.scrollableWidget{
+squi::core::Child UI::CharacterDetails::State::build(const Element &) {
+	auto &character = Store::characters.at(widget->characterKey);
+	return ScrollView{
+		.scrollWidget{
 			.padding = 4.f,
 		},
-		.alignment = Scrollable::Alignment::center,
+		.alignment = Flex::Alignment::center,
 		.spacing = 4.f,
 		.children{
 			EquipmentExpander{
 				.widget{
-					.sizeConstraints{
+					.sizeConstraints = BoxConstraints{
 						.maxWidth = 1520.f,
 					},
 				},
-				.characterKey = characterKey,
+				.characterKey = widget->characterKey,
 			},
-			Rebuilder{
-				.rebuildEvent = Store::characters.at(characterKey).updateEvent,
-				.buildFunc = std::bind(makeMainContent, characterKey, teamKey, enemyKey, theme),
-			},
-			Rebuilder{
-				.rebuildEvent = character.loadoutChangedEvent,
-				.buildFunc = [theme, &character, characterKey = characterKey, teamKey = teamKey, enemyKey = enemyKey]() -> Child {
-					auto _ = ThemeManager::pushTheme(theme);
-					return std::visit(
-						Utils::overloaded{
-							[&](const Stats::Artifact::Slotted &lotted) -> Child {
-								return UI::Optimization{
-									.characterKey = characterKey,
-									.teamKey = teamKey,
-									.enemyKey = enemyKey,
-								};
-							},
-							[&](const Stats::Artifact::Theorycraft &theorycraft) -> Child {
-								return UI::TCOptimization{
-									.characterKey = characterKey,
-									.teamKey = teamKey,
-									.enemyKey = enemyKey,
-								};
-							},
-						},
-						character.state.loadout().artifact.equipped
-					);
+			makeMainContent(widget->characterKey, widget->teamKey, widget->enemyKey),
+			std::visit(//
+				Utils::overloaded{
+					[&](const Stats::Artifact::Slotted &lotted) -> Child {
+						return UI::Optimization{
+							.characterKey = widget->characterKey,
+							.teamKey = widget->teamKey,
+							.enemyKey = widget->enemyKey,
+						};
+					},
+					[&](const Stats::Artifact::Theorycraft &theorycraft) -> Child {
+						return UI::TCOptimization{
+							.characterKey = widget->characterKey,
+							.teamKey = widget->teamKey,
+							.enemyKey = widget->enemyKey,
+						};
+					},
 				},
-			},
+				character.state.loadout().artifact.equipped
+			),
 		},
 	};
 }

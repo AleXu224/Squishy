@@ -1,28 +1,31 @@
 #pragma once
 
 #include "Ui/utils/skillHeader.hpp"
-#include "box.hpp"
 #include "card.hpp"
-
-#include "column.hpp"
-#include "widget.hpp"
-
+#include "core/core.hpp"
+#include "widgets/box.hpp"
+#include "widgets/column.hpp"
 
 namespace UI {
-	struct DisplayCard {
+	using namespace squi;
+	struct DisplayCard : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		std::optional<squi::Color> borderColor{};
-		std::string_view title;
-		std::string_view subtitle{};
+		std::string title;
+		std::string subtitle{};
 		squi::Children children{};
 		squi::Children footer{};
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
+			auto newWidget = widget;
+			newWidget.padding = newWidget.padding.value_or(1.f);
+
 			return UI::Card{
-				.widget = widget.withDefaultPadding(1.f),
+				.widget = newWidget,
 				.borderColor = borderColor,
-				.child = squi::Column{
+				.child = Column{
 					.children{
 						UI::SkillHeader{
 							.name = title,
@@ -35,8 +38,8 @@ namespace UI {
 							.children = children,
 						},
 						footer.empty()
-							? squi::Child{}
-							: squi::Box{
+							? Child{}
+							: Box{
 								  .widget{
 									  .padding = 4.f,
 								  },

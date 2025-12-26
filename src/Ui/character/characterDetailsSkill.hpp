@@ -13,7 +13,7 @@
 #include "modifiers/statFactory.hpp"
 
 #include "Ui/utils/skillEntry.hpp"
-#include "Ui/utils/tooltip.hpp"
+#include "widgets/tooltip.hpp"
 #include <map>
 
 
@@ -38,8 +38,8 @@ namespace UI {
 				auto value = stat.eval(ctx);
 
 				if (value == 0.f) return;
-				ret.emplace_back(UI::Tooltip{
-					.message = message,
+				ret.emplace_back(Tooltip{
+					.text = std::move(message),
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
 						.name = identifier.getName(),
@@ -73,17 +73,19 @@ namespace UI {
 		}
 	};
 
-	struct DetailsSkill {
+	using namespace squi;
+	struct DetailsSkill : StatelessWidget {
 		// Args
-		std::string_view name;
-		std::string_view subtitle{};
+		Key key;
+		std::string name;
+		std::string subtitle{};
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
 		const Formula::Context &ctx;
-		const std::vector<Node::Types> &nodes;
+		std::vector<Node::Types> nodes;
 		std::optional<std::map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 		std::shared_ptr<UI::ModsGenerator> modsGenerator = std::make_shared<ModsGenerator>();
 		Formula::BoolNode displayCondition = Formula::ConstantBool(true);
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

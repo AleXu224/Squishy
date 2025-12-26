@@ -1,24 +1,36 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/key.hpp"
 #include "misc/element.hpp"
 #include "misc/weaponType.hpp"
+#include "observer.hpp"
 
 
 namespace UI {
-	struct CharacterDataSelector {
+	using namespace squi;
+	struct CharacterDataSelector : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		std::function<void(Character::DataKey)> onSelect{};
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<CharacterDataSelector> {
+			VoidObservable closeEvent{};
 			std::unordered_map<Misc::Element, bool> characterElements{};
 			std::unordered_map<Misc::WeaponType, bool> characterWeapon{};
-		};
 
-		operator squi::Child() const;
+			void initState() override {
+				for (const auto &element: Misc::characterElements) {
+					characterElements[element] = true;
+				}
+				for (const auto &weaponType: Misc::weaponTypes) {
+					characterWeapon[weaponType] = true;
+				}
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

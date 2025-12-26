@@ -4,19 +4,19 @@
 #include "formula/formulaContext.hpp"
 
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct CharacterStats {
+	using namespace squi;
+	struct CharacterStats : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Formula::Context ctx;
 		Character::InstanceKey characterKey;
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<CharacterStats> {
+			Child build(const Element &element) override;
 		};
-
-		operator squi::Child() const;
 	};
 }// namespace UI

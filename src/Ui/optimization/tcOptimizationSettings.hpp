@@ -1,15 +1,27 @@
 #pragma once
 
-#include "widget.hpp"
 #include "character/instance.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct TCOptimizationSettings {
+	using namespace squi;
+	struct TCOptimizationSettings : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
-        Character::Instance &character;
-        Formula::Context ctx;
+		Key key;
+		Args widget{};
+		Character::Instance &character;
+		Formula::Context ctx;
 
-		operator squi::Child() const;
+		struct State : WidgetState<TCOptimizationSettings> {
+			VoidObserver characterUpdateEvent;
+
+			void initState() override {
+				characterUpdateEvent = widget->character.updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

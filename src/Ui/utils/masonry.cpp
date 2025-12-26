@@ -1,14 +1,11 @@
 #include "masonry.hpp"
 
+#include "core/app.hpp"
 #include "ranges"
 
 using namespace squi;
 
-UI::Masonry::Impl::Impl(const Masonry &args) : Widget(args.widget, Widget::FlagsArgs::Default()), spacing(args.spacing), columnCountRule(args.columnCount) {
-	setChildren(args.children);
-}
-
-[[nodiscard]] size_t UI::Masonry::Impl::computeColumnCount(float availableWidth) const {
+[[nodiscard]] size_t UI::Masonry::MasonryRenderObject::computeColumnCount(float availableWidth) const {
 	return std::visit(
 		[&](const auto &val) -> size_t {
 			using T = std::decay_t<decltype(val)>;
@@ -24,7 +21,7 @@ UI::Masonry::Impl::Impl(const Masonry &args) : Widget(args.widget, Widget::Flags
 				static_assert(false, "someone messed up the types");
 			}
 		},
-		columnCountRule
+		columnCount
 	);
 }
 
@@ -54,36 +51,53 @@ size_t getLowestIndex(std::vector<float> &vals) {
 	}
 	return lowest;
 }
-
-squi::vec2 UI::Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minSize, ShouldShrink shouldShrink, bool final) {
-	auto &children = getChildren();
-
-	auto columns = computeColumnCount(shouldShrink.width ? 0.f : maxSize.x);
+squi::vec2 UI::Masonry::MasonryRenderObject::calculateContentSize(BoxConstraints constraints, bool final) {
+	auto columns = computeColumnCount(constraints.shrinkWidth ? 0.f : constraints.maxWidth);
 	std::vector<float> columnSizes{};
 	columnSizes.resize(columns, 0);
 	assert(!columnSizes.empty());
 
 	float maxWidth = 0.f;
 	auto newMax = vec2{
-		(maxSize.x - static_cast<float>(columns) * spacing) / static_cast<float>(columns),
-		maxSize.y,
+		(constraints.maxWidth - static_cast<float>(columns) * spacing) / static_cast<float>(columns),
+		constraints.maxHeight,
 	};
 	auto newMin = vec2{
-		std::max((minSize.y - static_cast<float>(columns) * spacing) / static_cast<float>(columns), 0.f),
+		std::max((constraints.minHeight - static_cast<float>(columns) * spacing) / static_cast<float>(columns), 0.f),
 		0.f,
 	};
 	for (auto &child: children) {
-		auto size = child->layout(newMax, newMin, {true, true}, false);
+		auto size = child->calculateSize(
+			BoxConstraints{
+				.minWidth = newMin.x,
+				.maxWidth = newMax.x,
+				.minHeight = newMin.y,
+				.maxHeight = newMax.y,
+				.shrinkWidth = true,
+				.shrinkHeight = true,
+			},
+			false
+		);
 		maxWidth = std::max(maxWidth, size.x);
 	}
 
-	maxSize = {maxWidth, maxSize.y};
-	minSize = {0.f};
-	if (!shouldShrink.width) {
+	auto maxSize = vec2{maxWidth, constraints.maxHeight};
+	auto minSize = vec2{0.f};
+	if (!constraints.shrinkWidth) {
 		maxSize.x = std::max(maxSize.x, newMax.x);
 	}
 	for (auto &child: children) {
-		auto size = child->layout(maxSize, minSize, {false, true}, final);
+		auto size = child->calculateSize(
+			BoxConstraints{
+				.minWidth = minSize.x,
+				.maxWidth = maxSize.x,
+				.minHeight = minSize.y,
+				.maxHeight = maxSize.y,
+				.shrinkWidth = false,
+				.shrinkHeight = true,
+			},
+			final
+		);
 		auto &lowest = getLowest(columnSizes);
 		if (lowest != 0.f) lowest += spacing;
 		lowest += size.y;
@@ -100,9 +114,8 @@ squi::vec2 UI::Masonry::Impl::layoutChildren(squi::vec2 maxSize, squi::vec2 minS
 	};
 }
 
-void UI::Masonry::Impl::arrangeChildren(squi::vec2 &pos) {
-	auto newPos = pos + state.padding->getPositionOffset() + state.margin->getPositionOffset();
-	auto &children = getChildren();
+void UI::Masonry::MasonryRenderObject::positionContentAt(const Rect &newBounds) {
+	auto topLeft = newBounds.getTopLeft();
 
 	std::vector<float> columnHeights{};
 	columnHeights.resize(columns, 0.f);
@@ -113,7 +126,28 @@ void UI::Masonry::Impl::arrangeChildren(squi::vec2 &pos) {
 		if (column != 0.f) column += spacing;
 
 		float xCursor = (columnWidth + spacing) * index;
-		child->arrange(newPos + vec2{xCursor, column}.rounded());
-		column += child->getLayoutSize().y;
+		child->positionAt(Rect::fromPosSize(topLeft + vec2{xCursor, column}, child->getLayoutRect().size()));
+		column += child->getLayoutRect().height();
+	}
+}
+
+
+void UI::Masonry::MasonryRenderObject::init() {
+	this->getWidgetAs<UI::Masonry>()->updateRenderObject(this);
+}
+
+void UI::Masonry::updateRenderObject(RenderObject *renderObject) const {
+	// Update render object properties here
+	if (auto *gridRenderObject = dynamic_cast<MasonryRenderObject *>(renderObject)) {
+		auto *app = gridRenderObject->getApp();
+		if (gridRenderObject->columnCount != columnCount) {
+			gridRenderObject->columnCount = columnCount;
+			app->needsRelayout = true;
+		}
+
+		if (gridRenderObject->spacing != spacing) {
+			gridRenderObject->spacing = spacing;
+			app->needsRelayout = true;
+		}
 	}
 }

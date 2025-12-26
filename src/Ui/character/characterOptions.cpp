@@ -6,9 +6,7 @@
 
 using namespace squi;
 
-UI::CharacterOptions::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
+squi::core::Child UI::CharacterOptions::State::build(const Element &element) {
 	return UI::DisplayCard{
 		.title = "Options",
 		.children{
@@ -18,13 +16,13 @@ UI::CharacterOptions::operator squi::Child() const {
 				},
 				.spacing = 4.f,
 				.children{
-					CharacterLevelSelector{.characterKey = characterKey},
-					ConstellationSelector{.characterKey = characterKey},
-					WeaponLevelSelector{.characterKey = characterKey},
-					RefinementSelector{.characterKey = characterKey},
-					NormalTalentLevelSelector{.characterKey = characterKey},
-					SkillTalentLevelSelector{.characterKey = characterKey},
-					BurstTalentLevelSelector{.characterKey = characterKey},
+					CharacterLevelSelector{.characterKey = widget->characterKey},
+					ConstellationSelector{.characterKey = widget->characterKey},
+					WeaponLevelSelector{.characterKey = widget->characterKey},
+					RefinementSelector{.characterKey = widget->characterKey},
+					NormalTalentLevelSelector{.characterKey = widget->characterKey},
+					SkillTalentLevelSelector{.characterKey = widget->characterKey},
+					BurstTalentLevelSelector{.characterKey = widget->characterKey},
 				},
 			},
 		},

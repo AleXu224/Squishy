@@ -2,18 +2,18 @@
 
 #include "Ui/artifact/artifactCard.hpp"
 #include "artifact/sets.hpp"
-#include "box.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "expander.hpp"
-#include "image.hpp"
-#include "row.hpp"
 #include "store.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/expander.hpp"
+#include "widgets/image.hpp"
+#include "widgets/row.hpp"
 
 
 using namespace squi;
 
-UI::OptimizationResult::operator squi::Child() const {
+[[nodiscard]] squi::core::Child UI::OptimizationResult::build(const Element &) const {
 	return Expander{
 		.widget = widget,
 		.icon = Row{
@@ -37,31 +37,29 @@ UI::OptimizationResult::operator squi::Child() const {
 				return ret;
 			}(),
 		},
-		.heading = std::format("Result #{}", entryIndex),
-		.caption = std::format("Score: {}", solution.score),
-		.actions{
-			Button{
-				.text = "Equip",
-				.style = ButtonStyle::Accent(),
-				.onClick = [characterKey = characterKey, solution = solution](GestureDetector::Event event) {
-					auto &character = ::Store::characters.at(characterKey);
+		.title = std::format("Result #{}", entryIndex),
+		.subtitle = std::format("Score: {}", solution.score),
+		.action = Button{
+			.theme = Button::Theme::Accent(),
+			.onClick = [this]() {
+				auto &character = ::Store::characters.at(characterKey);
 
-					for (const auto &slot: Artifact::slots) {
-						auto &artifactKey = solution.artifacts.fromSlot(slot);
+				for (const auto &slot: Artifact::slots) {
+					auto &artifactKey = solution.artifacts.fromSlot(slot);
 
-						if (!artifactKey && character.state.loadout().artifact.getSlotted().fromSlot(slot)) {
-							character.state.loadout().artifact.getSlotted().fromSlot(slot).clear();
-						}
-
-						auto &artifact = ::Store::artifacts.at(artifactKey);
-						artifact.equipOn(characterKey, character.state.loadoutIndex);
+					if (!artifactKey && character.state.loadout().artifact.getSlotted().fromSlot(slot)) {
+						character.state.loadout().artifact.getSlotted().fromSlot(slot).clear();
 					}
-					character.state.loadout().artifact.refreshStats();
-					character.updateEvent.notify();
-				},
+
+					auto &artifact = ::Store::artifacts.at(artifactKey);
+					artifact.equipOn(characterKey, character.state.loadoutIndex);
+				}
+				character.state.loadout().artifact.refreshStats();
+				character.updateEvent.notify();
 			},
+			.child = "Equip",
 		},
-		.expandedContent = Column{
+		.content = Column{
 			.widget{
 				.padding = 4.f,
 			},

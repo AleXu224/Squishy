@@ -19,6 +19,15 @@ file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h")
 
 list(FILTER all_files EXCLUDE REGEX "src/Ui/.*")
 
+file(GLOB_RECURSE rewritten_files CONFIGURE_DEPENDS
+  "src/Ui/optimization/*.cpp"
+  "src/Ui/option/*.cpp"
+  "src/Ui/loadout/*.cpp"
+  "src/Ui/combo/*.cpp"
+  "src/Ui/character/*.cpp"
+  "src/Ui/utils/*.cpp"
+)
+
 list(APPEND all_files 
   "src/Ui/home/homePage.cpp"
   "src/Ui/artifact/artifactPage.cpp"
@@ -37,7 +46,7 @@ list(APPEND all_files
   "src/Ui/settings/settingsPage.cpp"
 )
 
-add_library(squishy_lib ${all_files})
+add_library(squishy_lib ${all_files} ${rewritten_files})
 target_compile_features(squishy_lib PUBLIC cxx_std_23)
 set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(squishy_lib PUBLIC src)
