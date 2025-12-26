@@ -20,7 +20,7 @@ namespace {
 		// Args
 		Key key;
 		Args widget{};
-		const Node::Instance &node;
+		Node::Instance node;
 		Combo::Source::Types source;
 		Formula::Context ctx;
 		std::function<void(Combo::Source::Types)> onSelect;

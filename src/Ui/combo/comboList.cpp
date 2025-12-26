@@ -35,6 +35,11 @@ namespace {
 				return Expander{
 					.title = widget->combo.name,
 					.action = Row{
+						.widget{
+							.width = Size::Shrink,
+						},
+						.crossAxisAlignment = Row::Alignment::center,
+						.spacing = 4.f,
 						.children{
 							Button{
 								.theme = Button::Theme::Standard(),

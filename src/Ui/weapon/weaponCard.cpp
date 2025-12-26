@@ -158,9 +158,7 @@ struct WeaponCardContent : StatelessWidget {
 
 squi::core::Child UI::WeaponCard::State::build(const Element &element) {
 	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
+		.widget = widget->widget,
 		.borderColor = Misc::rarityToColor.at(widget->weapon.stats.data->baseStats.rarity),
 		.child = WeaponCardContent{
 			.weapon = widget->weapon,

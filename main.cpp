@@ -62,7 +62,9 @@ int main() {
 			.height = ::Store::windowHeight,
 			.maximized = ::Store::maximized,
 		},
-		.child = UI::HomePage{}
+		.child = UI::HomePage{
+			.key = GlobalKey{},
+		}
 	};
 	app.run();
 	// Window window{WindowOptions{

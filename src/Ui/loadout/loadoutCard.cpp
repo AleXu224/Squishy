@@ -19,6 +19,11 @@ squi::core::Child UI::LoadoutCard::State::build(const Element &element) {
 		.title = widget->loadoutIndex.has_value() ? "Loadout name" : "Equipped",
 		.alwaysExpanded = true,
 		.action = Row{
+			.widget{
+				.width = Size::Wrap,
+			},
+			.crossAxisAlignment = Row::Alignment::center,
+			.spacing = 4.f,
 			.children{
 				widget->loadoutIndex.has_value() && std::holds_alternative<Stats::Artifact::Slotted>(loadout.artifact.equipped)//
 					? Tooltip{

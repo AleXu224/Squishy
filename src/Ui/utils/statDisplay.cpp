@@ -1,11 +1,12 @@
 #include "statDisplay.hpp"
 #include "Ui/elementToColor.hpp"
 #include "skillEntry.hpp"
+#include "widgets/container.hpp"
 
 using namespace squi;
 
 [[nodiscard]] squi::core::Child UI::StatDisplay::build(const Element &) const {
-	if (!stat.stat.has_value()) return Child{};
+	if (!stat.stat.has_value()) return Container{};
 	return SkillEntry{
 		.isTransparent = isTransparent,
 		.name = Utils::Stringify(stat.stat.value()),

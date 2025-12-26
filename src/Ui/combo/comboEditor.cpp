@@ -259,7 +259,11 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 				Expander{
 					.title = "Combo name",
 					.action = Row{
+						.widget{
+							.width = Size::Shrink,
+						},
 						.crossAxisAlignment = Row::Alignment::center,
+						.spacing = 4.f,
 						.children{
 							Button{
 								.onClick = [&]() {
@@ -521,6 +525,11 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 								.subtitle = captionText,
 								.alwaysExpanded = true,
 								.action = Row{
+									.widget{
+										.width = Size::Shrink,
+									},
+									.crossAxisAlignment = Row::Alignment::center,
+									.spacing = 4.f,
 									.children{
 										reactionSelectorSize <= 1 ? Child{} : reactionSelector,
 										addOptionOverride,

@@ -5,10 +5,11 @@
 #include "Ui/utils/decodeModsSheet.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
+#include "widgets/container.hpp"
 
 using namespace squi;
 [[nodiscard]] squi::core::Child UI::DetailsSkill::build(const Element &) const {
-	if (!displayCondition.eval(ctx)) return {};
+	if (!displayCondition.eval(ctx)) return Container{};
 
 	auto entries = [&]() -> Children {
 		Children ret{};
@@ -106,7 +107,7 @@ using namespace squi;
 		return ret;
 	}();
 
-	if (entries.empty()) return nullptr;
+	if (entries.empty()) return Container{};
 
 	return UI::DisplayCard{
 		.title = name,

@@ -28,9 +28,10 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 	};
 
 	return Container{
+		.widget = widget->widget,
 		.child = Column{
 			.widget{
-				.alignment = Alignment::CenterLeft,
+				.alignment = Alignment::TopCenter,
 				.sizeConstraints = BoxConstraints{
 					.maxWidth = 1520.f,
 				},
@@ -88,6 +89,10 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 					.title = "Optimize",
 					.action{
 						Row{
+							.widget{
+								.width = Size::Wrap,
+							},
+							.crossAxisAlignment = Row::Alignment::center,
 							.children{
 								Button{
 									.theme = []() {

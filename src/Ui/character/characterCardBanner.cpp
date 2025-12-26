@@ -20,6 +20,10 @@ using namespace squi;
 		.children{
 			Container{
 				.child = Image{
+					.widget{
+						.width = Size::Expand,
+						.height = Size::Expand,
+					},
 					.fit = squi::Image::Fit::cover,
 					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/banner.png", Character::list.at(character.dataKey).name)),
 				},

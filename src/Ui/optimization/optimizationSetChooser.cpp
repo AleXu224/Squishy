@@ -159,14 +159,6 @@ namespace {
 }// namespace
 
 squi::core::Child UI::OptimizationSetChooser::State::build(const Element &element) {
-	auto setSet = [this](std::unordered_map<Artifact::SetKey, bool> &set, bool value) {
-		setState([&]() {
-			for (auto &[key, active]: set) {
-				active = value;
-			}
-		});
-	};
-
 	auto helperButtons = Grid{
 		.columnCount = Grid::MinSize{250.f},
 		.spacing = 4.f,
@@ -263,4 +255,11 @@ squi::core::Child UI::OptimizationSetChooser::State::build(const Element &elemen
 			},
 		},
 	};
+}
+void UI::OptimizationSetChooser::State::setSet(std::unordered_map<Artifact::SetKey, bool> &setMap, bool value) {
+	setState([&]() {
+		for (auto &[key, active]: setMap) {
+			active = value;
+		}
+	});
 }

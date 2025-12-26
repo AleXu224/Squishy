@@ -26,6 +26,8 @@ namespace UI {
 				});
 			}
 
+			void setSet(std::unordered_map<Artifact::SetKey, bool> &setMap, bool value);
+
 			Child build(const Element &element) override;
 		};
 	};

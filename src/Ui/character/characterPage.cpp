@@ -5,7 +5,6 @@
 #include "widgets/sideNav.hpp"
 
 
-
 using namespace squi;
 
 squi::core::Child UI::CharacterPage::State::build(const Element &element) {
@@ -13,6 +12,7 @@ squi::core::Child UI::CharacterPage::State::build(const Element &element) {
 		.backAction = [this]() {
 			Navigator::of(this).popPage();
 		},
+		.defaultExpanded = false,
 		.pages{
 			SideNav::Page{
 				.name = "Details",
