@@ -80,7 +80,7 @@ namespace UI {
 		std::string name;
 		std::string subtitle{};
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		std::vector<Node::Types> nodes;
 		std::optional<std::map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 		std::shared_ptr<UI::ModsGenerator> modsGenerator = std::make_shared<ModsGenerator>();

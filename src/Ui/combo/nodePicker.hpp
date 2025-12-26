@@ -14,7 +14,7 @@ namespace UI {
 		Args widget{};
 		Character::InstanceKey characterKey;
 		bool enableCombos = false;
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 
 		struct State : WidgetState<NodePicker> {

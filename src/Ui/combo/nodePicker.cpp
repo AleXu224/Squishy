@@ -22,7 +22,7 @@ namespace {
 		Args widget{};
 		const Node::Instance &node;
 		Combo::Source::Types source;
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 		VoidObservable closeEvent;
 

@@ -14,7 +14,7 @@ namespace UI {
 		Key key;
 		Args widget{};
 		Character::InstanceKey characterKey;
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		const std::vector<::Combo::Option> &options;
 		std::function<void(::Combo::Option)> onSelect;
 

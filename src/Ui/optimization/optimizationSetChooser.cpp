@@ -24,7 +24,7 @@ namespace {
 		Args widget{};
 		Artifact::SetKey set;
 		Character::Instance &character;
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		std::unordered_map<Artifact::SetKey, bool> &twoPcSets;
 		std::unordered_map<Artifact::SetKey, bool> &fourPcSets;
 
