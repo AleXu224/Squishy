@@ -27,14 +27,14 @@ struct ArtifactEditorSubstat : StatelessWidget {
 
 	[[nodiscard]] Child build(const Element &) const {
 		auto newWidget = widget;
-		newWidget.height = newWidget.height.value_or(Size::Shrink);
+		newWidget.height = newWidget.height.value_or(Size::Wrap);
 
 		return Stack{
 			.widget = newWidget,
 			.children{
 				Container{
 					.widget{
-						.width = Size::Shrink,
+						.width = Size::Wrap,
 						.height = 32.f,
 						.alignment = Alignment::CenterLeft,
 					},
@@ -45,7 +45,7 @@ struct ArtifactEditorSubstat : StatelessWidget {
 				},
 				Row{
 					.widget{
-						.width = Size::Shrink,
+						.width = Size::Wrap,
 						.height = Size::Shrink,
 						.alignment = Alignment::CenterRight,
 					},
@@ -156,7 +156,7 @@ squi::core::Child UI::ArtifactEditor::State::build(const Element &) {
 					.text = std::string(set.second.name),
 					.callback = [&set = set.second, this]() {
 						setState([&]() {
-							artifact.set.key = set.key;
+							artifact.set.key = set.key.key;
 						});
 					},
 				});
