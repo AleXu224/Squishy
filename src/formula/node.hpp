@@ -2,11 +2,13 @@
 
 #include "string"
 
+#include "atomic"
 #include "compiled/node.hpp"
+#include "cstdint"
 #include "formula/formulaContext.hpp"
-#include "memory"
 #include "misc/element.hpp"
 #include "step.hpp"
+#include "utility"
 #include "utils/optional.hpp"
 
 
@@ -20,11 +22,21 @@ namespace Formula {
 			interface &operator=(const interface &) = delete;
 			interface &operator=(interface &&) = delete;
 
+			void retain() noexcept {
+				refCount.fetch_add(1, std::memory_order_relaxed);
+			}
+
+			[[nodiscard]] bool release() noexcept {
+				return refCount.fetch_sub(1, std::memory_order_acq_rel) == 1;
+			}
+
 			[[nodiscard]] virtual Compiled::NodeType<RetType> compile(const Context &) const = 0;
 			[[nodiscard]] virtual std::string print(const Context &, Step) const = 0;
 			[[nodiscard]] virtual RetType eval(const Context &) const = 0;
-			[[nodiscard]] virtual std::unique_ptr<interface> clone() const = 0;
 			virtual ~interface() = default;
+
+		private:
+			std::atomic<uint32_t> refCount{1};
 		};
 
 		template<class Fn>
@@ -41,9 +53,6 @@ namespace Formula {
 			[[nodiscard]] RetType eval(const Context &context) const override {
 				return fn.eval(context);
 			}
-			[[nodiscard]] std::unique_ptr<interface> clone() const override {
-				return std::make_unique<implementation<Fn>>(fn);
-			}
 
 		private:
 			Fn fn{};
@@ -51,31 +60,28 @@ namespace Formula {
 
 		template<class T>
 		NodeType(const T &t)
-			: fn(std::make_unique<implementation<T>>(t)) {
+			: fn(new implementation<T>(t)) {
 		}
 
-		NodeType(const NodeType &other) {
-			if (!other.fn)
-				fn.reset();
-			else
-				fn = other.fn->clone();
+		NodeType(const NodeType &other) : fn(other.fn) {
+			if (fn) fn->retain();
 		}
 		NodeType &operator=(const NodeType &other) {
 			if (this != &other) {
-				if (!other.fn)
-					fn.reset();
-				else
-					fn = other.fn->clone();
+				release();
+				fn = other.fn;
+				if (fn) fn->retain();
 			}
 			return *this;
 		}
+		NodeType(NodeType &&other) noexcept : fn(std::exchange(other.fn, nullptr)) {}
 		NodeType &operator=(NodeType &&other) noexcept {
 			if (this != &other) {
-				fn = std::move(other.fn);
+				release();
+				fn = std::exchange(other.fn, nullptr);
 			}
 			return *this;
 		}
-		NodeType(NodeType &&other) : fn(std::move(other.fn)) {}
 
 		[[nodiscard]] Compiled::NodeType<RetType> compile(const Context &context) const {
 			return fn->compile(context);
@@ -89,14 +95,23 @@ namespace Formula {
 
 		NodeType() = default;
 
-		~NodeType() = default;
+		~NodeType() {
+			release();
+		}
 
 		[[nodiscard]] bool hasValue() const {
 			return fn != nullptr;
 		}
 
 	private:
-		std::unique_ptr<interface> fn{};
+		void release() noexcept {
+			if (fn && fn->release()) {
+				delete fn;
+			}
+			fn = nullptr;
+		}
+
+		interface *fn{};
 	};
 
 	using FloatNode = NodeType<float>;
