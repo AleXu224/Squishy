@@ -19,6 +19,7 @@ namespace Serialization::Good {
 		std::string location;
 		bool lock = false;
 		std::vector<ISubstat> substats;
+		std::vector<ISubstat> unactivatedSubstats;
 
 		static IArtifact fromInstance(const Artifact::Instance &artifact);
 

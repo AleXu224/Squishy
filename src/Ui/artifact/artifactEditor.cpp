@@ -15,6 +15,7 @@
 #include "widgets/row.hpp"
 #include "widgets/stack.hpp"
 #include "widgets/text.hpp"
+#include "widgets/toggleSwitch.hpp"
 
 using namespace squi;
 
@@ -49,6 +50,7 @@ struct ArtifactEditorSubstat : StatelessWidget {
 						.height = Size::Shrink,
 						.alignment = Alignment::CenterRight,
 					},
+					.crossAxisAlignment = Row::Alignment::center,
 					.spacing = 4.f,
 					.children = children,
 				},
@@ -71,6 +73,15 @@ squi::core::Child UI::ArtifactEditor::State::createSubStat(size_t subStatIndex) 
 	Child ret = ArtifactEditorSubstat{
 		.name = std::format("Substat {}", subStatIndex + 1),
 		.children{
+			ToggleSwitch{
+				.active = subStat.activated,
+				.statePosition = ToggleSwitch::StatePosition::Left,
+				.onToggle = [this, &subStat](bool active) {
+					setState([&]() {
+						subStat.activated = active;
+					});
+				},
+			},
 			DropdownButton{
 				.theme = Button::Theme::Standard(),
 				.text = subStat.stat.transform([](auto &&val) {

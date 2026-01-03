@@ -48,7 +48,7 @@ list(APPEND all_files
 )
 
 add_library(squishy_lib ${all_files} ${rewritten_files})
-target_compile_features(squishy_lib PUBLIC cxx_std_23)
+target_compile_features(squishy_lib PUBLIC cxx_std_26)
 set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(squishy_lib PUBLIC src)
 add_dependencies(squishy_lib Assets)

@@ -38,7 +38,7 @@ namespace Artifact {
 
 			// Sub stats
 			for (const auto &subStat: subStats) {
-				if (subStat.stat.has_value()) {
+				if (subStat.stat.has_value() && subStat.activated) {
 					stats.fromStat(subStat.stat.value()) = subStat.value;
 				}
 			}
