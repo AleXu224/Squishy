@@ -7,8 +7,6 @@
 #include "Ui/utils/masonry.hpp"
 #include "Ui/utils/tag.hpp"
 #include "character/data.hpp"
-#include "formula/combo.hpp"
-#include "formula/custom.hpp"
 #include "optionPicker.hpp"
 #include "reaction/list.hpp"
 #include "store.hpp"
@@ -165,90 +163,120 @@ namespace {
 		}
 	};
 
-	Child createComboOptionEntries(Combo::EntryTypes &entry, Formula::Context ctx) {
-		Children ret = [&entry, ctx]() mutable {
-			std::vector<Combo::Option> store;
-			ctx.optionStore = &store;
+	struct ComboOptionEntry : StatefulWidget {
+		// Args
+		Key key;
+		Args widget{};
+		Combo::EntryTypes &entry;
+		VoidObservable comboUpdateEvent;
+		Combo::Overrides overrides;
+		Formula::Context ctx;
 
-			Children ret;
-			auto [options, optionUpdateEvent] = std::visit([](auto &&entry) {
-				return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
-			},
-														   entry);
+		struct State : WidgetState<ComboOptionEntry> {
+			Option::TypesMap localOptions;
+			VoidObserver optionUpdateEvent;
 
-			auto node = Formula::ComboOptionOverride{
-				.overrides = options,
-				.node = Formula::Custom{
-					.compileFunc = [](const Formula::Context &) {
-						return Formula::Compiled::ConstantFloat{.value = 0.f}.wrap();
+			void initState() override {
+				optionUpdateEvent = std::visit(
+					[&](auto &&entry) {
+						return entry.optionUpdateEvent.observe([this]() {
+							setState([&]() {});
+						});
 					},
-					.func = [&](const Formula::Context &ctx) {
-						for (auto &opt: options) {
-							for (const auto &character: ctx.team.characters) {
-								if (!character) continue;
-								if (character->instanceKey != opt.key) continue;
-								if (!character->state.options.contains(opt.hash)) continue;
+					widget->entry
+				);
+			}
 
-								auto optPtr = std::make_shared<Option::Types>(character->state.options.at(opt.hash));
-								std::visit(
-									Utils::overloaded{
-										[&](bool value) {
-											auto &optRef = std::get<Option::Boolean>(*optPtr);
-											optRef.active = value;
-											squi::Observable<bool> switchEvent{};
-											ret.emplace_back(ComboEditorOptionContainer{
-												.entry = entry,
-												.option = opt,
-												.child = UI::ToggleOption{
-													.option = optRef,
-													.instanceKey = character->instanceKey,
-													.ctx = ctx.withSource(character->state),
+			Child build(const Element &element) override {
+				auto ctx = widget->ctx.withOverrides(&widget->overrides);
+
+				Children ret;
+				auto [options, optionUpdateEvent] = std::visit(
+					[](auto &&entry) {
+						return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
+					},
+					widget->entry
+				);
+
+				for (auto &opt: options) {
+					auto &character = Store::characters.at(opt.key);
+					if (!character.state.options.contains(opt.hash)) continue;
+					if (!ctx.team.hasCharacter(opt.key.key)) continue;
+
+					std::visit(
+						Utils::overloaded{
+							[&](bool &value) {
+								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(character.state.options.at(opt.hash)));
+								auto &optRef = std::get<Option::Boolean>(localOptions.at(opt.hash));
+								optRef.active = value;
+
+								ret.emplace_back(ComboEditorOptionContainer{
+									.entry = widget->entry,
+									.option = opt,
+									.child = UI::ToggleOption{
+										.option = optRef,
+										.instanceKey = character.instanceKey,
+										.onToggle = [&](bool newVal) {
+											std::visit(
+												[&](auto &&entry) {
+													value = newVal;
+													entry.optionUpdateEvent.notify();
+													widget->comboUpdateEvent.notify();
 												},
-											});
+												widget->entry
+											);
 										},
-										[&](std::optional<uint8_t> value) {
-											auto &optRef = std::get<Option::ValueList>(*optPtr);
-											optRef.currentIndex = value;
-											squi::Observable<std::optional<uint32_t>, std::optional<uint32_t>> valueChangedEvent{};
-											ret.emplace_back(ComboEditorOptionContainer{
-												.entry = entry,
-												.option = opt,
-												.child = UI::ValueListOption{
-													.option = optRef,
-													.instanceKey = character->instanceKey,
-													.ctx = ctx.withSource(character->state),
-												},
-											});
-										},
+										.ctx = ctx.withSource(character.state),
 									},
-									opt.value
-								);
-							}
-						}
-						return 0.f;
+								});
+							},
+							[&](std::optional<uint8_t> &value) {
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(character.state.options.at(opt.hash)));
+								auto &optRef = std::get<Option::ValueList>(localOptions.at(opt.hash));
+								optRef.currentIndex = value;
+								ret.emplace_back(ComboEditorOptionContainer{
+									.entry = widget->entry,
+									.option = opt,
+									.child = UI::ValueListOption{
+										.option = optRef,
+										.instanceKey = character.instanceKey,
+										.onChange = [&](std::optional<uint8_t> newVal) {
+											std::visit(
+												[&](auto &&entry) {
+													value = newVal;
+													entry.optionUpdateEvent.notify();
+													widget->comboUpdateEvent.notify();
+												},
+												widget->entry
+											);
+										},
+										.ctx = ctx.withSource(character.state),
+									},
+								});
+							},
+						},
+						opt.value
+					);
+				}
+
+				if (ret.empty()) return Container{};
+
+				return UI::Masonry{
+					.widget{
+						.padding = 4.f,
 					},
-				},
-			};
-			(void) node.eval(ctx);
-
-			return ret;
-		}();
-
-		if (ret.empty()) return Child{};
-
-		return UI::Masonry{
-			.widget{
-				.padding = 4.f,
-			},
-			.columnCount = UI::Masonry::MinSize{250.f},
-			.spacing = 4.f,
-			.children = ret,
+					.columnCount = UI::Masonry::MinSize{250.f},
+					.spacing = 4.f,
+					.children = ret,
+				};
+			}
 		};
-	}
-
+	};
 }// namespace
 
 squi::core::Child UI::ComboEditor::State::build(const Element &element) {
+	auto ctx = widget->ctx;
+
 	return Dialog{
 		.width = 1000.f,
 		.closeEvent = closeEvent,
@@ -266,11 +294,11 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 						.spacing = 4.f,
 						.children{
 							Button{
-								.onClick = [&]() {
-									Navigator::of(element).pushOverlay(NodePicker{
+								.onClick = [this, ctx]() {
+									Navigator::of(this).pushOverlay(NodePicker{
 										.characterKey = widget->characterKey,
 										.enableCombos = false,
-										.ctx = widget->ctx,
+										.ctx = ctx,
 										.onSelect = [this](Combo::Source::Types source) {
 											setState([&]() {
 												combo.entries.emplace_back(Combo::Entry{
@@ -302,7 +330,8 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 					.children = [&]() {
 						Children ret;
 
-						std::vector<::Combo::Option> optionStack;
+						Combo::Overrides overrides;
+						auto ctxWithOverrides = ctx.withOverrides(&overrides);
 
 						for (auto it = combo.entries.begin(); it != combo.entries.end(); it++) {
 							auto &entry = *it;
@@ -320,14 +349,14 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									[&](::Combo::Entry &entry) {
 										const auto &node = std::visit(
 											[&](auto &&val) {
-												return val.resolve(entry.options);
+												return val.resolve(overrides);
 											},
 											entry.source
 										);
 
 										entryName = node.name;
 										sourceName = getSourceName(entry.source);
-										entryColor = Node::getColor(node.data, widget->ctx);
+										entryColor = Node::getColor(node.data, ctx);
 
 										std::optional<Misc::Element> element = std::nullopt;
 
@@ -337,7 +366,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 													element = Formula::getElement(
 														data.source,
 														data.element,
-														widget->ctx
+														ctx
 													);
 												},
 												[&](const Node::CustomAtkData &data) {
@@ -409,24 +438,21 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 												});
 											},
 										};
-										captionText = [this, &entry, optionStack]() {
-											std::vector<::Combo::Option> store;
-											auto newCtx = widget->ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction));
+										captionText = [ctx = ctxWithOverrides, &entry, overrides]() mutable {
+											auto newCtx = ctx.withReaction(Reaction::List::fromNodeReaction(entry.reaction));
 											const auto &node = std::visit(
 												[&](auto &&val) {
-													auto options = optionStack;
-													options.insert(options.end(), entry.options.begin(), entry.options.end());
-													return val.resolve(options);
+													overrides.push(entry.options);
+													return val.resolve(overrides);
 												},
 												entry.source
 											);
-											newCtx.optionStore = &store;
-											return std::format("{:.1f}", node.formula.eval(newCtx));
+											return std::format("{:.1f}", node.formula.eval(newCtx.withOverrides(&overrides)));
 										}();
 									},
 									[&](const ::Combo::StateChangeEntry &entry) {
 										entryName = "Option override";
-										optionStack.insert(optionStack.end(), entry.options.begin(), entry.options.end());
+										overrides.push(entry.options);
 									},
 								},
 								entry
@@ -434,7 +460,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 
 							auto addOptionOverride = Button{
 								.theme = Button::Theme::Standard(),
-								.onClick = [this, &entry]() {
+								.onClick = [this, &entry, ctx]() {
 									auto [options, optionUpdateEvent] = std::visit(
 										[](auto &&entry) -> auto {
 											return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
@@ -443,7 +469,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									);
 									Navigator::of(*this->element).pushOverlay(UI::OptionPicker{
 										.characterKey = widget->characterKey,
-										.ctx = widget->ctx,
+										.ctx = ctx,
 										.options = options,
 										.onSelect = [this, &options](Combo::Option option) {
 											setState([&]() {
@@ -536,7 +562,12 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 										deleteButton,
 									},
 								},
-								.content = createComboOptionEntries(std::ref(entry), widget->ctx),
+								.content = ComboOptionEntry{
+									.entry = entry,
+									.comboUpdateEvent = comboUpdateEvent,
+									.overrides = overrides,
+									.ctx = ctx,
+								},
 							});
 						}
 						return ret;

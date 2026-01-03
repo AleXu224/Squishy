@@ -1,15 +1,17 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "team/key.hpp"
 
 namespace UI {
-	struct TeamBuffs {
+	using namespace squi;
+	struct TeamBuffs : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Team::InstanceKey instanceKey;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

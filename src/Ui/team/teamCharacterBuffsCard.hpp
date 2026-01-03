@@ -1,21 +1,19 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/instance.hpp"
 #include "team/instance.hpp"
 
 namespace UI {
-	struct TeamCharacterBuffsCard {
+	using namespace squi;
+	struct TeamCharacterBuffsCard : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Team::Instance &team;
 		Character::Instance &character;
 
-		struct Storage {
-			// Data
-		};
-
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

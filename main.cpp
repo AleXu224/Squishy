@@ -10,6 +10,7 @@
 #include "theme.hpp"
 #include <GLFW/glfw3.h>
 
+// #include "modifiers/total/total.hpp"
 
 int main() {
 	Weapon::initWeapons();
@@ -32,14 +33,24 @@ int main() {
 	enemy.first->second.stats.sheet.level.constant = 100.f;
 
 	// auto &cyno = Store::characters.at({3});
-	// auto &team = Store::teams.at({2});
+	// // auto &team = Store::teams.at({2});
+	// auto &team = Store::createTeam("Garbage test team");
 
+	// Combo::Overrides overrides;
+	// overrides.push(Combo::Option{
+	// 	.key = cyno.instanceKey,
+	// 	.hash = Utils::HashedString("burstActive").hash,
+	// 	.value = false,
+	// });
 	// auto ctx = Formula::Context{
 	// 	.source = cyno.state,
 	// 	.active = cyno.state,
 	// 	.team = team.stats,
 	// 	.enemy = enemy.first->second.stats,
+	// 	.overrides = &overrides,
 	// };
+	// std::println("Cyno total em {}", Modifiers::total().em.eval(ctx));
+
 
 	// auto source = Combo::Source::Character{.key{cyno.dataKey}, .slot = Node::CharacterSlot::burst, .index = 0};
 	// auto resolved = source.resolve({});

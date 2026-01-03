@@ -53,6 +53,7 @@ namespace {
 												widget->combo = newCombo;
 											});
 											widget->combo.updateEvent.notify();
+											::Store::characters.at(widget->characterKey).updateEvent.notify();
 										},
 									});
 								},
@@ -64,6 +65,7 @@ namespace {
 									auto &combos = character.combos;
 
 									combos.erase(widget->comboKey);
+									character.optimizationOptions->removeComboIfSelected(widget->comboKey);
 									character.updateEvent.notify();
 								},
 								.child = "Delete",
@@ -112,6 +114,7 @@ squi::core::Child UI::ComboList::State::build(const Element &element) {
 
 						for (auto &[key, combo]: combos) {
 							ret.emplace_back(ComboListEntry{
+								.comboKey = key,
 								.combo = combo,
 								.characterKey = widget->characterKey,
 								.ctx = widget->ctx,

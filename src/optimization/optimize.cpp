@@ -199,14 +199,12 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 					characterPtr = &teamCharacters.at(index).emplace(*characterPtr);
 				}
 			}
-			std::vector<Combo::Option> optionStore;
 			auto ctx = Formula::Context{
 				.source = character.state,
 				.active = character.state,
 				.team = team.stats,
 				.enemy = initialCtx.enemy,
 				.reaction = initialCtx.reaction,
-				.optionStore = &optionStore,
 			};
 			auto filtered = filter.filter(initialArtifacts);
 			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5

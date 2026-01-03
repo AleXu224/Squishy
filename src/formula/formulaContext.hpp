@@ -1,7 +1,8 @@
 #pragma once
 
+#include "combo/override.hpp"
 #include "variant"
-#include <vector>
+
 
 namespace Reaction {
 	struct None;
@@ -16,10 +17,6 @@ namespace Stats {
 	struct Enemy;
 }// namespace Stats
 
-namespace Combo {
-	struct Option;
-}
-
 namespace Formula {
 	struct Context {
 		const Stats::State &source;
@@ -27,7 +24,7 @@ namespace Formula {
 		const Stats::Team &team;
 		const Stats::Enemy &enemy;
 		const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction{};
-		std::vector<Combo::Option> *optionStore = nullptr;
+		const Combo::Overrides *overrides = nullptr;
 
 		[[nodiscard]] Context withSource(const Stats::State &newSource) const {
 			return {
@@ -36,7 +33,7 @@ namespace Formula {
 				.team = team,
 				.enemy = enemy,
 				.reaction = reaction,
-				.optionStore = optionStore,
+				.overrides = overrides,
 			};
 		}
 
@@ -47,7 +44,18 @@ namespace Formula {
 				.team = team,
 				.enemy = enemy,
 				.reaction = newReaction,
-				.optionStore = optionStore,
+				.overrides = overrides,
+			};
+		}
+
+		[[nodiscard]] Context withOverrides(const Combo::Overrides *newOverrides) const {
+			return {
+				.source = source,
+				.active = active,
+				.team = team,
+				.enemy = enemy,
+				.reaction = reaction,
+				.overrides = newOverrides,
 			};
 		}
 	};

@@ -35,5 +35,15 @@ namespace Optimization {
 
 			return std::pair{retTwoPcSets, retFourPcSets};
 		}
+
+		void removeComboIfSelected(const Combo::InstanceKey &comboKey) {
+			if (nodeSource) {
+				if (auto comboSource = std::get_if<Combo::Source::Combo>(&nodeSource.value())) {
+					if (comboSource->comboKey == comboKey) {
+						nodeSource.reset();
+					}
+				}
+			}
+		}
 	};
 }// namespace Optimization

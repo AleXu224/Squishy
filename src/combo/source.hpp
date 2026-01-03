@@ -17,21 +17,21 @@ namespace Combo::Source {
 		Node::CharacterSlot slot;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &overrides) const;
 	};
 
 	struct Combo {
 		::Character::InstanceKey characterKey;
 		::Combo::InstanceKey comboKey;
 
-		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
 	};
 
 	struct Weapon {
 		::Weapon::DataKey key;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
 	};
 
 	struct Artifact {
@@ -39,13 +39,13 @@ namespace Combo::Source {
 		::Artifact::SetSlot slot;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
 	};
 
 	struct TransformativeReaction {
 		Misc::TransformativeReaction reaction;
 
-		[[nodiscard]] Node::Instance resolve(const std::vector<::Combo::Option> &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
 	};
 
 	using Types = std::variant<Character, Combo, Weapon, Artifact, TransformativeReaction>;

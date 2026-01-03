@@ -19,10 +19,6 @@ Optimization::SolutionTC Optimization::TCOptimization::optimize() const {
 	RollsValues rolls{};
 	TheorycraftFilter filter{};
 
-	std::vector<Combo::Option> optionStore;
-	auto newCtx = ctx;
-	newCtx.optionStore = &optionStore;
-
 	auto &equipped = character.state.loadout().artifact.getTheorycraft();
 	for (const auto &stat: Stats::subStats) {
 		equipped.fromStat(stat) = 0;

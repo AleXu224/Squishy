@@ -1,6 +1,5 @@
 #pragma once
 
-#include "combo/option.hpp"
 #include "combo/override.hpp"
 #include "compiled/node.hpp"
 #include "compiled/operators.hpp"
@@ -46,18 +45,18 @@ namespace Formula {
 
 	template<class T>
 	struct ComboOptionOverride {
-		std::vector<::Combo::Option> overrides;
+		::Combo::Overrides overrides;
 		T node;
 
 		inline auto runFor(const Context &context, auto &&lbd) const {
-			if (!context.optionStore || overrides.empty()) {
-				return lbd(context);
+			const ::Combo::Overrides *lastOverrides = overrides.parent;
+			if (context.overrides != nullptr) {
+				overrides.parent = context.overrides;
 			}
-			uint32_t count = ::Combo::pushOverrides(context, overrides);
 
-			auto ret = lbd(context);
+			auto ret = lbd(context.withOverrides(&overrides));
 
-			::Combo::popOverrides(context, count);
+			overrides.parent = lastOverrides;
 
 			return ret;
 		}

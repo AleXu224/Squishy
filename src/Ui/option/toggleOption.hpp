@@ -15,9 +15,16 @@ namespace UI {
 		Args widget{};
 		Option::Boolean &option;
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
+		std::function<void(bool)> onToggle;
 		Formula::Context ctx;
 
 		struct State : WidgetState<ToggleOption> {
+			Children mods;
+
+			void initState() override;
+
+			void widgetUpdated() override;
+
 			Child build(const Element &element) override;
 		};
 	};

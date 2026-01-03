@@ -50,6 +50,9 @@ squi::core::Child UI::ValueListOption::State::build(const Element &element) {
 							.callback = [this]() {
 								setState([&]() {
 									widget->option.currentIndex = std::nullopt;
+									if (widget->onChange) {
+										widget->onChange(std::nullopt);
+									}
 								});
 								std::visit(
 									Utils::overloaded{
@@ -77,6 +80,9 @@ squi::core::Child UI::ValueListOption::State::build(const Element &element) {
 							.callback = [this, index]() {
 								setState([&]() {
 									widget->option.currentIndex = index;
+									if (widget->onChange) {
+										widget->onChange(index);
+									}
 								});
 								std::visit(
 									Utils::overloaded{

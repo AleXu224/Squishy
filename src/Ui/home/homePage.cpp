@@ -4,7 +4,7 @@
 #include "widgets/topNav.hpp"
 #include "Ui/character/characterList.hpp"
 #include "Ui/settings/settingsPage.hpp"
-// #include "Ui/team/teamPage.hpp"
+#include "Ui/team/teamPage.hpp"
 #include "Ui/weapon/weaponPage.hpp"
 
 
@@ -21,10 +21,10 @@ squi::Child UI::HomePage::build(const squi::Element &) const {
 				.name{"Characters"},
 				.content = CharacterList{},
 			},
-			// TopNav::Page{
-			// 	.name{"Teams"},
-			// 	.content = TeamPage{},
-			// },
+			TopNav::Page{
+				.name{"Teams"},
+				.content = TeamPage{},
+			},
 			TopNav::Page{
 				.name{"Weapons"},
 				.content = WeaponPage{},

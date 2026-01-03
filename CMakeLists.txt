@@ -26,6 +26,7 @@ file(GLOB_RECURSE rewritten_files CONFIGURE_DEPENDS
   "src/Ui/combo/*.cpp"
   "src/Ui/character/*.cpp"
   "src/Ui/utils/*.cpp"
+  "src/Ui/team/*.cpp"
 )
 
 list(APPEND all_files 

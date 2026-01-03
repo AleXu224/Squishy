@@ -15,6 +15,8 @@ namespace UI {
 		Args widget{};
 		Option::ValueList &option;
 		std::variant<Character::InstanceKey, Team::InstanceKey> instanceKey{};
+		std::function<void(std::optional<uint8_t>)> onChange;
+
 		Formula::Context ctx;
 
 		struct State : WidgetState<ValueListOption> {

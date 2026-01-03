@@ -2,97 +2,63 @@
 
 #include "Ui/character/characterSelector.hpp"
 #include "Ui/utils/editorItem.hpp"
-#include "Ui/utils/tooltip.hpp"
-#include "align.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "character/key.hpp"
-#include "column.hpp"
-#include "dialog.hpp"
-#include "fontIcon.hpp"
-#include "row.hpp"
 #include "store.hpp"
-#include "textBox.hpp"
+#include "widgets/column.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/fontIcon.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
+#include "widgets/textBox.hpp"
+#include "widgets/tooltip.hpp"
+#include "widgets/visibility.hpp"
 
 
 using namespace squi;
 
-UI::TeamEditor::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>(instance);
-
-	VoidObservable closeEvent{};
-	std::array<Observable<std::optional<Character::InstanceKey>>, 4> characterChangeEvent{};
-
+squi::core::Child UI::TeamEditor::State::build(const Element &element) {
 	auto name = EditorItem{
 		.name = "Name",
 		.child = TextBox{
-			.text = storage->team.name,
-			.controller{
-				.onChange = [storage](std::string_view newString) {
-					storage->team.name = newString;
-				},
-			},
+			.controller = nameController,
 		},
 	};
 
-	Child content = Column{
-		.spacing = 16.f,
-		.children{
-			name,
-		},
+	Children content{
+		name
 	};
 
-	for (size_t i = 0; i < storage->team.stats.characters.size(); i++) {
-		const auto &character = storage->team.stats.characters.at(i);
+	for (size_t i = 0; i < team.stats.characters.size(); i++) {
+		const auto &character = team.stats.characters.at(i);
 
-		auto changeCharacterButton = Button{
-			.widget{
-				.onInit = [characterChangeEvent, i, storage](Widget &w) {
-					observe(w, characterChangeEvent.at(i), [&w, storage, i](std::optional<Character::InstanceKey> instanceKey) {
-						storage->team.stats.characters.at(i) = instanceKey
-																   .and_then([](auto &&val) -> std::optional<Character::Instance *> {
-																	   return &Store::characters.at(val);
-																   })
-																   .value_or(nullptr);
-						if (instanceKey) {
-							Button::State::style.of(w) = ButtonStyle::Accent();
-							Button::State::updateText.of(w).notify(std::string(Store::characters.at(instanceKey.value()).state.stats.data.name));
-						} else {
-							Button::State::style.of(w) = ButtonStyle::Standard();
-							Button::State::updateText.of(w).notify("None");
-						}
-					});
-				},
-			},
-			.text = character ? character->state.stats.data.name : "None",
-			.style = character ? ButtonStyle::Accent() : ButtonStyle::Standard(),
-			.onClick = [characterChangeEvent, i](GestureDetector::Event event) {
-				event.widget.addOverlay(CharacterSelector{
-					.onSelect = [characterChangeEvent, i](Character::InstanceKey instanceKey) {
-						characterChangeEvent.at(i).notify(instanceKey);
+		Child changeCharacterButton = Button{
+			.theme = character ? Button::Theme::Accent() : Button::Theme::Standard(),
+			.onClick = [this, i]() {
+				Navigator::of(this).pushOverlay(CharacterSelector{
+					.onSelect = [this, i](Character::InstanceKey instanceKey) {
+						auto character = Store::characters.find(instanceKey);
+						if (character == Store::characters.end()) return;
+						setState([&]() {
+							team.stats.characters.at(i) = &character->second;
+						});
 					},
 				});
 			},
+			.child = character ? std::string(character->state.stats.data.name) : "None",
 		};
 
 		auto deleteButton = Tooltip{
-			.message = "Remove character",
-			.child = Button{
-				.widget{
-					.padding = 6.f,
-					.onInit = [character, characterChangeEvent, i](Widget &w) {
-						if (!character) w.flags.visible = false;
-						observe(w, characterChangeEvent.at(i), [&w](std::optional<Character::InstanceKey> instanceKey) {
-							w.flags.visible = instanceKey.has_value();
+			.text = "Remove character",
+			.child = Visibility{
+				.visible = character != nullptr,
+				.child = Button{
+					.onClick = [this, i]() {
+						setState([&]() {
+							team.stats.characters.at(i) = nullptr;
 						});
 					},
-				},
-				.style = ButtonStyle::Standard(),
-				.onClick = [characterChangeEvent, i](GestureDetector::Event) {
-					characterChangeEvent.at(i).notify(std::nullopt);
-				},
-				.child = Align{
 					.child = FontIcon{
 						.icon = 0xe5cd,
 					},
@@ -100,7 +66,7 @@ UI::TeamEditor::operator squi::Child() const {
 			},
 		};
 
-		content->addChild(
+		content.emplace_back(
 			EditorItem{
 				.name = fmt::format("Character {}", i + 1),
 				.child = Row{
@@ -118,27 +84,30 @@ UI::TeamEditor::operator squi::Child() const {
 	auto footer = Children{
 		Button{
 			.widget{.width = Size::Expand},
-			.text = "Save",
-			.style = ButtonStyle::Accent(),
-			.onClick = [closeEvent, storage, onSubmit = onSubmit](GestureDetector::Event) {
-				if (onSubmit) onSubmit(storage->team);
+			.theme = Button::Theme::Accent(),
+			.onClick = [this]() {
+				if (widget->onSubmit) widget->onSubmit(team);
 				closeEvent.notify();
 			},
+			.child = "Save",
 		},
 		Button{
 			.widget{.width = Size::Expand},
-			.text = "Cancel",
-			.style = ButtonStyle::Standard(),
-			.onClick = [closeEvent](GestureDetector::Event) {
+			.theme = Button::Theme::Standard(),
+			.onClick = [this]() {
 				closeEvent.notify();
 			},
+			.child = "Cancel",
 		},
 	};
 
 	return Dialog{
 		.closeEvent = closeEvent,
 		.title = "Edit team",
-		.content = content,
+		.content = Column{
+			.spacing = 16.f,
+			.children = content,
+		},
 		.buttons = footer,
 	};
 }

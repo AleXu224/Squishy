@@ -34,8 +34,16 @@ struct ToggleBox : StatelessWidget {
 		};
 	}
 };
+
+void UI::ToggleOption::State::initState() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
+
+void UI::ToggleOption::State::widgetUpdated() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
+
 squi::core::Child UI::ToggleOption::State::build(const Element &element) {
-	auto mods = decodeOption(widget->option, widget->ctx);
 	auto hasMods = !mods.empty();
 
 	return Box{
@@ -53,6 +61,9 @@ squi::core::Child UI::ToggleOption::State::build(const Element &element) {
 						setState([&]() {
 							widget->option.active = !widget->option.active;
 						});
+						if (widget->onToggle) {
+							widget->onToggle(widget->option.active);
+						}
 						std::visit(
 							Utils::overloaded{
 								[](const Character::InstanceKey &key) {

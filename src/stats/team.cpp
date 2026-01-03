@@ -103,3 +103,10 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 		},
 	});
 }
+[[nodiscard]] bool Stats::Team::hasCharacter(::Character::InstanceKey key) const {
+	for (const auto &character: characters) {
+		if (!character) continue;
+		if (character->instanceKey == key) return true;
+	}
+	return false;
+}

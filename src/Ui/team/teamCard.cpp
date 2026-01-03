@@ -2,27 +2,28 @@
 
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/skillHeader.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "teamDetails.hpp"
 #include "teamEditor.hpp"
 
-#include "box.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "image.hpp"
-#include "row.hpp"
 #include "store.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/gestureDetector.hpp"
+#include "widgets/image.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
 
 
 using namespace squi;
 
-struct TeamAvatar {
+struct TeamAvatar : StatelessWidget {
 	// Args
+	Key key;
 	Character::Instance *character;
 
-	operator squi::Child() const {
-
+	[[nodiscard]] Child build(const Element &) const {
 		return Box{
 			.widget{
 				.width = 64.f,
@@ -40,21 +41,16 @@ struct TeamAvatar {
 	}
 };
 
-struct TeamContents {
-	// Args
-	Team::InstanceKey teamKey{};
-	squi::Navigator::Controller controller;
+squi::core::Child UI::TeamCard::State::build(const Element &element) {
+	auto &team = ::Store::teams.at(widget->teamKey);
 
-	operator squi::Child() const {
-		auto &team = ::Store::teams.at(teamKey);
-
-		return Column{
+	return Card{
+		.child = Column{
 			.children{
-				GestureDetector{
-					.onClick = [controller = controller, teamKey = teamKey](GestureDetector::Event) {
-						controller.push(UI::TeamDetails{
-							.teamKey = teamKey,
-							.controller = controller,
+				Gesture{
+					.onClick = [this](Gesture::State) {
+						Navigator::of(this).push(UI::TeamDetails{
+							.teamKey = widget->teamKey,
 						});
 					},
 					.child = UI::SkillHeader{
@@ -66,13 +62,11 @@ struct TeamContents {
 						.height = Size::Shrink,
 						.padding = 8.f,
 					},
+					.justifyContent = Row::JustifyContent::spaceBetween,
 					.children{
 						TeamAvatar{.character = team.stats.characters.at(0)},
-						Container{.widget{.height = 0.f}},
 						TeamAvatar{.character = team.stats.characters.at(1)},
-						Container{.widget{.height = 0.f}},
 						TeamAvatar{.character = team.stats.characters.at(2)},
-						Container{.widget{.height = 0.f}},
 						TeamAvatar{.character = team.stats.characters.at(3)},
 					},
 				},
@@ -84,46 +78,29 @@ struct TeamContents {
 					.spacing = 4.f,
 					.children{
 						Button{
-							.text = "Edit",
-							.style = ButtonStyle::Standard(),
-							.onClick = [teamKey = teamKey](GestureDetector::Event event) {
-								event.widget.addOverlay(UI::TeamEditor{
-									.instance = Store::teams.at(teamKey),
+							.theme = Button::Theme::Standard(),
+							.onClick = [this]() {
+								Navigator::of(this).pushOverlay(UI::TeamEditor{
+									.instance = Store::teams.at(widget->teamKey),
 									.onSubmit = [](const Team::Instance &team) {
 										Store::teams.at(team.instanceKey) = team;
 										Store::teamListUpdateEvent.notify();
 									},
 								});
 							},
+							.child = "Edit",
 						},
 						Button{
-							.text = "Delete",
-							.style = ButtonStyle::Standard(),
-							.onClick = [teamKey = teamKey](GestureDetector::Event) {
-								Store::teams.erase(teamKey);
+							.theme = Button::Theme::Standard(),
+							.onClick = [this]() {
+								Store::teams.erase(widget->teamKey);
 								Store::teamListUpdateEvent.notify();
 							},
+							.child = "Delete",
 						},
 					},
 				},
 			},
-		};
-	}
-};
-
-UI::TeamCard::operator squi::Child() const {
-	return Card{
-		.widget{
-			.padding = Padding{1.f},
-			.onInit = [controller = controller, teamKey = teamKey](Widget &w) {
-				w.customState.add(::Store::teams.at(teamKey).updateEvent.observe([controller, teamKey, &w]() {
-					w.setChildren({TeamContents{.teamKey = teamKey, .controller = controller}});
-				}));
-			},
-		},
-		.child = TeamContents{
-			.teamKey = teamKey,
-			.controller = controller,
 		},
 	};
 }

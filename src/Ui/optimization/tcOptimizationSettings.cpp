@@ -72,7 +72,7 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 						},
 						DropdownButton{
 							.widget{
-								.width = Size::Shrink,
+								.width = Size::Wrap,
 							},
 							.theme = Button::Theme::Standard(),
 							.text = std::format("{} star", widget->character.state.loadout().artifact.getTheorycraft().mainStats.at(index).rarity),

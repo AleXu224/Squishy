@@ -157,7 +157,6 @@ void Store::loadFromFile(const std::string &strpath) {
 	auto d = glz::read<glz::opts{.error_on_unknown_keys = false}>(saveData, ss.str());
 	if (d) {
 		std::println("Failed loading save file:");
-		std::println("{}", d.includer_error);
 		std::println("{}", d.custom_error_message);
 		std::println("{}", std::to_underlying(d.ec));
 		return;

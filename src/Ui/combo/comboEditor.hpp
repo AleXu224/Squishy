@@ -17,8 +17,11 @@ namespace UI {
 		std::function<void(Combo::Combo)> onSave;
 
 		struct State : WidgetState<ComboEditor> {
+			std::vector<Combo::Option> store;
 			Combo::Combo combo;
 			VoidObserver characterUpdateEvent;
+			VoidObservable comboUpdateEvent;
+			VoidObserver comboUpdateEventObserver;
 			VoidObservable closeEvent;
 			TextInput::Controller nameController;
 			Observer<const std::string &> nameObserver;
@@ -26,6 +29,10 @@ namespace UI {
 			void initState() override {
 				combo = widget->combo;
 				characterUpdateEvent = ::Store::characters.at(widget->characterKey).updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+
+				comboUpdateEventObserver = comboUpdateEvent.observe([this]() {
 					setState([&]() {});
 				});
 
