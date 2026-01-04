@@ -12,6 +12,7 @@ namespace UI {
 		// Args
 		Key key;
 		Args widget{};
+		bool enableBackButton = true;
 		Team::InstanceKey teamKey{};
 
 		struct State : WidgetState<TeamDetails> {

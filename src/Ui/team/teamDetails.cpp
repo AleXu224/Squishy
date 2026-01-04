@@ -13,9 +13,11 @@
 using namespace squi;
 squi::core::Child UI::TeamDetails::State::build(const Element &element) {
 	return SideNav{
-		.backAction = [this]() {
-			Navigator::of(this).pop();
-		},
+		.backAction = !widget->enableBackButton//
+						? std::function<void()>{}
+						: [this]() {
+							  Navigator::of(this).pop();
+						  },
 		.defaultExpanded = false,
 		.pages = [&]() {
 			std::vector<SideNav::Page> pages{};

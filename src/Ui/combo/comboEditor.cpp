@@ -552,7 +552,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 								.alwaysExpanded = true,
 								.action = Row{
 									.widget{
-										.width = Size::Shrink,
+										.width = Size::Wrap,
 									},
 									.crossAxisAlignment = Row::Alignment::center,
 									.spacing = 4.f,

@@ -77,7 +77,8 @@ int main() {
 			.key = GlobalKey{},
 		}
 	};
-	app.run();
+	app.initialize();
+	App::runAllWindows();
 	// Window window{WindowOptions{
 	// 	.name = "Squishy",
 	// 	.width = ::Store::windowWidth,

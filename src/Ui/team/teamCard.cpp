@@ -3,6 +3,7 @@
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/skillHeader.hpp"
 #include "character/data.hpp"
+#include "core/app.hpp"
 #include "teamDetails.hpp"
 #include "teamEditor.hpp"
 
@@ -53,6 +54,29 @@ squi::core::Child UI::TeamCard::State::build(const Element &element) {
 							.teamKey = widget->teamKey,
 						});
 					},
+					.onUpdate = [this](Gesture::State state) {
+						if (state.hovered && state.isKeyPressedOrRepeat(GestureMouseKey::middle)) {
+							auto thread = std::thread([teamKey = widget->teamKey]() {
+								std::optional<App> app;
+								App::addMainThreadTask([&]() {
+									app.emplace(
+										Engine::WindowOptions{
+											.name = "Team Details",
+											.width = 1280,
+											.height = 720,
+										},
+										UI::TeamDetails{
+											.enableBackButton = false,
+											.teamKey = teamKey,
+										}
+									);
+								}).wait();
+								app->initialize();
+								app->finished.wait();
+							});
+							thread.detach();
+						}
+					},
 					.child = UI::SkillHeader{
 						.name = team.name,
 					},
@@ -81,10 +105,11 @@ squi::core::Child UI::TeamCard::State::build(const Element &element) {
 							.theme = Button::Theme::Standard(),
 							.onClick = [this]() {
 								Navigator::of(this).pushOverlay(UI::TeamEditor{
-									.instance = Store::teams.at(widget->teamKey),
+									.instance = ::Store::teams.at(widget->teamKey),
 									.onSubmit = [](const Team::Instance &team) {
-										Store::teams.at(team.instanceKey) = team;
-										Store::teamListUpdateEvent.notify();
+										auto &teamInStore = ::Store::teams.at(team.instanceKey) = team;
+										teamInStore.updateEvent.notify();
+										::Store::teamListUpdateEvent.notify();
 									},
 								});
 							},
@@ -93,8 +118,8 @@ squi::core::Child UI::TeamCard::State::build(const Element &element) {
 						Button{
 							.theme = Button::Theme::Standard(),
 							.onClick = [this]() {
-								Store::teams.erase(widget->teamKey);
-								Store::teamListUpdateEvent.notify();
+								::Store::teams.erase(widget->teamKey);
+								::Store::teamListUpdateEvent.notify();
 							},
 							.child = "Delete",
 						},
