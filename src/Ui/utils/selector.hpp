@@ -1,37 +1,38 @@
 #pragma once
 
 #include "character/key.hpp"
-#include "dropdownButton.hpp"
+#include "core/core.hpp"
 #include "stats/loadout.hpp"
 #include "store.hpp"
-#include "widgetArgs.hpp"
+#include "widgets/dropdownButton.hpp"
 
 
 namespace UI {
+	using namespace squi;
 	template<class T>
-	struct Selector {
+	struct Selector : StatelessWidget {
 		// Args
-		std::string_view titlePrefix;
-		std::string_view valuePrefix;
+		Key key;
+		std::string titlePrefix;
+		std::string valuePrefix;
 		std::function<T(void)> getter;
 		std::function<void(const T &)> setter;
 		std::function<std::string(const T &)> printer;
 		std::vector<T> values;
 
-		operator squi::Child() const {
-			return squi::DropdownButton{
+		[[nodiscard]] Child build(const Element &) const {
+			return DropdownButton{
 				.widget{
 					.width = squi::Size::Expand,
 				},
-				.style = squi::ButtonStyle::Standard(),
 				.text = std::format("{} {}", titlePrefix, printer(getter())),
-				.items = [valuePrefix = valuePrefix, getter = getter, setter = setter, printer = printer, values = values]() {
+				.items = [this]() {
 					std::vector<squi::ContextMenu::Item> ret;
 					ret.reserve(values.size());
 					for (const auto &value: values) {
-						ret.emplace_back(squi::ContextMenu::Item{
+						ret.emplace_back(squi::ContextMenu::Button{
 							.text = std::format("{} {}", valuePrefix, printer(value)),
-							.content = [setter, value]() {
+							.callback = [this, &value]() {
 								setter(value);
 							},
 						});
@@ -64,23 +65,24 @@ namespace UI {
 	}
 
 	template<class T>
-	struct LevelSelector {
+	struct LevelSelector : StatelessWidget {
 		// Args
-		std::string_view titlePrefix;
+		Key key;
+		std::string titlePrefix;
 		std::function<T &()> sheetGetter;
 		Character::InstanceKey characterKey{};
 
 		using PairType = std::pair<uint8_t, uint8_t>;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Selector<PairType>{
 				.titlePrefix = titlePrefix,
 				.valuePrefix = "Level",
-				.getter = [sheetGetter = sheetGetter]() {
+				.getter = [this]() {
 					auto &sheet = sheetGetter();
 					return std::make_pair(sheet.level, getLvlFromAscension(sheet.ascension));
 				},
-				.setter = [characterKey = characterKey, sheetGetter = sheetGetter](const PairType &val) {
+				.setter = [this](const PairType &val) {
 					auto &character = Store::characters.at(characterKey);
 					auto &sheet = sheetGetter();
 					sheet.level = val.first;
@@ -110,11 +112,13 @@ namespace UI {
 		}
 	};
 
-	struct CharacterLevelSelector {
+	struct CharacterLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+
+		[[nodiscard]] Child build(const Element &) const {
 			return LevelSelector<Stats::CharacterSheet>{
 				.titlePrefix = "Character Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::CharacterSheet & {
@@ -125,11 +129,13 @@ namespace UI {
 		}
 	};
 
-	struct WeaponLevelSelector {
+	struct WeaponLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+
+		[[nodiscard]] Child build(const Element &) const {
 			return LevelSelector<Stats::WeaponSheet>{
 				.titlePrefix = "Weapon Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::WeaponSheet & {
@@ -140,13 +146,14 @@ namespace UI {
 		}
 	};
 
-	struct ConstellationSelector {
+	struct ConstellationSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey{};
 
 		using Type = uint8_t;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Selector<Type>{
 				.titlePrefix = "Constellation",
 				.valuePrefix = "Constellation",
@@ -167,13 +174,15 @@ namespace UI {
 			};
 		}
 	};
-	struct RefinementSelector {
+
+	struct RefinementSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey{};
 
 		using Type = uint8_t;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Selector<Type>{
 				.titlePrefix = "Refinement",
 				.valuePrefix = "Refinement",
@@ -194,8 +203,10 @@ namespace UI {
 			};
 		}
 	};
-	struct TalentLevelSelector {
+
+	struct TalentLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey{};
 		using _Talents = decltype(Stats::CharacterSheet::talents);
 		_Talents::Type _Talents::*talent{};
@@ -203,7 +214,7 @@ namespace UI {
 
 		using Type = uint32_t;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Selector<Type>{
 				.titlePrefix = std::format("{} Level", prefix),
 				.valuePrefix = "Level",
@@ -226,11 +237,12 @@ namespace UI {
 		}
 	};
 
-	struct NormalTalentLevelSelector {
+	struct NormalTalentLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
 				.talent = &decltype(Stats::CharacterSheet::talents)::normal,
@@ -238,11 +250,12 @@ namespace UI {
 			};
 		}
 	};
-	struct SkillTalentLevelSelector {
+	struct SkillTalentLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
 				.talent = &decltype(Stats::CharacterSheet::talents)::skill,
@@ -250,11 +263,12 @@ namespace UI {
 			};
 		}
 	};
-	struct BurstTalentLevelSelector {
+	struct BurstTalentLevelSelector : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return TalentLevelSelector{
 				.characterKey = characterKey,
 				.talent = &decltype(Stats::CharacterSheet::talents)::burst,

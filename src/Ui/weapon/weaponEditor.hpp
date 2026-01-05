@@ -1,21 +1,32 @@
 #pragma once
 
-#include "widget.hpp"
-
+#include "core/core.hpp"
+#include "weapon/defaultWeapons.hpp"
 #include "weapon/instance.hpp"
 
+
 namespace UI {
-	struct WeaponEditor {
+	using namespace squi;
+	struct WeaponEditor : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Weapon::Instance weapon;
 		std::function<void(Weapon::Instance)> onSubmit{};
 
-		struct Storage {
-			// Data
-			Weapon::Instance weapon;
-		};
+		struct State : WidgetState<WeaponEditor> {
+			// Weapon instance has no default constructor
+			Weapon::Instance weapon = Weapon::Instance{
+				Weapon::defaultWeapons.at(Misc::WeaponType::sword),
+				{0},
+			};
+			VoidObservable closeEvent{};
 
-		operator squi::Child() const;
+			void initState() override {
+				weapon = widget->weapon;
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

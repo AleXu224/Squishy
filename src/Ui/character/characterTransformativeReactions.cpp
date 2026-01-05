@@ -3,17 +3,15 @@
 #include "Ui/elementToColor.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
-#include "Ui/utils/tooltip.hpp"
 #include "character/data.hpp"
 #include "reaction/transformative.hpp"
 #include "utils.hpp"
+#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
 
-UI::CharacterTransformativeReactions::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
+[[nodiscard]] squi::core::Child UI::CharacterTransformativeReactions::build(const Element &) const {
 	return UI::DisplayCard{
 		.widget = widget,
 		.title = "Transformative Reactions",
@@ -50,11 +48,11 @@ UI::CharacterTransformativeReactions::operator squi::Child() const {
 					}
 				}
 				if (!found) return;
-				ret.emplace_back(UI::Tooltip{
-					.message = val->formula.print(ctx, Formula::Step::none),
+				ret.emplace_back(Tooltip{
+					.text = val->formula.print(ctx, Formula::Step::none),
 					.child = UI::SkillEntry{
 						.isTransparent = (transparent = !transparent),
-						.name = val->name,
+						.name = std::string(val->name),
 						.value = val->formula.eval(ctx),
 						.color = Utils::elementToColor(val->damageElement),
 					},

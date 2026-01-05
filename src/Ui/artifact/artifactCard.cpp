@@ -5,29 +5,28 @@
 #include "Ui/utils/card.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/tag.hpp"
-#include "align.hpp"
 #include "artifact/sets.hpp"
-#include "box.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
-#include "column.hpp"
-#include "gestureDetector.hpp"
-#include "image.hpp"
 #include "misc/rarityToColor.hpp"
-#include "rebuilder.hpp"
-#include "row.hpp"
-#include "stack.hpp"
 #include "store.hpp"
-#include "text.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/image.hpp"
+#include "widgets/navigator.hpp"
 
 
 #include "ranges"
-#include "theme.hpp"
+#include "widgets/row.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/text.hpp"
 
 using namespace squi;
 
-struct ArtifactHeader {
+
+struct ArtifactHeader : StatelessWidget {
 	// Args
+	Key key;
 	Artifact::SetKey set;
 	Artifact::Slot slot;
 	StatValue mainStat;
@@ -35,59 +34,48 @@ struct ArtifactHeader {
 	uint8_t level;
 	Character::InstanceKey equippedCharacter;
 
-	struct Storage {
-		// Data
-	};
-
-	operator squi::Child() const {
-		auto storage = std::make_shared<Storage>();
-
-		auto icon = Align{
-			.xAlign = 1.f,
-			.child = Image{
-				.fit = squi::Image::Fit::contain,
-				.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
+	[[nodiscard]] Child build(const Element &) const {
+		auto icon = Image{
+			.widget{
+				.alignment = Alignment::CenterRight,
 			},
+			.fit = squi::Image::Fit::contain,
+			.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 		};
-		auto title = Align{
-			.xAlign = 0.f,
-			.child = Column{
-				.widget{
-					.height = Size::Shrink,
-					.padding = Padding{12.f, 0.f},
-				},
-				.children{
-					Row{
-						.alignment = Row::Alignment::center,
-						.spacing = 4.f,
-						.children{
-							UI::Tag{.sourceStr = std::format("+{}", level)},
-							Text{
-								.text = Utils::Stringify(mainStat.stat),
-							},
+		auto title = Column{
+			.widget{
+				.height = Size::Shrink,
+				.alignment = Alignment::CenterLeft,
+				.padding = Padding{12.f, 0.f},
+			},
+			.children{
+				Row{
+					.crossAxisAlignment = Row::Alignment::center,
+					.spacing = 4.f,
+					.children{
+						UI::Tag{.sourceStr = std::format("+{}", level)},
+						Text{
+							.text = Utils::Stringify(mainStat.stat),
 						},
 					},
-					Text{
-						.text = Utils::Stringify(mainStat),
-						.fontSize = 24.f,
-					},
+				},
+				Text{
+					.text = Utils::Stringify(mainStat),
+					.fontSize = 24.f,
 				},
 			},
 		};
 		auto characterImage = [&]() -> Child {
 			if (!equippedCharacter) return Child{};
-			return Align{
-				.xAlign = 1.f,
-				.yAlign = 1.f,
-				.child = Image{
-					.widget{
-						.width = 32.f,
-						.height = 32.f,
-						.margin = Margin{}.withRight(64.f),
-					},
-					.fit = squi::Image::Fit::contain,
-					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", ::Store::characters.at(equippedCharacter).state.stats.data.name))
+			return Image{
+				.widget{
+					.width = 32.f,
+					.height = 32.f,
+					.alignment = Alignment::BottomRight,
+					.margin = Margin{}.withRight(64.f),
 				},
+				.fit = squi::Image::Fit::contain,
+				.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", ::Store::characters.at(equippedCharacter).state.stats.data.name))
 			};
 		}();
 		return Box{
@@ -108,13 +96,14 @@ struct ArtifactHeader {
 	}
 };
 
-struct ArtifactCardContent {
+struct ArtifactCardContent : StatelessWidget {
 	// Args
-	squi::Widget::Args widget{};
+	Key key;
+	Args widget{};
 	Artifact::Instance &artifact;
 	UI::ArtifactCard::Actions actions;
 
-	operator squi::Child() const {
+	[[nodiscard]] Child build(const Element &element) const {
 		auto header = ArtifactHeader{
 			.set = artifact.set,
 			.slot = artifact.slot,
@@ -129,19 +118,21 @@ struct ArtifactCardContent {
 		auto subStats = Column{
 			.widget{
 				.padding = Padding{4.f},
-				.onInit = [artifact = artifact](Widget &w) {
-					auto trueFalse = {false, true};
-					auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));
-
-					for (const auto &[transparent, substat]: std::views::zip(trueFalseInf, artifact.subStats)) {
-						if (!substat.stat.has_value()) continue;
-						w.addChild(UI::StatDisplay{
-							.isTransparent = transparent,
-							.stat = substat,
-						});
-					}
-				},
 			},
+			.children = [&]() {
+				Children ret{};
+				auto trueFalse = {false, true};
+				auto trueFalseInf = std::views::join(std::views::repeat(trueFalse));
+
+				for (const auto &[transparent, substat]: std::views::zip(trueFalseInf, artifact.subStats)) {
+					if (!substat.stat.has_value()) continue;
+					ret.emplace_back(UI::StatDisplay{
+						.isTransparent = transparent,
+						.stat = substat,
+					});
+				}
+				return ret;
+			}(),
 		};
 
 		auto equippedCharacter = artifact.equippedOn();
@@ -149,15 +140,15 @@ struct ArtifactCardContent {
 			.widget{
 				.width = Size::Expand,
 			},
-			.text = equippedCharacter ? Store::characters.at(equippedCharacter).state.stats.data.name : "Unequipped",
-			.style = equippedCharacter ? ButtonStyle::Accent() : ButtonStyle::Standard(),
-			.onClick = [&artifact = artifact](GestureDetector::Event event) {
-				event.widget.addOverlay(UI::CharacterSelector{
-					.onSelect = [&artifact](Character::InstanceKey instanceKey) {
+			.theme = equippedCharacter ? Button::Theme::Accent() : Button::Theme::Standard(),
+			.onClick = [&]() {
+				Navigator::of(element).pushOverlay(UI::CharacterSelector{
+					.onSelect = [this](Character::InstanceKey instanceKey) {
 						artifact.equipOn(instanceKey);
 					},
 				});
 			},
+			.child = equippedCharacter ? std::string(Store::characters.at(equippedCharacter).state.stats.data.name) : "Unequipped",
 		};
 
 		auto footer = Row{
@@ -169,10 +160,9 @@ struct ArtifactCardContent {
 			.children{
 				actions == UI::ArtifactCard::Actions::list ? equippedButton : Child{},
 				Button{
-					.text = "Edit",
-					.style = ButtonStyle::Standard(),
-					.onClick = [artifact = artifact](GestureDetector::Event event) {
-						event.widget.addOverlay(UI::ArtifactEditor{
+					.theme = Button::Theme::Standard(),
+					.onClick = [&]() {
+						Navigator::of(element).pushOverlay(UI::ArtifactEditor{
 							.artifact = artifact,
 							.onSubmit = [key = artifact.key](Artifact::Instance artifact) {
 								artifact.key = key;
@@ -183,18 +173,19 @@ struct ArtifactCardContent {
 							},
 						});
 					},
+					.child = "Edit",
 				},
 				actions == UI::ArtifactCard::Actions::list//
 					? Button{
-						  .text = "Delete",
-						  .style = ButtonStyle::Standard(),
-						  .onClick = [key = artifact.key](GestureDetector::Event) {
+						  .theme = Button::Theme::Standard(),
+						  .onClick = [key = artifact.key]() {
 							  auto &artifact = Store::artifacts.at(key);
 							  artifact.unequip();
 
 							  Store::artifacts.erase(key);
 							  Store::artifactListUpdateEvent.notify();
 						  },
+						  .child = "Delete",
 					  }
 					: Child{},
 			},
@@ -209,28 +200,15 @@ struct ArtifactCardContent {
 	}
 };
 
-UI::ArtifactCard::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	return Rebuilder{
-		.widget = widget,
-		.rebuildEvent = artifact.updateEvent,
-		.buildFunc = [key = artifact.key, actions = actions]() -> Child {
-			if (!Store::artifacts.contains(key)) {
-				return Child{};
-			}
-			auto &artifact = Store::artifacts.at(key);
-			auto _ = ThemeManager::pushTheme(Theme{.accent = Misc::rarityToColor.at(artifact.rarity)});
-			return Card{
-				.widget{
-					.padding = Padding{1.f},
-				},
-				.borderColor = Misc::rarityToColor.at(artifact.rarity),
-				.child = ArtifactCardContent{
-					.artifact = artifact,
-					.actions = actions,
-				},
-			};
+squi::core::Child UI::ArtifactCard::State::build(const Element &) {
+	return Card{
+		.widget{
+			.padding = Padding{1.f},
+		},
+		.borderColor = Misc::rarityToColor.at(widget->artifact.rarity),
+		.child = ArtifactCardContent{
+			.artifact = widget->artifact,
+			.actions = widget->actions,
 		},
 	};
 }

@@ -4,11 +4,8 @@
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/statDisplay.hpp"
 #include "Ui/utils/tag.hpp"
-#include "Ui/utils/tooltip.hpp"
 #include "Ui/utils/trueFalse.hpp"
 
-#include "align.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "characterEditor.hpp"
 #include "characterLoadouts.hpp"
@@ -16,23 +13,22 @@
 
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
+#include "widgets/button.hpp"
+#include "widgets/image.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/tooltip.hpp"
 
-#include "image.hpp"
-#include "row.hpp"
-#include "stack.hpp"
-#include "theme.hpp"
 
 using namespace squi;
-UI::CharacterStats::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-	auto theme = ThemeManager::getTheme();
-
+squi::core::Child UI::CharacterStats::State::build(const Element &element) {
 	return UI::DisplayCard{
-		.widget = widget,
-		.borderColor = Utils::elementToColor(ctx.active.stats.base.element),
-		.title = ctx.active.stats.data.name,
+		.widget = widget->widget,
+		.borderColor = Utils::elementToColor(widget->ctx.active.stats.base.element),
+		.title = std::string(widget->ctx.active.stats.data.name),
 		.children = [&]() {
-			const auto &loadout = ctx.source;
+			const auto &loadout = widget->ctx.source;
 			Children ret{};
 			ret.emplace_back(Stack{
 				.widget{
@@ -41,22 +37,19 @@ UI::CharacterStats::operator squi::Child() const {
 				.children{
 					Image{
 						.fit = Image::Fit::contain,
-						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", ctx.active.stats.data.name)),
+						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", widget->ctx.active.stats.data.name)),
 					},
-					Align{
-						.xAlign = 0.f,
-						.yAlign = 1.f,
-						.child = Row{
-							.widget{
-								.width = Size::Shrink,
-								.height = Size::Shrink,
-								.margin = 8.f,
-							},
-							.spacing = 4.f,
-							.children{
-								UI::Tag{.sourceStr = std::format("Lvl {}", loadout.stats.sheet.level)},
-								UI::Tag{.sourceStr = std::format("C{}", loadout.stats.sheet.constellation)},
-							},
+					Row{
+						.widget{
+							.width = Size::Shrink,
+							.height = Size::Shrink,
+							.alignment = Alignment::BottomLeft,
+							.margin = 8.f,
+						},
+						.spacing = 4.f,
+						.children{
+							UI::Tag{.sourceStr = std::format("Lvl {}", loadout.stats.sheet.level)},
+							UI::Tag{.sourceStr = std::format("C{}", loadout.stats.sheet.constellation)},
 						},
 					},
 				},
@@ -67,10 +60,10 @@ UI::CharacterStats::operator squi::Child() const {
 
 			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				auto formula = Stats::fromStat(Modifiers::displayTotal(), stat);
-				auto message = formula.print(ctx);
-				auto value = formula.eval(ctx);
-				ret2.emplace_back(UI::Tooltip{
-					.message = message,
+				auto message = formula.print(widget->ctx);
+				auto value = formula.eval(widget->ctx);
+				ret2.emplace_back(Tooltip{
+					.text = message,
 					.child = UI::StatDisplay{
 						.isTransparent = transparent,
 						.stat{
@@ -96,11 +89,9 @@ UI::CharacterStats::operator squi::Child() const {
 						.widget{
 							.width = Size::Expand,
 						},
-						.text = "Edit",
-						.onClick = [characterKey = characterKey, theme](GestureDetector::Event event) {
-							auto &character = ::Store::characters.at(characterKey);
-							auto _ = ThemeManager::pushTheme(theme);
-							event.widget.addOverlay(UI::CharacterEditor{
+						.onClick = [this]() {
+							auto &character = ::Store::characters.at(widget->characterKey);
+							Navigator::of(this).pushOverlay(UI::CharacterEditor{
 								.character = character,
 								.onSubmit = [](const Character::Instance &character) {
 									auto &instance = Store::characters.at(character.instanceKey);
@@ -109,18 +100,18 @@ UI::CharacterStats::operator squi::Child() const {
 								},
 							});
 						},
+						.child = "Edit",
 					},
 					Button{
 						.widget{
 							.width = Size::Expand,
 						},
-						.text = "Loadouts",
-						.onClick = [characterKey = characterKey, theme](GestureDetector::Event event) {
-							auto _ = ThemeManager::pushTheme(theme);
-							event.widget.addOverlay(UI::CharacterLoadouts{
-								.characterKey = characterKey,
+						.onClick = [this]() {
+							Navigator::of(this).pushOverlay(UI::CharacterLoadouts{
+								.characterKey = widget->characterKey,
 							});
 						},
+						.child = "Loadouts",
 					},
 				},
 			},

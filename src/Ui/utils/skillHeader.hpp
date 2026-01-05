@@ -1,18 +1,16 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct SkillHeader {
+	using namespace squi;
+	struct SkillHeader : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
-		std::string_view name;
-		std::string_view subtitle{};
+		Key key;
+		Args widget{};
+		std::string name;
+		std::string subtitle{};
 
-		struct Storage {
-			// Data
-		};
-
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

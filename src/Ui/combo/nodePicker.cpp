@@ -1,83 +1,67 @@
 #include "nodePicker.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/masonry.hpp"
-#include "align.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
-#include "container.hpp"
-#include "dialog.hpp"
 #include "node/node.hpp"
 #include "ranges"
 #include "stats/loadout.hpp"
 #include "store.hpp"
-#include "text.hpp"
 #include "utils/slotToCondition.hpp"
 #include "weapon/data.hpp"
+#include "widgets/button.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/text.hpp"
 
 
 using namespace squi;
 
 namespace {
-	struct NodePickerEntry {
+	struct NodePickerEntry : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
-		const Node::Instance &node;
+		Key key;
+		Args widget{};
+		Node::Instance node;
 		Combo::Source::Types source;
-		const Formula::Context &ctx;
+		Formula::Context ctx;
 		std::function<void(Combo::Source::Types)> onSelect;
 		VoidObservable closeEvent;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Button{
 				.widget{
 					.width = Size::Expand,
 					.margin = Margin{4.f, 2.f},
 				},
-				.style = ButtonStyle::Subtle(),
-				.onClick = [onSelect = onSelect, source = source, closeEvent = closeEvent](auto) {
-					onSelect(source);
+				.theme = Button::Theme::Subtle(),
+				.onClick = [this]() {
+					if (onSelect) onSelect(source);
 					closeEvent.notify();
 				},
-				.child = Align{
-					.xAlign = 0.f,
-					.child = Text{
-						.text = node.name,
-						.lineWrap = true,
-						.color = Node::getColor(node.data, ctx),
+				.child = Text{
+					.widget{
+						.alignment = Alignment::CenterLeft,
 					},
+					.text = std::string(node.name),
+					.lineWrap = true,
+					.color = Node::getColor(node.data, ctx),
 				},
-			};
-		}
-	};
-
-	struct NodePickerGroup {
-		// Args
-		squi::Widget::Args widget{};
-		Children children;
-
-		operator squi::Child() const {
-			return UI::DisplayCard{
-				.title = "Category",
-				.children = children,
 			};
 		}
 	};
 }// namespace
 
-UI::NodePicker::operator squi::Child() const {
-	VoidObservable closeEvent;
-
+squi::core::Child UI::NodePicker::State::build(const Element &element) {
 	return Dialog{
 		.width = 800.f,
 		.closeEvent = closeEvent,
 		.title = "Choose node",
 		.content = Masonry{
-			.spacing = 4.f,
 			.columnCount = Masonry::MinSize{200.f},
+			.spacing = 4.f,
 			.children = [&]() {
 				Children ret;
 
-				auto &character = ::Store::characters.at(characterKey);
+				auto &character = ::Store::characters.at(widget->characterKey);
 
 				Children transformativeRet;
 				for (const auto &reaction: Misc::transformativeReactions) {
@@ -86,8 +70,8 @@ UI::NodePicker::operator squi::Child() const {
 					transformativeRet.emplace_back(NodePickerEntry{
 						.node = node,
 						.source = source,
-						.ctx = ctx,
-						.onSelect = onSelect,
+						.ctx = widget->ctx,
+						.onSelect = widget->onSelect,
 						.closeEvent = closeEvent,
 					});
 				}
@@ -98,7 +82,7 @@ UI::NodePicker::operator squi::Child() const {
 					});
 				}
 
-				if (enableCombos) {
+				if (widget->enableCombos) {
 					Children comboRet{};
 					for (const auto &[key, combo]: character.combos) {
 						auto source = Combo::Source::Combo{
@@ -109,8 +93,8 @@ UI::NodePicker::operator squi::Child() const {
 						comboRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = source,
-							.ctx = ctx,
-							.onSelect = onSelect,
+							.ctx = widget->ctx,
+							.onSelect = widget->onSelect,
 							.closeEvent = closeEvent,
 						});
 					}
@@ -123,7 +107,7 @@ UI::NodePicker::operator squi::Child() const {
 				}
 
 				for (const auto &slot: Node::characterSlots) {
-					if (!Utils::slotToCondition(slot).eval(ctx)) continue;
+					if (!Utils::slotToCondition(slot).eval(widget->ctx)) continue;
 					Children entryRet{};
 					const auto &nodeList = character.state.stats.data.data.nodes.fromEntry(slot);
 					for (const auto &[index, node]: nodeList | std::views::enumerate) {
@@ -135,8 +119,8 @@ UI::NodePicker::operator squi::Child() const {
 								.slot = slot,
 								.index = static_cast<size_t>(index),
 							},
-							.ctx = ctx,
-							.onSelect = onSelect,
+							.ctx = widget->ctx,
+							.onSelect = widget->onSelect,
 							.closeEvent = closeEvent,
 						});
 					}
@@ -158,8 +142,8 @@ UI::NodePicker::operator squi::Child() const {
 							.key = character.state.loadout().weapon->data->key,
 							.index = static_cast<size_t>(index),
 						},
-						.ctx = ctx,
-						.onSelect = onSelect,
+						.ctx = widget->ctx,
+						.onSelect = widget->onSelect,
 						.closeEvent = closeEvent,
 					});
 				}
@@ -176,13 +160,12 @@ UI::NodePicker::operator squi::Child() const {
 			}(),
 		},
 		.buttons{
-			Container{},
 			Button{
 				.widget{.width = Size::Expand},
-				.text = "Close",
-				.onClick = [closeEvent](auto) {
+				.onClick = [this]() {
 					closeEvent.notify();
 				},
+				.child = "Close",
 			},
 		},
 	};

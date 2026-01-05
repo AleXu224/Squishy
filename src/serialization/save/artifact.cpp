@@ -8,6 +8,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		if (!artifactSubStat.stat) continue;
 		subStatData = ArtifactSubStat{
 			.stat = artifactSubStat.stat.value(),
+			.activated = artifactSubStat.activated,
 			.value = artifactSubStat.value,
 		};
 	}
@@ -29,6 +30,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		if (!subStatData) continue;
 		artifactSubStat = StatValue{
 			.stat = subStatData->stat,
+			.activated = subStatData->activated,
 			.value = subStatData->value,
 		};
 	}

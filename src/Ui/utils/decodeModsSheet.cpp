@@ -7,7 +7,7 @@
 #include "modifiers/statFactory.hpp"
 #include "skillEntry.hpp"
 #include "stats/helpers.hpp"
-#include "tooltip.hpp"
+#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -19,8 +19,8 @@ namespace {
 		auto value = stat.eval(ctx);
 
 		if (value == 0) return;
-		ret.emplace_back(UI::Tooltip{
-			.message = message,
+		ret.emplace_back(Tooltip{
+			.text = std::move(message),
 			.child = UI::SkillEntry{
 				.isTransparent = transparent = !transparent,
 				.name = std::format("{}{}", prefix, identifier.getName()),
@@ -85,7 +85,7 @@ namespace {
 		auto value = infusion.eval(ctx);
 		if (!value.has_value()) return ret;
 		ret.emplace_back(UI::Tooltip{
-			.message = message,
+			.text = message,
 			.child = UI::SkillEntry{
 				.isTransparent = transparent = !transparent,
 				.name = std::format("{}{} Infusion", prefix, message),
@@ -167,10 +167,10 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 				auto value = node.formula.eval(ctx);
 				if (value == 0) continue;
 				ret.emplace_back(UI::Tooltip{
-					.message = node.formula.print(ctx),
+					.text = node.formula.print(ctx),
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
-						.name = node.name,
+						.name = std::string(node.name),
 						.value = value,
 						.color = Node::getColor(node.data, ctx),
 						.isPercentage = Node::isPercentage(node.data),

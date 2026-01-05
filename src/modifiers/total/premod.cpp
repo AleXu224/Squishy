@@ -38,7 +38,7 @@ namespace Modifiers {
 			return (characterKitStat + characterInstanceStat + weaponPassiveStat + weaponInstanceStat + artifactSetStat + artifactSubStats + teamPreStat).print(context, prevStep);
 		}
 
-		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
+		[[nodiscard]] float eval(const Formula::Context &context) const {
 			return characterKitStat.eval(context)
 				 + characterInstanceStat.eval(context)
 				 + weaponPassiveStat.eval(context)

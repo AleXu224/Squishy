@@ -22,7 +22,7 @@ namespace Modifiers::Weapon {
 			return (weaponPassivePre + weaponPassivePost + weaponInstance).print(context, prevStep);
 		}
 
-		[[nodiscard]] constexpr float eval(const Formula::Context &context) const {
+		[[nodiscard]] float eval(const Formula::Context &context) const {
 			return weaponPassivePre.eval(context)
 				 + weaponPassivePost.eval(context)
 				 + weaponInstance.eval(context);

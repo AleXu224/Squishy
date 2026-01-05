@@ -1,58 +1,58 @@
 #include "optionPicker.hpp"
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/masonry.hpp"
-#include "align.hpp"
-#include "button.hpp"
 #include "character/data.hpp"
 #include "character/instance.hpp"
-#include "container.hpp"
-#include "dialog.hpp"
 #include "ranges"
 #include "stats/team.hpp"
-#include "text.hpp"
+#include "widgets/button.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/text.hpp"
 #include <unordered_set>
 
 
 using namespace squi;
 
 namespace {
-	struct OptionPickerEntry {
+	struct OptionPickerEntry : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		std::string name;
 		::Combo::Option option;
 		std::function<void(::Combo::Option)> onSelect;
 		VoidObservable closeEvent;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Button{
 				.widget{
 					.width = Size::Expand,
 					.margin = Margin{4.f, 2.f},
 				},
-				.style = ButtonStyle::Subtle(),
-				.onClick = [onSelect = onSelect, option = option, closeEvent = closeEvent](auto) {
+				.theme = Button::Theme::Subtle(),
+				.onClick = [this]() {
 					if (onSelect) onSelect(option);
 					closeEvent.notify();
 				},
-				.child = Align{
-					.xAlign = 0.f,
-					.child = Text{
-						.text = name,
-						.lineWrap = true,
+				.child = Text{
+					.widget{
+						.alignment = Alignment::CenterLeft,
 					},
+					.text = name,
+					.lineWrap = true,
 				},
 			};
 		}
 	};
 
-	struct OptionPickerCategory {
+	struct OptionPickerCategory : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		std::string name;
 		Children children;
 
-		operator squi::Child() const {
+		[[nodiscard]] Child build(const Element &) const {
 			return Box{
 				.widget{
 					.margin = Margin{4.f, 2.f},
@@ -70,12 +70,12 @@ namespace {
 							.color = Color::transparent,
 							.borderColor = Color::css(0x0, 0.1f),
 							.borderWidth = BorderWidth::Bottom(1.f),
-							.child = Align{
-								.xAlign = 0.f,
-								.child = Text{
-									.text = name,
-									.font = FontStore::defaultFontBold,
-								}
+							.child = Text{
+								.widget{
+									.alignment = Alignment::CenterLeft,
+								},
+								.text = name,
+								.font = FontStore::defaultFontBold,
 							},
 						},
 						Column{
@@ -92,25 +92,23 @@ namespace {
 	};
 }// namespace
 
-UI::OptionPicker::operator squi::Child() const {
-	VoidObservable closeEvent;
-
+squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 	return Dialog{
 		.width = 800.f,
 		.closeEvent = closeEvent,
 		.title = "Choose option",
 		.content = Masonry{
-			.spacing = 4.f,
 			.columnCount = Masonry::MinSize{200.f},
+			.spacing = 4.f,
 			.children = [&]() {
 				Children ret;
 
 				std::unordered_set<uint32_t> existingOptions;
-				for (const auto &opt: options) {
+				for (const auto &opt: widget->options) {
 					existingOptions.insert(opt.hash);
 				}
 
-				for (const auto &character: ctx.team.characters) {
+				for (const auto &character: widget->ctx.team.characters) {
 					if (!character) continue;
 					Children characterRet;
 					for (const auto &[memberCond, slot]: std::views::zip(Option::CharacterList::getMembersAndConditions(), Node::characterSlots)) {
@@ -124,8 +122,8 @@ UI::OptionPicker::operator squi::Child() const {
 								},
 								opt
 							);
-							if (character->instanceKey != characterKey && !teamBuff) continue;
-							auto newCtx = ctx.withSource(character->state);
+							if (character->instanceKey != widget->characterKey && !teamBuff) continue;
+							auto newCtx = widget->ctx.withSource(character->state);
 							if (condition.hasValue() && !condition.eval(newCtx)) continue;
 							if (!cond.eval(newCtx)) continue;
 							if (existingOptions.contains(
@@ -167,7 +165,7 @@ UI::OptionPicker::operator squi::Child() const {
 									},
 									opt
 								),
-								.onSelect = onSelect,
+								.onSelect = widget->onSelect,
 								.closeEvent = closeEvent,
 							});
 						}
@@ -180,7 +178,7 @@ UI::OptionPicker::operator squi::Child() const {
 					}
 					if (!characterRet.empty()) {
 						ret.emplace_back(DisplayCard{
-							.title = character->state.stats.data.name,
+							.title = std::string(character->state.stats.data.name),
 							.children = characterRet,
 						});
 					}
@@ -190,13 +188,12 @@ UI::OptionPicker::operator squi::Child() const {
 			}(),
 		},
 		.buttons{
-			Container{},
 			Button{
 				.widget{.width = Size::Expand},
-				.text = "Close",
-				.onClick = [closeEvent](auto) {
+				.onClick = [this]() {
 					closeEvent.notify();
 				},
+				.child = "Close",
 			},
 		},
 	};

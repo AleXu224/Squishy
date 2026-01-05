@@ -1,21 +1,19 @@
 #pragma once
 
 #include "character/key.hpp"
+#include "core/core.hpp"
 #include "formula/formulaContext.hpp"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct ComboDisplay {
+	using namespace squi;
+	struct ComboDisplay : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		Formula::Context ctx;
 
-		struct Storage {
-			// Data
-		};
-
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

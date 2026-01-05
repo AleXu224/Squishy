@@ -1,19 +1,16 @@
 #include "homePage.hpp"
 
 #include "Ui/artifact/artifactPage.hpp"
+#include "widgets/topNav.hpp"
 #include "Ui/character/characterList.hpp"
 #include "Ui/settings/settingsPage.hpp"
 #include "Ui/team/teamPage.hpp"
-#include "Ui/utils/topnav.hpp"
 #include "Ui/weapon/weaponPage.hpp"
 
 
 using namespace squi;
 
-
-UI::homePage::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
+squi::Child UI::HomePage::build(const squi::Element &) const {
 	return TopNav{
 		.pages{
 			TopNav::Page{

@@ -1,19 +1,34 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "artifact/key.hpp"
 #include "character/instance.hpp"
 
 namespace UI {
-	struct OptimizationSetChooser {
+	using namespace squi;
+	struct OptimizationSetChooser : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::Instance &character;
-        Formula::Context ctx;
+		Formula::Context ctx;
 		std::unordered_map<Artifact::SetKey, bool> &twoPcSets;
 		std::unordered_map<Artifact::SetKey, bool> &fourPcSets;
 
-		operator squi::Child() const;
+		struct State : WidgetState<OptimizationSetChooser> {
+			VoidObservable closeEvent;
+			VoidObserver characterUpdateEvent;
+
+			void initState() override {
+				characterUpdateEvent = widget->character.updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			void setSet(std::unordered_map<Artifact::SetKey, bool> &setMap, bool value);
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

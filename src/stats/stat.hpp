@@ -211,6 +211,7 @@ namespace Stats {
 
 struct StatValue {
 	std::optional<Stat> stat;
+	bool activated = true;
 	float value;
 };
 

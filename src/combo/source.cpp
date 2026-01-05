@@ -16,23 +16,23 @@ namespace {
 	};
 }// namespace
 
-Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> &options) const {
+Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 	auto &combo = ::Store::characters.at(characterKey).combos.at(comboKey);
 
 	std::vector<Formula::Combo::Entry> nodes;
-	std::vector<::Combo::Option> optionStack{};
+	Overrides overridesStack{};
 	for (auto &entry: combo.entries) {
 		std::visit(
 			Utils::overloaded{
 				[&](const ::Combo::Entry &entry) {
-					std::vector<::Combo::Option> retOptions = optionStack;
-					retOptions.insert(retOptions.end(), entry.options.begin(), entry.options.end());
+					Overrides retOverrides = overridesStack;
+					retOverrides.push(entry.options);
 					nodes.emplace_back(Formula::Combo::Entry{
 						.multiplier = entry.multiplier,
 						.reaction = Reaction::List::fromNodeReaction(entry.reaction),
 						.node = std::visit(//
 									[&](auto &&val) {
-										return val.resolve(retOptions);
+										return val.resolve(std::move(retOverrides));
 									},
 									entry.source
 						)
@@ -40,7 +40,7 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 					});
 				},
 				[&](const ::Combo::StateChangeEntry &entry) {
-					optionStack.insert(optionStack.end(), entry.options.begin(), entry.options.end());
+					overridesStack.push(entry.options);
 				},
 			},
 			entry
@@ -48,12 +48,12 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 	}
 
 
-	auto formula = Formula::Combo{.nodes = nodes};
+	auto formula = Formula::Combo{.nodes = std::move(nodes)};
 	auto formulaInstance = [&]() -> Formula::FloatNode {
-		if (options.empty()) return formula;
+		if (overrides.empty()) return std::move(formula);
 		return Formula::ComboOptionOverride{
-			.overrides = options,
-			.node = formula,
+			.overrides = std::move(overrides),
+			.node = std::move(formula),
 		};
 	}();
 
@@ -64,17 +64,17 @@ Node::Instance Combo::Source::Combo::resolve(const std::vector<::Combo::Option> 
 			.color = Utils::elementToColor(Misc::Element::physical),
 			.optimizable = true,
 		},
-		._formula = formulaInstance,
+		._formula = std::move(formulaInstance),
 	});
 }
 
-Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Option> &options) const {
+Node::Instance Combo::Source::Character::resolve(const Overrides &overrides) const {
 	const auto &ret = ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
 
-	if (!options.empty()) {
+	if (!overrides.empty()) {
 		auto nodeCopy = ret;
 		nodeCopy.formula = Formula::ComboOptionOverride{
-			.overrides = options,
+			.overrides = overrides,
 			.node = ret.formula,
 		};
 		return nodeCopy;
@@ -83,13 +83,13 @@ Node::Instance Combo::Source::Character::resolve(const std::vector<::Combo::Opti
 	return ret;
 }
 
-Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option> &options) const {
+Node::Instance Combo::Source::Weapon::resolve(const Overrides &overrides) const {
 	const auto &ret = ::Weapon::list.at(key).data.nodes.at(index);
 
-	if (!options.empty()) {
+	if (!overrides.empty()) {
 		auto nodeCopy = ret;
 		nodeCopy.formula = Formula::ComboOptionOverride{
-			.overrides = options,
+			.overrides = overrides,
 			.node = ret.formula,
 		};
 		return nodeCopy;
@@ -98,13 +98,13 @@ Node::Instance Combo::Source::Weapon::resolve(const std::vector<::Combo::Option>
 	return ret;
 }
 
-Node::Instance Combo::Source::Artifact::resolve(const std::vector<::Combo::Option> &options) const {
+Node::Instance Combo::Source::Artifact::resolve(const Overrides &overrides) const {
 	const auto &ret = ::Artifact::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
 
-	if (!options.empty()) {
+	if (!overrides.empty()) {
 		auto nodeCopy = ret;
 		nodeCopy.formula = Formula::ComboOptionOverride{
-			.overrides = options,
+			.overrides = overrides,
 			.node = ret.formula,
 		};
 		return nodeCopy;
@@ -113,7 +113,7 @@ Node::Instance Combo::Source::Artifact::resolve(const std::vector<::Combo::Optio
 	return ret;
 }
 
-Node::Instance Combo::Source::TransformativeReaction::resolve(const std::vector<::Combo::Option> &options) const {
+Node::Instance Combo::Source::TransformativeReaction::resolve(const Overrides &overrides) const {
 	auto [formula, name, element] = [&]() -> std::tuple<Formula::FloatNode, std::string_view, Misc::Element> {
 		switch (reaction) {
 			case Misc::TransformativeReaction::burning:
@@ -158,10 +158,10 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const std::vector<
 		._formula = formula,
 	});
 
-	if (!options.empty()) {
+	if (!overrides.empty()) {
 		auto nodeCopy = ret;
 		nodeCopy.formula = Formula::ComboOptionOverride{
-			.overrides = options,
+			.overrides = overrides,
 			.node = ret.formula,
 		};
 		return nodeCopy;

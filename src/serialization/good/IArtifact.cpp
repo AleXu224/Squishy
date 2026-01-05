@@ -25,7 +25,18 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 			auto ret = std::vector<ISubstat>(4);
 
 			for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, ret)) {
-				if (!subStat.stat.has_value()) continue;
+				if (!subStat.stat.has_value() || !subStat.activated) continue;
+				dataSubStat.key = keyStat.at(subStat.stat.value());
+				dataSubStat.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+			}
+
+			return ret;
+		}(),
+		.unactivatedSubstats = [&]() {
+			auto ret = std::vector<ISubstat>(4);
+
+			for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, ret)) {
+				if (!subStat.stat.has_value() || subStat.activated) continue;
 				dataSubStat.key = keyStat.at(subStat.stat.value());
 				dataSubStat.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
 			}
@@ -69,25 +80,49 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 		if (artifact.rarity != rarity) continue;
 		if (statKey.at(mainStatKey) != artifact.mainStat) continue;
 		bool validSubstats = true;
-		for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {
-			if (dataSubStat.key.empty()) {
-				if (subStat.stat.has_value()) {
-					validSubstats = false;
-					break;
-				}
+		auto it = artifact.subStats.begin();
+		for (auto dataIt = substats.begin(); it != artifact.subStats.end() && dataIt != substats.end(); ++dataIt) {
+			if (dataIt->key.empty()) {
 				continue;
 			}
-			if (!statKey.contains(dataSubStat.key)) {
-				std::println("Warning: StatKey {} not found", dataSubStat.key);
+			if (!statKey.contains(dataIt->key)) {
+				std::println("Warning: StatKey {} not found", dataIt->key);
 				validSubstats = false;
 				break;
 			}
-			if (!subStat.stat.has_value()) {
+			if (!it->stat.has_value()) {
 				validSubstats = false;
 				break;
 			}
-			const auto &val = subStat;
-			if (val.stat != statKey.at(dataSubStat.key) || val.value > dataSubStat.value) {
+			const auto &val = *it;
+			if (val.stat != statKey.at(dataIt->key) || val.value > dataIt->value) {
+				validSubstats = false;
+				break;
+			}
+			++it;
+		}
+		for (auto dataIt = unactivatedSubstats.begin(); it != artifact.subStats.end() && dataIt != unactivatedSubstats.end(); ++dataIt) {
+			if (dataIt->key.empty()) {
+				continue;
+			}
+			if (!statKey.contains(dataIt->key)) {
+				std::println("Warning: StatKey {} not found", dataIt->key);
+				validSubstats = false;
+				break;
+			}
+			if (!it->stat.has_value()) {
+				validSubstats = false;
+				break;
+			}
+			const auto &val = *it;
+			if (val.stat != statKey.at(dataIt->key) || val.value > dataIt->value) {
+				validSubstats = false;
+				break;
+			}
+			++it;
+		}
+		for (; it != artifact.subStats.end(); ++it) {
+			if (it->stat.has_value()) {
 				validSubstats = false;
 				break;
 			}
@@ -107,19 +142,39 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 		subStat.stat = std::nullopt;
 	}
 
-	for (auto [subStat, dataSubStat]: std::views::zip(artifact.subStats, substats)) {
-		if (dataSubStat.key.empty()) continue;
-		if (!statKey.contains(dataSubStat.key)) {
-			std::println("Warning: StatKey {} not found", dataSubStat.key);
+	auto it = artifact.subStats.begin();
+
+	for (auto dataIt = substats.begin(); it != artifact.subStats.end() && dataIt != substats.end(); ++dataIt) {
+		if (dataIt->key.empty()) continue;
+		if (!statKey.contains(dataIt->key)) {
+			std::println("Warning: StatKey {} not found", dataIt->key);
 			continue;
 		}
 
-		auto stat = statKey.at(dataSubStat.key);
+		auto stat = statKey.at(dataIt->key);
 
-		subStat = StatValue{
+		*it = StatValue{
 			.stat = stat,
-			.value = dataSubStat.value / (Utils::isPercentage(stat) ? 100.f : 1.f),
+			.activated = true,
+			.value = dataIt->value / (Utils::isPercentage(stat) ? 100.f : 1.f),
 		};
+		it++;
+	}
+	for (auto dataIt = unactivatedSubstats.begin(); it != artifact.subStats.end() && dataIt != unactivatedSubstats.end(); ++dataIt) {
+		if (dataIt->key.empty()) continue;
+		if (!statKey.contains(dataIt->key)) {
+			std::println("Warning: StatKey {} not found", dataIt->key);
+			continue;
+		}
+
+		auto stat = statKey.at(dataIt->key);
+
+		*it = StatValue{
+			.stat = stat,
+			.activated = false,
+			.value = dataIt->value / (Utils::isPercentage(stat) ? 100.f : 1.f),
+		};
+		it++;
 	}
 
 	artifact.updateStats();

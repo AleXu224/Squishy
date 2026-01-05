@@ -1,21 +1,19 @@
 #pragma once
 
 #include "character/key.hpp"
-#include "navigator.hpp"
-#include "widget.hpp"
+#include "core/core.hpp"
 
 
 namespace UI {
-	struct CharacterPage {
+	using namespace squi;
+	struct CharacterPage : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey{};
-		squi::Navigator::Controller controller;
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<CharacterPage> {
+			Child build(const Element &element) override;
 		};
-
-		operator squi::Child() const;
 	};
 }// namespace UI

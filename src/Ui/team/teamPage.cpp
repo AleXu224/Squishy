@@ -1,44 +1,24 @@
 #include "teamPage.hpp"
 
-#include "Ui/utils/grid.hpp"
-#include "button.hpp"
-#include "navigator.hpp"
-#include "row.hpp"
-#include "scrollableFrame.hpp"
 #include "store.hpp"
 #include "teamCard.hpp"
 #include "teamEditor.hpp"
-#include <GLFW/glfw3.h>
-
+#include "widgets/button.hpp"
+#include "widgets/grid.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
 
 using namespace squi;
 
-namespace {
-	Children makeTeams(const Navigator::Controller &controller) {
-		Children ret;
-		for (auto &[teamKey, team]: ::Store::teams) {
-			ret.emplace_back(UI::TeamCard{
-				.teamKey = teamKey,
-				.controller = controller,
-			});
-		}
-		return ret;
-	}
-}// namespace
-
-UI::TeamPage::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	Navigator::Controller controller{};
-
+squi::core::Child UI::TeamPage::State::build(const Element &element) {
 	auto addTeamButton = Button{
-		.text = "Add team",
-		.onClick = [](GestureDetector::Event event) {
+		.onClick = [this]() {
 			++Store::lastTeamId;
 			auto &instance = Store::teams.emplace(Store::lastTeamId, Team::Instance{.instanceKey{Store::lastTeamId}}).first->second;
 			Store::teamListUpdateEvent.notify();
 
-			event.widget.addOverlay(TeamEditor{
+			Navigator::of(this).pushOverlay(TeamEditor{
 				.instance = instance,
 				.onSubmit = [](const Team::Instance &newInstance) {
 					Store::teams.at(newInstance.instanceKey) = newInstance;
@@ -46,44 +26,43 @@ UI::TeamPage::operator squi::Child() const {
 				},
 			});
 		},
+		.child = "Add team",
 	};
 
-	auto buttonBar = Row{
-		.widget{
-			.height = Size::Shrink,
+	return ScrollView{
+		.scrollWidget{
+			.padding = 8.f,
 		},
+		.alignment = Flex::Alignment::center,
+		.spacing = 8.f,
 		.children{
-			addTeamButton,
-		},
-	};
-
-	return Navigator{
-		.controller = controller,
-		.child = ScrollableFrame{
-			.scrollableWidget{
-				.padding = 8.f,
+			Row{
+				.widget{
+					.height = Size::Shrink,
+				},
+				.children{
+					addTeamButton,
+				},
 			},
-			.alignment = Scrollable::Alignment::center,
-			.spacing = 8.f,
-			.children{
-				buttonBar,
-				Grid{
-					.widget{
-						.height = Size::Shrink,
-						.sizeConstraints{
-							.maxWidth = 1520.f,
-						},
-						.onInit = [controller](Widget &w) {
-							observe(w, Store::teamListUpdateEvent, [&w, controller]() {
-								w.setChildren(makeTeams(controller));
-							});
-							w.setChildren(makeTeams(controller));
-						},
+			Grid{
+				.widget{
+					.height = Size::Shrink,
+					.sizeConstraints = BoxConstraints{
+						.maxWidth = 1520.f,
 					},
-					.spacing = 2.f,
-					.columnCount = Grid::MinSize{.value = 300.f},
-				}
-			},
+				},
+				.columnCount = Grid::MinSize{.value = 300.f},
+				.spacing = 2.f,
+				.children = [&]() {
+					Children ret;
+					for (auto &[teamKey, team]: ::Store::teams) {
+						ret.emplace_back(UI::TeamCard{
+							.teamKey = teamKey,
+						});
+					}
+					return ret;
+				}(),
+			}
 		},
 	};
 }

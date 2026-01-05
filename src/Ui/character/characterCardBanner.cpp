@@ -1,17 +1,17 @@
 #include "characterCardBanner.hpp"
 
 #include "character/characters.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "image.hpp"
-#include "row.hpp"
-#include "stack.hpp"
 #include "store.hpp"
-#include "text.hpp"
+#include "widgets/column.hpp"
+#include "widgets/container.hpp"
+#include "widgets/image.hpp"
+#include "widgets/row.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/text.hpp"
 
 using namespace squi;
 
-UI::CharacterCardBanner::operator squi::Child() const {
+[[nodiscard]] squi::core::Child UI::CharacterCardBanner::build(const Element &) const {
 	auto &character = ::Store::characters.at(characterKey);
 	return Stack{
 		.widget{
@@ -20,6 +20,10 @@ UI::CharacterCardBanner::operator squi::Child() const {
 		.children{
 			Container{
 				.child = Image{
+					.widget{
+						.width = Size::Expand,
+						.height = Size::Expand,
+					},
 					.fit = squi::Image::Fit::cover,
 					.image = ImageProvider::fromFile(std::format("assets/Characters/{}/banner.png", Character::list.at(character.dataKey).name)),
 				},
@@ -37,7 +41,7 @@ UI::CharacterCardBanner::operator squi::Child() const {
 						.spacing = 4.f,
 						.children{
 							Text{
-								.text = Character::list.at(character.dataKey).name,
+								.text = std::string(Character::list.at(character.dataKey).name),
 								.fontSize = 24.f,
 							},
 							Text{

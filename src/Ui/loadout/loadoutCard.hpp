@@ -1,16 +1,20 @@
 #pragma once
 
 #include "character/key.hpp"
-#include "widget.hpp"
+#include "core/core.hpp"
 
 
 namespace UI {
-	struct LoadoutCard {
+	using namespace squi;
+	struct LoadoutCard : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::InstanceKey characterKey;
 		std::optional<uint32_t> loadoutIndex = std::nullopt;
 
-		operator squi::Child() const;
+		struct State : WidgetState<LoadoutCard> {
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

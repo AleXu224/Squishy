@@ -28,16 +28,20 @@ namespace Option {
 		);
 	}
 
-	inline float getFloat(const TypesMap &options, const Utils::HashedString &key, float defaultValue = 0.f) {
+	[[nodiscard]] inline float getFloat(const TypesMap &options, const Utils::HashedString &key, float defaultValue = 0.f) {
 		return static_cast<float>(std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue));
 	}
 
-	inline uint32_t getInt(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
+	[[nodiscard]] inline uint32_t getInt(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
 		return std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue);
 	}
 
-	inline uint32_t getIndex(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
+	[[nodiscard]] inline uint32_t getIndex(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
 		return std::get<Option::ValueList>(options.at(key.hash)).currentIndex.value_or(defaultValue);
+	}
+
+	[[nodiscard]] inline const ValueList &getValueListOption(const TypesMap &options, const Utils::HashedString &key) {
+		return std::get<Option::ValueList>(options.at(key.hash));
 	}
 
 	struct CharacterList {

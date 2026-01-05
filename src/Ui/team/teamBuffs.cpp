@@ -1,56 +1,37 @@
 #include "teamBuffs.hpp"
 #include "Ui/utils/masonry.hpp"
-#include "rebuilder.hpp"
-#include "scrollableFrame.hpp"
 
 #include "store.hpp"
 #include "teamCharacterBuffsCard.hpp"
+#include "widgets/scrollview.hpp"
 
 using namespace squi;
 
-namespace {
-	Child makeContent(Team::InstanceKey instanceKey) {
-		auto &team = Store::teams.at(instanceKey);
+squi::core::Child UI::TeamBuffs::State::build(const Element &element) {
+	auto &team = Store::teams.at(widget->instanceKey);
 
-		Children teamCharacters{};
+	Children teamCharacters{};
 
-		for (const auto &character: team.stats.characters) {
-			if (!character) continue;
+	for (const auto &character: team.stats.characters) {
+		if (!character) continue;
 
-			teamCharacters.emplace_back(UI::TeamCharacterBuffsCard{
-				.team = team,
-				.character = *character,
-			});
-		}
-
-		return UI::Masonry{
-			.widget{
-				.width = Size::Wrap,
-				.padding = 8.f,
-			},
-			.spacing = 4.f,
-			.columnCount = UI::Masonry::MinSize{250.f},
-			.children = teamCharacters,
-		};
+		teamCharacters.emplace_back(UI::TeamCharacterBuffsCard{
+			.team = team,
+			.character = *character,
+		});
 	}
-}// namespace
-
-UI::TeamBuffs::operator squi::Child() const {
-	return ScrollableFrame{
-		.alignment = Scrollable::Alignment::center,
+	return ScrollView{
+		.alignment = Flex::Alignment::center,
 		.children{
-			Rebuilder{
-				.widget{.width = Size::Wrap},
-				.rebuildEvent = Store::teams.at(instanceKey).updateEvent,
-				.onRebuild = [instanceKey = instanceKey]() {
-					auto &team = Store::teams.at(instanceKey);
-					for (const auto &character: team.stats.characters) {
-						if (!character) continue;
-						character->updateEvent.notify();
-					}
+			UI::Masonry{
+				.widget{
+					.width = Size::Wrap,
+					.padding = 8.f,
 				},
-				.buildFunc = std::bind(makeContent, instanceKey),
-			},
+				.columnCount = UI::Masonry::MinSize{250.f},
+				.spacing = 4.f,
+				.children = teamCharacters,
+			}
 		},
 	};
 }

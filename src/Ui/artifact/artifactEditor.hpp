@@ -1,21 +1,27 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "artifact/instance.hpp"
 
 namespace UI {
-	struct ArtifactEditor {
+	using namespace squi;
+	struct ArtifactEditor : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
 		std::optional<Artifact::Instance> artifact{};
 		std::function<void(Artifact::Instance)> onSubmit{};
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<ArtifactEditor> {
 			Artifact::Instance artifact{};
-		};
+			VoidObservable closeEvent{};
 
-		operator squi::Child() const;
+			void updateSlot(Artifact::Slot newSlot);
+			Child createSubStat(size_t subStatIndex);
+
+			void initState() override;
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

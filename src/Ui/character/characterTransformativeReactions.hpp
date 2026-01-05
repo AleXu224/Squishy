@@ -1,19 +1,17 @@
 #pragma once
 
+#include "core/core.hpp"
 #include "formula/formulaContext.hpp"
-#include "widget.hpp"
 
 
 namespace UI {
-	struct CharacterTransformativeReactions {
+	using namespace squi;
+	struct CharacterTransformativeReactions : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Formula::Context ctx;
 
-		struct Storage {
-			// Data
-		};
-
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

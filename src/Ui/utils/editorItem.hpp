@@ -1,14 +1,16 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct EditorItem {
+	using namespace squi;
+	struct EditorItem : StatelessWidget {
 		// Args
-		squi::Widget::Args widget{};
-		std::string_view name;
+		Key key;
+		Args widget;
+		std::string name;
 		squi::Child child;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI

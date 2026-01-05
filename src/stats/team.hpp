@@ -23,5 +23,7 @@ namespace Stats {
 		Option::TypesMap options{};
 
 		Team();
+
+		[[nodiscard]] bool hasCharacter(::Character::InstanceKey key) const;
 	};
 }// namespace Stats

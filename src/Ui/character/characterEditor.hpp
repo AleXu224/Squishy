@@ -1,21 +1,30 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 #include "character/instance.hpp"
 
 namespace UI {
-	struct CharacterEditor {
+	using namespace squi;
+	struct CharacterEditor : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Character::Instance character;
 		std::function<void(Character::Instance)> onSubmit{};
 
-		struct Storage {
-			// Data
-			Character::Instance character;
-		};
+		struct State : WidgetState<CharacterEditor> {
+			VoidObservable closeEvent{};
+			std::optional<Character::Instance> character;
 
-		operator squi::Child() const;
+			void initState() override {
+				character.emplace(widget->character);
+			}
+
+			void clampAscension();
+			void clampTalents();
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

@@ -1,16 +1,31 @@
 #pragma once
 
+#include "core/core.hpp"
+#include "observer.hpp"
+#include "store.hpp"
 #include "team/key.hpp"
-#include "widget.hpp"
-#include "navigator.hpp"
+
 
 namespace UI {
-	struct TeamCard {
+	using namespace squi;
+	struct TeamCard : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 		Team::InstanceKey teamKey{};
-		squi::Navigator::Controller controller;
 
-		operator squi::Child() const;
+		struct State : WidgetState<TeamCard> {
+			VoidObserver teamUpdateEvent;
+
+			void initState() override {
+				auto &team = ::Store::teams.at(widget->teamKey);
+
+				teamUpdateEvent = team.updateEvent.observe([this]() {
+					setState();
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

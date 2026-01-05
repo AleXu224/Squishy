@@ -2,117 +2,178 @@
 
 #include "Ui/utils/editorItem.hpp"
 #include "artifact/sets.hpp"
-#include "dialog.hpp"
 #include "stats/artifact.hpp"
 
-#include "align.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "dropdownButton.hpp"
-#include "gestureDetector.hpp"
-#include "numberBox.hpp"
-#include "observer.hpp"
-#include "row.hpp"
-#include "stack.hpp"
-#include "teachingTip.hpp"
-#include "text.hpp"
+#include "widgets/column.hpp"
+#include "widgets/container.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/dropdownButton.hpp"
+#include "widgets/numberBox.hpp"
+
 
 #include "ranges"
+#include "widgets/row.hpp"
+#include "widgets/stack.hpp"
+#include "widgets/text.hpp"
+#include "widgets/toggleSwitch.hpp"
 
 using namespace squi;
 
-struct ArtifactEditorSubstat {
+struct ArtifactEditorSubstat : StatelessWidget {
 	// Args
-	squi::Widget::Args widget{};
-	std::string_view name;
+	Key key;
+	Args widget;
+	std::string name;
 	Children children;
 
-	operator squi::Child() const {
+	[[nodiscard]] Child build(const Element &) const {
+		auto newWidget = widget;
+		newWidget.height = newWidget.height.value_or(Size::Wrap);
+
 		return Stack{
-			.widget = widget.withDefaultHeight(Size::Shrink),
+			.widget = newWidget,
 			.children{
 				Container{
 					.widget{
-						.width = Size::Shrink,
+						.width = Size::Wrap,
 						.height = 32.f,
+						.alignment = Alignment::CenterLeft,
 					},
-					.child = Align{
-						.xAlign = 0.f,
-						.child = Text{.text = name},
+					.child = Text{
+						.widget{.alignment = Alignment::CenterLeft},
+						.text = name,
 					},
 				},
-				Align{
-					.xAlign = 1.f,
-					.yAlign = 0.f,
-					.child = Row{
-						.widget{
-							.width = Size::Shrink,
-							.height = Size::Shrink,
-						},
-						.spacing = 4.f,
-						.children = children,
+				Row{
+					.widget{
+						.width = Size::Wrap,
+						.height = Size::Shrink,
+						.alignment = Alignment::CenterRight,
 					},
+					.crossAxisAlignment = Row::Alignment::center,
+					.spacing = 4.f,
+					.children = children,
 				},
 			},
 		};
 	}
 };
 
-UI::ArtifactEditor::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>(artifact.value_or(Artifact::Instance{}));
+void UI::ArtifactEditor::State::updateSlot(Artifact::Slot newSlot) {
+	artifact.slot = newSlot;
+	const auto &stats = Stats::Artifact::bySlot(newSlot);
+	if (auto it = std::ranges::find(stats, artifact.mainStat); it == stats.end()) {
+		artifact.mainStat = stats.at(0);
+	}
+}
 
-	VoidObservable closeEvent{};
-	Observable<const Artifact::Set &> setChangeEvent{};
-	Observable<Artifact::Slot> slotChangeEvent{};
-	Observable<Stat> mainStatChangeEvent{};
+squi::core::Child UI::ArtifactEditor::State::createSubStat(size_t subStatIndex) {
+	auto &subStat = artifact.subStats.at(subStatIndex);
 
+	Child ret = ArtifactEditorSubstat{
+		.name = std::format("Substat {}", subStatIndex + 1),
+		.children{
+			ToggleSwitch{
+				.active = subStat.activated,
+				.statePosition = ToggleSwitch::StatePosition::Left,
+				.onToggle = [this, &subStat](bool active) {
+					setState([&]() {
+						subStat.activated = active;
+					});
+				},
+			},
+			DropdownButton{
+				.theme = Button::Theme::Standard(),
+				.text = subStat.stat.transform([](auto &&val) {
+										return Utils::Stringify(val);
+									})
+							.value_or("None"),
+				.items = [this, &subStat]() {
+					std::vector<ContextMenu::Item> ret{};
+					ret.emplace_back(ContextMenu::Button{
+						.text = "None",
+						.callback = [this, &subStat]() {
+							setState([&]() {
+								subStat.stat = std::nullopt;
+							});
+						},
+					});
+					auto filter = [this](auto &&val) {
+						return artifact.mainStat != val;
+					};
+					for (const auto &stat: std::views::filter(Stats::Artifact::subStats, filter)) {
+						ret.emplace_back(ContextMenu::Button{
+							.text = Utils::Stringify(stat),
+							.callback = [this, &subStat, stat]() {
+								setState([&]() {
+									subStat.stat = stat;
+								});
+							},
+						});
+					}
+					return ret;
+				}(),
+			},
+			NumberBox{
+				.disabled = !subStat.stat.has_value(),
+				.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f),
+				.min = 0.f,
+				.precision = Utils::isPercentage(subStat.stat) ? 1 : 0,
+				.onChange = [&](float val) {
+					if (subStat.stat.has_value()) {
+						subStat.value = val / (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+					}
+				},
+			},
+		},
+	};
+	return ret;
+}
+
+void UI::ArtifactEditor::State::initState() {
+	if (widget->artifact.has_value()) {
+		artifact = widget->artifact.value();
+	} else {
+		artifact = Artifact::Instance{};
+	}
+}
+
+squi::core::Child UI::ArtifactEditor::State::build(const Element &) {
 	// Level
 	Child levelSelector = EditorItem{
 		.name = "Level",
 		.child = NumberBox{
-			.value = static_cast<float>(storage->artifact.level),
+			.value = static_cast<double>(artifact.level),
 			.min = 0.f,
 			.max = 20.f,
-			.onChange = [storage](float newVal) {
-				storage->artifact.level = std::floor(newVal);
-			},
-			.validator = [](float val) {
-				return TextBox::Controller::ValidatorResponse{
-					.valid = (val == std::round(val)),
-					.message = "Value must be an intereger",
-				};
+			.precision = 0,
+			.onChange = [this](double newVal) {
+				setState([&]() {
+					artifact.level = std::floor(newVal);
+				});
 			},
 		},
 	};
 
 	// Set
-	decltype(DropdownButton::textUpdater) setTextUpdater{};
-	auto setItemsProvider = [setChangeEvent]() {
-		std::vector<ContextMenu::Item> ret{};
-		ret.reserve(Artifact::sets.size());
-		for (const auto &set: Artifact::sets) {
-			ret.emplace_back(ContextMenu::Item{
-				.text = std::string(set.second.name),
-				.content = [&set = set.second, setChangeEvent]() {
-					setChangeEvent.notify(set);
-				},
-			});
-		}
-		return ret;
-	};
 	Child setButton = DropdownButton{
-		.widget{
-			.onInit = [setChangeEvent, setTextUpdater, setItemsProvider, storage](Widget &w) {
-				w.customState.add(setChangeEvent.observe([setTextUpdater, setItemsProvider, storage](const Artifact::Set &set) {
-					storage->artifact.set = set.key;
-					setTextUpdater.notify(std::string{set.name});
-				}));
-			},
-		},
-		.style = ButtonStyle::Standard(),
-		.text = storage->artifact.set.key != 0 ? Artifact::sets.at(storage->artifact.set).name : "No set",
-		.items = setItemsProvider(),
-		.textUpdater = setTextUpdater,
+		.theme = Button::Theme::Standard(),
+		.text = artifact.set.key != 0 ? std::string(Artifact::sets.at(artifact.set).name) : "No set",
+		.items = [this]() {
+			std::vector<ContextMenu::Item> ret{};
+			ret.reserve(Artifact::sets.size());
+			for (const auto &set: Artifact::sets) {
+				ret.emplace_back(ContextMenu::Button{
+					.text = std::string(set.second.name),
+					.callback = [&set = set.second, this]() {
+						setState([&]() {
+							artifact.set.key = set.key.key;
+						});
+					},
+				});
+			}
+			return ret;
+		}(),
 	};
 	Child setSelector = UI::EditorItem{
 		.name = "Set",
@@ -120,168 +181,60 @@ UI::ArtifactEditor::operator squi::Child() const {
 	};
 
 	// Slot
-	decltype(DropdownButton::textUpdater) slotTextUpdater{};
 	Child slotSelector = UI::EditorItem{
 		.name = "Slot",
 		.child = DropdownButton{
-			.widget{
-				.onInit = [slotChangeEvent, slotTextUpdater, storage](Widget &w) {
-					w.customState.add(slotChangeEvent.observe([slotTextUpdater, storage](Artifact::Slot newSlot) {
-						storage->artifact.slot = newSlot;
-						slotTextUpdater.notify(Utils::Stringify(newSlot));
-					}));
-				},
-			},
-			.style = ButtonStyle::Standard(),
-			.text = Utils::Stringify(storage->artifact.slot),
-			.disabled = !storage->artifact.usedOn().empty(),
+			.theme = Button::Theme::Standard(),
+			.disabled = !artifact.usedOn().empty(),
+			.text = Utils::Stringify(artifact.slot),
 			.items = [&]() {
 				std::vector<ContextMenu::Item> ret{};
 				ret.reserve(Artifact::slots.size());
 				for (const auto &slot: Artifact::slots) {
-					ret.emplace_back(ContextMenu::Item{
+					ret.emplace_back(ContextMenu::Button{
 						.text = Utils::Stringify(slot),
-						.content = [slot, slotChangeEvent]() {
-							slotChangeEvent.notify(slot);
+						.callback = [slot, this]() {
+							setState([&]() {
+								updateSlot(slot);
+							});
 						},
 					});
 				}
 				return ret;
 			}(),
-			.textUpdater = slotTextUpdater,
 		},
 	};
 
 	// Main stat
-	decltype(DropdownButton::textUpdater) mainStatTextUpdater{};
-	decltype(DropdownButton::itemsUpdater) mainStatItemsUpdater{};
-	auto mainStatItemsProvider = [storage, mainStatChangeEvent](Artifact::Slot slot) {
-		std::vector<ContextMenu::Item> ret{};
-		for (const auto &stat: Stats::Artifact::bySlot(slot)) {
-			ret.emplace_back(ContextMenu::Item{
-				.text = Utils::Stringify(stat),
-				.content = [stat, mainStatChangeEvent]() {
-					mainStatChangeEvent.notify(stat);
-				},
-			});
-		}
-		return ret;
-	};
 	Child mainStatSelector = UI::EditorItem{
 		.name = "Main Stat",
 		.child = DropdownButton{
-			.widget{
-				.onInit = [slotChangeEvent, mainStatItemsUpdater, mainStatItemsProvider, storage, mainStatChangeEvent, mainStatTextUpdater](Widget &w) {
-					w.customState.add(slotChangeEvent.observe([mainStatItemsUpdater, mainStatItemsProvider, storage, mainStatChangeEvent](Artifact::Slot newSlot) {
-						mainStatItemsUpdater.notify(mainStatItemsProvider(newSlot));
-						auto &artifact = storage->artifact;
-						const auto &stats = Stats::Artifact::bySlot(newSlot);
-						if (auto it = std::ranges::find(stats, artifact.mainStat); it == stats.end()) {
-							mainStatChangeEvent.notify(stats.at(0));
-						}
-					}));
-					w.customState.add(mainStatChangeEvent.observe([mainStatTextUpdater, storage](Stat newStat) {
-						storage->artifact.mainStat = newStat;
-						mainStatTextUpdater.notify(Utils::Stringify(newStat));
-					}));
-				},
-			},
-			.style = ButtonStyle::Standard(),
-			.text = Utils::Stringify(storage->artifact.mainStat),
-			.items = mainStatItemsProvider(storage->artifact.slot),
-			.textUpdater = mainStatTextUpdater,
-			.itemsUpdater = mainStatItemsUpdater,
+			.theme = Button::Theme::Standard(),
+			.text = Utils::Stringify(artifact.mainStat),
+			.items = [this]() {
+				std::vector<ContextMenu::Item> ret{};
+				for (const auto &stat: Stats::Artifact::bySlot(artifact.slot)) {
+					ret.emplace_back(ContextMenu::Button{
+						.text = Utils::Stringify(stat),
+						.callback = [this, stat]() {
+							setState([&]() {
+								artifact.mainStat = stat;
+							});
+						},
+					});
+				}
+				return ret;
+			}(),
 		},
 	};
 
 	// Substats
-	auto createSubStat = [storage](size_t subStatIndex) {
-		decltype(TextBox::Controller::disable) subStatDisable{};
-		decltype(DropdownButton::textUpdater) subStatTextUpdater{};
-		decltype(NumberBox::valueUpdater) subStatValueUpdater{};
-		Observable<std::optional<Stat>> subStatChangeEvent{};
-		auto subStatItemsProvider = [storage, subStatChangeEvent]() {
-			std::vector<ContextMenu::Item> ret{};
-			ret.emplace_back(ContextMenu::Item{
-				.text = "None",
-				.content = [subStatChangeEvent]() {
-					subStatChangeEvent.notify({});
-				},
-			});
-			auto filter = [&storage](auto &&val) {
-				return storage->artifact.mainStat != val;
-			};
-			for (const auto &stat: std::views::filter(Stats::Artifact::subStats, filter)) {
-				ret.emplace_back(ContextMenu::Item{
-					.text = Utils::Stringify(stat),
-					.content = [stat, subStatChangeEvent]() {
-						subStatChangeEvent.notify(stat);
-					},
-				});
-			}
-			return ret;
-		};
-		Child subStat = ArtifactEditorSubstat{
-			.name = std::format("Substat {}", subStatIndex + 1),
-			.children{
-				DropdownButton{
-					.widget{
-						.onInit = [subStatChangeEvent, subStatTextUpdater, subStatDisable, storage, subStatIndex, subStatValueUpdater](Widget &w) {
-							w.customState.add(subStatChangeEvent.observe([subStatTextUpdater, subStatDisable, storage, subStatIndex, subStatValueUpdater](std::optional<Stat> newStat) {
-								auto &subStat = storage->artifact.subStats.at(subStatIndex);
-								subStat.stat = newStat;
-								subStatDisable.notify(!newStat.has_value());
-								subStatTextUpdater.notify(
-									newStat
-										.transform([](auto &&val) {
-											return Utils::Stringify(val);
-										})
-										.value_or("None")
-								);
-							}));
-						},
-					},
-					.style = ButtonStyle::Standard(),
-					.text = storage->artifact.subStats.at(subStatIndex).stat.transform([](auto &&val) {
-																				return Utils::Stringify(val);
-																			})
-								.value_or("None"),
-					.items = subStatItemsProvider(),
-					.textUpdater = subStatTextUpdater,
-				},
-				NumberBox{
-					.value = storage->artifact.subStats.at(subStatIndex).value * (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat) ? 100.f : 1.f),
-					.min = 0.f,
-					.disabled = !storage->artifact.subStats.at(subStatIndex).stat.has_value(),
-					.onChange = [storage, subStatIndex](float val) {
-						if (storage->artifact.subStats.at(subStatIndex).stat.has_value()) {
-							storage->artifact.subStats.at(subStatIndex).value = val / (Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat) ? 100.f : 1.f);
-						}
-					},
-					.formatter = [storage, subStatIndex](float val) {
-						if (
-							!storage->artifact.subStats.at(subStatIndex).stat.has_value()
-							|| !Utils::isPercentage(storage->artifact.subStats.at(subStatIndex).stat.value())
-						) {
-							return std::format("{:.0f}", val);
-						}
-						return std::format("{:.1f}", val);
-					},
-					.valueUpdater = subStatValueUpdater,
-					.controller{
-						.disable = subStatDisable,
-					},
-				},
-			},
-		};
-		return subStat;
-	};
 	auto subStat1 = createSubStat(0);
 	auto subStat2 = createSubStat(1);
 	auto subStat3 = createSubStat(2);
 	auto subStat4 = createSubStat(3);
 
-	auto content = Column{
+	Child content = Column{
 		.spacing = 16.f,
 		.children{
 			levelSelector,
@@ -298,27 +251,21 @@ UI::ArtifactEditor::operator squi::Child() const {
 	Children buttonFooter{
 		Button{
 			.widget{.width = Size::Expand},
-			.text = "Save",
-			.style = ButtonStyle::Accent(),
-			.onClick = [closeEvent, onSubmit = onSubmit, setButton = std::weak_ptr(setButton), storage](GestureDetector::Event event) {
-				if (storage->artifact.set.key == 0) {
-					event.widget.addOverlay(TeachingTip{
-						.target = setButton,
-						.message = "You must specify a set",
-					});
-					return;
-				}
+			.theme = Button::Theme::Accent(),
+			.disabled = artifact.set.key == 0,
+			.onClick = [this]() {
 				closeEvent.notify();
-				if (onSubmit) onSubmit(storage->artifact);
+				if (widget->onSubmit) widget->onSubmit(artifact);
 			},
+			.child = "Save",
 		},
 		Button{
 			.widget{.width = Size::Expand},
-			.text = "Cancel",
-			.style = ButtonStyle::Standard(),
-			.onClick = [closeEvent](GestureDetector::Event) {
+			.theme = Button::Theme::Standard(),
+			.onClick = [this]() {
 				closeEvent.notify();
 			},
+			.child = "Cancel",
 		},
 	};
 

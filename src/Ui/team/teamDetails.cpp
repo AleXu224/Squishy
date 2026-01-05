@@ -3,36 +3,36 @@
 #include "Ui/character/characterDetails.hpp"
 
 #include "character/data.hpp"
-#include "image.hpp"
-#include "navigationView.hpp"
 #include "store.hpp"
 #include "teamBuffs.hpp"
+#include "widgets/image.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/sideNav.hpp"
 
 
 using namespace squi;
-
-UI::TeamDetails::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>();
-
-	return NavigationView{
-		.expanded = false,
-		.backAction = [controller = controller]() {
-			controller.pop();
-		},
-		.pages = [teamKey = teamKey]() {
-			std::vector<NavigationView::Page> pages{};
-			pages.emplace_back(NavigationView::Page{
+squi::core::Child UI::TeamDetails::State::build(const Element &element) {
+	return SideNav{
+		.backAction = !widget->enableBackButton//
+						? std::function<void()>{}
+						: [this]() {
+							  Navigator::of(this).pop();
+						  },
+		.defaultExpanded = false,
+		.pages = [&]() {
+			std::vector<SideNav::Page> pages{};
+			pages.emplace_back(SideNav::Page{
 				.name = "Team Buffs",
 				.icon = 0xe7ef,
 				.content = TeamBuffs{
-					.instanceKey = teamKey,
+					.instanceKey = widget->teamKey,
 				},
 			});
-			auto &team = ::Store::teams.at(teamKey);
+			auto &team = ::Store::teams.at(widget->teamKey);
 			for (auto &character: team.stats.characters) {
 				if (character) {
-					pages.emplace_back(NavigationView::Page{
-						.name = character->state.stats.data.name,
+					pages.emplace_back(SideNav::Page{
+						.name = std::string(character->state.stats.data.name),
 						.icon = Image{
 							.widget{
 								.width = 16.f,
@@ -43,7 +43,7 @@ UI::TeamDetails::operator squi::Child() const {
 						},
 						.content = CharacterDetails{
 							.characterKey = character->instanceKey,
-							.teamKey = teamKey,
+							.teamKey = widget->teamKey,
 						},
 					});
 				}

@@ -17,6 +17,7 @@ namespace Stats {
 	};
 
 	struct State {
+		::Character::InstanceKey instanceKey;
 		Stats::Character stats;
 		std::optional<uint32_t> loadoutIndex = std::nullopt;
 		Option::TypesMap options;

@@ -18,6 +18,22 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
+					return std::visit(
+						Utils::overloaded{
+							[](const bool &active) {
+								return active;
+							},
+							[](const std::optional<uint8_t> &currentIndex) {
+								return currentIndex.has_value();
+							},
+						},
+						opt->get().value
+					);
+				}
+			}
+
 			return ::Option::getBool(context.source.options, name);
 		}
 	};
@@ -34,6 +50,22 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(0, name.hash)); opt.has_value()) {
+					return std::visit(
+						Utils::overloaded{
+							[](const bool &active) {
+								return active;
+							},
+							[](const std::optional<uint8_t> &currentIndex) {
+								return currentIndex.has_value();
+							},
+						},
+						opt->get().value
+					);
+				}
+			}
+
 			return ::Option::getBool(context.team.options, name);
 		}
 	};
@@ -51,7 +83,20 @@ namespace Formula {
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			return ::Option::getFloat(context.source.options, name, defaultValue);
+			auto &option = ::Option::getValueListOption(context.source.options, name);
+
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
+					auto index = std::get<std::optional<uint8_t>>(opt->get().value);
+					if (index.has_value()) {
+						return static_cast<float>(option.values.at(index.value()));
+					} else {
+						return defaultValue;
+					}
+				}
+			}
+
+			return option.getValue().value_or(defaultValue);
 		}
 	};
 
@@ -68,7 +113,20 @@ namespace Formula {
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
-			return ::Option::getInt(context.source.options, name, defaultValue);
+			auto &option = ::Option::getValueListOption(context.source.options, name);
+
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
+					auto index = std::get<std::optional<uint8_t>>(opt->get().value);
+					if (index.has_value()) {
+						return option.values.at(index.value());
+					} else {
+						return defaultValue;
+					}
+				}
+			}
+
+			return option.getValue().value_or(defaultValue);
 		}
 	};
 
@@ -85,6 +143,12 @@ namespace Formula {
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
+					return std::get<std::optional<uint8_t>>(opt->get().value).value_or(defaultValue);
+				}
+			}
+
 			return ::Option::getIndex(context.source.options, name, defaultValue);
 		}
 	};

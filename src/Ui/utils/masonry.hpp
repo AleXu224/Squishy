@@ -1,38 +1,55 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct Masonry {
+	using namespace squi;
+	struct Masonry : RenderObjectWidget {
 		struct MinSize {
 			float value;
+
+			auto operator<=>(const MinSize &) const = default;
 		};
 
 		// Args
-		squi::Widget::Args widget{};
-		float spacing = 0.f;
+		Key key;
+		Args widget;
 		std::variant<int, MinSize> columnCount;
-		squi::Children children{};
+		float spacing = 0.0f;
+		Children children;
 
-		class Impl : public squi::Widget {
-			// Data
-			float spacing;
-			std::variant<int, MinSize> columnCountRule;
+		struct Element : core::MultiChildRenderObjectElement {
+			using core::MultiChildRenderObjectElement::MultiChildRenderObjectElement;
 
-			size_t columns = 0;
-			float columnWidth = 0;
-			
-			size_t computeColumnCount(float availableWidth) const;
-
-		public:
-			Impl(const Masonry &args);
-
-			squi::vec2 layoutChildren(squi::vec2 maxSize, squi::vec2 minSize, ShouldShrink shouldShrink, bool final) override;
-			void arrangeChildren(squi::vec2 &pos) override;
+			std::vector<Child> build() override {
+				if (auto masonryWidget = std::static_pointer_cast<Masonry>(widget)) {
+					return masonryWidget->children;
+				}
+				return {};
+			}
 		};
 
-		operator squi::Child() const {
-			return std::make_shared<Impl>(*this);
+		struct MasonryRenderObject : core::MultiChildRenderObject {
+			MasonryRenderObject() : core::MultiChildRenderObject() {}
+
+			std::variant<int, MinSize> columnCount;
+			float spacing = 0.0f;
+			float columnWidth = 0.f;
+			size_t columns = 1;
+			std::vector<float> rowHeights{};
+
+			vec2 calculateContentSize(BoxConstraints constraints, bool final) override;
+			void positionContentAt(const Rect &newBounds) override;
+
+			[[nodiscard]] size_t computeColumnCount(float availableWidth) const;
+
+			void init() override;
+		};
+
+		static std::shared_ptr<RenderObject> createRenderObject() {
+			return std::make_shared<MasonryRenderObject>();
 		}
+
+		void updateRenderObject(RenderObject *renderObject) const;
 	};
 }// namespace UI

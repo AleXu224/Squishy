@@ -1,84 +1,53 @@
 #include "toggleOption.hpp"
 #include "Ui/utils/decodeModsSheet.hpp"
-#include "align.hpp"
-#include "button.hpp"
-#include "column.hpp"
-#include "container.hpp"
-#include "fontIcon.hpp"
-#include "observer.hpp"
-#include "row.hpp"
 #include "store.hpp"
-#include "text.hpp"
 #include "theme.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/container.hpp"
+#include "widgets/fontIcon.hpp"
+#include "widgets/row.hpp"
 
 using namespace squi;
 
-struct ToggleBox {
+struct ToggleBox : StatelessWidget {
 	// Args
-	squi::Widget::Args widget{};
-	Observable<bool> switchEvent;
-	CountObserver readyEvent;
+	Key key;
+	Args widget{};
+	bool active = false;
 
-	struct Storage {
-		// Data
-	};
-
-	operator squi::Child() const {
-		auto storage = std::make_shared<Storage>();
-
+	[[nodiscard]] Child build(const Element &) const {
 		auto accent = ThemeManager::getTheme().accent;
 
 		return Box{
 			.widget{
 				.width = 20.f,
 				.height = 20.f,
-				.onInit = [switchEvent = switchEvent, readyEvent = readyEvent, accent](Widget &w) {
-					w.customState.add(switchEvent.observe([&w, accent](bool active) {
-						auto &box = w.as<Box::Impl>();
-						if (active) {
-							box.setBorderWidth(0.f);
-							box.setColor(accent);
-						} else {
-							box.setBorderWidth(1.f);
-							box.setColor(Color{0.f, 0.f, 0.f, 0.1f});
-						}
-					}));
-					readyEvent.notify();
-				},
 			},
+			.color = active ? accent : Color{0.f, 0.f, 0.f, 0.1f},
 			.borderColor{1.f, 1.f, 1.f, 0.60},
+			.borderWidth = active ? 0.f : 1.f,
 			.borderRadius{4.f},
 			.borderPosition = squi::Box::BorderPosition::outset,
-			.child = Align{
-				.child = FontIcon{
-					.widget{
-						.onInit = [switchEvent = switchEvent, readyEvent = readyEvent](Widget &w) {
-							w.customState.add(switchEvent.observe([&w](bool active) {
-								w.flags.visible = active;
-							}));
-							readyEvent.notify();
-						},
-					},
-					.icon = 0xe5ca,
-					.color{0.f, 0.f, 0.f, 1.0f},
-				},
-			},
+			.child = active ? FontIcon{.color{0.f, 0.f, 0.f, 1.0f}, .icon = 0xe5ca} : Child{},
 		};
 	}
 };
 
-UI::ToggleOption::operator squi::Child() const {
-	auto storage = std::make_shared<Storage>(Storage{
-		.active = option.active,
-	});
-	Observable<bool> internalSwitchEvent;
-	CountObserver readyEvent{2};
+void UI::ToggleOption::State::initState() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
 
-	auto mods = decodeOption(option, ctx);
+void UI::ToggleOption::State::widgetUpdated() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
+
+squi::core::Child UI::ToggleOption::State::build(const Element &element) {
 	auto hasMods = !mods.empty();
 
 	return Box{
-		.widget = widget,
+		.widget = widget->widget,
 		.color = hasMods ? Color::css(0x0, 0.3f) : Color::transparent,
 		.borderRadius = 4.f,
 		.child = Column{
@@ -86,20 +55,15 @@ UI::ToggleOption::operator squi::Child() const {
 				Button{
 					.widget{
 						.width = Size::Expand,
-						.onInit = [readyEvent, switchEvent = switchEvent, storage, internalSwitchEvent](Widget &w) {
-							observe(w, switchEvent, [internalSwitchEvent, storage](bool value) {
-								internalSwitchEvent.notify(value);
-							});
-							w.customState.add(readyEvent.observe([storage, internalSwitchEvent]() {
-								internalSwitchEvent.notify(storage->active);
-							}));
-						},
 					},
-					.style = ButtonStyle::Subtle(),
-					.onClick = [storage, switchEvent = switchEvent, &option = option, instanceKey = instanceKey](GestureDetector::Event) {
-						storage->active = !storage->active;
-						option.active = storage->active;
-						switchEvent.notify(storage->active);
+					.theme = Button::Theme::Subtle(),
+					.onClick = [this]() {
+						setState([&]() {
+							widget->option.active = !widget->option.active;
+						});
+						if (widget->onToggle) {
+							widget->onToggle(widget->option.active);
+						}
 						std::visit(
 							Utils::overloaded{
 								[](const Character::InstanceKey &key) {
@@ -113,36 +77,34 @@ UI::ToggleOption::operator squi::Child() const {
 									}
 								},
 							},
-							instanceKey
+							widget->instanceKey
 						);
 					},
 					.child = Row{
-						.alignment = squi::Row::Alignment::center,
+						.crossAxisAlignment = Row::Alignment::center,
 						.spacing = 8.f,
 						.children{
 							ToggleBox{
-								.switchEvent = internalSwitchEvent,
-								.readyEvent = readyEvent,
+								.active = widget->option.active,
 							},
 							Container{
 								.widget{.height = Size::Shrink},
 								.child = Text{
-									.text = option.name,
+									.text = std::string(widget->option.name),
 									.lineWrap = true,
 								},
 							},
 						},
 					},
 				},
-				Column{
-					.widget{
-						.padding = 4.f,
-						.onInit = [hasMods](Widget &w) {
-							w.flags.visible = hasMods;
-						},
-					},
-					.children = mods,
-				},
+				hasMods//
+					? Column{
+						  .widget{
+							  .padding = 4.f,
+						  },
+						  .children = mods,
+					  }
+					: Child{},
 			},
 		},
 	};

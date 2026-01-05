@@ -1,16 +1,16 @@
 #pragma once
 
-#include "widget.hpp"
+#include "core/core.hpp"
 
 namespace UI {
-	struct TeamPage {
+	using namespace squi;
+	struct TeamPage : StatefulWidget {
 		// Args
-		squi::Widget::Args widget{};
+		Key key;
+		Args widget{};
 
-		struct Storage {
-			// Data
+		struct State : WidgetState<TeamPage> {
+			Child build(const Element &element) override;
 		};
-
-		operator squi::Child() const;
 	};
 }// namespace UI

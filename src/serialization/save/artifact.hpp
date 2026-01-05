@@ -10,6 +10,7 @@
 namespace Serialization::Save {
 	struct ArtifactSubStat {
 		::Stat stat;
+		bool activated = true;
 		float value;
 	};
 

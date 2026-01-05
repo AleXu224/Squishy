@@ -1,14 +1,16 @@
 #pragma once
 
 #include "character/key.hpp"
-#include "widgetArgs.hpp"
+#include "core/core.hpp"
 
 
 namespace UI {
-	struct CharacterCardBanner {
+	using namespace squi;
+	struct CharacterCardBanner : StatelessWidget {
 		// Args
+		Key key;
 		Character::InstanceKey characterKey;
 
-		operator squi::Child() const;
+		[[nodiscard]] Child build(const Element &) const;
 	};
 }// namespace UI
