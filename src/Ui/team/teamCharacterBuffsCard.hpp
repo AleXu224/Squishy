@@ -7,13 +7,23 @@
 
 namespace UI {
 	using namespace squi;
-	struct TeamCharacterBuffsCard : StatelessWidget {
+	struct TeamCharacterBuffsCard : StatefulWidget {
 		// Args
 		Key key;
 		Args widget{};
 		Team::Instance &team;
 		Character::Instance &character;
 
-		[[nodiscard]] Child build(const Element &) const;
+		struct State : WidgetState<TeamCharacterBuffsCard> {
+			VoidObserver characterUpdateEvent;
+
+			void initState() override {
+				characterUpdateEvent = widget->character.updateEvent.observe([this]() {
+					setState([&]() {});
+				});
+			}
+
+			Child build(const Element &element) override;
+		};
 	};
 }// namespace UI

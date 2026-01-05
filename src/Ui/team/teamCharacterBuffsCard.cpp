@@ -11,7 +11,10 @@
 
 using namespace squi;
 
-[[nodiscard]] squi::core::Child UI::TeamCharacterBuffsCard::build(const Element &) const {
+squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &element) {
+	auto &character = widget->character;
+	auto &team = widget->team;
+
 	return UI::DisplayCard{
 		.title = std::string(character.state.stats.data.name),
 		.children{

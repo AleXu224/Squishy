@@ -7,8 +7,8 @@
 
 using namespace squi;
 
-[[nodiscard]] squi::core::Child UI::TeamBuffs::build(const Element &) const {
-	auto &team = Store::teams.at(instanceKey);
+squi::core::Child UI::TeamBuffs::State::build(const Element &element) {
+	auto &team = Store::teams.at(widget->instanceKey);
 
 	Children teamCharacters{};
 
