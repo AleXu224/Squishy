@@ -42,6 +42,7 @@ squi::core::Child UI::TeamDetails::State::build(const Element &element) {
 							.image = ImageProvider::fromFile(std::format("assets/Characters/{}/avatar.png", character->state.stats.data.name)),
 						},
 						.content = CharacterDetails{
+							.key = IndexKey{static_cast<int64_t>(character->instanceKey.key)},
 							.characterKey = character->instanceKey,
 							.teamKey = widget->teamKey,
 						},

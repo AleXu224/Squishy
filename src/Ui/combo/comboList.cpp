@@ -57,7 +57,25 @@ namespace {
 										},
 									});
 								},
-								.child = "Edit combo",
+								.child = "Edit",
+							},
+							Button{
+								.theme = Button::Theme::Standard(),
+								.onClick = [this]() {
+									auto &character = ::Store::characters.at(widget->characterKey);
+									auto newCombo = widget->combo;
+									newCombo.name += " (Copy)";
+									::Store::lastComboId++;
+									newCombo.instanceKey.key = ::Store::lastComboId;
+									character.combos.insert(
+										{
+											::Store::lastComboId,
+											std::move(newCombo),
+										}
+									);
+									character.updateEvent.notify();
+								},
+								.child = "Duplicate",
 							},
 							Button{
 								.onClick = [this]() {

@@ -27,6 +27,7 @@
 #include "weapons/LightbearingMoonshard.hpp"
 #include "weapons/MistsplitterReforged.hpp"
 #include "weapons/NocturnesCurtainCall.hpp"
+#include "weapons/PrototypeAmber.hpp"
 #include "weapons/SacrificialBow.hpp"
 #include "weapons/SacrificialFragments.hpp"
 #include "weapons/SacrificialGreatsword.hpp"
@@ -68,6 +69,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::lightbearingMoonshard.key, Weapon::Datas::lightbearingMoonshard},
 		{Weapon::Datas::mistsplitterReforged.key, Weapon::Datas::mistsplitterReforged},
 		{Weapon::Datas::nocturnesCurtainCall.key, Weapon::Datas::nocturnesCurtainCall},
+		{Weapon::Datas::prototypeAmber.key, Weapon::Datas::prototypeAmber},
 		{Weapon::Datas::sacrificialBow.key, Weapon::Datas::sacrificialBow},
 		{Weapon::Datas::sacrificialFragments.key, Weapon::Datas::sacrificialFragments},
 		{Weapon::Datas::sacrificialGreatsword.key, Weapon::Datas::sacrificialGreatsword},

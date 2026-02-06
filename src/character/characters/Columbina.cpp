@@ -338,7 +338,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Charged DMG",
 						.damageType = Misc::LunarDamageType::lunarCharged,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0470, 0.0506, 0.0541, 0.0588, 0.0623, 0.0659, 0.0706, 0.0753, 0.0800, 0.0847, 0.0894, 0.0941, 0.1000, 0.1058, 0.1117}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0470, 0.0506, 0.0541, 0.0588, 0.0623, 0.0659, 0.0706, 0.0753, 0.0800, 0.0847, 0.0894, 0.0941, 0.1000, 0.1058, 0.1117}),
 						.modifier{
 							.additiveDMG = c4BuffLunarCharged,
 						},
@@ -346,7 +346,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Bloom DMG (x5)",
 						.damageType = Misc::LunarDamageType::lunarBloom,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0141, 0.0151, 0.0162, 0.0176, 0.0187, 0.0197, 0.0211, 0.0225, 0.0239, 0.0253, 0.0268, 0.0282, 0.0299, 0.0317, 0.0334}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0141, 0.0151, 0.0162, 0.0176, 0.0187, 0.0197, 0.0211, 0.0225, 0.0239, 0.0253, 0.0268, 0.0282, 0.0299, 0.0317, 0.0334}),
 						.modifier{
 							.additiveDMG = c4BuffLunarBloom,
 						},
@@ -354,7 +354,7 @@ const Character::Data Character::Datas::columbina{
 					Node::DirectLunar{
 						.name = "Moonreel: Lunar-Crystallize DMG",
 						.damageType = Misc::LunarDamageType::lunarCrystallize,
-						.formula = Multiplier(total.atk, LevelableTalent::skill, {0.0882, 0.0949, 0.1015, 0.1103, 0.1169, 0.1235, 0.1324, 0.1412, 0.1500, 0.1588, 0.1677, 0.1765, 0.1875, 0.1985, 0.2096}),
+						.formula = Multiplier(total.hp, LevelableTalent::skill, {0.0882, 0.0949, 0.1015, 0.1103, 0.1169, 0.1235, 0.1324, 0.1412, 0.1500, 0.1588, 0.1677, 0.1765, 0.1875, 0.1985, 0.2096}),
 						.modifier{
 							.additiveDMG = c4BuffLunarCrystallize,
 						},
