@@ -17,8 +17,8 @@ struct ToggleBox : StatelessWidget {
 	Args widget{};
 	bool active = false;
 
-	[[nodiscard]] Child build(const Element &) const {
-		auto accent = ThemeManager::getTheme().accent;
+	[[nodiscard]] Child build(const Element &element) const {
+		auto accent = Theme::of(element).accent;
 
 		return Box{
 			.widget{

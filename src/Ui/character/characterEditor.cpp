@@ -185,7 +185,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	Children buttonFooter{
 		Button{
 			.widget{.width = Size::Expand},
-			.theme = Button::Theme::Accent(),
+			.theme = Button::Theme::Accent(element),
 			.onClick = [this]() {
 				closeEvent.notify();
 				if (widget->onSubmit) widget->onSubmit(*character);

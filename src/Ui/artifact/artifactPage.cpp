@@ -71,7 +71,7 @@ namespace {
 
 squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 	auto addArtifactButton = Button{
-		.theme = Button::Theme::Accent(),
+		.theme = Button::Theme::Accent(element),
 		.onClick = [this]() {
 			Navigator::of(*this->element).pushOverlay(ArtifactEditor{
 				.onSubmit = [](Artifact::Instance artifact) {
@@ -170,7 +170,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 				.title = "Filters",
 				.action{
 					Button{
-						.theme = Button::Theme::Accent(),
+						.theme = Button::Theme::Accent(element),
 						.onClick = [&element]() {
 							Navigator::of(element).pushOverlay(ArtifactEditor{
 								.onSubmit = [](Artifact::Instance artifact) {

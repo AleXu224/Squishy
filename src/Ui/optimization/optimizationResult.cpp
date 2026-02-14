@@ -13,7 +13,7 @@
 
 using namespace squi;
 
-[[nodiscard]] squi::core::Child UI::OptimizationResult::build(const Element &) const {
+[[nodiscard]] squi::core::Child UI::OptimizationResult::build(const Element &element) const {
 	return Expander{
 		.widget = widget,
 		.icon = Row{
@@ -40,7 +40,7 @@ using namespace squi;
 		.title = std::format("Result #{}", entryIndex),
 		.subtitle = std::format("Score: {}", solution.score),
 		.action = Button{
-			.theme = Button::Theme::Accent(),
+			.theme = Button::Theme::Accent(element),
 			.onClick = [this]() {
 				auto &character = ::Store::characters.at(characterKey);
 

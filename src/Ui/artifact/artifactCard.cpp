@@ -140,7 +140,7 @@ struct ArtifactCardContent : StatelessWidget {
 			.widget{
 				.width = Size::Expand,
 			},
-			.theme = equippedCharacter ? Button::Theme::Accent() : Button::Theme::Standard(),
+			.theme = equippedCharacter ? Button::Theme::Accent(element) : Button::Theme::Standard(),
 			.onClick = [&]() {
 				Navigator::of(element).pushOverlay(UI::CharacterSelector{
 					.onSelect = [this](Character::InstanceKey instanceKey) {

@@ -4,6 +4,7 @@
 #include "Ui/artifact/artifactCard.hpp"
 #include "Ui/character/characterDetailsSkill.hpp"
 #include "Ui/combo/comboDisplay.hpp"
+#include "Ui/elementToColor.hpp"
 #include "Ui/optimization/optimization.hpp"
 #include "Ui/optimization/tcOptimization.hpp"
 #include "Ui/utils/card.hpp"
@@ -28,6 +29,7 @@
 #include "widgets/expander.hpp"
 #include "widgets/grid.hpp"
 #include "widgets/scrollview.hpp"
+#include "widgets/themeOverride.hpp"
 #include <map>
 
 using namespace squi;
@@ -297,43 +299,48 @@ namespace {
 	};
 }// namespace
 
-squi::core::Child UI::CharacterDetails::State::build(const Element &) {
+squi::core::Child UI::CharacterDetails::State::build(const Element &element) {
 	auto &character = Store::characters.at(widget->characterKey);
-	return ScrollView{
-		.scrollWidget{
-			.padding = 4.f,
-		},
-		.alignment = Flex::Alignment::center,
-		.spacing = 4.f,
-		.children{
-			EquipmentExpander{
-				.widget{
-					.sizeConstraints = BoxConstraints{
-						.maxWidth = 1520.f,
-					},
-				},
-				.characterKey = widget->characterKey,
+	auto theme = Theme::of(element);
+	theme.accent = Utils::elementToColor(character.state.stats.base.element);
+	return ThemeOverride{
+		.theme = theme,
+		.child = ScrollView{
+			.scrollWidget{
+				.padding = 4.f,
 			},
-			makeMainContent(widget->characterKey, widget->teamKey, widget->enemyKey),
-			std::visit(//
-				Utils::overloaded{
-					[&](const Stats::Artifact::Slotted &lotted) -> Child {
-						return UI::Optimization{
-							.characterKey = widget->characterKey,
-							.teamKey = widget->teamKey,
-							.enemyKey = widget->enemyKey,
-						};
+			.alignment = Flex::Alignment::center,
+			.spacing = 4.f,
+			.children{
+				EquipmentExpander{
+					.widget{
+						.sizeConstraints = BoxConstraints{
+							.maxWidth = 1520.f,
+						},
 					},
-					[&](const Stats::Artifact::Theorycraft &theorycraft) -> Child {
-						return UI::TCOptimization{
-							.characterKey = widget->characterKey,
-							.teamKey = widget->teamKey,
-							.enemyKey = widget->enemyKey,
-						};
-					},
+					.characterKey = widget->characterKey,
 				},
-				character.state.loadout().artifact.equipped
-			),
+				makeMainContent(widget->characterKey, widget->teamKey, widget->enemyKey),
+				std::visit(//
+					Utils::overloaded{
+						[&](const Stats::Artifact::Slotted &lotted) -> Child {
+							return UI::Optimization{
+								.characterKey = widget->characterKey,
+								.teamKey = widget->teamKey,
+								.enemyKey = widget->enemyKey,
+							};
+						},
+						[&](const Stats::Artifact::Theorycraft &theorycraft) -> Child {
+							return UI::TCOptimization{
+								.characterKey = widget->characterKey,
+								.teamKey = widget->teamKey,
+								.enemyKey = widget->enemyKey,
+							};
+						},
+					},
+					character.state.loadout().artifact.equipped
+				),
+			},
 		},
 	};
 }

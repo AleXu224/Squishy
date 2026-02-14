@@ -74,8 +74,8 @@ squi::core::Child UI::TCOptimization::State::build(const Element &element) {
 											   : "Select optimization target",
 								},
 								Button{
-									.theme = []() {
-										auto ret = Button::Theme::Accent();
+									.theme = [&]() {
+										auto ret = Button::Theme::Accent(element);
 										ret.forAll([](Button::Style &style) {
 											style.borderRadius = style.borderRadius.withLeft(0.f);
 										});

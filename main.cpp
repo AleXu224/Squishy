@@ -61,10 +61,7 @@ int main() {
 
 	using namespace squi;
 
-	auto systemTheme = ThemeManager::getSystemAccentColor();
-	auto _ = ThemeManager::pushTheme(Theme{
-		.accent = systemTheme.value_or(ThemeManager::getTheme().accent),
-	});
+	auto systemTheme = Theme::getSystemAccentColor();
 
 	App app{
 		.windowOptions{
@@ -75,7 +72,10 @@ int main() {
 		},
 		.child = UI::HomePage{
 			.key = GlobalKey{},
-		}
+		},
+		.theme = Theme{
+			.accent = systemTheme.value_or(Theme{}.accent),
+		},
 	};
 	app.initialize();
 	App::runAllWindows();

@@ -34,7 +34,7 @@ squi::core::Child UI::TeamEditor::State::build(const Element &element) {
 		const auto &character = team.stats.characters.at(i);
 
 		Child changeCharacterButton = Button{
-			.theme = character ? Button::Theme::Accent() : Button::Theme::Standard(),
+			.theme = character ? Button::Theme::Accent(element) : Button::Theme::Standard(),
 			.onClick = [this, i]() {
 				Navigator::of(this).pushOverlay(CharacterSelector{
 					.onSelect = [this, i](Character::InstanceKey instanceKey) {
@@ -84,7 +84,7 @@ squi::core::Child UI::TeamEditor::State::build(const Element &element) {
 	auto footer = Children{
 		Button{
 			.widget{.width = Size::Expand},
-			.theme = Button::Theme::Accent(),
+			.theme = Button::Theme::Accent(element),
 			.onClick = [this]() {
 				if (widget->onSubmit) widget->onSubmit(team);
 				closeEvent.notify();

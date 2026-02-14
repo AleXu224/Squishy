@@ -15,7 +15,7 @@ using namespace squi;
 
 squi::core::Child UI::WeaponPage::State::build(const Element &element) {
 	auto addArtifactButton = Button{
-		.theme = Button::Theme::Accent(),
+		.theme = Button::Theme::Accent(element),
 		.onClick = [this]() {
 			Navigator::of(*this->element).pushOverlay(WeaponSelector{
 				.onSelect = [this](Weapon::DataKey key) {

@@ -251,7 +251,7 @@ squi::core::Child UI::ArtifactEditor::State::build(const Element &) {
 	Children buttonFooter{
 		Button{
 			.widget{.width = Size::Expand},
-			.theme = Button::Theme::Accent(),
+			.theme = Button::Theme::Accent(element),
 			.disabled = artifact.set.key == 0,
 			.onClick = [this]() {
 				closeEvent.notify();

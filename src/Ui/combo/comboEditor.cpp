@@ -386,7 +386,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 										reactionName = getReactionName(Reaction::List::fromNodeReaction(entry.reaction));
 
 										reactionSelector = DropdownButton{
-											.theme = entry.reaction == Misc::NodeReaction::none ? Button::Theme::Standard() : Button::Theme::Accent(),
+											.theme = entry.reaction == Misc::NodeReaction::none ? Button::Theme::Standard() : Button::Theme::Accent(this->element),
 											.text = reactionName,
 											.items = [&]() {
 												std::vector<ContextMenu::Item> ret;
@@ -578,7 +578,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 		.buttons{
 			Button{
 				.widget{.width = Size::Expand},
-				.theme = Button::Theme::Accent(),
+				.theme = Button::Theme::Accent(element),
 				.onClick = [this]() {
 					if (widget->onSave) widget->onSave(combo);
 					closeEvent.notify();

@@ -1,9 +1,11 @@
 #include "teamBuffs.hpp"
+#include "Ui/elementToColor.hpp"
 #include "Ui/utils/masonry.hpp"
 
 #include "store.hpp"
 #include "teamCharacterBuffsCard.hpp"
 #include "widgets/scrollview.hpp"
+#include "widgets/themeOverride.hpp"
 
 using namespace squi;
 
@@ -12,12 +14,20 @@ squi::core::Child UI::TeamBuffs::State::build(const Element &element) {
 
 	Children teamCharacters{};
 
+	auto theme = Theme::of(element);
+
 	for (const auto &character: team.stats.characters) {
 		if (!character) continue;
 
-		teamCharacters.emplace_back(UI::TeamCharacterBuffsCard{
-			.team = team,
-			.character = *character,
+		auto newTheme = theme;
+		newTheme.accent = Utils::elementToColor(character->state.stats.base.element);
+
+		teamCharacters.emplace_back(ThemeOverride{
+			.theme = newTheme,
+			.child = UI::TeamCharacterBuffsCard{
+				.team = team,
+				.character = *character,
+			},
 		});
 	}
 	return ScrollView{

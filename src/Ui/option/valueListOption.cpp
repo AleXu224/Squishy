@@ -26,7 +26,7 @@ squi::core::Child UI::ValueListOption::State::build(const Element &element) {
 		return style;
 	};
 
-	auto accentStyle = Button::Theme::Accent();
+	auto accentStyle = Button::Theme::Accent(element);
 
 	return Column{
 		.widget = widget->widget,
