@@ -7,6 +7,7 @@
 namespace Modifiers::Artifact {
 	struct CompiledSubStat : Formula::Compiled::FormulaBase<float> {
 		SheetMember<Stats::Sheet<float>> stat;
+		SheetMemberIdentifier member;
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
@@ -18,7 +19,7 @@ namespace Modifiers::Artifact {
 		}
 
 		[[nodiscard]] std::string print() const {
-			return fmt::format("SubStat<...>");
+			return fmt::format("SubStat<{}>", member.getName());
 		}
 	};
 	struct SubStatFormula {
@@ -26,11 +27,12 @@ namespace Modifiers::Artifact {
 		SheetMemberIdentifier member;
 
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			if (&context.active != &context.source) {
+			if (&context.active != &context.source || !member.isArtifactStat()) {
 				return Formula::Compiled::ConstantFloat{.value = eval(context)};
 			}
 			return CompiledSubStat{
 				.stat = stat,
+				.member = member,
 			};
 		}
 

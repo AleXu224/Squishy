@@ -159,5 +159,42 @@ namespace Modifiers {
 			}
 			std::unreachable();
 		}
+
+		[[nodiscard]] constexpr bool isArtifactStat() const {
+			switch (_type) {
+				case Type::stat: {
+					switch (_uni.stat) {
+						case Stat::hp:
+						case Stat::hp_:
+						case Stat::atk:
+						case Stat::atk_:
+						case Stat::def:
+						case Stat::def_:
+						case Stat::er:
+						case Stat::em:
+						case Stat::cr:
+						case Stat::cd:
+						case Stat::hb:
+							return true;
+						default:
+							return false;
+					}
+				}
+				case Type::element: {
+					switch (_uni.element.first) {
+						case Misc::DamageElement::all:
+						case Misc::DamageElement::allElemental:
+							return false;
+						default:
+							break;
+					}
+					if (_uni.element.second == Misc::SkillStat::DMG) return true;
+					return false;
+				}
+				default:
+					return false;
+			}
+			std::unreachable();
+		}
 	};
 }// namespace Modifiers
