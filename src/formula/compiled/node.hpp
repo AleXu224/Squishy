@@ -5,9 +5,44 @@
 #include "misc/element.hpp"
 #include "type.hpp"
 #include "utils/optional.hpp"
-
+#include <memory_resource>
 
 namespace Formula::Compiled {
+	thread_local inline bool enableAllocator = false;
+	struct NodeAllocator {
+		static inline std::pmr::monotonic_buffer_resource &getBuffer() {
+			thread_local std::pmr::monotonic_buffer_resource mbr;
+			return mbr;
+		}
+
+		static inline std::pmr::polymorphic_allocator<std::byte> &get() {
+			thread_local std::pmr::polymorphic_allocator<std::byte> allocator{&getBuffer()};
+			return allocator;
+		}
+
+		template<class T, class... Args>
+		static inline T *allocate(Args &&...args) {
+			if (enableAllocator) {
+				return get().new_object<T>(std::forward<Args>(args)...);
+			}
+			return new T(std::forward<Args>(args)...);
+		}
+
+		template<class T>
+		static inline void deallocate(T *ptr) {
+			if (enableAllocator) {
+				std::destroy_at(ptr);
+				get().deallocate(std::bit_cast<std::byte *>(ptr), sizeof(T));
+			} else {
+				delete ptr;
+			}
+		}
+
+		static inline void reset() {
+			getBuffer().release();
+		}
+	};
+
 	template<class T, class Ret>
 	concept HasConstantValue = std::is_same_v<std::remove_cvref_t<decltype(std::declval<T>().value)>, Ret>;
 
@@ -40,6 +75,14 @@ namespace Formula::Compiled {
 			interface &operator=(const interface &) = delete;
 			interface &operator=(interface &&) = delete;
 
+			void retain() noexcept {
+				refCount.fetch_add(1, std::memory_order_relaxed);
+			}
+
+			[[nodiscard]] bool release() noexcept {
+				return refCount.fetch_sub(1, std::memory_order_acq_rel) == 1;
+			}
+
 			[[nodiscard]] constexpr virtual RetType eval(const Context &) const = 0;
 			[[nodiscard]] constexpr virtual Formula::Compiled::Type getType() const = 0;
 			[[nodiscard]] constexpr virtual std::unique_ptr<interface> clone() const = 0;
@@ -54,6 +97,9 @@ namespace Formula::Compiled {
 			[[nodiscard]] constexpr virtual RetType getMultParam() const = 0;
 			[[nodiscard]] constexpr virtual NodeType getMonomialValue() const = 0;
 			constexpr virtual ~interface() = default;
+
+		private:
+			std::atomic<uint32_t> refCount{1};
 		};
 
 		template<class Fn>
@@ -145,7 +191,27 @@ namespace Formula::Compiled {
 
 		template<class T>
 		constexpr NodeType(const T &t)
-			: fn(std::make_unique<implementation<T>>(t)) {}
+			: fn(NodeAllocator::allocate<implementation<T>>(t)) {}
+
+		NodeType(const NodeType &other) : fn(other.fn) {
+			if (fn) fn->retain();
+		}
+		NodeType &operator=(const NodeType &other) {
+			if (this != &other) {
+				release();
+				fn = other.fn;
+				if (fn) fn->retain();
+			}
+			return *this;
+		}
+		NodeType(NodeType &&other) noexcept : fn(std::exchange(other.fn, nullptr)) {}
+		NodeType &operator=(NodeType &&other) noexcept {
+			if (this != &other) {
+				release();
+				fn = std::exchange(other.fn, nullptr);
+			}
+			return *this;
+		}
 
 		[[nodiscard]] constexpr RetType eval(const Context &context) const {
 			return fn->eval(context);
@@ -183,14 +249,23 @@ namespace Formula::Compiled {
 
 		NodeType() = default;
 
-		~NodeType() = default;
+		~NodeType() {
+			release();
+		}
 
 		[[nodiscard]] constexpr bool hasValue() const {
 			return fn != nullptr;
 		}
 
 	private:
-		std::shared_ptr<interface> fn{};
+		void release() noexcept {
+			if (fn && fn->release()) {
+				NodeAllocator::deallocate(fn);
+			}
+			fn = nullptr;
+		}
+
+		interface *fn{};
 	};
 
 	using FloatNode = NodeType<float>;

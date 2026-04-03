@@ -186,38 +186,31 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		std::execution::parallel_unsequenced_policy{},
 		filters.begin(), filters.end(),
 		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx](const ArtifactFilter &filter) {
-			auto character = character_original;
-			std::array<std::optional<Character::Instance>, 4> teamCharacters;
-			Team::Instance team{
-				.instanceKey{},
-				.stats = initialCtx.team,
-			};
-			for (auto [index, characterPtr]: std::views::enumerate(team.stats.characters)) {
-				if (characterPtr == &character_original) {
-					characterPtr = &character;
-				} else if (characterPtr) {
-					characterPtr = &teamCharacters.at(index).emplace(*characterPtr);
-				}
+			thread_local OptimizationThreadData threadData{character_original, initialCtx};
+
+			if (threadData.character.instanceKey != character_original.instanceKey) {
+				threadData.~OptimizationThreadData();
+				new (&threadData) OptimizationThreadData(character_original, initialCtx);
 			}
-			auto ctx = Formula::Context{
-				.source = character.state,
-				.active = character.state,
-				.team = team.stats,
-				.enemy = initialCtx.enemy,
-				.reaction = initialCtx.reaction,
-			};
+
 			auto filtered = filter.filter(initialArtifacts);
 			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5
 			// This however could help in figuring out the single best solution when a single build is requested
 			// filtered.removeInferior();
 			for (auto [slotPtr, filtered]: std::views::zip(Stats::Artifact::Slotted::getMembers(), filtered.entries)) {
-				auto &slot = std::invoke(slotPtr, character.state.loadout().artifact.getSlotted());
+				auto &slot = std::invoke(slotPtr, threadData.character.state.loadout().artifact.getSlotted());
 				if (!filtered.empty()) slot = filtered.front()->key;
 			}
-			character.state.loadout().artifact.refreshStats();
-			auto node = optimizedNode.compile(ctx);
+			threadData.character.state.loadout().artifact.refreshStats();
 
-			bnb(filtered, solutions, character, ctx, node, filter.bonus1, filter.bonus2, {});
+			{
+				Formula::Compiled::enableAllocator = true;
+				auto node = optimizedNode.compile(threadData.ctx);
+
+				bnb(filtered, solutions, threadData.character, threadData.ctx, node, filter.bonus1, filter.bonus2, {});
+			}
+			Formula::Compiled::enableAllocator = false;
+			Formula::Compiled::NodeAllocator::reset();
 
 			combed++;
 			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), filterCount, (static_cast<float>(combed) / static_cast<float>(filterCount)) * 100.f);
@@ -248,4 +241,26 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	std::println("Optimizing done: Best dmg {}, time taken {}", solutions.maxScore, std::chrono::duration_cast<std::chrono::milliseconds>(end - start));
 
 	return solutions;
+}
+Optimization::OptimizationThreadData::OptimizationThreadData(Character::Instance &character, const Formula::Context &ctx)
+	: character(character),
+	  teamCharacters{},
+	  team{
+		  .instanceKey{},
+		  .stats = ctx.team,
+	  },
+	  ctx{
+		  .source = this->character.state,
+		  .active = this->character.state,
+		  .team = this->team.stats,
+		  .enemy = ctx.enemy,
+		  .reaction = ctx.reaction,
+	  } {
+	for (auto [index, characterPtr]: std::views::enumerate(this->team.stats.characters)) {
+		if (characterPtr == &character) {
+			characterPtr = &this->character;
+		} else if (characterPtr) {
+			characterPtr = &teamCharacters.at(index).emplace(*characterPtr);
+		}
+	}
 }

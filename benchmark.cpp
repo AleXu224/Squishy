@@ -162,11 +162,19 @@ namespace {
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
-			benchmark::DoNotOptimize(compiledNode.eval(ctx));
+			// benchmark::DoNotOptimize(compiledNode.eval(ctx));
 			// (void) compiledNode.eval(ctx);
-			// benchmark::DoNotOptimize(node.formula.compile(ctx));
+
+			// Compile formula using the custom allocator, while also keeping the memory between runs
+			{
+				Formula::Compiled::enableAllocator = true;
+				benchmark::DoNotOptimize(node.formula.compile(ctx));
+			}
+			Formula::Compiled::enableAllocator = false;
+			Formula::Compiled::NodeAllocator::reset();
+
 			// character.getArtifactStats();
-			benchmark::DoNotOptimize(compiledNode);
+			// benchmark::DoNotOptimize(compiledNode);
 		}
 	}
 }// namespace

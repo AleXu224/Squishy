@@ -6,6 +6,9 @@
 #include "Ui/utils/displayCard.hpp"
 #include "Ui/utils/skillEntry.hpp"
 #include "widgets/container.hpp"
+#include "widgets/gestureDetector.hpp"
+
+#include "print"
 
 using namespace squi;
 [[nodiscard]] squi::core::Child UI::DetailsSkill::build(const Element &) const {
@@ -27,14 +30,19 @@ using namespace squi;
 				}
 
 				if (node.formula.eval(ctx) == 0.f) continue;
-				ret2.emplace_back(UI::Tooltip{
-					.text = node.formula.print(ctx),
-					.child = UI::SkillEntry{
-						.isTransparent = transparent = !transparent,
-						.name = std::string(node.name),
-						.value = node.formula.eval(ctx),
-						.color = Node::getColor(node.data, ctx),
-						.isPercentage = Node::isPercentage(node.data),
+				ret2.emplace_back(Gesture{
+					.onClick = [out = node.formula.compile(ctx).print()](const Gesture::State &state) {
+						std::println("{}", out);
+					},
+					.child = UI::Tooltip{
+						.text = node.formula.print(ctx),
+						.child = UI::SkillEntry{
+							.isTransparent = transparent = !transparent,
+							.name = std::string(node.name),
+							.value = node.formula.eval(ctx),
+							.color = Node::getColor(node.data, ctx),
+							.isPercentage = Node::isPercentage(node.data),
+						},
 					},
 				});
 			}
