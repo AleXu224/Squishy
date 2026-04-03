@@ -182,15 +182,19 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto filterCount = filters.size();
 
 	auto start = std::chrono::high_resolution_clock::now();
+	static uint64_t runID = 0;
+	runID++;
 	std::for_each(
 		std::execution::parallel_unsequenced_policy{},
 		filters.begin(), filters.end(),
-		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx](const ArtifactFilter &filter) {
+		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx, runID = runID](const ArtifactFilter &filter) {
+			thread_local uint64_t localRunID = runID;
 			thread_local OptimizationThreadData threadData{character_original, initialCtx};
 
-			if (threadData.character.instanceKey != character_original.instanceKey) {
+			if (localRunID != runID) {
 				threadData.~OptimizationThreadData();
 				new (&threadData) OptimizationThreadData(character_original, initialCtx);
+				localRunID = runID;
 			}
 
 			auto filtered = filter.filter(initialArtifacts);
