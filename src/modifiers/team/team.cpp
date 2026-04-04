@@ -1,5 +1,6 @@
 #include "team.hpp"
 #include "character/instance.hpp"
+#include "formula/teamCharacter.hpp"
 #include "modifiers/artifact/set.hpp"
 #include "modifiers/character/kit.hpp"
 #include "modifiers/enemyFactory.hpp"
@@ -33,7 +34,12 @@ namespace Modifiers::Team {
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterStat + weaponStat + artifactStat).print(context, prevStep);
+			auto combined = characterStat + weaponStat + artifactStat;
+			return (Formula::TeamCharacter{.index = 0, .formula = combined}
+					+ Formula::TeamCharacter{.index = 1, .formula = combined}
+					+ Formula::TeamCharacter{.index = 2, .formula = combined}
+					+ Formula::TeamCharacter{.index = 3, .formula = combined})
+				.print(context, prevStep);
 		}
 
 

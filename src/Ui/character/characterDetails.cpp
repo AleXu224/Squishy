@@ -21,7 +21,9 @@
 #include "formula/stat.hpp"// IWYU pragma: keep
 
 #include "modifiers/artifact/displayStats.hpp"
+#include "modifiers/team/team.hpp"
 #include "modifiers/weapon/displayStats.hpp"
+
 
 #include "utils/slotToCondition.hpp"
 #include "weapon/data.hpp"
@@ -212,6 +214,13 @@ namespace {
 					break;
 			}
 		}
+
+		normalColumnChildren.emplace_back(UI::DetailsSkill{
+			.name = "Incoming Team Buffs",
+			.instanceKey = keyParam,
+			.ctx = ctx,
+			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Team::preMods()),
+		});
 
 		Child normalColumn = Column{.spacing = 4.f, .children = normalColumnChildren};
 		Child skillColumn = Column{.spacing = 4.f, .children = skillColumnChildren};

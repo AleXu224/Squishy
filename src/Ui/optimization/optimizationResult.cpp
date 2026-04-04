@@ -39,6 +39,7 @@ using namespace squi;
 		},
 		.title = std::format("Result #{}", entryIndex),
 		.subtitle = std::format("Score: {}", solution.score),
+		.defaultExpanded = true,
 		.action = Button{
 			.theme = Button::Theme::Accent(element),
 			.onClick = [this]() {
@@ -67,7 +68,7 @@ using namespace squi;
 				Row{
 					.spacing = 4.f,
 					.children = [solution = solution]() {
-						Children ret;
+						Children ret{};
 						for (const auto &slot: Artifact::slots) {
 							auto &key = solution.artifacts.fromSlot(slot);
 							if (!key) continue;
