@@ -31,7 +31,7 @@ struct WeaponSelectorWeaponCard : StatelessWidget {
 	std::function<void(Weapon::DataKey)> notifySelection;
 
 	[[nodiscard]] Child build(const Element &) const {
-		auto stars = Row{
+		Child stars = Row{
 			.widget{
 				.width = Size::Shrink,
 				.height = Size::Shrink,
@@ -50,7 +50,7 @@ struct WeaponSelectorWeaponCard : StatelessWidget {
 			}(),
 		};
 
-		auto details = Column{
+		Child details = Column{
 			.widget{
 				.height = Size::Shrink,
 				.padding = Padding(0.f, 8.f).withRight(8.f),
@@ -66,7 +66,7 @@ struct WeaponSelectorWeaponCard : StatelessWidget {
 			},
 		};
 
-		auto image = Box{
+		Child image = Box{
 			.widget{
 				.width = 96.f,
 				.height = 96.f,
@@ -79,7 +79,7 @@ struct WeaponSelectorWeaponCard : StatelessWidget {
 			},
 		};
 
-		auto content = Row{
+		Child content = Row{
 			.spacing = 12.f,
 			.children{
 				image,
@@ -116,7 +116,7 @@ squi::core::Child UI::WeaponSelector::State::build(const Element &element) {
 	}
 
 
-	auto typeFilter = LiteFilter{
+	Child typeFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::weaponTypes.size());
@@ -139,7 +139,7 @@ squi::core::Child UI::WeaponSelector::State::build(const Element &element) {
 		}(),
 	};
 
-	auto content = ScrollView{
+	Child content = ScrollView{
 		.children{
 			Grid{
 				.widget{
@@ -162,7 +162,7 @@ squi::core::Child UI::WeaponSelector::State::build(const Element &element) {
 		},
 	};
 
-	auto header = Column{
+	Child header = Column{
 		.widget{
 			.height = Size::Shrink,
 			.margin = Margin(24.f, 0.f),

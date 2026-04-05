@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/core.hpp"
+#include "core/core.hpp"// IWYU pragma: keep
 #include "option/option.hpp"
 #include "stats/sheet.hpp"
 

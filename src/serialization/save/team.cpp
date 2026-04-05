@@ -16,6 +16,7 @@ Serialization::Save::Team Serialization::Save::Team::fromInstance(const ::Team::
 			}
 			return ret;
 		}(),
+		.activeCharacterIndex = team.stats.activeCharacterIndex,
 		.options = optionsFromInstance(team.stats.options),
 	};
 }
@@ -34,6 +35,7 @@ Serialization::Save::Team Serialization::Save::Team::fromInstance(const ::Team::
 		}
 		return ret;
 	}();
+	instance.stats.activeCharacterIndex = activeCharacterIndex;
 
 	return instance;
 }

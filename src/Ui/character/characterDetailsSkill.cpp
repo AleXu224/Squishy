@@ -16,51 +16,50 @@ using namespace squi;
 
 	auto entries = [&]() -> Children {
 		Children ret{};
+		Children skillEntries{};
 
 		bool transparent = true;
 
-		if (!nodes.empty()) {
-			Children ret2{};
-			for (const auto &node: nodes) {
-				if (std::holds_alternative<Node::ModsData>(node.data)) {
-					const auto &data = std::get<Node::ModsData>(node.data);
-					auto modsChildren = decodeModsSheet(data.mods, ctx, &transparent);
-					ret.insert(ret.end(), modsChildren.begin(), modsChildren.end());
-					continue;
-				}
+		for (const auto &node: nodes) {
+			if (std::holds_alternative<Node::ModsData>(node.data)) {
+				const auto &data = std::get<Node::ModsData>(node.data);
+				auto modsChildren = decodeModsSheet(data.mods, ctx, &transparent);
+				skillEntries.insert(skillEntries.end(), modsChildren.begin(), modsChildren.end());
+				continue;
+			}
 
-				if (node.formula.eval(ctx) == 0.f) continue;
-				ret2.emplace_back(Gesture{
-					.onClick = [out = node.formula.compile(ctx).print()](const Gesture::State &state) {
-						std::println("{}", out);
+			if (node.formula.eval(ctx) == 0.f) continue;
+			skillEntries.emplace_back(Gesture{
+				.onClick = [out = node.formula.compile(ctx).print()](const Gesture::State &state) {
+					std::println("{}", out);
+				},
+				.child = UI::Tooltip{
+					.text = node.formula.print(ctx),
+					.child = UI::SkillEntry{
+						.isTransparent = transparent = !transparent,
+						.name = std::string(node.name),
+						.value = node.formula.eval(ctx),
+						.color = Node::getColor(node.data, ctx),
+						.isPercentage = Node::isPercentage(node.data),
 					},
-					.child = UI::Tooltip{
-						.text = node.formula.print(ctx),
-						.child = UI::SkillEntry{
-							.isTransparent = transparent = !transparent,
-							.name = std::string(node.name),
-							.value = node.formula.eval(ctx),
-							.color = Node::getColor(node.data, ctx),
-							.isPercentage = Node::isPercentage(node.data),
-						},
-					},
-				});
-			}
-			if (!ret2.empty()) {
-				ret.emplace_back(Column{
-					.widget{
-						.padding = Padding{4.f},
-					},
-					.children = ret2,
-				});
-			}
+				},
+			});
 		}
 
-		auto ret3 = modsGenerator->generate(ctx);
-		if (!ret3.empty()) {
+		auto ret3 = modsGenerator->generate(ctx, &transparent);
+		skillEntries.insert(skillEntries.end(), ret3.begin(), ret3.end());
+		
+		if (modsSheet.has_value()) {
+			auto ret2 = decodeModsSheet(modsSheet->get(), ctx, &transparent);
+			skillEntries.insert(skillEntries.end(), ret2.begin(), ret2.end());
+		}
+
+		if (!skillEntries.empty()) {
 			ret.emplace_back(Column{
-				.widget{.padding = 4.f},
-				.children = ret3,
+				.widget{
+					.padding = Padding{4.f},
+				},
+				.children = skillEntries,
 			});
 		}
 

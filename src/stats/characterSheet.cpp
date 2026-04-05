@@ -85,9 +85,9 @@ void Stats::CharacterSheet::init(Stats::State &stats) {
 	this->talents.fromTalent(stats.stats.base.c5Talent).modifiers.at(0) = Formula::Requires(Requirement::constellation5, Formula::ConstantInt(3));
 
 	// Infusion
-	infusion = Formula::CharacterTeamInfusion(stats.stats.data.data.mods.infusion);
-	teamInfusion = stats.stats.data.data.mods.teamInfusion;
+	infusion = Formula::CharacterTeamInfusion(stats.stats.data.data->mods.infusion);
+	teamInfusion = stats.stats.data.data->mods.teamInfusion;
 
 	// Moonsign
-	moonsignLevel = stats.stats.data.data.mods.moonsignLevel;
+	moonsignLevel = stats.stats.data.data->mods.moonsignLevel;
 }

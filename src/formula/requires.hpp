@@ -63,6 +63,19 @@ namespace Formula {
 }// namespace Formula
 
 namespace Requirement {
+	static constexpr struct impl_SelfBuff {
+		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
+			return Formula::Compiled::ConstantBool{.value = eval(context)};
+		}
+
+		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
+			return "Self Buff";
+		}
+
+		[[nodiscard]] static bool eval(const Formula::Context &context) {
+			return context.source.instanceKey == context.prevSource.instanceKey;
+		}
+	} selfBuff{};
 	static constexpr struct impl_Passive1 {
 		[[nodiscard]] Formula::Compiled::BoolNode compile(const Formula::Context &context) const {
 			return Formula::Compiled::ConstantBool{.value = eval(context)};

@@ -119,6 +119,10 @@ squi::Children UI::decodeModsSheet(const Stats::ModsSheet &sheet, const Formula:
 	ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
 	auto teamPostMod = decodeSheet("Team ", *transparent, sheet.teamPostMod, ctx);
 	ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
+	auto activePreMod = decodeSheet("Active ", *transparent, sheet.activePreMod, ctx);
+	ret.insert(ret.end(), activePreMod.begin(), activePreMod.end());
+	auto activePostMod = decodeSheet("Active ", *transparent, sheet.activePostMod, ctx);
+	ret.insert(ret.end(), activePostMod.begin(), activePostMod.end());
 	auto enemy = decodeEnemySheet("Enemy ", *transparent, sheet.enemy, ctx);
 	ret.insert(ret.end(), enemy.begin(), enemy.end());
 	auto talents = decodeTalentsSheet("", *transparent, sheet.talents, ctx);
@@ -150,6 +154,10 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			ret.insert(ret.end(), teamPreMod.begin(), teamPreMod.end());
 			auto teamPostMod = decodeSheet("Team ", transparent, opt.mods.teamPostMod, ctx);
 			ret.insert(ret.end(), teamPostMod.begin(), teamPostMod.end());
+			auto activePreMod = decodeSheet("Active ", transparent, opt.mods.activePreMod, ctx);
+			ret.insert(ret.end(), activePreMod.begin(), activePreMod.end());
+			auto activePostMod = decodeSheet("Active ", transparent, opt.mods.activePostMod, ctx);
+			ret.insert(ret.end(), activePostMod.begin(), activePostMod.end());
 			auto enemy = decodeEnemySheet("Enemy ", transparent, opt.mods.enemy, ctx);
 			ret.insert(ret.end(), enemy.begin(), enemy.end());
 			auto talents = decodeTalentsSheet("", transparent, opt.mods.talents, ctx);

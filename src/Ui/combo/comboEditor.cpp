@@ -66,7 +66,7 @@ namespace {
 	}
 	[[nodiscard]] std::string getOptionSourceName(Character::InstanceKey key, uint32_t hash) {
 		const auto &character = Store::characters.at(key);
-		const auto &charOpts = character.state.stats.data.data.opts;
+		const auto &charOpts = character.state.stats.data.data->opts;
 		for (const auto &slot: Node::characterSlots) {
 			const auto &optList = charOpts.fromCharacterSlot(slot);
 			for (const auto &opt: optList) {
@@ -458,7 +458,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 								entry
 							);
 
-							auto addOptionOverride = Button{
+							Child addOptionOverride = Button{
 								.theme = Button::Theme::Standard(),
 								.onClick = [this, &entry, ctx]() {
 									auto [options, optionUpdateEvent] = std::visit(
@@ -481,7 +481,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 								.child = "Add option",
 							};
 
-							auto deleteButton = IconButton{
+							Child deleteButton = IconButton{
 								.icon = 0xe5cd,
 								.theme = Button::Theme::Subtle(),
 								.onClick = [this, entryPtr = &entry]() {
@@ -493,7 +493,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 								},
 							};
 
-							auto moveUpButton = IconButton{
+							Child moveUpButton = IconButton{
 								.widget{
 									.width = Size::Shrink,
 									.padding = Padding(8.f, 6.f),
@@ -507,7 +507,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									});
 								},
 							};
-							auto moveDownButton = IconButton{
+							Child moveDownButton = IconButton{
 								.widget{
 									.width = Size::Shrink,
 									.padding = Padding(8.f, 6.f),

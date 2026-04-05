@@ -78,6 +78,14 @@ namespace Modifiers::Artifact::Set {
 		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamPostMod, &Stats::Artifact::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
 		return ret;
 	}
+	const Stats::Sheet<Formula::FloatNode> &sheet1ActivePreMods() {
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activePreMod, &Stats::Artifact::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &sheet1ActivePostMods() {
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activePostMod, &Stats::Artifact::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
 	const Talents<Formula::IntNode> &sheet1Talents() {
 		static auto ret = talentFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::talents, &Stats::Artifact::bonus1, TalentMember<Stats::ModsSheet::_Talents>>::Frm>(TalentPointerFactory<Stats::ModsSheet::_Talents>{});
 		return ret;
@@ -107,6 +115,14 @@ namespace Modifiers::Artifact::Set {
 		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamPostMod, &Stats::Artifact::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
 		return ret;
 	}
+	const Stats::Sheet<Formula::FloatNode> &sheet2ActivePreMods() {
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activePreMod, &Stats::Artifact::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &sheet2ActivePostMods() {
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activePostMod, &Stats::Artifact::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
 	const Talents<Formula::IntNode> &sheet2Talents() {
 		static auto ret = talentFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::talents, &Stats::Artifact::bonus2, TalentMember<Stats::ModsSheet::_Talents>>::Frm>(TalentPointerFactory<Stats::ModsSheet::_Talents>{});
 		return ret;
@@ -134,6 +150,14 @@ namespace Modifiers::Artifact::Set {
 	}
 	const Stats::Sheet<Formula::FloatNode> &teamPostMods() {
 		static auto ret = statFactory<Formula::FloatNode, SetFormula<Formula::FloatNode>>(sheet1TeamPostMods(), sheet2TeamPostMods());
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &activePreMods() {
+		static auto ret = statFactory<Formula::FloatNode, SetFormula<Formula::FloatNode>>(sheet1ActivePreMods(), sheet2ActivePreMods());
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &activePostMods() {
+		static auto ret = statFactory<Formula::FloatNode, SetFormula<Formula::FloatNode>>(sheet1ActivePostMods(), sheet2ActivePostMods());
 		return ret;
 	}
 	const Talents<Formula::IntNode> &talents() {

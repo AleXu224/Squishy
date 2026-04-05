@@ -159,7 +159,7 @@ namespace {
 }// namespace
 
 squi::core::Child UI::OptimizationSetChooser::State::build(const Element &element) {
-	auto helperButtons = Grid{
+	Child helperButtons = Grid{
 		.columnCount = Grid::MinSize{250.f},
 		.spacing = 4.f,
 		.children{

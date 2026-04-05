@@ -54,7 +54,7 @@ void UI::CharacterEditor::State::clampTalents() {
 
 squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	// Level
-	auto levelSelector = NumberBox{
+	Child levelSelector = NumberBox{
 		.widget{
 			.width = 40.f,
 		},
@@ -88,14 +88,14 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		}
 		return ret;
 	}();
-	auto ascensionSelector = DropdownButton{
+	Child ascensionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItems.size() <= 1,
 		.text = fmt::format("{}", Misc::ascensions.at(character->state.stats.sheet.ascension).maxLevel),
 		.items = ascensionItems,
 	};
 
-	auto levelAscensionSeparator = Container{
+	Child levelAscensionSeparator = Container{
 		.widget{
 			.width = Size::Shrink,
 			.padding = Padding{4.f, 0.f},
@@ -108,7 +108,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		},
 	};
 
-	auto levelAscensionSelector = UI::EditorItem{
+	Child levelAscensionSelector = UI::EditorItem{
 		.name = "Level",
 		.child = Row{
 			.widget{
@@ -123,7 +123,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	};
 
 	// Constellation
-	auto constellationSelector = UI::EditorItem{
+	Child constellationSelector = UI::EditorItem{
 		.name = "Constellation",
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
@@ -171,7 +171,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		};
 	};
 
-	auto content = Column{
+	Child content = Column{
 		.spacing = 16.f,
 		.children{
 			levelAscensionSelector,

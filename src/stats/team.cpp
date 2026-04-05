@@ -63,7 +63,7 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 			.key = "teamGeoCond",
 			.name = "Character is protected by a shield",
 			.displayCondition = geoCond,
-			.mods{.preMod{.geo{.DMG = geoBuff1}}},
+			.mods{.preMod{.all{.DMG = geoBuff1}}},
 		},
 	});
 	options.insert({

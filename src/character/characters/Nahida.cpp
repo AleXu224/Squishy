@@ -78,7 +78,7 @@ const Character::Data Character::Datas::nahida{
 					.burgeon{.critRate = c2CritRate, .critDMG = c2CritDMG},
 					.hyperbloom{.critRate = c2CritRate, .critDMG = c2CritDMG},
 				},
-				.teamPostMod{
+				.activePostMod{
 					.em = a1EmBuff,
 				},
 				.enemy{

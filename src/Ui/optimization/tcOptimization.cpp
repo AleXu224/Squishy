@@ -92,15 +92,18 @@ squi::core::Child UI::TCOptimization::State::build(const Element &element) {
 											storage->nodeSource.value()
 										);
 										auto [twoPc, fourPc] = character.state.loadout().artifact.getTheorycraft().getSets();
+
+										::Optimization::OptionsTc opts{
+											.nodeSource = storage->nodeSource,
+											.twoPcSet = twoPc,
+											.fourPcSet = fourPc,
+										};
+
 										::Optimization::TCOptimization optimization{
 											.character = character,
 											.ctx = ctx,
 											.optimizedNode = node,
-											.options{
-												.nodeSource = storage->nodeSource,
-												.twoPcSet = twoPc,
-												.fourPcSet = fourPc,
-											},
+											.options = opts,
 										};
 										auto solution = optimization.optimize();
 

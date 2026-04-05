@@ -85,7 +85,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 		.child = "Add artifact",
 	};
 
-	auto slotFilter = LiteFilter{
+	Child slotFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 
@@ -108,7 +108,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 		}(),
 	};
 
-	auto mainStatFilter = LiteFilter{
+	Child mainStatFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 
@@ -131,7 +131,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 		}(),
 	};
 
-	auto subStatFilter = LiteFilter{
+	Child subStatFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret;
 

@@ -73,7 +73,7 @@ const Character::Data Character::Datas::mavuika{
 					.atk_ = a1Buff + c1Buff,
 					.baseAtk = c2BaseBuff,
 				},
-				.teamPreMod{
+				.activePreMod{
 					.all{.DMG = a4Buff},
 				},
 				.enemy{
@@ -127,7 +127,7 @@ const Character::Data Character::Datas::mavuika{
 						.displayCondition = burstActive,
 						.values = std::views::iota(0) | std::views::take(20) | std::ranges::to<std::vector<uint32_t>>(),
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.all{.DMG = a4Buff},
 							},
 						},

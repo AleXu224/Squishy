@@ -51,7 +51,7 @@ const Weapon::Data Weapon::Datas::aThousandFloatingDreams{
 					.geo{.DMG = dmgBuffGeo},
 				},
 				.teamPreMod{
-					.em = multiplier3,
+					.em = Requires{.requirement = !Requirement::selfBuff, .ret = multiplier3},
 				},
 			},
 		};

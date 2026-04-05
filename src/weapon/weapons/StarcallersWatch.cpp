@@ -32,7 +32,7 @@ const Weapon::Data Weapon::Datas::starcallersWatch{
 				.preMod{
 					.em = multiplier4,
 				},
-				.teamPreMod{
+				.activePreMod{
 					.all{.DMG = buff},
 				},
 			},
@@ -41,7 +41,7 @@ const Weapon::Data Weapon::Datas::starcallersWatch{
 					.key = "starcallersWatchCond",
 					.name = "After the equipping character creates a shield",
 					.mods{
-						.teamPreMod{
+						.activePreMod{
 							.all{.DMG = buff},
 						},
 					},

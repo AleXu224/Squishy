@@ -19,7 +19,7 @@
 
 namespace UI {
 	struct ModsGenerator {
-		[[nodiscard]] virtual squi::Children generate(const Formula::Context &ctx) const { return {}; };
+		[[nodiscard]] virtual squi::Children generate(const Formula::Context &ctx, bool *transparent = nullptr) const { return {}; };
 
 		virtual ~ModsGenerator() = default;
 	};
@@ -29,10 +29,13 @@ namespace UI {
 
 		DerivedModsGenerator(const Stats::Sheet<Formula::FloatNode> &sheet) : sheet(sheet) {}
 
-		squi::Children generate(const Formula::Context &ctx) const {
+		squi::Children generate(const Formula::Context &ctx, bool *transparentP) const {
 			squi::Children ret{};
 
-			bool transparent = true;
+			bool transparentBackup;
+			if (!transparentP) transparentP = &transparentBackup;
+			auto &transparent = *transparentP;
+
 			auto evalFunc = [&](auto &&stat, Modifiers::SheetMemberIdentifier identifier) {
 				auto message = stat.print(ctx);
 				auto value = stat.eval(ctx);
@@ -83,6 +86,7 @@ namespace UI {
 		Formula::Context ctx;
 		std::vector<Node::Types> nodes;
 		std::optional<std::map<uint32_t, std::reference_wrapper<Option::Types>>> options;
+		std::optional<std::reference_wrapper<const Stats::ModsSheet>> modsSheet{};
 		std::shared_ptr<UI::ModsGenerator> modsGenerator = std::make_shared<ModsGenerator>();
 		Formula::BoolNode displayCondition = Formula::ConstantBool(true);
 

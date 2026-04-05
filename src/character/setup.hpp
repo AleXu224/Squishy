@@ -29,7 +29,6 @@ namespace Character {
 
 	static inline const auto &preMods = Modifiers::preMods();
 	static inline const auto &total = Modifiers::total();
-	static inline const auto &totalActive = Modifiers::totalActive();
 	static inline const auto &totalEnemy = Modifiers::totalEnemy();
 	static inline const auto &totalTalents = Modifiers::totalTalents();
 };// namespace Character

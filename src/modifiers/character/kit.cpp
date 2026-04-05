@@ -13,19 +13,19 @@ namespace Modifiers::Character::Kit {
 			using Ret = RetType<typename StatMember::RetType>;
 
 			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
-				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data.mods));
+				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data->mods));
 				if (!mod.hasValue()) return Formula::Compiled::Constant<Ret>{};
 				return mod.compile(context);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data.mods));
+				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data->mods));
 				if (!mod.hasValue()) return "";
 				return mod.print(context);
 			}
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
-				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data.mods));
+				const auto &mod = stat.resolve(std::invoke(location, context.source.stats.data.data->mods));
 				if (!mod.hasValue()) return 0.f;
 				return mod.eval(context);
 			}
@@ -46,6 +46,14 @@ namespace Modifiers::Character::Kit {
 	}
 	const Stats::Sheet<Formula::FloatNode> &teamPostMods() {
 		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::teamPostMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &activePreMods() {
+		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::activePreMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &activePostMods() {
+		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::activePostMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
 		return ret;
 	}
 	const Talents<Formula::IntNode> &talents() {

@@ -23,8 +23,7 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 			}
 		};
 
-		auto condGleamingMoon = GetFloat("nightOfTheSkysUnveilingGleamingMoonEffectCount");
-		auto gleamingMoonBuff = condGleamingMoon * Constant(0.1f);
+		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant(0.1f)};
 
 		return Set::Setup{
 			.twoPc{
@@ -43,14 +42,6 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 							.preMod{
 								.cr = buff,
 							},
-						},
-					},
-					Option::ValueList{
-						.key = "nightOfTheSkysUnveilingGleamingMoonEffectCount",
-						.prefix = "Gleaming Moon effect count",
-						.teamBuff = true,
-						.values{1, 2, 3},
-						.mods{
 							.teamPreMod{
 								.allLunar{.DMG = gleamingMoonBuff},
 							},

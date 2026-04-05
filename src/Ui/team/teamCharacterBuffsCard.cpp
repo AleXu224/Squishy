@@ -25,8 +25,10 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 		.footer = [&character = character, &team = team]() {
 			Children ret{};
 
+			auto activeCharacter = team.stats.characters.at(team.stats.activeCharacterIndex);
 			Formula::Context ctx{
 				.source = character.state,
+				.prevSource = activeCharacter ? activeCharacter->state : character.state,
 				.active = character.state,
 				.team = team.stats,
 				.enemy = Store::enemies.at(0).stats,
@@ -105,7 +107,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 
 			for (const auto &[optPtr, condition]: Option::CharacterList::getMembersAndConditions()) {
 				if (!condition.eval(ctx)) continue;
-				auto &optList = std::invoke(optPtr, character.state.stats.data.data.opts);
+				auto &optList = std::invoke(optPtr, character.state.stats.data.data->opts);
 				for (auto &optionData: optList) {
 					bool isTeamBuff = std::visit(
 						[](auto &&opt) {

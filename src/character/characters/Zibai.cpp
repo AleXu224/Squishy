@@ -29,9 +29,9 @@ const Character::Data Character::Datas::zibai{
 		auto a1Buff = Requires{
 			.requirement = Requirement::passive1 && a1Cond,
 			.ret = total.def
-				 * (0.6 + Requires{
+				 * (0.6f + Requires{
 						.requirement = Requirement::constellation2 && Requirement::ascendantGleam,
-						.ret = Constant(5.5f),
+						.ret = Constant(5.5f - 0.6f),
 					}),
 		};
 

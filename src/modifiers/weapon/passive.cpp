@@ -49,6 +49,14 @@ namespace Modifiers::Weapon::Passive {
 		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::teamPostMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
+	const Stats::Sheet<Formula::FloatNode> &activePreMods() {
+		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::activePreMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
+		return ret;
+	}
+	const Stats::Sheet<Formula::FloatNode> &activePostMods() {
+		static auto ret = statFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::activePostMod, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
+		return ret;
+	}
 	const Talents<Formula::IntNode> &talents() {
 		static auto ret = talentFactory<Formula::IntNode, FormulaMaker<&Stats::ModsSheet::talents, TalentMember<Stats::ModsSheet::_Talents>>::Frm>(TalentPointerFactory<Stats::ModsSheet::_Talents>{}, TalentNameFactory{});
 		return ret;

@@ -35,14 +35,14 @@ struct ArtifactHeader : StatelessWidget {
 	Character::InstanceKey equippedCharacter;
 
 	[[nodiscard]] Child build(const Element &) const {
-		auto icon = Image{
+		Child icon = Image{
 			.widget{
 				.alignment = Alignment::CenterRight,
 			},
 			.fit = squi::Image::Fit::contain,
 			.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(set).name, Utils::Stringify(slot))),
 		};
-		auto title = Column{
+		Child title = Column{
 			.widget{
 				.height = Size::Shrink,
 				.alignment = Alignment::CenterLeft,
@@ -65,7 +65,7 @@ struct ArtifactHeader : StatelessWidget {
 				},
 			},
 		};
-		auto characterImage = [&]() -> Child {
+		Child characterImage = [&]() -> Child {
 			if (!equippedCharacter) return Child{};
 			return Image{
 				.widget{
@@ -104,7 +104,7 @@ struct ArtifactCardContent : StatelessWidget {
 	UI::ArtifactCard::Actions actions;
 
 	[[nodiscard]] Child build(const Element &element) const {
-		auto header = ArtifactHeader{
+		Child header = ArtifactHeader{
 			.set = artifact.set,
 			.slot = artifact.slot,
 			.mainStat{
@@ -115,7 +115,7 @@ struct ArtifactCardContent : StatelessWidget {
 			.level = artifact.level,
 			.equippedCharacter = artifact.equippedOn(),
 		};
-		auto subStats = Column{
+		Child subStats = Column{
 			.widget{
 				.padding = Padding{4.f},
 			},
@@ -136,7 +136,7 @@ struct ArtifactCardContent : StatelessWidget {
 		};
 
 		auto equippedCharacter = artifact.equippedOn();
-		auto equippedButton = Button{
+		Child equippedButton = Button{
 			.widget{
 				.width = Size::Expand,
 			},
@@ -151,7 +151,7 @@ struct ArtifactCardContent : StatelessWidget {
 			.child = equippedCharacter ? std::string(Store::characters.at(equippedCharacter).state.stats.data.name) : "Unequipped",
 		};
 
-		auto footer = Row{
+		Child footer = Row{
 			.widget{
 				.height = Size::Shrink,
 				.padding = 4.f,

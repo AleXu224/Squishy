@@ -40,10 +40,10 @@ const Character::Data Character::Datas::xilonen{
 		auto a4DefIncrease = Requires(Requirement::passive2 && IsActive("xilonenNightsoulBurstTriggered"), Constant(0.2f));
 
 		auto c2BuffCond = Requirement::constellation2 && samplesActivated;
-		auto c2GeoBuff = Requires(c2BuffCond && IsActiveCharacterElement{Misc::Element::geo}, Constant(0.5f));
-		auto c2PyroBuff = Requires(c2BuffCond && IsActiveCharacterElement{Misc::Element::pyro}, Constant(0.45f));
-		auto c2HydroBuff = Requires(c2BuffCond && IsActiveCharacterElement{Misc::Element::hydro}, Constant(0.45f));
-		auto c2CryoBuff = Requires(c2BuffCond && IsActiveCharacterElement{Misc::Element::cryo}, Constant(0.60f));
+		auto c2GeoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::geo}, Constant(0.5f));
+		auto c2PyroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::pyro}, Constant(0.45f));
+		auto c2HydroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::hydro}, Constant(0.45f));
+		auto c2CryoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::cryo}, Constant(0.60f));
 
 		auto c4DmgBuff = total.def * Requires(Requirement::constellation4 && IsActive("xilonenC4AfterUse"), Constant(0.65f));
 

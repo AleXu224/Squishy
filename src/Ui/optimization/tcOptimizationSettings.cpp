@@ -17,7 +17,7 @@ using namespace squi;
 squi::core::Child UI::TCOptimizationSettings::State::build(const Element &element) {
 	auto &weapon = Store::weapons.at(widget->character.state.loadout().weaponInstanceKey);
 
-	auto weaponCard = WeaponCard{
+	Child weaponCard = WeaponCard{
 		.widget{
 			.width = Size::Expand,
 			.height = Size::Shrink,
@@ -26,7 +26,7 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 		.actions = WeaponCard::Actions::character,
 	};
 
-	auto mainStats = Column{
+	Child mainStats = Column{
 		.spacing = 4.f,
 		.children = [&]() {
 			Children ret;
@@ -253,7 +253,7 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 		}(),
 	};
 
-	auto subStats = Column{
+	Child subStats = Column{
 		.children = [&]() {
 			Children ret;
 

@@ -19,7 +19,7 @@
 using namespace squi;
 
 squi::core::Child UI::TeamEditor::State::build(const Element &element) {
-	auto name = EditorItem{
+	Child name = EditorItem{
 		.name = "Name",
 		.child = TextBox{
 			.controller = nameController,
@@ -49,7 +49,7 @@ squi::core::Child UI::TeamEditor::State::build(const Element &element) {
 			.child = character ? std::string(character->state.stats.data.name) : "None",
 		};
 
-		auto deleteButton = Tooltip{
+		Child deleteButton = Tooltip{
 			.text = "Remove character",
 			.child = Visibility{
 				.visible = character != nullptr,

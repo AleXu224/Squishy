@@ -37,9 +37,9 @@ const Character::Data Character::Datas::bennett{
 		auto c2Cond = IsActive("bennettC2");
 		auto c2Buff = Requires(c2Cond && Requirement::constellation2, Constant(0.3f));
 
-		auto isCharacterSword = IsActiveCharacterWeaponType{.type = Misc::WeaponType::sword};
-		auto isCharacterClaymore = IsActiveCharacterWeaponType{.type = Misc::WeaponType::claymore};
-		auto isCharacterPolearm = IsActiveCharacterWeaponType{.type = Misc::WeaponType::polearm};
+		auto isCharacterSword = IsTargetCharacterWeaponType{.type = Misc::WeaponType::sword};
+		auto isCharacterClaymore = IsTargetCharacterWeaponType{.type = Misc::WeaponType::claymore};
+		auto isCharacterPolearm = IsTargetCharacterWeaponType{.type = Misc::WeaponType::polearm};
 		auto c6Cond = isCharacterSword || isCharacterClaymore || isCharacterPolearm;
 		auto c6Buff = Requires(Requirement::constellation6 && c6Cond, Constant(0.15f));
 		auto c6Infusion = Requires(Requirement::constellation6 && c6Cond, Infusion{.element = Misc::Element::pyro});
@@ -49,7 +49,7 @@ const Character::Data Character::Datas::bennett{
 				.preMod{
 					.er = c2Buff,
 				},
-				.teamPreMod{
+				.activePreMod{
 					.atk = burstBuff,
 					.pyro{.DMG = c6Buff},
 				},
@@ -62,7 +62,7 @@ const Character::Data Character::Datas::bennett{
 						.name = "Active character is inside the field",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.atk = burstBuff,
 								.pyro{.DMG = c6Buff},
 							},

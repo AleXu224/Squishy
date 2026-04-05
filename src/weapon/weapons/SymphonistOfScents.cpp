@@ -34,10 +34,10 @@ const Weapon::Data Weapon::Datas::symphonistOfScents{
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.atk_ = multiplier1 + offFieldBuff,
+					.atk_ = multiplier1 + offFieldBuff + healBuff,
 				},
-				.teamPreMod{
-					.atk_ = healBuff,
+				.activePreMod{
+					.atk_ = Requires{.requirement = !Requirement::selfBuff, .ret = healBuff},
 				},
 			},
 			.opts{
@@ -54,8 +54,11 @@ const Weapon::Data Weapon::Datas::symphonistOfScents{
 					.key = "symphonistOfScentsHeal",
 					.name = "After healing or being healed by the weapon holder",
 					.mods{
-						.teamPreMod{
+						.preMod{
 							.atk_ = healBuff,
+						},
+						.activePreMod{
+							.atk_ = Requires{.requirement = !Requirement::selfBuff, .ret = healBuff},
 						},
 					},
 				},

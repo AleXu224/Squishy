@@ -31,16 +31,14 @@ const Character::Data Character::Datas::citlali{
 		auto a4BuffSkill = Requires(Requirement::passive2, 0.9f * total.em);
 		auto a4BuffBurst = Requires(Requirement::passive2, 12.f * total.em);
 
-		auto isCitlali = IsActiveCharacterId{10000107};
-
 		auto condC1 = IsActive("citlaliC1");
 		auto c1BuffDisplay = Requires(Requirement::constellation1 && condC1, 2.f * total.em);
-		auto c1Buff = Requires(!isCitlali, c1BuffDisplay);
+		auto c1Buff = Requires(!Requirement::selfBuff, c1BuffDisplay);
 
 		auto c2EmBuff = Requires(Requirement::constellation2, ConstantFlat(125.f));
 		auto condC2 = IsActive("citlaliC2");
 		auto c2TeamEmDisplay = Requires(Requirement::constellation2 && condC2, ConstantFlat(250.f));
-		auto c2TeamEm = Requires(!isCitlali, c2TeamEmDisplay);
+		auto c2TeamEm = Requires(!Requirement::selfBuff, c2TeamEmDisplay);
 		auto c2Res = Requires(Requirement::constellation2 && Requirement::passive1 && condA1, Constant(-0.2f));
 
 		auto c6Stacks = GetFloat("citlaliC6");
@@ -54,9 +52,11 @@ const Character::Data Character::Datas::citlali{
 					.all{.DMG = c6SelfBuff},
 				},
 				.teamPreMod{
-					.em = c2TeamEm,
 					.pyro{.DMG = c6TeamBuff},
 					.hydro{.DMG = c6TeamBuff},
+				},
+				.activePreMod{
+					.em = c2TeamEm,
 					.normal{.additiveDMG = c1Buff},
 					.charged{.additiveDMG = c1Buff},
 					.plunge{.additiveDMG = c1Buff},
@@ -92,7 +92,7 @@ const Character::Data Character::Datas::citlali{
 						.name = "Opalstar Vestments effect",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.normal{.additiveDMG = c1Buff},
 								.charged{.additiveDMG = c1Buff},
 								.plunge{.additiveDMG = c1Buff},
@@ -114,7 +114,7 @@ const Character::Data Character::Datas::citlali{
 						.name = "Character shielded by Opal Shield",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.em = c2TeamEm,
 							},
 						},

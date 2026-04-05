@@ -16,6 +16,8 @@ namespace Modifiers::Weapon::Passive {
 	const Stats::Sheet<Formula::FloatNode> &postMods();
 	const Stats::Sheet<Formula::FloatNode> &teamPreMods();
 	const Stats::Sheet<Formula::FloatNode> &teamPostMods();
+	const Stats::Sheet<Formula::FloatNode> &activePreMods();
+	const Stats::Sheet<Formula::FloatNode> &activePostMods();
 	const Talents<Formula::IntNode> &talents();
 	const Talents<Formula::IntNode> &teamTalents();
 	const Stats::EnemySheet<Formula::FloatNode> &enemy();

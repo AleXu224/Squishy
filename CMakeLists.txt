@@ -15,39 +15,9 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" $<TARG
 add_custom_command(TARGET Assets PRE_BUILD
 COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" ${PROJECT_BINARY_DIR}/assets)
 
-file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h")
+file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h" "src/*.hpp")
 
-list(FILTER all_files EXCLUDE REGEX "src/Ui/.*")
-
-file(GLOB_RECURSE rewritten_files CONFIGURE_DEPENDS
-  "src/Ui/optimization/*.cpp"
-  "src/Ui/option/*.cpp"
-  "src/Ui/loadout/*.cpp"
-  "src/Ui/combo/*.cpp"
-  "src/Ui/character/*.cpp"
-  "src/Ui/utils/*.cpp"
-  "src/Ui/team/*.cpp"
-)
-
-list(APPEND all_files 
-  "src/Ui/home/homePage.cpp"
-  "src/Ui/artifact/artifactPage.cpp"
-  "src/Ui/artifact/artifactEditor.cpp"
-  "src/Ui/artifact/artifactCard.cpp"
-  "src/Ui/character/characterSelector.cpp"
-  "src/Ui/utils/card.cpp"
-  "src/Ui/utils/tag.cpp"
-  "src/Ui/utils/statDisplay.cpp"
-  "src/Ui/utils/editorItem.cpp"
-  "src/Ui/utils/skillEntry.cpp"
-  "src/Ui/weapon/weaponEditor.cpp"
-  "src/Ui/weapon/weaponPage.cpp"
-  "src/Ui/weapon/weaponSelector.cpp"
-  "src/Ui/weapon/weaponCard.cpp"
-  "src/Ui/settings/settingsPage.cpp"
-)
-
-add_library(squishy_lib ${all_files} ${rewritten_files})
+add_library(squishy_lib ${all_files})
 target_compile_features(squishy_lib PUBLIC cxx_std_23)
 set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(squishy_lib PUBLIC src)

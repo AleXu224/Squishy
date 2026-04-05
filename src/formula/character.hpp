@@ -83,7 +83,7 @@ namespace Formula {
 		}
 	};
 
-	struct IsActiveCharacterWeaponType {
+	struct IsTargetCharacterWeaponType {
 		Misc::WeaponType type;
 
 		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
@@ -91,11 +91,11 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is active character {} ({})", Utils::Stringify(type), eval(context));
+			return fmt::format("Is target character {} ({})", Utils::Stringify(type), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.stats.base.weaponType == type;
+			return context.prevSource.stats.base.weaponType == type;
 		}
 	};
 

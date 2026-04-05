@@ -21,13 +21,16 @@ namespace Modifiers {
 		Formula::FloatNode weaponPassiveStat;
 		Formula::FloatNode artifactSetStat;
 		Formula::FloatNode teamPostStat;
+		Formula::FloatNode activePostStat;
 		Formula::FloatNode preModStat;
 		SheetMemberIdentifier name;
+
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return characterKitStat.compile(context)
 				 + weaponPassiveStat.compile(context)
 				 + artifactSetStat.compile(context)
 				 + teamPostStat.compile(context)
+				 + activePostStat.compile(context)
 				 + preModStat.compile(context);
 		}
 
@@ -40,39 +43,39 @@ namespace Modifiers {
 			auto weaponPassive = weaponPassiveStat.eval(context);
 			auto artifactSet = artifactSetStat.eval(context);
 			auto teamPost = teamPostStat.eval(context);
+			auto activePost = activePostStat.eval(context);
 			auto preMod = preModStat.eval(context);
 			return characterKit
 				 + weaponPassive
 				 + artifactSet
 				 + teamPost
+				 + activePost
 				 + preMod;
 		}
 	};
-	struct TotalActiveFrm {
-		Formula::FloatNode characterKitStat;
-		Formula::FloatNode weaponPassiveStat;
-		Formula::FloatNode artifactSetStat;
+	struct TeamTotalFrm {
+		Formula::FloatNode teamPreStat;
 		Formula::FloatNode teamPostStat;
-		Formula::FloatNode preModStat;
+		Formula::FloatNode activePreStat;
+		Formula::FloatNode activePostStat;
 		SheetMemberIdentifier name;
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return characterKitStat.compile(context)
-				 + weaponPassiveStat.compile(context)
-				 + artifactSetStat.compile(context)
+			return teamPreStat.compile(context)
 				 + teamPostStat.compile(context)
-				 + preModStat.compile(context);
+				 + activePreStat.compile(context)
+				 + activePostStat.compile(context);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
+			return (teamPreStat + teamPostStat + activePreStat + activePostStat).print(context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return characterKitStat.eval(context)
-				 + weaponPassiveStat.eval(context)
-				 + artifactSetStat.eval(context)
-				 + teamPostStat.eval(context)
-				 + preModStat.eval(context);
+			auto newContext = context.withSource(context.active);
+			return teamPreStat.eval(newContext)
+				 + teamPostStat.eval(newContext)
+				 + activePreStat.eval(newContext)
+				 + activePostStat.eval(newContext);
 		}
 	};
 	struct DisplayTotalFrm {
@@ -152,11 +155,11 @@ namespace Modifiers {
 	};
 
 	const Stats::Sheet<Formula::FloatNode> &total() {
-		static auto ret = statFactory<Formula::FloatNode, TotalFrm>(Character::Kit::postMods(), Weapon::Passive::postMods(), Artifact::Set::postMods(), Team::postMods(), preMods(), StatNameFactory{});
+		static auto ret = statFactory<Formula::FloatNode, TotalFrm>(Character::Kit::postMods(), Weapon::Passive::postMods(), Artifact::Set::postMods(), Team::postMods(), Team::activePostMods(), preMods(), StatNameFactory{});
 		return ret;
 	}
-	const Stats::Sheet<Formula::FloatNode> &totalActive() {
-		static auto ret = statFactory<Formula::FloatNode, TotalActiveFrm>(Character::Kit::postMods(), Weapon::Passive::postMods(), Artifact::Set::postMods(), Team::postMods(), preMods(), StatNameFactory{});
+	const Stats::Sheet<Formula::FloatNode> &totalTeam() {
+		static auto ret = statFactory<Formula::FloatNode, TeamTotalFrm>(Team::preMods(), Team::postMods(), Team::activePreMods(), Team::activePostMods(), StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &displayTotal() {

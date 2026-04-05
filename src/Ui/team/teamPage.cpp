@@ -12,7 +12,7 @@
 using namespace squi;
 
 squi::core::Child UI::TeamPage::State::build(const Element &element) {
-	auto addTeamButton = Button{
+	Child addTeamButton = Button{
 		.onClick = [this]() {
 			++Store::lastTeamId;
 			auto &instance = Store::teams.emplace(Store::lastTeamId, Team::Instance{.instanceKey{Store::lastTeamId}}).first->second;

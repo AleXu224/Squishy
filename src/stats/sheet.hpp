@@ -179,6 +179,8 @@ namespace Stats {
 		_Sheet postMod{};
 		_Sheet teamPreMod{};
 		_Sheet teamPostMod{};
+		_Sheet activePreMod{};
+		_Sheet activePostMod{};
 
 		_EnemySheet enemy{};
 

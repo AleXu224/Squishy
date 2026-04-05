@@ -113,7 +113,7 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 					Children characterRet;
 					for (const auto &[memberCond, slot]: std::views::zip(Option::CharacterList::getMembersAndConditions(), Node::characterSlots)) {
 						auto &[optListPtr, cond] = memberCond;
-						auto &optList = std::invoke(optListPtr, character->state.stats.data.data.opts);
+						auto &optList = std::invoke(optListPtr, character->state.stats.data.data->opts);
 						Children categoryRet;
 						for (const auto &opt: optList) {
 							auto [teamBuff, condition] = std::visit(

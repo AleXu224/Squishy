@@ -10,6 +10,8 @@ namespace Modifiers::Team {
 	// static constexpr EnemyFactory<Frm, Character::Kit::enemy, Weapon::Passive::enemy, Artifact::Set::enemy> enemy;
 	const Stats::Sheet<Formula::FloatNode> &preMods();
 	const Stats::Sheet<Formula::FloatNode> &postMods();
+	const Stats::Sheet<Formula::FloatNode> &activePreMods();
+	const Stats::Sheet<Formula::FloatNode> &activePostMods();
 	const Talents<Formula::IntNode> &talents();
 	const Stats::EnemySheet<Formula::FloatNode> &enemy();
 }// namespace Modifiers::Team

@@ -19,7 +19,7 @@ using namespace squi;
 
 squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 	// Weapon
-	auto weaponSelector = UI::EditorItem{
+	Child weaponSelector = UI::EditorItem{
 		.name = "Weapon",
 		.child = Button{
 			.theme = Button::Theme::Standard(),
@@ -55,7 +55,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 	};
 
 	// Level
-	auto levelSelector = NumberBox{
+	Child levelSelector = NumberBox{
 		.widget{
 			.width = 40.f,
 		},
@@ -97,14 +97,14 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		return ret;
 	};
 	auto ascensionSelectorText = fmt::format("{}", Misc::ascensions.at(weapon.stats.sheet.ascension).maxLevel);
-	auto ascensionSelector = DropdownButton{
+	Child ascensionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItemFactory().size() <= 1,
 		.text = ascensionSelectorText,
 		.items = ascensionItemFactory(),
 	};
 
-	auto levelAscensionSeparator = Container{
+	Child levelAscensionSeparator = Container{
 		.widget{
 			.width = Size::Shrink,
 			.padding = Padding{4.f, 0.f},
@@ -117,7 +117,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		},
 	};
 
-	auto levelAscensionSelector = UI::EditorItem{
+	Child levelAscensionSelector = UI::EditorItem{
 		.name = "Level",
 		.child = Row{
 			.widget{
@@ -132,7 +132,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 	};
 
 	// Refinement
-	auto refinementSelector = UI::EditorItem{
+	Child refinementSelector = UI::EditorItem{
 		.name = "Refinement",
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
@@ -155,7 +155,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		},
 	};
 
-	auto content = Column{
+	Child content = Column{
 		.spacing = 16.f,
 		.children{
 			weaponSelector,

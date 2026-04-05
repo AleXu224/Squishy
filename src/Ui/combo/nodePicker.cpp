@@ -109,7 +109,7 @@ squi::core::Child UI::NodePicker::State::build(const Element &element) {
 				for (const auto &slot: Node::characterSlots) {
 					if (!Utils::slotToCondition(slot).eval(widget->ctx)) continue;
 					Children entryRet{};
-					const auto &nodeList = character.state.stats.data.data.nodes.fromEntry(slot);
+					const auto &nodeList = character.state.stats.data.data->nodes.fromEntry(slot);
 					for (const auto &[index, node]: nodeList | std::views::enumerate) {
 						if (!Node::getOptimizable(node.data)) continue;
 						entryRet.emplace_back(NodePickerEntry{

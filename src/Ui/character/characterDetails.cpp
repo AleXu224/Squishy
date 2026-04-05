@@ -20,8 +20,6 @@
 
 #include "formula/stat.hpp"// IWYU pragma: keep
 
-#include "modifiers/artifact/displayStats.hpp"
-#include "modifiers/team/team.hpp"
 #include "modifiers/weapon/displayStats.hpp"
 
 
@@ -85,14 +83,14 @@ namespace {
 			.enemy = enemy.stats,
 		};
 
-		auto transformativeReactions = UI::CharacterTransformativeReactions{.ctx = ctx};
+		Child transformativeReactions = UI::CharacterTransformativeReactions{.ctx = ctx};
 
-		auto combos = UI::ComboDisplay{
+		Child combos = UI::ComboDisplay{
 			.characterKey = characterKey,
 			.ctx = ctx,
 		};
 
-		auto characterStats = UI::CharacterStats{
+		Child characterStats = UI::CharacterStats{
 			.ctx = ctx,
 			.characterKey = characterKey,
 		};
@@ -103,7 +101,7 @@ namespace {
 		auto teamOpts = makeOptsSimple(team.stats.options);
 
 		std::vector<Node::Types> nodesPlaceholder;
-		auto teamStats = UI::DetailsSkill{
+		Child teamStats = UI::DetailsSkill{
 			.name = "Resonance",
 			.instanceKey = keyParam,
 			.ctx = ctx,
@@ -114,13 +112,14 @@ namespace {
 
 		auto weaponOpts = makeOpts(character.state.loadout().weapon->data->data.opts, character.state.options);
 
-		auto weaponStats = UI::DetailsSkill{
+		Child weaponStats = UI::DetailsSkill{
 			.name = character.state.loadout().weapon->data->name,
 			.subtitle = "Weapon",
 			.instanceKey = keyParam,
 			.ctx = ctx,
 			.nodes = character.state.loadout().weapon->data->data.nodes,
 			.options = weaponOpts,
+			.modsSheet = std::ref(character.state.loadout().weapon->data->data.mods),
 			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Weapon::displayStats()),
 		};
 
@@ -140,7 +139,7 @@ namespace {
 									   .ctx = ctx,
 									   .nodes = character.state.loadout().artifact.bonus1->bonusPtr->nodes,
 									   .options = artifactOpts1,
-									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display1()),
+									   .modsSheet = std::ref(character.state.loadout().artifact.bonus1->bonusPtr->mods),
 								   }
 								 : Child{};
 
@@ -152,7 +151,7 @@ namespace {
 									   .ctx = ctx,
 									   .nodes = character.state.loadout().artifact.bonus2->bonusPtr->nodes,
 									   .options = artifactOpts2,
-									   .modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Artifact::display2()),
+									   .modsSheet = std::ref(character.state.loadout().artifact.bonus2->bonusPtr->mods),
 								   }
 								 : Child{};
 
@@ -175,12 +174,12 @@ namespace {
 
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
-			const auto &optList = std::invoke(optPtr, character.state.stats.data.data.opts);
+			const auto &optList = std::invoke(optPtr, character.state.stats.data.data->opts);
 			characterOpts.emplace_back(makeOpts(optList, character.state.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {
-			nodes.emplace_back(std::invoke(nodePtr, character.state.stats.data.data.nodes));
+			nodes.emplace_back(std::invoke(nodePtr, character.state.stats.data.data->nodes));
 		}
 
 		for (const auto &[nodeWrapper, options, slot]: std::views::zip(nodes, characterOpts, Node::characterSlots)) {
@@ -189,7 +188,7 @@ namespace {
 			const auto &nodes = nodeWrapper.get();
 			if (nodes.empty() && options.empty()) continue;
 
-			auto ret = UI::DetailsSkill{
+			Child ret = UI::DetailsSkill{
 				.name = name,
 				.instanceKey = keyParam,
 				.ctx = ctx,
@@ -219,7 +218,7 @@ namespace {
 			.name = "Incoming Team Buffs",
 			.instanceKey = keyParam,
 			.ctx = ctx,
-			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::Team::preMods()),
+			.modsGenerator = std::make_shared<UI::DerivedModsGenerator>(Modifiers::totalTeam()),
 		});
 
 		Child normalColumn = Column{.spacing = 4.f, .children = normalColumnChildren};

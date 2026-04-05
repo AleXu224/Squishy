@@ -135,17 +135,21 @@ const Character::Data Character::Datas::columbina{
 					.cr = a1Buff,
 				},
 				.teamPreMod{
-					.atk = c2BuffLunarCharged,
-					.def = c2BuffLunarCrystallize,
-					.em = c2BuffLunarBloom,
 					.hydro{.critDMG = c6HydroBuff},
 					.electro{.critDMG = c6BuffLunarCharged},
 					.dendro{.critDMG = c6BuffLunarBloom},
 					.geo{.critDMG = c6BuffLunarCrystallize},
 					.allLunar{
-						.DMG = burstBuff,
 						.multiplicativeDMG = p3Buff,
 						.elevation = c1Elevation + c2Elevation + c3Elevation + c4Elevation + c5Elevation + c6Elevation,
+					},
+				},
+				.activePreMod{
+					.atk = c2BuffLunarCharged,
+					.def = c2BuffLunarCrystallize,
+					.em = c2BuffLunarBloom,
+					.allLunar{
+						.DMG = burstBuff,
 					},
 				},
 				.moonsignLevel = ConstantInt(1),
@@ -157,7 +161,7 @@ const Character::Data Character::Datas::columbina{
 						.name = "Character is within the Lunar Domain",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.allLunar{.DMG = burstBuff},
 							},
 						},
@@ -181,7 +185,7 @@ const Character::Data Character::Datas::columbina{
 						.name = "Lunar-Charged Kuuvahki Interference",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.atk = c2BuffLunarCharged,
 							},
 						},
@@ -191,7 +195,7 @@ const Character::Data Character::Datas::columbina{
 						.name = "Lunar-Bloom Kuuvahki Interference",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.em = c2BuffLunarBloom,
 							},
 						},
@@ -201,7 +205,7 @@ const Character::Data Character::Datas::columbina{
 						.name = "Lunar-Crystallize Kuuvahki Interference",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.def = c2BuffLunarCrystallize,
 							},
 						},

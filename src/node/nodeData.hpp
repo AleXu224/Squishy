@@ -9,6 +9,9 @@
 #include "utils/entryType.hpp"
 #include "utils/optional.hpp"
 #include "utils/overloaded.hpp"
+
+#include "utils.hpp"
+
 #include "variant"
 
 
@@ -35,7 +38,7 @@ namespace Node {
 	};
 
 	struct ModsData {
-		Stats::ModsSheet mods;
+		squi::utils::Container<Stats::ModsSheet> mods;
 	};
 
 	struct DirectLunarData {

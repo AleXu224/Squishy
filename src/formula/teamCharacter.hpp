@@ -237,7 +237,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Non-Moonsign Character Team Buff: {}", eval(context));
+			return Percentage("Non-Moonsign Character Team Buff: ", eval(context), true);
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
@@ -312,6 +312,31 @@ namespace Formula {
 			return values.at(0)
 				 + (values.at(1) * 0.5f)
 				 + ((values.at(2) + values.at(3)) * (1.f / 12.f));
+		}
+	};
+
+	struct ActiveCharacterFilter {
+		Formula::FloatNode formula;
+
+		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!activeCharacter) return Compiled::ConstantFloat{.value = 0};
+			if (context.source.instanceKey != activeCharacter->instanceKey) return Compiled::ConstantFloat{.value = 0};
+			return formula.compile(context);
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step step) const {
+			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!activeCharacter) return "";
+			if (context.source.instanceKey != activeCharacter->instanceKey) return "";
+			return formula.print(context, step);
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!activeCharacter) return {};
+			if (context.source.instanceKey != activeCharacter->instanceKey) return {};
+			return formula.eval(context);
 		}
 	};
 }// namespace Formula

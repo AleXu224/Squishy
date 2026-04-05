@@ -77,10 +77,10 @@ struct WeaponCardContent : StatelessWidget {
 	UI::WeaponCard::Actions actions;
 
 	[[nodiscard]] Child build(const Element &element) const {
-		auto header = WeaponHeader{
+		Child header = WeaponHeader{
 			.weapon = weapon,
 		};
-		auto content = Column{
+		Child content = Column{
 			.widget{
 				.padding = Padding{4.f},
 			},
@@ -103,7 +103,7 @@ struct WeaponCardContent : StatelessWidget {
 					: Child{},
 			},
 		};
-		auto footer = Row{
+		Child footer = Row{
 			.widget{
 				.height = Size::Shrink,
 				.padding = 4.f,

@@ -14,7 +14,7 @@
 using namespace squi;
 
 squi::core::Child UI::WeaponPage::State::build(const Element &element) {
-	auto addArtifactButton = Button{
+	Child addArtifactButton = Button{
 		.theme = Button::Theme::Accent(element),
 		.onClick = [this]() {
 			Navigator::of(*this->element).pushOverlay(WeaponSelector{
@@ -43,7 +43,7 @@ squi::core::Child UI::WeaponPage::State::build(const Element &element) {
 		.child = "Add weapon",
 	};
 
-	auto buttonBar = Row{
+	Child buttonBar = Row{
 		.widget{.height = Size::Shrink},
 		.children{
 			addArtifactButton,

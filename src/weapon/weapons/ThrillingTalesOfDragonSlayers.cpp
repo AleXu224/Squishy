@@ -24,11 +24,11 @@ const Weapon::Data Weapon::Datas::thrillingTalesOfDragonSlayers{
 		auto multiplier1 = WeaponMultiplier(true, {0.2400, 0.3000, 0.3600, 0.4200, 0.4800});
 
 		auto cond = IsActive("thrillingTalesCond");
-		auto buff = Requires(cond, multiplier1);
+		auto buff = Requires(cond && !Requirement::selfBuff, multiplier1);
 
 		return Data::Setup{
 			.mods{
-				.teamPreMod{
+				.activePreMod{
 					.atk_ = buff,
 				},
 			},
@@ -38,7 +38,7 @@ const Weapon::Data Weapon::Datas::thrillingTalesOfDragonSlayers{
 					.name = "After switching characters",
 					.teamBuff = true,
 					.mods{
-						.teamPreMod{
+						.activePreMod{
 							.atk_ = buff,
 						},
 					},

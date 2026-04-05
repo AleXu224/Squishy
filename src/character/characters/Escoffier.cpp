@@ -27,7 +27,6 @@ const Character::Data Character::Datas::escoffier{
 	.setup = []() -> Data::Setup {
 		auto hydroCount = ElementCount{Misc::Element::hydro};
 		auto cryoCount = ElementCount{Misc::Element::cryo};
-		auto isEscoffier = IsActiveCharacterId{10000112};
 
 		auto condA4 = IsActive("escoffierA4");
 		auto a4Res = Requires(
@@ -44,14 +43,18 @@ const Character::Data Character::Datas::escoffier{
 
 		auto condC2 = IsActive("escoffierC2");
 		auto c2BuffDisplay = Requires(Requirement::constellation2 && condC2, 2.4f * total.atk);
-		auto c2Buff = Requires(!isEscoffier, c2BuffDisplay);
+		auto c2Buff = Requires(!Requirement::selfBuff, c2BuffDisplay);
 
 		return Data::Setup{
 			.mods{
 				.teamPreMod{
 					.cryo{
-						.additiveDMG = c2Buff,
 						.critDMG = c1Buff,
+					},
+				},
+				.activePreMod{
+					.cryo{
+						.additiveDMG = c2Buff,
 					},
 				},
 				.enemy{
@@ -95,7 +98,7 @@ const Character::Data Character::Datas::escoffier{
 						.name = "Stacks active",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.cryo{
 									.additiveDMG = c2Buff,
 								},

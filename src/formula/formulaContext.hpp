@@ -20,6 +20,7 @@ namespace Stats {
 namespace Formula {
 	struct Context {
 		const Stats::State &source;
+		const Stats::State &prevSource = source;
 		const Stats::State &active;
 		const Stats::Team &team;
 		const Stats::Enemy &enemy;
@@ -29,6 +30,7 @@ namespace Formula {
 		[[nodiscard]] Context withSource(const Stats::State &newSource) const {
 			return {
 				.source = newSource,
+				.prevSource = source,
 				.active = active,
 				.team = team,
 				.enemy = enemy,
@@ -40,6 +42,7 @@ namespace Formula {
 		[[nodiscard]] Context withReaction(const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> &newReaction) const {
 			return {
 				.source = source,
+				.prevSource = prevSource,
 				.active = active,
 				.team = team,
 				.enemy = enemy,
@@ -51,6 +54,7 @@ namespace Formula {
 		[[nodiscard]] Context withOverrides(const Combo::Overrides *newOverrides) const {
 			return {
 				.source = source,
+				.prevSource = prevSource,
 				.active = active,
 				.team = team,
 				.enemy = enemy,

@@ -69,7 +69,7 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 }
 
 Node::Instance Combo::Source::Character::resolve(const Overrides &overrides) const {
-	const auto &ret = ::Character::list.at(key).data.nodes.fromEntry(slot).at(index);
+	const auto &ret = ::Character::list.at(key).data->nodes.fromEntry(slot).at(index);
 
 	if (!overrides.empty()) {
 		auto nodeCopy = ret;

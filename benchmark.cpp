@@ -123,7 +123,7 @@ namespace {
 	}
 
 	[[nodiscard]] const Node::Instance &getNode(Character::Instance &character) {
-		return character.state.stats.data.data.nodes.burst.at(0);
+		return character.state.stats.data.data->nodes.burst.at(0);
 	}
 
 	void formulaCalc(benchmark::State &state) {

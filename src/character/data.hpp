@@ -22,14 +22,14 @@ namespace Character {
 		Stats::CharacterBase baseStats;
 		std::function<Setup(void)> setup;
 
-		Setup data = [](const std::function<Setup(void)> &setup) {
-			return setup();
+		std::unique_ptr<Setup> data = [](const std::function<Setup(void)> &setup) {
+			return std::make_unique<Setup>(setup());
 		}(setup);
 
 		void getOpts(Option::TypesMap &options) const {
 			Option::mapOptions(
 				options,
-				data.opts
+				data->opts
 			);
 		}
 	};

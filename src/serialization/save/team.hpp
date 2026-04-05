@@ -15,6 +15,7 @@ namespace Serialization::Save {
 		::Team::InstanceKey instanceKey;
 		std::string name;
 		std::array<std::optional<::Character::InstanceKey>, 4> characters;
+		uint32_t activeCharacterIndex;
 		std::vector<Serialization::Save::OptionTypes> options;
 
 		static Team fromInstance(const ::Team::Instance &);

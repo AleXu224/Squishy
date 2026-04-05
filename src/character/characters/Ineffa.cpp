@@ -41,14 +41,17 @@ const Character::Data Character::Datas::ineffa{
 
 		return Data::Setup{
 			.mods{
+				.postMod{
+					.em = a4Buff,
+				},
 				.teamPreMod{
 					.lunarCharged{
 						.DMG = c1Buff,
 						.multiplicativeDMG = p3Buff,
 					},
 				},
-				.teamPostMod{
-					.em = a4Buff,
+				.activePostMod{
+					.em = Requires{.requirement = !Requirement::selfBuff, .ret = a4Buff},
 				},
 				.moonsignLevel = ConstantInt(1),
 			},
@@ -59,8 +62,11 @@ const Character::Data Character::Datas::ineffa{
 						.name = "After using Elemental Burst",
 						.teamBuff = true,
 						.mods{
-							.teamPostMod{
+							.postMod{
 								.em = a4Buff,
+							},
+							.activePostMod{
+								.em = Requires{.requirement = !Requirement::selfBuff, .ret = a4Buff},
 							},
 						},
 					},

@@ -16,7 +16,7 @@
 using namespace squi;
 
 squi::core::Child UI::CharacterList::State::build(const Element &element) {
-	auto characterAddButton = Button{
+	Child characterAddButton = Button{
 		.onClick = [this]() {
 			Navigator::of(*this->element).pushOverlay(CharacterDataSelector{
 				.onSelect = [](Character::DataKey dataKey) {

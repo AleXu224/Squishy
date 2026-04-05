@@ -51,7 +51,7 @@ struct CharacterSelectorCharacterCard : StatelessWidget {
 
 		const auto &characterData = Character::list.at(character.dataKey);
 
-		auto details = Column{
+		Child details = Column{
 			.widget{
 				.height = Size::Shrink,
 				.padding = Padding(0.f, 8.f).withRight(8.f),
@@ -70,7 +70,7 @@ struct CharacterSelectorCharacterCard : StatelessWidget {
 			},
 		};
 
-		auto image = Box{
+		Child image = Box{
 			.widget{
 				.width = 96.f,
 				.height = 96.f,
@@ -83,7 +83,7 @@ struct CharacterSelectorCharacterCard : StatelessWidget {
 			},
 		};
 
-		auto content = Row{
+		Child content = Row{
 			.spacing = 12.f,
 			.children{
 				image,
@@ -119,7 +119,7 @@ void UI::CharacterSelector::State::initState() {
 squi::core::Child UI::CharacterSelector::State::build(const Element &) {
 	VoidObservable closeEvent{};
 
-	auto elementFilter = LiteFilter{
+	Child elementFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::characterElements.size());
@@ -141,7 +141,7 @@ squi::core::Child UI::CharacterSelector::State::build(const Element &) {
 			return ret;
 		}(),
 	};
-	auto weaponTypeFilter = LiteFilter{
+	Child weaponTypeFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::weaponTypes.size());
@@ -177,7 +177,7 @@ squi::core::Child UI::CharacterSelector::State::build(const Element &) {
 
 		return ret;
 	};
-	auto content = ScrollView{
+	Child content = ScrollView{
 		.children{
 			Grid{
 				.widget{
@@ -191,7 +191,7 @@ squi::core::Child UI::CharacterSelector::State::build(const Element &) {
 		},
 	};
 
-	auto header = Column{
+	Child header = Column{
 		.widget{
 			.height = Size::Shrink,
 			.margin = Margin(24.f, 0.f),

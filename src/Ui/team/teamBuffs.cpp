@@ -4,6 +4,9 @@
 
 #include "store.hpp"
 #include "teamCharacterBuffsCard.hpp"
+#include "widgets/builder.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
 #include "widgets/scrollview.hpp"
 #include "widgets/themeOverride.hpp"
 
@@ -16,7 +19,7 @@ squi::core::Child UI::TeamBuffs::State::build(const Element &element) {
 
 	auto theme = Theme::of(element);
 
-	for (const auto &character: team.stats.characters) {
+	for (const auto &[index, character]: team.stats.characters | std::views::enumerate) {
 		if (!character) continue;
 
 		auto newTheme = theme;
@@ -24,9 +27,35 @@ squi::core::Child UI::TeamBuffs::State::build(const Element &element) {
 
 		teamCharacters.emplace_back(ThemeOverride{
 			.theme = newTheme,
-			.child = UI::TeamCharacterBuffsCard{
-				.team = team,
-				.character = *character,
+			.child = Column{
+				.widget{
+					.width = Size::Wrap,
+					.height = Size::Wrap,
+				},
+				.spacing = 4.f,
+				.children{
+					Builder{
+						.builder = [this, index, &team](const Element &element) {
+							return Button{
+								.widget{
+									.width = Size::Expand,
+								},
+								.theme = Button::Theme::Accent(element),
+								.disabled = index == team.stats.activeCharacterIndex,
+								.onClick = [this, index]() {
+									auto &team = Store::teams.at(widget->instanceKey);
+									team.stats.activeCharacterIndex = index;
+									team.updateEvent.notify();
+								},
+								.child = "Make Active",
+							};
+						},
+					},
+					UI::TeamCharacterBuffsCard{
+						.team = team,
+						.character = *character,
+					},
+				},
 			},
 		});
 	}

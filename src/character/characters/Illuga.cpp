@@ -32,12 +32,12 @@ const Character::Data Character::Datas::illuga{
 		};
 		auto burstLunarCrystallizeDmgIncrease = Requires{
 			.requirement = burstCond,
-			.ret = Multiplier(total.atk, LevelableTalent::burst, {2.2592, 2.4286, 2.5981, 2.8240, 2.9934, 3.1629, 3.3888, 3.6147, 3.8406, 4.0666, 4.2925, 4.5184, 4.8008, 5.0832, 5.3656}),
+			.ret = Multiplier(total.em, LevelableTalent::burst, {2.2592, 2.4286, 2.5981, 2.8240, 2.9934, 3.1629, 3.3888, 3.6147, 3.8406, 4.0666, 4.2925, 4.5184, 4.8008, 5.0832, 5.3656}),
 		};
 
 		auto a1Cond = IsActive("illugaA1Cond");
 		auto a1CrBuff = Requires{
-			.requirement = Requirement::passive1 && a1Cond,
+			.requirement = Requirement::passive1 && a1Cond && !Requirement::selfBuff,
 			.ret = IfElse{
 				.requirement = Requirement::constellation6,
 				.trueVal = Constant(0.10f),
@@ -45,7 +45,7 @@ const Character::Data Character::Datas::illuga{
 			},
 		};
 		auto a1CdBuff = Requires{
-			.requirement = Requirement::passive1 && a1Cond,
+			.requirement = Requirement::passive1 && a1Cond && !Requirement::selfBuff,
 			.ret = IfElse{
 				.requirement = Requirement::constellation6,
 				.trueVal = Constant(0.30f),
@@ -53,8 +53,12 @@ const Character::Data Character::Datas::illuga{
 			},
 		};
 		auto a1EmBuff = Requires{
-			.requirement = Requirement::passive1 && Requirement::ascendantGleam && a1Cond,
-			.ret = ConstantFlat(50.f),
+			.requirement = Requirement::passive1 && Requirement::ascendantGleam && a1Cond && !Requirement::selfBuff,
+			.ret = IfElse{
+				.requirement = Requirement::constellation6,
+				.trueVal = ConstantFlat(80.f),
+				.elseVal = ConstantFlat(50.f),
+			},
 		};
 
 		auto a4Count = ElementCount{.element = Misc::Element::geo} + ElementCount{.element = Misc::Element::hydro};
@@ -92,12 +96,16 @@ const Character::Data Character::Datas::illuga{
 		return Data::Setup{
 			.mods{
 				.teamPreMod{
-					.def = c4Buff,
 					.em = a1EmBuff,
 					.geo{
-						.additiveDMG = burstDmgIncrease + a4GeoDmgIncrease,
 						.critRate = a1CrBuff,
 						.critDMG = a1CdBuff,
+					},
+				},
+				.activePreMod{
+					.def = c4Buff,
+					.geo{
+						.additiveDMG = burstDmgIncrease + a4GeoDmgIncrease,
 					},
 					.lunarCrystallize{
 						.additiveDMG = burstLunarCrystallizeDmgIncrease + a4LunarCrystallizeDmgIncrease,
@@ -112,7 +120,7 @@ const Character::Data Character::Datas::illuga{
 						.name = "Burst Active",
 						.teamBuff = true,
 						.mods{
-							.teamPreMod{
+							.activePreMod{
 								.def = c4Buff,
 								.geo{
 									.additiveDMG = burstDmgIncrease + a4GeoDmgIncrease,

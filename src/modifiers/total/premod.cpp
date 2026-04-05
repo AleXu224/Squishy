@@ -22,6 +22,7 @@ namespace Modifiers {
 		Formula::FloatNode artifactSetStat;
 		Formula::FloatNode artifactSubStats;
 		Formula::FloatNode teamPreStat;
+		Formula::FloatNode activePreStat;
 		Formula::FloatNode teamResonances;
 		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
 			return characterKitStat.compile(context)
@@ -31,11 +32,21 @@ namespace Modifiers {
 				 + artifactSetStat.compile(context)
 				 + artifactSubStats.compile(context)
 				 + teamPreStat.compile(context)
+				 + activePreStat.compile(context)
 				 + teamResonances.compile(context);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterKitStat + characterInstanceStat + weaponPassiveStat + weaponInstanceStat + artifactSetStat + artifactSubStats + teamPreStat).print(context, prevStep);
+			return (characterKitStat
+					+ characterInstanceStat
+					+ weaponPassiveStat
+					+ weaponInstanceStat
+					+ artifactSetStat
+					+ artifactSubStats
+					+ teamPreStat
+					+ activePreStat
+					+ teamResonances)
+				.print(context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -46,6 +57,7 @@ namespace Modifiers {
 				 + artifactSetStat.eval(context)
 				 + artifactSubStats.eval(context)
 				 + teamPreStat.eval(context)
+				 + activePreStat.eval(context)
 				 + teamResonances.eval(context);
 		}
 	};
@@ -59,6 +71,7 @@ namespace Modifiers {
 			Artifact::Set::preMods(),
 			Artifact::subStats(),
 			Team::preMods(),
+			Team::activePreMods(),
 			Team::resonances()
 		);
 		return ret;

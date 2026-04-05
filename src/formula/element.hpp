@@ -155,7 +155,9 @@ namespace Formula {
 		}
 	};
 
-	struct IsActiveCharacterElement {
+	// Used when needing to check the element of the character that is to receive a team buff.
+	// If this is not used in a team buff context then the result can be incorrect, use `IsCharacterElement` instead.
+	struct IsTargetCharacterElement {
 		Misc::Element element;
 
 		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
@@ -167,7 +169,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.stats.base.element == element;
+			return context.prevSource.stats.base.element == element;
 		}
 	};
 }// namespace Formula

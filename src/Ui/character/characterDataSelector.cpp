@@ -98,7 +98,7 @@ struct CharacterDataSelectorCharacterCard : StatelessWidget {
 };
 
 squi::core::Child UI::CharacterDataSelector::State::build(const Element &element) {
-	auto elementFilter = LiteFilter{
+	Child elementFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::characterElements.size());
@@ -120,7 +120,7 @@ squi::core::Child UI::CharacterDataSelector::State::build(const Element &element
 			return ret;
 		}(),
 	};
-	auto weaponTypeFilter = LiteFilter{
+	Child weaponTypeFilter = LiteFilter{
 		.items = [&]() {
 			std::vector<LiteFilter::Item> ret{};
 			ret.reserve(Misc::weaponTypes.size());
@@ -155,7 +155,7 @@ squi::core::Child UI::CharacterDataSelector::State::build(const Element &element
 
 		return ret;
 	};
-	auto content = ScrollView{
+	Child content = ScrollView{
 		.children{
 			Grid{
 				.widget{
@@ -169,7 +169,7 @@ squi::core::Child UI::CharacterDataSelector::State::build(const Element &element
 		},
 	};
 
-	auto header = Column{
+	Child header = Column{
 		.widget{
 			.height = Size::Shrink,
 			.margin = Margin(24.f, 0.f),

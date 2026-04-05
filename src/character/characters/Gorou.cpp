@@ -25,13 +25,13 @@ const Character::Data Character::Datas::gorou{
 		.ascensionStatUpgrade = {0.000, 0.000, 0.060, 0.120, 0.120, 0.180, 0.240},
 	},
 	.setup = []() -> Data::Setup {
-		auto burstCond = IsActive("gorouSkillActive");
-		auto burstDefIncrease = Requires{
-			.requirement = burstCond && ElementCount{.element = Misc::Element::geo} >= 1,
+		auto skillCond = IsActive("gorouSkillActive");
+		auto skillDefIncrease = Requires{
+			.requirement = skillCond && ElementCount{.element = Misc::Element::geo} >= 1,
 			.ret = Multiplier(Utils::EntryType::points, LevelableTalent::skill, {206.1600, 221.6220, 237.0840, 257.7000, 273.1620, 288.6240, 309.2400, 329.8560, 350.4720, 371.0880, 391.7040, 412.3200, 438.0900, 463.8600, 489.6300}),
 		};
-		auto burstGeoDMG = Requires{
-			.requirement = burstCond && ElementCount{.element = Misc::Element::geo} >= 3,
+		auto skillGeoDMG = Requires{
+			.requirement = skillCond && ElementCount{.element = Misc::Element::geo} >= 3,
 			.ret = Multiplier(Utils::EntryType::multiplier, LevelableTalent::skill, {0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500, 0.1500}),
 		};
 
@@ -51,15 +51,15 @@ const Character::Data Character::Datas::gorou{
 		};
 
 		auto c6BuffStandingFirm = Requires{
-			.requirement = Requirement::constellation6 && a1Cond && ElementCount{.element = Misc::Element::geo} == 1,
+			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} == 1,
 			.ret = Constant(0.10f),
 		};
 		auto c6BuffImpregnable = Requires{
-			.requirement = Requirement::constellation6 && a1Cond && ElementCount{.element = Misc::Element::geo} == 2,
+			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} == 2,
 			.ret = Constant(0.20f),
 		};
 		auto c6BuffCrunch = Requires{
-			.requirement = Requirement::constellation6 && a1Cond && ElementCount{.element = Misc::Element::geo} >= 3,
+			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} >= 3,
 			.ret = Constant(0.40f),
 		};
 		auto c6Buff = c6BuffStandingFirm + c6BuffImpregnable + c6BuffCrunch;
@@ -67,11 +67,15 @@ const Character::Data Character::Datas::gorou{
 		return Data::Setup{
 			.mods{
 				.teamPreMod{
-					.def = burstDefIncrease,
 					.def_ = a1Buff,
 					.geo{
-						.DMG = burstGeoDMG,
 						.critDMG = c6Buff,
+					},
+				},
+				.activePreMod{
+					.def = skillDefIncrease,
+					.geo{
+						.DMG = skillGeoDMG,
 					},
 				},
 			},
@@ -83,8 +87,13 @@ const Character::Data Character::Datas::gorou{
 						.teamBuff = true,
 						.mods{
 							.teamPreMod{
-								.def = burstDefIncrease,
-								.geo{.DMG = burstGeoDMG},
+								.geo{
+									.critDMG = c6Buff,
+								},
+							},
+							.activePreMod{
+								.def = skillDefIncrease,
+								.geo{.DMG = skillGeoDMG},
 							},
 						},
 					},
@@ -167,12 +176,12 @@ const Character::Data Character::Datas::gorou{
 					Node::Info{
 						.name = "DEF Increase",
 						.type = Utils::EntryType::points,
-						.formula = burstDefIncrease,
+						.formula = skillDefIncrease,
 					},
 					Node::Info{
 						.name = "Geo DMG Bonus",
 						.type = Utils::EntryType::multiplier,
-						.formula = burstGeoDMG,
+						.formula = skillGeoDMG,
 					},
 					Node::Info{
 						.name = "Duration",

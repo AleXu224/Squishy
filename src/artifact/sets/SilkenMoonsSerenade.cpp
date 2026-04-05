@@ -23,8 +23,7 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 			}
 		};
 
-		auto condGleamingMoon = GetFloat("silkenMoonsSerenadeGleamingMoonEffectCount");
-		auto gleamingMoonBuff = condGleamingMoon * Constant(0.1f);
+		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant(0.1f)};
 
 		return Set::Setup{
 			.twoPc{
@@ -43,16 +42,6 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 						.mods{
 							.teamPreMod{
 								.em = buff,
-							},
-						},
-					},
-					Option::ValueList{
-						.key = "silkenMoonsSerenadeGleamingMoonEffectCount",
-						.prefix = "Gleaming Moon effect count",
-						.teamBuff = true,
-						.values{1, 2, 3},
-						.mods{
-							.teamPreMod{
 								.allLunar{.DMG = gleamingMoonBuff},
 							},
 						},
