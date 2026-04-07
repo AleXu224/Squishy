@@ -12,6 +12,7 @@
 #include "character/characters/Illuga.hpp"
 #include "character/characters/Ineffa.hpp"
 #include "character/characters/KamisatoAyaka.hpp"
+#include "character/characters/Linnea.hpp"
 #include "character/characters/Mavuika.hpp"
 #include "character/characters/Nahida.hpp"
 #include "character/characters/Neuvillette.hpp"
@@ -34,6 +35,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::illuga.key, Character::Datas::illuga},
 		{Character::Datas::ineffa.key, Character::Datas::ineffa},
 		{Character::Datas::kamisatoAyaka.key, Character::Datas::kamisatoAyaka},
+		{Character::Datas::linnea.key, Character::Datas::linnea},
 		{Character::Datas::mavuika.key, Character::Datas::mavuika},
 		{Character::Datas::nahida.key, Character::Datas::nahida},
 		{Character::Datas::neuvillette.key, Character::Datas::neuvillette},

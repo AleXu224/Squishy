@@ -47,6 +47,93 @@ namespace Formula {
 		}
 	};
 
+	template<FormulaLike T>
+	struct ActiveCharacter {
+		T formula;
+
+		using RetType = FormulaType<T>;
+
+		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
+			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!character) return Compiled::Constant<RetType>{.value = {}};
+			return formula.compile(context.withSource(character->state));
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!character) return "";
+			auto &stats = character->state;
+			return fmt::format(
+				"{} {}",
+				stats.stats.data.name,
+				formula.print(context.withSource(stats), prevStep)
+			);
+		}
+
+		[[nodiscard]] RetType eval(const Context &context) const {
+			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			if (!character) return {};
+			return formula.eval(context.withSource(character->state));
+		}
+	};
+
+	template<FormulaLike T>
+	struct PreviousCharacter {
+		T formula;
+
+		using RetType = FormulaType<T>;
+
+		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
+			return formula.compile(context.withSource(context.prevSource));
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			return fmt::format(
+				"{} {}",
+				context.prevSource.stats.data.name,
+				formula.print(context.withSource(context.prevSource), prevStep)
+			);
+		}
+
+		[[nodiscard]] RetType eval(const Context &context) const {
+			return formula.eval(context.withSource(context.prevSource));
+		}
+	};
+
+	template<ArithmeticFormula T>
+	struct TeamEvalSum {
+		T formula;
+
+		using RetType = FormulaType<T>;
+		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) {
+			using namespace Formula::Operators;
+			return (TeamCharacter{.index = 0, .formula = formula}
+					+ TeamCharacter{.index = 1, .formula = formula}
+					+ TeamCharacter{.index = 2, .formula = formula}
+					+ TeamCharacter{.index = 3, .formula = formula})
+				.compile(context);
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step) {
+			return fmt::format("{}", eval(context));
+		}
+
+		[[nodiscard]] RetType eval(const Context &context) {
+			const auto &character1 = context.team.characters.at(0);
+			const auto &character2 = context.team.characters.at(1);
+			const auto &character3 = context.team.characters.at(2);
+			const auto &character4 = context.team.characters.at(3);
+
+			RetType ret = 0;
+			if (character1) ret += formula.eval(context.withSource(character1->state));
+			if (character2) ret += formula.eval(context.withSource(character2->state));
+			if (character3) ret += formula.eval(context.withSource(character3->state));
+			if (character4) ret += formula.eval(context.withSource(character4->state));
+
+			return ret;
+		}
+	};
+
 	struct TeamInfusion {
 		[[nodiscard]] static Compiled::ElementNode compile(const Context &context) {
 			return Compiled::ConstantElement{.value = eval(context)};

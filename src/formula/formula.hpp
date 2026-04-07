@@ -13,3 +13,4 @@
 #include "prefix.hpp"        // IWYU pragma: export
 #include "refinement.hpp"    // IWYU pragma: export
 #include "requires.hpp"      // IWYU pragma: export
+#include "teamCharacter.hpp" // IWYU pragma: export
