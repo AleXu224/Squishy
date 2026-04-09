@@ -86,6 +86,20 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 					},
 				},
 				Expander{
+					.title = "Use equipped artifacts",
+					.subtitle = "Whether to allow to usage of artifacts currently equipped on other characters",
+					.action{
+						ToggleSwitch{
+							.active = character.optimizationOptions->useEquippedArtifacts,
+							.onToggle = [this, storage = character.optimizationOptions](bool active) {
+								setState([&]() {
+									storage->useEquippedArtifacts = active;
+								});
+							},
+						},
+					},
+				},
+				Expander{
 					.title = "Optimize",
 					.action{
 						Row{

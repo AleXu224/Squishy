@@ -14,6 +14,7 @@ namespace Optimization {
 		std::unordered_map<Artifact::SetKey, bool> fourPcSets{};
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
+		bool useEquippedArtifacts = true;
 
 		Options() {
 			for (const auto &[key, set]: Artifact::sets) {

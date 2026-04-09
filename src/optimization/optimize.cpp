@@ -15,6 +15,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	std::vector<Artifact::Instance> artifacts;
 	artifacts.reserve(::Store::artifacts.size());
 	for (const auto &[_, artifact]: ::Store::artifacts) {
+		if (!options.useEquippedArtifacts && artifact.equippedOn() && artifact.equippedOn() != character.instanceKey)
+			continue;
 		artifacts.emplace_back(artifact);
 	}
 	auto end_artifactDuplication = std::chrono::high_resolution_clock::now();
