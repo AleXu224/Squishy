@@ -1,6 +1,7 @@
 import pascalCase from "https://deno.land/x/case@2.2.0/pascalCase.ts";
-import { Weapon } from "./weaponType.d.ts";
+import { Weapon } from "./weaponTypeNanoka.d.ts";
 import { camelCase } from "https://deno.land/x/case@2.2.0/mod.ts";
+import { ManifestNanoka } from "./manifestNanoka.d.ts";
 
 if (Deno.args[0] == undefined) {
 	console.error("Usage: weaponGenerator.ts <weapon id>\neg: deno run .\\scripts\\weaponGenerator.ts 13101");
@@ -15,7 +16,14 @@ try {
 	Deno.exit(1);
 }
 
-const response = await fetch(`https://api.hakush.in/gi/data/en/weapon/${Deno.args[0]}.json`);
+const manifestNanokaResponse = await fetch("https://static.nanoka.cc/manifest.json");
+if (!manifestNanokaResponse.ok) {
+	console.error(`Failed to get the manifest with code ${manifestNanokaResponse.status}, "${manifestNanokaResponse.statusText}"`);
+	Deno.exit(1);
+}
+const manifestNanoka: ManifestNanoka = await manifestNanokaResponse.json();
+
+const response = await fetch(`https://static.nanoka.cc/gi/${manifestNanoka.gi.latest}/en/weapon/${Deno.args[0]}.json`);
 if (!response.ok) {
 	console.error(`Response failed with code ${response.status}, "${response.statusText}"`);
 }
@@ -50,16 +58,16 @@ const stat = new Map<string, string>([
 
 const data = {
 	key: Deno.args[0],
-	name: contents.Name,
-	caseableName: contents.Name.replaceAll("'", ""),
-	type: weaponType.get(contents.WeaponType),
-	growCurve: contents.WeaponProp[0].type.replace("GROW_CURVE_", ""),
-	hasSubstat: Object.entries(contents.StatsModifier).length > 1,
-	subStat: stat.get(Object.keys(contents.StatsModifier)[1]),
-	subStatValue: Object.values(contents.StatsModifier)[1]?.Base,
-	subStatCurve: contents.WeaponProp[1].type.replace("GROW_CURVE_", ""),
-	icon: `https://api.hakush.in/gi/UI/${contents.Icon}.webp`,
-	iconAwaken: `https://api.hakush.in/gi/UI/${contents.Icon}_Awaken.webp`,
+	name: contents.name,
+	caseableName: contents.name.replaceAll("'", ""),
+	type: weaponType.get(contents.weapon_type),
+	growCurve: contents.weapon_prop[0].type.replace("GROW_CURVE_", ""),
+	hasSubstat: Object.entries(contents.stats_modifier).length > 1,
+	subStat: stat.get(Object.keys(contents.stats_modifier)[1].toUpperCase()),
+	subStatValue: Object.values(contents.stats_modifier)[1]?.base,
+	subStatCurve: contents.weapon_prop[1].type.replace("GROW_CURVE_", ""),
+	icon: `https://static.nanoka.cc/assets/gi/${contents.icon}.webp`,
+	iconAwaken: `https://static.nanoka.cc/assets/gi/${contents.icon}_Awaken.webp`,
 };
 
 const subStatStr = `.subStat = SubStat{
@@ -72,8 +80,10 @@ const subStatStr = `.subStat = SubStat{
 
 const ascensionUpgrade = new Float32Array(7);
 
-for (const [key, value] of Object.entries(contents.Ascension)) {
-	ascensionUpgrade[parseInt(key)] = value.FIGHT_PROP_BASE_ATTACK;
+ascensionUpgrade[0] = 0;
+
+for (const [key, value] of Object.entries(contents.ascension)) {
+	ascensionUpgrade[parseInt(key)] = value.fight_prop_base_attack;
 }
 
 const ascensionUpgradeStr: string[] = [];
@@ -83,8 +93,8 @@ for (const val of ascensionUpgrade) {
 }
 
 const refinementParams: Float32Array[] = [];
-for (const [key, value] of Object.entries(contents.Refinement)) {
-	for (const [valKey, val] of Object.entries(value.ParamList)) {
+for (const [key, value] of Object.entries(contents.refinement)) {
+	for (const [valKey, val] of Object.entries(value.param_list)) {
 		if (refinementParams[parseInt(valKey)] === undefined) refinementParams[parseInt(valKey)] = new Float32Array(5);
 		refinementParams[parseInt(valKey)][parseInt(key) - 1] = val;
 	}
@@ -124,8 +134,8 @@ const Weapon::Data Weapon::Datas::${camelCase(data.caseableName)}{
 	.name = "${data.name}",
 	.baseStats{
 		.type = ${data.type},
-		.rarity = ${contents.Rarity},
-		.baseAtk = ${contents.StatsModifier.ATK.Base.toFixed(3)},
+		.rarity = ${contents.rarity},
+		.baseAtk = ${contents.stats_modifier.atk.base.toFixed(3)},
 		.atkCurve = Curves::WeaponGrow::${data.growCurve},
 		${data.hasSubstat ? subStatStr : ".subStat{},"}
 		.ascensionUpgrade{${ascensionUpgradeStr.join(", ")}}
