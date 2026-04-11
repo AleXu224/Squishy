@@ -24,12 +24,15 @@ const Weapon::Data Weapon::Datas::aquaSimulacra{
 		auto multiplier1 = WeaponMultiplier(true, {0.1600, 0.2000, 0.2400, 0.2800, 0.3200});
 		auto multiplier2 = WeaponMultiplier(true, {0.2000, 0.2500, 0.3000, 0.3500, 0.4000});
 
+		auto cond = IsActive("aquaSimulacraCond");
+		auto buff = Requires{cond, multiplier2};
+
 		return Data::Setup{
 			.mods{
 				.preMod{
 					.hp_ = multiplier1,
 					.all{
-						.DMG = multiplier2,
+						.DMG = buff,
 					},
 				},
 			},
@@ -40,7 +43,7 @@ const Weapon::Data Weapon::Datas::aquaSimulacra{
 					.mods{
 						.preMod{
 							.all{
-								.DMG = multiplier2,
+								.DMG = buff,
 							},
 						},
 					},

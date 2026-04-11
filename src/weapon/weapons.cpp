@@ -7,6 +7,7 @@
 #include "weapons/AThousandBlazingSuns.hpp"
 #include "weapons/AmenomaKageuchi.hpp"
 #include "weapons/ApprenticeSNotes.hpp"
+#include "weapons/AquaSimulacra.hpp"
 #include "weapons/AquilaFavonia.hpp"
 #include "weapons/AstralVulturesCrimsonPlumage.hpp"
 #include "weapons/Azurelight.hpp"
@@ -21,6 +22,7 @@
 #include "weapons/FavoniusSword.hpp"
 #include "weapons/FavoniusWarbow.hpp"
 #include "weapons/FracturedHalo.hpp"
+#include "weapons/GoldenFrostboundOath.hpp"
 #include "weapons/HarbingerOfDawn.hpp"
 #include "weapons/HunterSBow.hpp"
 #include "weapons/KitainCrossSpear.hpp"
@@ -49,6 +51,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::aThousandBlazingSuns.key, Weapon::Datas::aThousandBlazingSuns},
 		{Weapon::Datas::amenomaKageuchi.key, Weapon::Datas::amenomaKageuchi},
 		{Weapon::Datas::apprenticeSNotes.key, Weapon::Datas::apprenticeSNotes},
+		{Weapon::Datas::aquaSimulacra.key, Weapon::Datas::aquaSimulacra},
 		{Weapon::Datas::aquilaFavonia.key, Weapon::Datas::aquilaFavonia},
 		{Weapon::Datas::astralVulturesCrimsonPlumage.key, Weapon::Datas::astralVulturesCrimsonPlumage},
 		{Weapon::Datas::azurelight.key, Weapon::Datas::azurelight},
@@ -63,6 +66,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
 		{Weapon::Datas::fracturedHalo.key, Weapon::Datas::fracturedHalo},
+		{Weapon::Datas::goldenFrostboundOath.key, Weapon::Datas::goldenFrostboundOath},
 		{Weapon::Datas::harbingerOfDawn.key, Weapon::Datas::harbingerOfDawn},
 		{Weapon::Datas::hunterSBow.key, Weapon::Datas::hunterSBow},
 		{Weapon::Datas::kitainCrossSpear.key, Weapon::Datas::kitainCrossSpear},
