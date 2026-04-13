@@ -186,10 +186,13 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto start = std::chrono::high_resolution_clock::now();
 	static uint64_t runID = 0;
 	runID++;
+
+	auto preCompiledNode = optimizedNode.fold(ctx, {.enableGates = true});
+
 	std::for_each(
 		std::execution::parallel_unsequenced_policy{},
 		filters.begin(), filters.end(),
-		[&initialArtifacts, &combed, &solutions, &optimizedNode = optimizedNode, &character_original = character, filterCount, &initialCtx = ctx, runID = runID](const ArtifactFilter &filter) {
+		[&initialArtifacts, &combed, &solutions, &optimizedNode = preCompiledNode, &character_original = character, filterCount, &initialCtx = ctx, runID = runID](const ArtifactFilter &filter) {
 			thread_local uint64_t localRunID = runID;
 			thread_local OptimizationThreadData threadData{character_original, initialCtx};
 

@@ -25,7 +25,15 @@ namespace Formula {
 		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
 			const auto &character = context.team.characters.at(index);
 			if (!character) return ConstantBase<RetType>{.value = {}};
-			return formula.fold(context.withSource(character->state), args);
+			auto ret = formula.fold(context.withSource(character->state), args);
+			auto type = ret.getType();
+			if (type == Formula::Type::constant) {
+				return ret;
+			}
+			return TeamCharacter<decltype(ret)>{
+				.index = index,
+				.formula = ret,
+			};
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {

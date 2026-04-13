@@ -5,6 +5,7 @@
 #include "formula/context.hpp"// IWYU pragma: keep
 #include "formula/type.hpp"
 #include "memory"
+#include <algorithm>
 #include <memory_resource>
 
 

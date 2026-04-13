@@ -11,9 +11,15 @@ namespace Modifiers::Artifact::Set {
 	struct SetFormula : Formula::FormulaBase<RetType<Ret>> {
 		Ret sheet1;
 		Ret sheet2;
-		[[nodiscard]] auto fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+		[[nodiscard]] Formula::NodeType<RetType<Ret>> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto ret = sheet1
 					 + sheet2;
+			if (&context.active == &context.source && args.enableGates) {
+				return SetFormula{
+					.sheet1 = sheet1,
+					.sheet2 = sheet2,
+				};
+			}
 			return ret.fold(context, args);
 		}
 

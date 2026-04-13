@@ -159,6 +159,7 @@ namespace {
 		};
 
 		auto compiledNode = node.formula.fold(ctx, {});
+		auto preCompiledNode = node.formula.fold(ctx, {.enableGates = true});
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
@@ -168,7 +169,8 @@ namespace {
 			// Compile formula using the custom allocator, while also keeping the memory between runs
 			{
 				Formula::enableAllocator = true;
-				benchmark::DoNotOptimize(node.formula.fold(ctx, {}));
+				// benchmark::DoNotOptimize(node.formula.fold(ctx, {}));
+				benchmark::DoNotOptimize(preCompiledNode.fold(ctx, {}));
 			}
 			Formula::enableAllocator = false;
 			Formula::NodeAllocator::reset();

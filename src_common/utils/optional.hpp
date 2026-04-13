@@ -31,6 +31,12 @@ namespace Utils {
 			return std::move(other);
 		}
 
+		[[nodiscard]] constexpr bool operator==(const JankyOptional<T> &other) const {
+			if (this->_hasValue != other._hasValue) return false;
+			if (!this->_hasValue) return true;
+			return this->_value == other._value;
+		}
+
 	private:
 		bool _hasValue;
 		T _value;

@@ -1,5 +1,7 @@
 #pragma once
 
 namespace Formula {
-    struct FoldArgs {};
-}
+	struct FoldArgs {
+		bool enableGates = false;
+	};
+}// namespace Formula
