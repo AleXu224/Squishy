@@ -1,7 +1,8 @@
 #include "team.hpp"
-#include "formula/element.hpp"
+#include "formula/elemental.hpp"
 #include "formula/operators.hpp"
 #include "formula/option.hpp"
+#include "formula/requirement.hpp"
 #include "formula/requires.hpp"
 #include "formula/teamCharacter.hpp"
 
@@ -9,35 +10,37 @@
 Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::TeamMoonsignLevel{}) {
 	using namespace Formula::Operators;
 
-	using IsActive = Formula::impl_IsActivePassive;
+	auto IsActive = [](const Utils::HashedString &str) {
+		return Formula::impl_IsActivePassive{.name = str};
+	};
 
 	// Pyro
-	resonances.atk_.modifiers.at(0) = Formula::Requires(Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::pyro) >= 2, Formula::Constant(0.25f));
+	resonances.atk_.modifiers.at(0) = Formula::Requires{.requirement = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount{.element = Misc::Element::pyro} >= 2, .ret = Formula::Constant{.value = 0.25f}};
 
 	// Hydro
-	resonances.hp_.modifiers.at(0) = Formula::Requires(Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::hydro) >= 2, Formula::Constant(0.25f));
+	resonances.hp_.modifiers.at(0) = Formula::Requires{.requirement = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount{.element = Misc::Element::hydro} >= 2, .ret = Formula::Constant{.value = 0.25f}};
 
 	// Cryo
-	auto cryoCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::cryo) >= 2;
-	auto cryoBuff = Formula::Requires(cryoCond && IsActive("teamCryoCond"), Formula::Constant(0.15f));
+	auto cryoCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount{.element = Misc::Element::cryo} >= 2;
+	auto cryoBuff = Formula::Requires{.requirement = cryoCond && IsActive("teamCryoCond"), .ret = Formula::Constant{.value = 0.15f}};
 	resonances.cr.modifiers.at(0) = cryoBuff;
 
 	// Geo
-	auto geoCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::geo) >= 2;
-	resonances.shield_.modifiers.at(0) = Formula::Requires(geoCond, Formula::Constant(0.15f));
-	auto geoBuff1 = Formula::Requires(geoCond && IsActive("teamGeoCond"), Formula::Constant(0.15f));
+	auto geoCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount{.element = Misc::Element::geo} >= 2;
+	resonances.shield_.modifiers.at(0) = Formula::Requires{.requirement = geoCond, .ret = Formula::Constant{.value = 0.15f}};
+	auto geoBuff1 = Formula::Requires{.requirement = geoCond && IsActive("teamGeoCond"), .ret = Formula::Constant{.value = 0.15f}};
 	resonances.all.DMG.modifiers.at(0) = geoBuff1;
-	auto geoBuff2 = Formula::Requires(geoCond && IsActive("teamGeoCond") && IsActive("teamGeoCond2"), Formula::Constant(-0.20f));
+	auto geoBuff2 = Formula::Requires{.requirement = geoCond && IsActive("teamGeoCond") && IsActive("teamGeoCond2"), .ret = Formula::Constant{.value = -0.20f}};
 	resonancesEnemy.resistance.geo.modifiers.at(0) = geoBuff2;
 
 	// Dendro
-	auto dendroCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount(Misc::Element::dendro) >= 2;
-	resonances.em.modifiers.at(0) = Formula::Requires(
-		dendroCond,
-		Formula::ConstantFlat(50.f)
-			+ Formula::Requires(IsActive("teamDendroCond"), Formula::ConstantFlat(30.f))
-			+ Formula::Requires(IsActive("teamDendroCond2"), Formula::ConstantFlat(20.f))
-	);
+	auto dendroCond = Formula::TeamCharacterCount{} >= 4 && Formula::ElementCount{.element = Misc::Element::dendro} >= 2;
+	resonances.em.modifiers.at(0) = Formula::Requires{
+		.requirement = dendroCond,
+		.ret = Formula::ConstantFlat{.value = 50.f}
+			 + Formula::Requires{.requirement = IsActive("teamDendroCond"), .ret = Formula::ConstantFlat{.value = 30.f}}
+			 + Formula::Requires{.requirement = IsActive("teamDendroCond2"), .ret = Formula::ConstantFlat{.value = 20.f}}
+	};
 
 	// Moonsign team effects
 	auto moonsignCond = IsActive("teamLunarAscendantDream");
@@ -81,7 +84,7 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 			.key = "teamDendroCond",
 			.name = "After triggering Burning, Quicken, or Bloom reactions",
 			.displayCondition = dendroCond,
-			.mods{.preMod{.em = Formula::Requires(dendroCond && IsActive("teamDendroCond"), Formula::ConstantFlat(30.f))}},
+			.mods{.preMod{.em = Formula::Requires{.requirement = dendroCond && IsActive("teamDendroCond"), .ret = Formula::ConstantFlat{.value = 30.f}}}},
 		},
 	});
 	options.insert({
@@ -90,7 +93,7 @@ Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::
 			.key = "teamDendroCond2",
 			.name = "After triggering Aggravate, Spread, Hyperbloom, or Burgeon reactions",
 			.displayCondition = dendroCond,
-			.mods{.preMod{.em = Formula::Requires(dendroCond && IsActive("teamDendroCond2"), Formula::ConstantFlat(20.f))}},
+			.mods{.preMod{.em = Formula::Requires{.requirement = dendroCond && IsActive("teamDendroCond2"), .ret = Formula::ConstantFlat{.value = 20.f}}}},
 		},
 	});
 	options.insert({

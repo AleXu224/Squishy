@@ -7,8 +7,8 @@ const Artifact::Set Artifact::Sets::gladiatorsFinale{
 	.goodKey{"GladiatorsFinale"},
 	.name = "Gladiator's Finale",
 	.setup = []() -> Set::Setup {
-		auto fourPcCond = IsCharacterWeaponType(Misc::WeaponType::sword) || IsCharacterWeaponType(Misc::WeaponType::claymore) || IsCharacterWeaponType(Misc::WeaponType::polearm);
-		auto fourPcBuff = Requires(fourPcCond, Constant{.value = 0.35f});
+		auto fourPcCond = IsCharacterWeaponType{.weaponType = Misc::WeaponType::sword} || IsCharacterWeaponType{.weaponType = Misc::WeaponType::claymore} || IsCharacterWeaponType{.weaponType = Misc::WeaponType::polearm};
+		auto fourPcBuff = Requires{.requirement = fourPcCond, .ret = Constant{.value = 0.35f}};
 
 		return Set::Setup{
 			.twoPc{

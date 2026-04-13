@@ -111,7 +111,7 @@ const Character::Data Character::Datas::illuga{
 						.additiveDMG = burstLunarCrystallizeDmgIncrease + a4LunarCrystallizeDmgIncrease,
 					},
 				},
-				.moonsignLevel = ConstantInt(1),
+				.moonsignLevel = ConstantInt{.value = 1},
 			},
 			.opts{
 				.burst{

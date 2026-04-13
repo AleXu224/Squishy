@@ -8,8 +8,8 @@ const Artifact::Set Artifact::Sets::tenacityOfTheMillelith{
 	.name = "Tenacity of the Millelith",
 	.setup = []() -> Set::Setup {
 		auto fourPcCond = IsActive("tenacitySkillHit");
-		auto fourPcAtkBuff = Requires(fourPcCond, Constant{.value = 0.2f});
-		auto fourPcShieldBuff = Requires(fourPcCond, Constant{.value = 0.3f});
+		auto fourPcAtkBuff = Requires{.requirement = fourPcCond, .ret = Constant{.value = 0.2f}};
+		auto fourPcShieldBuff = Requires{.requirement = fourPcCond, .ret = Constant{.value = 0.3f}};
 
 		return Set::Setup{
 			.twoPc{

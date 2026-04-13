@@ -27,41 +27,41 @@ const Character::Data Character::Datas::linnea{
 	.setup = []() -> Data::Setup {
 		auto a1Cond = IsActive("linneaA1Cond");
 		auto a1ResShred = Requires{
-			a1Cond && Requirement::passive1,
-			Constant(-0.15f) + Requires{
-				Requirement::ascendantGleam,
-				Constant(-0.15f),
-			},
+			.requirement = a1Cond && Requirement::passive1,
+			.ret = Constant{.value = -0.15f} + Requires{
+					   .requirement = Requirement::ascendantGleam,
+					   .ret = Constant{.value = -0.15f},
+				   },
 		};
 
-		auto a4Buff = Requires{Requirement::passive2, total.def * 0.05f};
-		auto a4ActiveBuff = Requires{ActiveCharacter{CharacterMoonsignLevel{} >= 1}, a4Buff};
-		auto a4SelfBuff = Requires{ActiveCharacter{CharacterMoonsignLevel{} <= 0}, a4Buff};
+		auto a4Buff = Requires{.requirement = Requirement::passive2, .ret = total.def * 0.05f};
+		auto a4ActiveBuff = Requires{.requirement = ActiveCharacter{.formula = CharacterMoonsignLevel{} >= 1}, .ret = a4Buff};
+		auto a4SelfBuff = Requires{.requirement = ActiveCharacter{.formula = CharacterMoonsignLevel{} <= 0}, .ret = a4Buff};
 
-		auto p3Buff = Requires{Requirement::passive3, ConstantInt(1)};
+		auto p3Buff = Requires{.requirement = Requirement::passive3, .ret = ConstantInt{.value = 1}};
 
 		auto c1Cond = IsActive("linneaC1");
-		auto c6StackMultiplier = IfElse{Requirement::constellation6, Constant{.value = 2.f}, Constant{.value = 2.f}};
+		auto c6StackMultiplier = IfElse{.requirement = Requirement::constellation6, .trueVal = Constant{.value = 2.f}, .elseVal = Constant{.value = 2.f}};
 		auto c1Buff = Requires{
-			Requirement::constellation1 && c1Cond,
-			total.def * 0.75f * c6StackMultiplier,
+			.requirement = Requirement::constellation1 && c1Cond,
+			.ret = total.def * 0.75f * c6StackMultiplier,
 		};
 		auto c1LumiBuff = Requires{
-			Requirement::constellation1 && c1Cond,
-			total.def * 1.5f * GetFloat("linneaC1LumiStacks") * c6StackMultiplier,
+			.requirement = Requirement::constellation1 && c1Cond,
+			.ret = total.def * 1.5f * GetFloat("linneaC1LumiStacks") * c6StackMultiplier,
 		};
 
 		auto c2Cond = IsActive("linneaC2MoondriftHarmony");
 		auto c2Buff = Requires{
-			PreviousCharacter{IsCharacterElement{Misc::Element::geo} || IsCharacterElement{Misc::Element::hydro}}
-				&& c2Cond && Requirement::constellation2,
-			Constant{.value = 0.4f},
+			.requirement = PreviousCharacter{.formula = IsCharacterElement{.element = Misc::Element::geo} || IsCharacterElement{.element = Misc::Element::hydro}}
+						&& c2Cond && Requirement::constellation2,
+			.ret = Constant{.value = 0.4f},
 		};
-		auto c2LumiBuff = Requires{Requirement::constellation2, Constant{.value = 1.5f}};
+		auto c2LumiBuff = Requires{.requirement = Requirement::constellation2, .ret = Constant{.value = 1.5f}};
 
-		auto c4Buff = Requires{Requirement::constellation4 && c2Cond, Constant{.value = 0.25f}};
+		auto c4Buff = Requires{.requirement = Requirement::constellation4 && c2Cond, .ret = Constant{.value = 0.25f}};
 
-		auto c6Buff = Requires{Requirement::constellation6, Constant{.value = 0.25f}};
+		auto c6Buff = Requires{.requirement = Requirement::constellation6, .ret = Constant{.value = 0.25f}};
 
 		return Data::Setup{
 			.mods{

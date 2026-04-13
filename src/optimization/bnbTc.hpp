@@ -12,7 +12,7 @@ namespace Optimization {
 		Character::Instance &character,
 		const RollsValues &rolls,
 		const Formula::Context &ctx,
-		const Formula::Compiled::FloatNode &node,
+		const Formula::FloatNode &node,
 		const std::optional<Stat> &splitSlot
 	) {
 		if (filter.hasTooManyRolls()) return;

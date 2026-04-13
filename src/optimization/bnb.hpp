@@ -11,7 +11,7 @@ namespace Optimization {
 		Solutions &solutions,
 		Character::Instance &character,
 		const Formula::Context &ctx,
-		const Formula::Compiled::FloatNode &node,
+		const Formula::FloatNode &node,
 		const std::optional<Stats::ArtifactBonus> &bonus1,
 		const std::optional<Stats::ArtifactBonus> &bonus2,
 		const std::optional<uint32_t> &splitSlot

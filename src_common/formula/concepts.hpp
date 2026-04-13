@@ -12,6 +12,13 @@
 #endif
 
 namespace Formula {
+	template<class T>
+	concept GeneralFormulaConcept = requires(T t) {
+		typename T::RetType;
+		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<typename T::RetType>;
+		{ t.getType() } -> std::convertible_to<Type>;
+	};
+
 	template<class T, class V>
 	concept FormulaConcept = requires(T t, V v) {
 		requires std::same_as<typename T::RetType, V>;
@@ -27,7 +34,7 @@ namespace Formula {
 	concept IntFormula = FormulaConcept<T, int32_t>;
 
 	template<class T>
-	concept FormulaLike = FloatFormula<T> || BoolFormula<T> || IntFormula<T> || AdditionalFormulaLike<T>;
+	concept FormulaLike = GeneralFormulaConcept<T> || AdditionalFormulaLike<T>;
 	template<class T>
 	concept ArithmeticFormula = FloatFormula<T> || IntFormula<T> || AdditionalArithmeticFormula<T>;
 

@@ -25,7 +25,7 @@ const Weapon::Data Weapon::Datas::starcallersWatch{
 		auto multiplier4 = WeaponMultiplier(false, {100.0000, 125.0000, 150.0000, 175.0000, 200.0000});
 
 		auto cond = IsActive("starcallersWatchCond");
-		auto buff = Requires(cond, multiplier1);
+		auto buff = Requires{.requirement = cond, .ret = multiplier1};
 
 		return Data::Setup{
 			.mods{

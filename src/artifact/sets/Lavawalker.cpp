@@ -7,7 +7,7 @@ const Artifact::Set Artifact::Sets::lavawalker{
 	.goodKey{"Lavawalker"},
 	.name = "Lavawalker",
 	.setup = []() -> Set::Setup {
-		auto fourPcDMG = Requires(IsActive("lavawalkerCond"), Constant(-0.35f));
+		auto fourPcDMG = Requires{.requirement = IsActive("lavawalkerCond"), .ret = Constant{.value = -0.35f}};
 
 		return Set::Setup{
 			.twoPc{},

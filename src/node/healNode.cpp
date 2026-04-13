@@ -12,7 +12,7 @@ namespace Node {
 		auto totalHb = Modifiers::total().hb + modifier.hb;
 		auto totalIncHb = Modifiers::total().incHb + modifier.incHb;
 
-		auto bonus = Formula::Constant(1.f) + totalHb + totalIncHb;
+		auto bonus = Formula::Constant({}, 1.f) + totalHb + totalIncHb;
 
 		return formula
 			 * bonus;

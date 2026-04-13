@@ -50,7 +50,6 @@ namespace Formula {
 		using RetType = FormulaType<T>;
 		T val1;
 		U val2;
-		bool isPercentage = true;
 
 		static_assert(std::is_same_v<RetType, FormulaType<U>>, "Both formulas need to return the same type");
 
@@ -73,7 +72,6 @@ namespace Formula {
 			return Min<decltype(foldVal1), decltype(foldVal2)>{
 				.val1 = foldVal1,
 				.val2 = foldVal2,
-				.isPercentage = isPercentage,
 			};
 		}
 
@@ -94,7 +92,6 @@ namespace Formula {
 		using RetType = FormulaType<T>;
 		T val1;
 		U val2;
-		bool isPercentage = true;
 
 		static_assert(std::is_same_v<RetType, FormulaType<U>>, "Both formulas need to return the same type");
 
@@ -117,7 +114,6 @@ namespace Formula {
 			return Max<decltype(foldVal1), decltype(foldVal2)>{
 				.val1 = foldVal1,
 				.val2 = foldVal2,
-				.isPercentage = isPercentage,
 			};
 		}
 

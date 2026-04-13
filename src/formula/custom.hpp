@@ -11,11 +11,11 @@ namespace Formula {
 
 	template<class T>
 	concept FoldFuncLike = requires(T t) {
-		{ t(std::declval<const Context &>(), std::declval<const FoldArgs &>()) } -> FloatFormula;
+		{ t(std::declval<const Context &>(), std::declval<const FoldArgs &>()) } -> std::same_as<FloatNode>;
 	};
 
 	template<FoldFuncLike T, EvalFuncLike V>
-	struct Custom {
+	struct Custom : FormulaBase<float> {
 		T foldFunc;
 		V func;
 		bool isPercentage = false;

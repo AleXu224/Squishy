@@ -159,7 +159,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	auto initialArtifacts = ArtifactFilter{}.filter(artifacts);
 	std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
-	auto compiledNode = optimizedNode.compile(ctx);
+	auto compiledNode = optimizedNode.fold(ctx, {});
 
 	auto &loadout = character.state.loadout();
 	// Roughly sort the artifact based on potential. Helps a lot when splitting
@@ -210,13 +210,13 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			threadData.character.state.loadout().artifact.refreshStats();
 
 			{
-				Formula::Compiled::enableAllocator = true;
-				auto node = optimizedNode.compile(threadData.ctx);
+				Formula::enableAllocator = true;
+				auto node = optimizedNode.fold(threadData.ctx, {});
 
 				bnb(filtered, solutions, threadData.character, threadData.ctx, node, filter.bonus1, filter.bonus2, {});
 			}
-			Formula::Compiled::enableAllocator = false;
-			Formula::Compiled::NodeAllocator::reset();
+			Formula::enableAllocator = false;
+			Formula::NodeAllocator::reset();
 
 			combed++;
 			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), filterCount, (static_cast<float>(combed) / static_cast<float>(filterCount)) * 100.f);

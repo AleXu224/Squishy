@@ -7,7 +7,7 @@ const Artifact::Set Artifact::Sets::maidenBeloved{
 	.goodKey{"MaidenBeloved"},
 	.name = "Maiden Beloved",
 	.setup = []() -> Set::Setup {
-		auto fourPcBuff = Requires(IsActive("maidenBelovedCond"), Constant{.value = 0.2f});
+		auto fourPcBuff = Requires{.requirement = IsActive("maidenBelovedCond"), .ret = Constant{.value = 0.2f}};
 
 		return Set::Setup{
 			.twoPc{

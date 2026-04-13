@@ -26,11 +26,11 @@ const Weapon::Data Weapon::Datas::azurelight{
 		auto multiplier4 = WeaponMultiplier(true, {0.4000, 0.5000, 0.6000, 0.7000, 0.8000});
 
 		auto skillUsedCond = IsActive("azurelightSkillUsed");
-		auto skillUsedBuff = Requires(skillUsedCond, multiplier1);
+		auto skillUsedBuff = Requires{.requirement = skillUsedCond, .ret = multiplier1};
 
 		auto energyCond = IsActive("azurelightEnergyCond");
-		auto energyAtkBuff = Requires(skillUsedCond && energyCond, multiplier3);
-		auto energyCdBuff = Requires(skillUsedCond && energyCond, multiplier4);
+		auto energyAtkBuff = Requires{.requirement = skillUsedCond && energyCond, .ret = multiplier3};
+		auto energyCdBuff = Requires{.requirement = skillUsedCond && energyCond, .ret = multiplier4};
 
 		return Data::Setup{
 			.mods{

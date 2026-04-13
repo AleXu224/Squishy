@@ -27,45 +27,45 @@ const Character::Data Character::Datas::nahida{
 	},
 	.setup = []() -> Data::Setup {
 		auto insideField = IsActive("nahidaInsideField");
-		auto pyroCount = Max(ElementCount{Misc::Element::pyro} + Requires(Requirement::constellation1, ConstantInt(1)), 2);
+		auto pyroCount = Max{.val1 = ElementCount{.element = Misc::Element::pyro} + Requires{.requirement = Requirement::constellation1, .ret = ConstantInt{.value = 1}}, .val2 = ConstantInt{.value = 2}};
 
 		auto burst1PyroCharacters = Multiplier(LevelableTalent::burst, {0.1488, 0.1600, 0.1711, 0.1860, 0.1972, 0.2083, 0.2232, 0.2381, 0.2530, 0.2678, 0.2827, 0.2976, 0.3162, 0.3348, 0.3534});
 		auto burst2PyroCharacters = Multiplier(LevelableTalent::burst, {0.2232, 0.2399, 0.2567, 0.2790, 0.2957, 0.3125, 0.3348, 0.3571, 0.3794, 0.4018, 0.4241, 0.4464, 0.4743, 0.5022, 0.5301});
 		auto burstPyroMultiplier = IfElse{
-			pyroCount == 1,
-			burst1PyroCharacters,
-			IfElse{
-				pyroCount == 2,
-				burst2PyroCharacters,
-				Constant{.value = 0.f},
+			.requirement = pyroCount == 1,
+			.trueVal = burst1PyroCharacters,
+			.elseVal = IfElse{
+				.requirement = pyroCount == 2,
+				.trueVal = burst2PyroCharacters,
+				.elseVal = Constant{.value = 0.f},
 			},
 		};
-		auto burstSkillBuff = Requires(insideField, burstPyroMultiplier);
+		auto burstSkillBuff = Requires{.requirement = insideField, .ret = burstPyroMultiplier};
 
-		auto maxEm = MaxCharacter{preMods.em};
-		auto a1EmBuff = Requires(
-			Requirement::passive1 && insideField,
-			Min(0.25f * maxEm, 250.f)
-		);
+		auto maxEm = MaxCharacter{.formula = preMods.em};
+		auto a1EmBuff = Requires{
+			.requirement = Requirement::passive1 && insideField,
+			.ret = Min{.val1 = 0.25f * maxEm, .val2 = ConstantFlat{.value = 250.f}},
+		};
 
-		auto a4Points = Clamp(total.em - ConstantFlat{.value = 200.f}, 0.f, 800.f);
-		auto a4TriKarmaDmg = Requires(Requirement::passive2, a4Points * 0.001);
-		auto a4TriKarmaCr = Requires(Requirement::passive2, a4Points * 0.0003);
+		auto a4Points = Clamp{.val1 = total.em - ConstantFlat{.value = 200.f}, .min = 0.f, .max = 800.f};
+		auto a4TriKarmaDmg = Requires{.requirement = Requirement::passive2, .ret = a4Points * 0.001};
+		auto a4TriKarmaCr = Requires{.requirement = Requirement::passive2, .ret = a4Points * 0.0003};
 
 		auto c2OpponentMarked = IsActive("nahidaC2OpponentsMarked");
 		auto c2ReactionTriggered = c2OpponentMarked && IsActive("nahidaC2ReactionTriggered");
-		auto c2CritRate = Requires(Requirement::constellation2 && c2OpponentMarked, Constant{.value = 0.2f});
-		auto c2CritDMG = Requires(Requirement::constellation2 && c2OpponentMarked, Constant{.value = 1.f});
-		auto c2EnemyDef = Requires(Requirement::constellation2 && c2ReactionTriggered, Constant{.value = 0.3f});
+		auto c2CritRate = Requires{.requirement = Requirement::constellation2 && c2OpponentMarked, .ret = Constant{.value = 0.2f}};
+		auto c2CritDMG = Requires{.requirement = Requirement::constellation2 && c2OpponentMarked, .ret = Constant{.value = 1.f}};
+		auto c2EnemyDef = Requires{.requirement = Requirement::constellation2 && c2ReactionTriggered, .ret = Constant{.value = 0.3f}};
 
-		auto c4EmBuff = Requires(
-			Requirement::constellation4 && IsActive("nahidaC4OpponentsAffected"),
-			Index{
-				GetInt("nahidaC4OpponentsAffected", 1) - ConstantInt(1),
-				false,
-				std::array{100.f, 120.f, 140.f, 160.f},
-			}
-		);
+		auto c4EmBuff = Requires{
+			.requirement = Requirement::constellation4 && IsActive("nahidaC4OpponentsAffected"),
+			.ret = Index{
+				.index = GetInt("nahidaC4OpponentsAffected", 1) - ConstantInt{.value = 1},
+				.isPercentage = false,
+				.indexable = std::array{100.f, 120.f, 140.f, 160.f},
+			},
+		};
 
 		return Data::Setup{
 			.mods{

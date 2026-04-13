@@ -44,8 +44,14 @@ namespace Formula {
 		}
 	};
 
+	template<class T, class V>
+	concept IsConvertibleNodeType = std::is_same_v<NodeType<typename std::remove_cvref_t<T>::RetType>, std::remove_cvref_t<T>>
+								 && !std::is_same_v<typename std::remove_cvref_t<T>::RetType, V>
+								 && std::is_convertible_v<typename std::remove_cvref_t<T>::RetType, V>;
+
 	template<class T>
 	concept isMonomial = requires(T t) {
+		t.value;
 		{ t.add(std::declval<typename T::RetType>()) };
 		{ t.subtract(std::declval<typename T::RetType>()) };
 		{ t.mult(std::declval<typename T::RetType>()) };
@@ -107,7 +113,7 @@ namespace Formula {
 				return fn.fold(context, args);
 			}
 			[[nodiscard]] constexpr Formula::Type getType() const override {
-				return fn.type;
+				return fn.getType();
 			}
 			[[nodiscard]] constexpr RetType getConstantValue() const override {
 				if constexpr (HasConstantValue<Fn, RetType>) {

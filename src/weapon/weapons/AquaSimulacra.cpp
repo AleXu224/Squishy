@@ -25,7 +25,7 @@ const Weapon::Data Weapon::Datas::aquaSimulacra{
 		auto multiplier2 = WeaponMultiplier(true, {0.2000, 0.2500, 0.3000, 0.3500, 0.4000});
 
 		auto cond = IsActive("aquaSimulacraCond");
-		auto buff = Requires{cond, multiplier2};
+		auto buff = Requires{.requirement = cond, .ret = multiplier2};
 
 		return Data::Setup{
 			.mods{

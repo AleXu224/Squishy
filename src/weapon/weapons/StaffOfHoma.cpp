@@ -27,8 +27,8 @@ const Weapon::Data Weapon::Datas::staffOfHoma{
 
 		auto cond = IsActive("staffOfHomaCond");
 		auto buff = Requires{
-			cond,
-			multiplier3 * total.hp,
+			.requirement = cond,
+			.ret = multiplier3 * total.hp,
 		};
 
 		return Data::Setup{

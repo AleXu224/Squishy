@@ -8,7 +8,7 @@ const Artifact::Set Artifact::Sets::deepwoodMemories{
 	.name = "Deepwood Memories",
 	.setup = []() -> Set::Setup {
 		auto enemyHit = IsActive("deepwoodEnemyHit");
-		auto dendroRes = Requires(enemyHit, Constant(-0.3f));
+		auto dendroRes = Requires{.requirement = enemyHit, .ret = Constant{.value = -0.3f}};
 
 		return Set::Setup{
 			.twoPc{

@@ -25,25 +25,25 @@ const Character::Data Character::Datas::escoffier{
 		.ascensionStatUpgrade = {0.000, 0.000, 0.048, 0.096, 0.096, 0.144, 0.192},
 	},
 	.setup = []() -> Data::Setup {
-		auto hydroCount = ElementCount{Misc::Element::hydro};
-		auto cryoCount = ElementCount{Misc::Element::cryo};
+		auto hydroCount = ElementCount{.element = Misc::Element::hydro};
+		auto cryoCount = ElementCount{.element = Misc::Element::cryo};
 
 		auto condA4 = IsActive("escoffierA4");
-		auto a4Res = Requires(
-			condA4,
-			Index{
+		auto a4Res = Requires{
+			.requirement = condA4,
+			.ret = Index{
 				.index = hydroCount + cryoCount,
 				.isPercentage = true,
 				.indexable = std::array{0.f, -0.05f, -0.1f, -0.15f, -0.55f},
-			}
-		);
+			},
+		};
 
 		auto condC1 = IsActive("escoffierC1");
-		auto c1Buff = Requires(Requirement::constellation1 && Requirement::passive1 && ((hydroCount + cryoCount) >= 4) && condC1, Constant{.value = 0.6f});
+		auto c1Buff = Requires{.requirement = Requirement::constellation1 && Requirement::passive1 && ((hydroCount + cryoCount) >= 4) && condC1, .ret = Constant{.value = 0.6f}};
 
 		auto condC2 = IsActive("escoffierC2");
-		auto c2BuffDisplay = Requires(Requirement::constellation2 && condC2, 2.4f * total.atk);
-		auto c2Buff = Requires(!Requirement::selfBuff, c2BuffDisplay);
+		auto c2BuffDisplay = Requires{.requirement = Requirement::constellation2 && condC2, .ret = 2.4f * total.atk};
+		auto c2Buff = Requires{.requirement = !Requirement::selfBuff, .ret = c2BuffDisplay};
 
 		return Data::Setup{
 			.mods{

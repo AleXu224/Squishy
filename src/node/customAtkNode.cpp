@@ -9,27 +9,27 @@
 namespace Node {
 	using namespace Formula::Operators;
 	template<Misc::SkillStat skillStat>
-	struct _CustomAtkNodeElement {
+	struct _CustomAtkNodeElement : Formula::FormulaBase<float> {
 		Misc::Element element;
 
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			switch (element) {
 				case Misc::Element::pyro:
-					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).fold(context, args);
 				case Misc::Element::hydro:
-					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).fold(context, args);
 				case Misc::Element::cryo:
-					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).fold(context, args);
 				case Misc::Element::electro:
-					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).fold(context, args);
 				case Misc::Element::dendro:
-					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).fold(context, args);
 				case Misc::Element::anemo:
-					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).fold(context, args);
 				case Misc::Element::geo:
-					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).fold(context, args);
 				case Misc::Element::physical:
-					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).compile(context);
+					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).fold(context, args);
 			}
 			std::unreachable();
 		}
@@ -71,7 +71,7 @@ namespace Node {
 		auto formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
-		auto elementStats = _CustomAtkNodeElement<skillStat>(attackElement);
+		auto elementStats = _CustomAtkNodeElement<skillStat>({}, attackElement);
 
 		return allStats + elementStats + formula;
 	}
@@ -89,7 +89,7 @@ namespace Node {
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto elevation = 1.0f + totalElevation;
 		auto dmgBonus = (1.0f + totalDMG);
-		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier({}, element);
+		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier{.attackSource = {}, .element = element};
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return multiplier

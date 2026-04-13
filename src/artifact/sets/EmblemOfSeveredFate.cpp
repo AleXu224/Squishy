@@ -7,7 +7,7 @@ const Artifact::Set Artifact::Sets::emblemOfSeveredFate{
 	.goodKey{"EmblemOfSeveredFate"},
 	.name = "Emblem of Severed Fate",
 	.setup = []() -> Set::Setup {
-		auto fourPcBuff = Min(total.er * 0.25f, 0.75f);
+		auto fourPcBuff = Min{.val1 = total.er * 0.25f, .val2 = Constant{.value = 0.75f}};
 		return Set::Setup{
 			.twoPc{
 				.mods{

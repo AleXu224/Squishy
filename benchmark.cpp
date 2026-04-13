@@ -1,7 +1,7 @@
 #include "artifact/instance.hpp"
 #include "artifact/sets.hpp"// IWYU pragma: keep
 #include "character/characters.hpp"
-#include "src/formula/node.hpp"
+#include "formula/base.hpp"
 #include "stats/team.hpp"
 #include "store.hpp"
 #include "weapon/weapons.hpp"
@@ -158,7 +158,7 @@ namespace {
 			.enemy = enemy,
 		};
 
-		auto compiledNode = node.formula.compile(ctx);
+		auto compiledNode = node.formula.fold(ctx, {});
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
@@ -167,11 +167,11 @@ namespace {
 
 			// Compile formula using the custom allocator, while also keeping the memory between runs
 			{
-				Formula::Compiled::enableAllocator = true;
-				benchmark::DoNotOptimize(node.formula.compile(ctx));
+				Formula::enableAllocator = true;
+				benchmark::DoNotOptimize(node.formula.fold(ctx, {}));
 			}
-			Formula::Compiled::enableAllocator = false;
-			Formula::Compiled::NodeAllocator::reset();
+			Formula::enableAllocator = false;
+			Formula::NodeAllocator::reset();
 
 			// character.getArtifactStats();
 			// benchmark::DoNotOptimize(compiledNode);

@@ -25,12 +25,12 @@ const Weapon::Data Weapon::Datas::aThousandBlazingSuns{
 		auto multiplier2 = WeaponMultiplier(false, {0.2800, 0.3500, 0.4200, 0.4900, 0.5600});
 
 		auto passive1 = IsActive("aThousandBlazingSuns1");
-		auto passive1CD = Requires(passive1, multiplier1);
-		auto passive1Atk = Requires(passive1, multiplier2);
+		auto passive1CD = Requires{.requirement = passive1, .ret = multiplier1};
+		auto passive1Atk = Requires{.requirement = passive1, .ret = multiplier2};
 
 		auto passive2 = IsActive("aThousandBlazingSuns2");
-		auto passive2CD = Requires(passive2, passive1CD * 0.75f);
-		auto passive2Atk = Requires(passive2, passive1Atk * 0.75f);
+		auto passive2CD = Requires{.requirement = passive2, .ret = passive1CD * 0.75f};
+		auto passive2Atk = Requires{.requirement = passive2, .ret = passive1Atk * 0.75f};
 
 		return Data::Setup{
 			.mods{

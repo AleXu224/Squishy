@@ -28,7 +28,7 @@ namespace Formula {
 	struct FormulaBase {
 		static constexpr Type type = type_;
 
-		[[nodiscard]] consteval Type getType() const {
+		[[nodiscard]] constexpr Type getType() const {
 			return type;
 		}
 

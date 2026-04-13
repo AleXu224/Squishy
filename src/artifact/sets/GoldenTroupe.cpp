@@ -7,10 +7,10 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 	.goodKey = "GoldenTroupe",
 	.name = "Golden Troupe",
 	.setup = []() -> Set::Setup {
-		auto fourPcOffFieldDmg = Requires(
-			IsActive("goldenTroupeOffField"),
-			Constant{.value = 0.25f}
-		);
+		auto fourPcOffFieldDmg = Requires{
+			.requirement = IsActive("goldenTroupeOffField"),
+			.ret = Constant{.value = 0.25f}
+		};
 
 		return Set::Setup{
 			.twoPc{

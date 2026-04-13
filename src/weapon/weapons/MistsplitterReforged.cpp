@@ -29,24 +29,24 @@ const Weapon::Data Weapon::Datas::mistsplitterReforged{
 		auto condVal = GetIndex("mistsplitterCond");
 		auto cond = IsActive("mistsplitterCond");
 
-		auto buff = Requires(
-			cond,
-			Evaluator(
-				Index{
+		auto buff = Requires{
+			.requirement = cond,
+			.ret = Evaluator{
+				.evaluated = Index{
 					.index = condVal,
 					.indexable = std::array{multiplier2, multiplier3, multiplier4},
 				},
-				true
-			)
-		);
+				.isPercentage = true
+			},
+		};
 
-		auto pyroBuff = Requires(IsCharacterElement{Misc::Element::pyro}, buff);
-		auto hydroBuff = Requires(IsCharacterElement{Misc::Element::hydro}, buff);
-		auto cryoBuff = Requires(IsCharacterElement{Misc::Element::cryo}, buff);
-		auto electroBuff = Requires(IsCharacterElement{Misc::Element::electro}, buff);
-		auto dendroBuff = Requires(IsCharacterElement{Misc::Element::dendro}, buff);
-		auto anemoBuff = Requires(IsCharacterElement{Misc::Element::anemo}, buff);
-		auto geoBuff = Requires(IsCharacterElement{Misc::Element::geo}, buff);
+		auto pyroBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::pyro}, .ret = buff};
+		auto hydroBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::hydro}, .ret = buff};
+		auto cryoBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::cryo}, .ret = buff};
+		auto electroBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::electro}, .ret = buff};
+		auto dendroBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::dendro}, .ret = buff};
+		auto anemoBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::anemo}, .ret = buff};
+		auto geoBuff = Requires{.requirement = IsCharacterElement{.element = Misc::Element::geo}, .ret = buff};
 		return Data::Setup{
 			.mods{
 				.preMod{

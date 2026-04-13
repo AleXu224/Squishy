@@ -28,7 +28,7 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 		auto stacks = GetInt("peakPatrolOdeToFlowers");
 		auto defBuff = multiplier1 * stacks;
 		auto elemBuff = multiplier4 * stacks;
-		auto teamElemBuff = Requires(stacks == 2, multiplier5 * (Min(total.def, 3200.f) / ConstantFlat{.value = 1000.f}));
+		auto teamElemBuff = Requires{.requirement = stacks == 2, .ret = multiplier5 * (Min{.val1 = total.def, .val2 = ConstantFlat{.value = 3200.f}} / ConstantFlat{.value = 1000.f})};
 
 		return Data::Setup{
 			.mods{

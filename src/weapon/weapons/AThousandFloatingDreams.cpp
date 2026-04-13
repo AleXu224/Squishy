@@ -25,18 +25,18 @@ const Weapon::Data Weapon::Datas::aThousandFloatingDreams{
 		auto multiplier2 = WeaponMultiplier(true, {0.1000, 0.1400, 0.1800, 0.2200, 0.2600});
 		auto multiplier3 = WeaponMultiplier(false, {40.0000, 42.0000, 44.0000, 46.0000, 48.0000});
 
-		auto sameElementCount = Min(SameElementCount{}, 3);
-		auto otherElementCount = Min(OtherElementCount{}, 3);
+		auto sameElementCount = Min{.val1 = SameElementCount{}, .val2 = ConstantInt{.value = 3}};
+		auto otherElementCount = Min{.val1 = SameElementCount{}, .val2 = ConstantInt{.value = 3}};
 
 		auto emBuff = sameElementCount * multiplier1;
 		auto dmgBuff = otherElementCount * multiplier2;
-		auto dmgBuffPyro = Requires(IsCharacterElement(Misc::Element::pyro), dmgBuff);
-		auto dmgBuffHydro = Requires(IsCharacterElement(Misc::Element::hydro), dmgBuff);
-		auto dmgBuffCryo = Requires(IsCharacterElement(Misc::Element::cryo), dmgBuff);
-		auto dmgBuffElectro = Requires(IsCharacterElement(Misc::Element::electro), dmgBuff);
-		auto dmgBuffDendro = Requires(IsCharacterElement(Misc::Element::dendro), dmgBuff);
-		auto dmgBuffAnemo = Requires(IsCharacterElement(Misc::Element::anemo), dmgBuff);
-		auto dmgBuffGeo = Requires(IsCharacterElement(Misc::Element::geo), dmgBuff);
+		auto dmgBuffPyro = Requires{.requirement = IsCharacterElement{.element = Misc::Element::pyro}, .ret = dmgBuff};
+		auto dmgBuffHydro = Requires{.requirement = IsCharacterElement{.element = Misc::Element::hydro}, .ret = dmgBuff};
+		auto dmgBuffCryo = Requires{.requirement = IsCharacterElement{.element = Misc::Element::cryo}, .ret = dmgBuff};
+		auto dmgBuffElectro = Requires{.requirement = IsCharacterElement{.element = Misc::Element::electro}, .ret = dmgBuff};
+		auto dmgBuffDendro = Requires{.requirement = IsCharacterElement{.element = Misc::Element::dendro}, .ret = dmgBuff};
+		auto dmgBuffAnemo = Requires{.requirement = IsCharacterElement{.element = Misc::Element::anemo}, .ret = dmgBuff};
+		auto dmgBuffGeo = Requires{.requirement = IsCharacterElement{.element = Misc::Element::geo}, .ret = dmgBuff};
 
 		return Data::Setup{
 			.mods{

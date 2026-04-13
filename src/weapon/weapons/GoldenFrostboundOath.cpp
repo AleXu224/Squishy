@@ -27,12 +27,12 @@ const Weapon::Data Weapon::Datas::goldenFrostboundOath{
 		auto multiplier6 = WeaponMultiplier(true, {0.2000, 0.2500, 0.3000, 0.3500, 0.4000});
 
 		auto cond = IsActive("goldenFrostboundOathCond");
-		auto buffGeo = Requires{cond, multiplier2};
-		auto buffLunar = Requires{cond, multiplier3};
+		auto buffGeo = Requires{.requirement = cond, .ret = multiplier2};
+		auto buffLunar = Requires{.requirement = cond, .ret = multiplier3};
 
 		auto cond2 = IsActive("goldenFrostboundOathMoondriftsNearby");
-		auto teamBuffGeo = Requires{cond && cond2 && !Requirement::selfBuff, multiplier6};
-		auto teamBuffLunar = Requires{cond && cond2 && !Requirement::selfBuff, multiplier6};
+		auto teamBuffGeo = Requires{.requirement = cond && cond2 && !Requirement::selfBuff, .ret = multiplier6};
+		auto teamBuffLunar = Requires{.requirement = cond && cond2 && !Requirement::selfBuff, .ret = multiplier6};
 
 		return Data::Setup{
 			.mods{

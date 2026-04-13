@@ -26,10 +26,10 @@ const Weapon::Data Weapon::Datas::symphonistOfScents{
 		auto multiplier3 = WeaponMultiplier(false, {0.3200, 0.4000, 0.4800, 0.5600, 0.6400});
 
 		auto offFieldCond = IsActive("symphonistOfScentsOffField");
-		auto offFieldBuff = Requires(offFieldCond, multiplier2);
+		auto offFieldBuff = Requires{.requirement = offFieldCond, .ret = multiplier2};
 
 		auto healCond = IsActive("symphonistOfScentsHeal");
-		auto healBuff = Requires(healCond, multiplier3);
+		auto healBuff = Requires{.requirement = healCond, .ret = multiplier3};
 
 		return Data::Setup{
 			.mods{

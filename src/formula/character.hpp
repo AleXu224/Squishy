@@ -50,26 +50,26 @@ namespace Formula {
 	};
 
 	struct IsCharacterWeaponType : FormulaBase<bool, Type::constant> {
-		Misc::WeaponType type;
+		Misc::WeaponType weaponType;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character {} ({})", Utils::Stringify(type), eval(context));
+			return fmt::format("Is character {} ({})", Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.source.stats.base.weaponType == type;
+			return context.source.stats.base.weaponType == weaponType;
 		}
 	};
 
 	struct IsTargetCharacterWeaponType : FormulaBase<bool, Type::constant> {
-		Misc::WeaponType type;
+		Misc::WeaponType weaponType;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is target character {} ({})", Utils::Stringify(type), eval(context));
+			return fmt::format("Is target character {} ({})", Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.prevSource.stats.base.weaponType == type;
+			return context.prevSource.stats.base.weaponType == weaponType;
 		}
 	};
 

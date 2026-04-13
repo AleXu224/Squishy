@@ -26,16 +26,16 @@ const Character::Data Character::Datas::ineffa{
 	},
 	.setup = []() -> Data::Setup {
 		auto a4Cond = IsActive("ineffaA4");
-		auto a4Buff = Requires(a4Cond && Requirement::passive2, 0.06f * total.atk);
+		auto a4Buff = Requires{.requirement = a4Cond && Requirement::passive2, .ret = 0.06f * total.atk};
 
-		auto p3Buff = Min(0.007f * total.atk / ConstantFlat{.value = 100.f}, 0.14f);
+		auto p3Buff = Min{.val1 = 0.007f * total.atk / ConstantFlat{.value = 100.f}, .val2 = Constant{.value = 0.14f}};
 
 		auto c1Cond = IsActive("ineffaC1");
 		auto c1Buff = Requires{
 			.requirement = Requirement::constellation1 && c1Cond,
 			.ret = Min{
-				0.025f * total.atk / ConstantFlat{.value = 100.f},
-				0.5f,
+				.val1 = 0.025f * total.atk / ConstantFlat{.value = 100.f},
+				.val2 = Constant{.value = 0.5f},
 			},
 		};
 
@@ -53,7 +53,7 @@ const Character::Data Character::Datas::ineffa{
 				.activePostMod{
 					.em = Requires{.requirement = !Requirement::selfBuff, .ret = a4Buff},
 				},
-				.moonsignLevel = ConstantInt(1),
+				.moonsignLevel = ConstantInt{.value = 1},
 			},
 			.opts{
 				.passive2{

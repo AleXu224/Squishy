@@ -12,10 +12,10 @@ const Artifact::Set Artifact::Sets::viridescentVenerer{
 		auto fourPcCryoCond = IsActive("viridescentCryo");
 		auto fourPcElectroCond = IsActive("viridescentElectro");
 
-		auto fourPcPyroRes = Requires(fourPcPyroCond, Constant(-0.4f));
-		auto fourPcHydroRes = Requires(fourPcHydroCond, Constant(-0.4f));
-		auto fourPcCryoRes = Requires(fourPcCryoCond, Constant(-0.4f));
-		auto fourPcElectroRes = Requires(fourPcElectroCond, Constant(-0.4f));
+		auto fourPcPyroRes = Requires{.requirement = fourPcPyroCond, .ret = Constant{.value = -0.4f}};
+		auto fourPcHydroRes = Requires{.requirement = fourPcHydroCond, .ret = Constant{.value = -0.4f}};
+		auto fourPcCryoRes = Requires{.requirement = fourPcCryoCond, .ret = Constant{.value = -0.4f}};
+		auto fourPcElectroRes = Requires{.requirement = fourPcElectroCond, .ret = Constant{.value = -0.4f}};
 
 		return Set::Setup{
 			.twoPc{

@@ -25,8 +25,8 @@ const Weapon::Data Weapon::Datas::deathmatch{
 		auto multiplier3 = WeaponMultiplier(true, {0.1600, 0.2000, 0.2400, 0.2800, 0.3200});
 
 		auto cond = IsActive("deathmatchCond");
-		auto buffAtk = IfElse(cond, multiplier3, multiplier2);
-		auto buffDef = Requires(cond, multiplier3);
+		auto buffAtk = IfElse{.requirement = cond, .trueVal = multiplier3, .elseVal = multiplier2};
+		auto buffDef = Requires{.requirement = cond, .ret = multiplier3};
 
 		return Data::Setup{
 			.mods{

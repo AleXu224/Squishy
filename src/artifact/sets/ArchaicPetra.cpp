@@ -12,10 +12,10 @@ const Artifact::Set Artifact::Sets::archaicPetra{
 		auto fourPcCryo = IsActive("archaicPetraCryo");
 		auto fourPcElectro = IsActive("archaicPetraElectro");
 
-		auto fourPcPyroBuff = Requires(fourPcPyro, Constant{.value = 0.35f});
-		auto fourPcHydroBuff = Requires(fourPcHydro, Constant{.value = 0.35f});
-		auto fourPcCryoBuff = Requires(fourPcCryo, Constant{.value = 0.35f});
-		auto fourPcElectroBuff = Requires(fourPcElectro, Constant{.value = 0.35f});
+		auto fourPcPyroBuff = Requires{.requirement = fourPcPyro, .ret = Constant{.value = 0.35f}};
+		auto fourPcHydroBuff = Requires{.requirement = fourPcHydro, .ret = Constant{.value = 0.35f}};
+		auto fourPcCryoBuff = Requires{.requirement = fourPcCryo, .ret = Constant{.value = 0.35f}};
+		auto fourPcElectroBuff = Requires{.requirement = fourPcElectro, .ret = Constant{.value = 0.35f}};
 
 		return Set::Setup{
 			.twoPc{

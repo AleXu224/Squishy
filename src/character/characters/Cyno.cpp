@@ -25,26 +25,26 @@ const Character::Data Character::Datas::cyno{
 		.ascensionStatUpgrade = {0, 0, 0.096, 0.192, 0.192, 0.288, 0.384},
 	},
 	.setup = []() -> Data::Setup {
-		auto burstEmBonus = Requires(
-			IsActive("burstActive"),
-			ConstantFlat{.value = 100.f}
-		);
+		auto burstEmBonus = Requires{
+			.requirement = IsActive("burstActive"),
+			.ret = ConstantFlat{.value = 100.f},
+		};
 
-		auto a1Skill = Requires(
-			Requirement::passive1 && IsActive("endseerStance"),
-			Constant{.value = 0.35f}
-		);
+		auto a1Skill = Requires{
+			.requirement = Requirement::passive1 && IsActive("endseerStance"),
+			.ret = Constant{.value = 0.35f},
+		};
 		auto a1SkillMod = Modifier{
 			.DMG = a1Skill
 		};
 
-		auto a4BurstBonus = Requires(Requirement::passive2, total.em * 1.5f);
-		auto a4BoltBbonus = Requires(Requirement::passive2, total.em * 2.5f);
+		auto a4BurstBonus = Requires{.requirement = Requirement::passive2, .ret = total.em * 1.5f};
+		auto a4BoltBbonus = Requires{.requirement = Requirement::passive2, .ret = total.em * 2.5f};
 		auto a4BurstModifier = Modifier{
 			.additiveDMG = a4BurstBonus,
 		};
 
-		auto c2ElectroDmg = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f);
+		auto c2ElectroDmg = Requires{.requirement = Requirement::constellation2, .ret = GetFloat("c2Hits") * 0.1f};
 
 		return Data::Setup{
 			.mods{
@@ -89,7 +89,7 @@ const Character::Data Character::Datas::cyno{
 						.mods{
 							.preMod{
 								.electro{
-									.DMG = Requires(Requirement::constellation2, GetFloat("c2Hits") * 0.1f),
+									.DMG = Requires{.requirement = Requirement::constellation2, .ret = GetFloat("c2Hits") * 0.1f},
 								},
 							},
 						},

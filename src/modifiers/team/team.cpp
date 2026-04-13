@@ -21,10 +21,10 @@ namespace Modifiers::Team {
 		using Ret = RetType<T>;
 		[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto formula = characterStat + weaponStat + artifactStat;
-			Formula::NodeType<Ret> ret = Formula::TeamCharacter{.index = 0, .formula = formula}
-									   + Formula::TeamCharacter{.index = 1, .formula = formula}
-									   + Formula::TeamCharacter{.index = 2, .formula = formula}
-									   + Formula::TeamCharacter{.index = 3, .formula = formula};
+			auto ret = Formula::TeamCharacter{.index = 0, .formula = formula}
+					 + Formula::TeamCharacter{.index = 1, .formula = formula}
+					 + Formula::TeamCharacter{.index = 2, .formula = formula}
+					 + Formula::TeamCharacter{.index = 3, .formula = formula};
 
 			return ret.fold(context, args);
 		}
@@ -58,16 +58,15 @@ namespace Modifiers::Team {
 		Formula::FloatNode artifactStat;
 
 		using Ret = float;
-		[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			Formula::NodeType<Ret> ret = Formula::ConstantBase<Ret>{};
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
-			if (!activeCharacter || activeCharacter->instanceKey != context.source.instanceKey) return ret;
+			if (!activeCharacter || activeCharacter->instanceKey != context.source.instanceKey) return Formula::ConstantFlat{};
 
 			auto formula = characterStat + weaponStat + artifactStat;
-			ret = Formula::TeamCharacter{.index = 0, .formula = formula}
-				+ Formula::TeamCharacter{.index = 1, .formula = formula}
-				+ Formula::TeamCharacter{.index = 2, .formula = formula}
-				+ Formula::TeamCharacter{.index = 3, .formula = formula};
+			auto ret = Formula::TeamCharacter{.index = 0, .formula = formula}
+					 + Formula::TeamCharacter{.index = 1, .formula = formula}
+					 + Formula::TeamCharacter{.index = 2, .formula = formula}
+					 + Formula::TeamCharacter{.index = 3, .formula = formula};
 			return ret.fold(context, args);
 		}
 

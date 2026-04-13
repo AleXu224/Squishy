@@ -8,7 +8,7 @@ const Artifact::Set Artifact::Sets::shimenawasReminiscence{
 	.name = "Shimenawa's Reminiscence",
 	.setup = []() -> Set::Setup {
 		auto fourPcCond = IsActive("shimenawaUsedEnergy");
-		auto fourPcBuff = Requires(fourPcCond, Constant{.value = 0.5f});
+		auto fourPcBuff = Requires{.requirement = fourPcCond, .ret = Constant{.value = 0.5f}};
 
 		return Set::Setup{
 			.twoPc{

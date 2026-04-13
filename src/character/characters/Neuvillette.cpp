@@ -27,22 +27,22 @@ const Character::Data Character::Datas::neuvillette{
 	},
 	.setup = []() -> Data::Setup {
 		auto a1Stacks = GetInt("neuvilletteA1");
-		auto a1Buff = Requires(
-			Requirement::passive1,
-			Index(
-				a1Stacks,
-				true,
-				std::array{0.f, 0.1f, 0.25f, 0.6f}
-			)
-		);
+		auto a1Buff = Requires{
+			.requirement = Requirement::passive1,
+			.ret = Index{
+				.index = a1Stacks,
+				.isPercentage = true,
+				.indexable = std::array{0.f, 0.1f, 0.25f, 0.6f},
+			},
+		};
 
 		auto a4Cond = IsActive("neuvilletteA4");
-		auto a4Buff = Requires(
-			Requirement::passive2 && a4Cond,
-			0.006f * (GetFloat("neuvilletteA4") - ConstantFlat{.value = 30.f})
-		);
+		auto a4Buff = Requires{
+			.requirement = Requirement::passive2 && a4Cond,
+			.ret = 0.006f * (GetFloat("neuvilletteA4") - ConstantFlat{.value = 30.f}),
+		};
 
-		auto c2Buff = Requires(Requirement::constellation2, a1Stacks * 0.14f);
+		auto c2Buff = Requires{.requirement = Requirement::constellation2, .ret = a1Stacks * 0.14f};
 
 		return Data::Setup{
 			.mods{
@@ -60,7 +60,7 @@ const Character::Data Character::Datas::neuvillette{
 							Node::Info{
 								.name = "Equitable Judgment Multiplier",
 								.type = Utils::EntryType::multiplier,
-								.formula = Requires(IsActive("neuvilletteA1"), 1.f + a1Buff),
+								.formula = Requires{.requirement = IsActive("neuvilletteA1"), .ret = 1.f + a1Buff},
 							},
 							Node::Info{
 								.name = "Equitable Judgment Crit DMG",

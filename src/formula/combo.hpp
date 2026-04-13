@@ -41,7 +41,7 @@ namespace Formula {
 	};
 
 	template<class T>
-	struct ComboOptionOverride : FormulaBase<typename T::RetType> {
+	struct ComboOptionOverride : FormulaBase<float> {
 		::Combo::Overrides overrides;
 		T node;
 
@@ -58,8 +58,10 @@ namespace Formula {
 			return ret;
 		}
 
-		NodeType<NodeType<T>> fold(const Context &ctx, const FoldArgs &args) const {
+		FloatNode fold(const Context &ctx, const FoldArgs &args) const {
 			return runFor(ctx, [&node = node, &args](const Context &context) {
+				// It's alrgith to return the folded node here because option is guaranteed to be folded to a constant
+				// meaning that any further folding from this node will just return the same thing
 				return node.fold(context, args);
 			});
 		}

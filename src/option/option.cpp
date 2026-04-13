@@ -1,15 +1,15 @@
 #include "option.hpp"
 
 #include "formula/constant.hpp"
-#include "formula/requires.hpp"
+#include "formula/requirement.hpp"
 
 std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14> Option::CharacterList::getMembersAndConditions() {
 	return std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14>{
-		std::pair{&CharacterList::normal, Formula::ConstantBool(true)},
-		std::pair{&CharacterList::charged, Formula::ConstantBool(true)},
-		std::pair{&CharacterList::plunge, Formula::ConstantBool(true)},
-		std::pair{&CharacterList::skill, Formula::ConstantBool(true)},
-		std::pair{&CharacterList::burst, Formula::ConstantBool(true)},
+		std::pair{&CharacterList::normal, Formula::ConstantBool({}, true)},
+		std::pair{&CharacterList::charged, Formula::ConstantBool({}, true)},
+		std::pair{&CharacterList::plunge, Formula::ConstantBool({}, true)},
+		std::pair{&CharacterList::skill, Formula::ConstantBool({}, true)},
+		std::pair{&CharacterList::burst, Formula::ConstantBool({}, true)},
 		std::pair{&CharacterList::passive1, Requirement::passive1},
 		std::pair{&CharacterList::passive2, Requirement::passive2},
 		std::pair{&CharacterList::passive3, Requirement::passive3},

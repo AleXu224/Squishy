@@ -5,7 +5,7 @@
 
 namespace Formula {
 	template<FloatFormula T>
-	struct Prefix {
+	struct Prefix : FormulaBase<float> {
 		std::string_view prefix;
 		T val;
 

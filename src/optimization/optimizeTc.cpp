@@ -9,7 +9,7 @@ Optimization::SolutionTC Optimization::TCOptimization::optimize() const {
 	auto start = std::chrono::high_resolution_clock::now();
 	auto prevLoadout = character.state.loadout().artifact.getTheorycraft();
 
-	auto compiledNode = optimizedNode.compile(ctx);
+	auto compiledNode = optimizedNode.fold(ctx, {});
 
 	SolutionTC solution{
 		.artifacts = prevLoadout,
@@ -25,7 +25,7 @@ Optimization::SolutionTC Optimization::TCOptimization::optimize() const {
 	}
 	equipped.updateStats();
 	character.state.loadout().artifact.refreshStats();
-	auto node = optimizedNode.compile(ctx);
+	auto node = optimizedNode.fold(ctx, {});
 
 	bnbTc(filter, solution, character, rolls, ctx, node, {});
 

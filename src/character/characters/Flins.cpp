@@ -29,39 +29,39 @@ const Character::Data Character::Datas::flins{
 		auto moonsignLevel = TeamMoonsignLevel{};
 
 		auto a1Buff = Requires{
-			moonsignLevel >= 2 && Requirement::passive1,
-			Constant{.value = 0.2f},
+			.requirement = moonsignLevel >= 2 && Requirement::passive1,
+			.ret = Constant{.value = 0.2f},
 		};
 
 		auto a4Buff = Requires{
-			Requirement::passive2,
-			IfElse{
-				Requirement::constellation4,
-				Min(0.1f * total.atk, 220.f),
-				Min(0.08f * total.atk, 160.f),
+			.requirement = Requirement::passive2,
+			.ret = IfElse{
+				.requirement = Requirement::constellation4,
+				.trueVal = Min{.val1 = 0.1f * total.atk, .val2 = ConstantFlat{.value = 220.f}},
+				.elseVal = Min{.val1 = 0.08f * total.atk, .val2 = ConstantFlat{.value = 160.f}},
 			},
 		};
 
-		auto p3Buff = Min(0.007f * total.atk / 100.f, 0.14f);
+		auto p3Buff = Min{.val1 = 0.007f * total.atk / 100.f, .val2 = Constant{.value = 0.14f}};
 
 		auto c2Cond = IsActive("flinsC2Cond");
 		auto c2Buff = Requires{
-			c2Cond && moonsignLevel >= 2 && Requirement::constellation2,
-			Constant(-0.25f),
+			.requirement = c2Cond && moonsignLevel >= 2 && Requirement::constellation2,
+			.ret = Constant{.value = -0.25f},
 		};
 
 		auto c4Buff = Requires{
-			Requirement::constellation4,
-			Constant{.value = 0.2f}
+			.requirement = Requirement::constellation4,
+			.ret = Constant{.value = 0.2f}
 		};
 
 		auto c6BuffSelf = Requires{
-			Requirement::constellation6,
-			Constant{.value = 0.3f},
+			.requirement = Requirement::constellation6,
+			.ret = Constant{.value = 0.3f},
 		};
 		auto c6BuffTeam = Requires{
-			Requirement::constellation6 && moonsignLevel >= 2,
-			Constant{.value = 0.1f},
+			.requirement = Requirement::constellation6 && moonsignLevel >= 2,
+			.ret = Constant{.value = 0.1f},
 		};
 
 		return Data::Setup{
@@ -86,7 +86,7 @@ const Character::Data Character::Datas::flins{
 						.electro = c2Buff,
 					},
 				},
-				.moonsignLevel = ConstantInt(1),
+				.moonsignLevel = ConstantInt{.value = 1},
 			},
 			.opts{
 				.constellation2{
@@ -265,7 +265,7 @@ const Character::Data Character::Datas::flins{
 				.passive3{
 					Node::Mods{
 						.mods{
-							.moonsignLevel = ConstantInt(1)
+							.moonsignLevel = ConstantInt{.value = 1}
 						},
 					},
 				},

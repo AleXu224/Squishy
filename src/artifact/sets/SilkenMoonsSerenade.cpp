@@ -12,8 +12,8 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 
 		auto cond = IsActive("silkenMoonsSerenadeCond");
 		auto buff = Requires{
-			cond,
-			IfElse{
+			.requirement = cond,
+			.ret = IfElse{
 				.requirement = moonsignLevel >= 2,
 				.trueVal = ConstantFlat{.value = 120.f},
 				.elseVal = Requires{

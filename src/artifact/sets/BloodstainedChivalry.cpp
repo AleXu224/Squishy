@@ -7,7 +7,7 @@ const Artifact::Set Artifact::Sets::bloodstainedChivalry{
 	.goodKey{"BloodstainedChivalry"},
 	.name = "Bloodstained Chivalry",
 	.setup = []() -> Set::Setup {
-		auto fourPcBuff = Requires(IsActive("bloodstainedChivalry"), Constant{.value = 0.5f});
+		auto fourPcBuff = Requires{.requirement = IsActive("bloodstainedChivalry"), .ret = Constant{.value = 0.5f}};
 
 		return Set::Setup{
 			.twoPc{

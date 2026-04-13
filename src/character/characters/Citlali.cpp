@@ -26,24 +26,24 @@ const Character::Data Character::Datas::citlali{
 	},
 	.setup = []() -> Data::Setup {
 		auto condA1 = IsActive("citlaliA1");
-		auto a1Res = Requires(Requirement::passive1 && condA1, Constant(-0.2f));
+		auto a1Res = Requires{.requirement = Requirement::passive1 && condA1, .ret = Constant{.value = -0.2f}};
 
-		auto a4BuffSkill = Requires(Requirement::passive2, 0.9f * total.em);
-		auto a4BuffBurst = Requires(Requirement::passive2, 12.f * total.em);
+		auto a4BuffSkill = Requires{.requirement = Requirement::passive2, .ret = 0.9f * total.em};
+		auto a4BuffBurst = Requires{.requirement = Requirement::passive2, .ret = 12.f * total.em};
 
 		auto condC1 = IsActive("citlaliC1");
-		auto c1BuffDisplay = Requires(Requirement::constellation1 && condC1, 2.f * total.em);
-		auto c1Buff = Requires(!Requirement::selfBuff, c1BuffDisplay);
+		auto c1BuffDisplay = Requires{.requirement = Requirement::constellation1 && condC1, .ret = 2.f * total.em};
+		auto c1Buff = Requires{.requirement = !Requirement::selfBuff, .ret = c1BuffDisplay};
 
-		auto c2EmBuff = Requires(Requirement::constellation2, ConstantFlat{.value = 125.f});
+		auto c2EmBuff = Requires{.requirement = Requirement::constellation2, .ret = ConstantFlat{.value = 125.f}};
 		auto condC2 = IsActive("citlaliC2");
-		auto c2TeamEmDisplay = Requires(Requirement::constellation2 && condC2, ConstantFlat{.value = 250.f});
-		auto c2TeamEm = Requires(!Requirement::selfBuff, c2TeamEmDisplay);
-		auto c2Res = Requires(Requirement::constellation2 && Requirement::passive1 && condA1, Constant(-0.2f));
+		auto c2TeamEmDisplay = Requires{.requirement = Requirement::constellation2 && condC2, .ret = ConstantFlat{.value = 250.f}};
+		auto c2TeamEm = Requires{.requirement = !Requirement::selfBuff, .ret = c2TeamEmDisplay};
+		auto c2Res = Requires{.requirement = Requirement::constellation2 && Requirement::passive1 && condA1, .ret = Constant{.value = -0.2f}};
 
 		auto c6Stacks = GetFloat("citlaliC6");
-		auto c6TeamBuff = Requires(Requirement::constellation6, c6Stacks * 0.015f);
-		auto c6SelfBuff = Requires(Requirement::constellation6, c6Stacks * 0.025f);
+		auto c6TeamBuff = Requires{.requirement = Requirement::constellation6, .ret = c6Stacks * 0.015f};
+		auto c6SelfBuff = Requires{.requirement = Requirement::constellation6, .ret = c6Stacks * 0.025f};
 
 		return Data::Setup{
 			.mods{
@@ -206,7 +206,7 @@ const Character::Data Character::Datas::citlali{
 						.formula = Multiplier(total.em, LevelableTalent::skill, {5.7600, 6.1920, 6.6240, 7.2000, 7.6320, 8.0640, 8.6400, 9.2160, 9.7920, 10.3680, 10.9440, 11.5200, 12.2400, 12.9600, 13.6800})
 								 + Multiplier(LevelableTalent::skill, {1386.6759, 1525.3628, 1675.6068, 1837.4082, 2010.7667, 2195.6826, 2392.1558, 2600.1860, 2819.7734, 3050.9182, 3293.6204, 3547.8796, 3813.6960, 4091.0698, 4380.0005}),
 						.modifier = ShieldModifier{
-							.elementBonus{2.5f},
+							.elementBonus{.value = 2.5f},
 						}
 					},
 					Node::Info{

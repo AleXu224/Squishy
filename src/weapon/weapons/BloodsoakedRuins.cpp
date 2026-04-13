@@ -26,14 +26,14 @@ const Weapon::Data Weapon::Datas::bloodsoakedRuins{
 
 		auto condBurst = IsActive("bloodsoakedRuinsCondBurst");
 		auto buffBurst = Requires{
-			condBurst,
-			multiplier2,
+			.requirement = condBurst,
+			.ret = multiplier2,
 		};
 
 		auto condReaction = IsActive("bloodsoakedRuinsCondReaction");
 		auto buffReaction = Requires{
-			condReaction,
-			multiplier4,
+			.requirement = condReaction,
+			.ret = multiplier4,
 		};
 
 

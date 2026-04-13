@@ -10,8 +10,8 @@ const Artifact::Set Artifact::Sets::finaleOfTheDeepGalleries{
 		auto cond = IsActive("finaleOfTheDeepGalleriesCond");
 		auto normalCond = IsActive("finaleOfTheDeepGalleriesNormalCond");
 		auto burstCond = IsActive("finaleOfTheDeepGalleriesBurstCond");
-		auto normalBuff = Requires(cond && !burstCond, Constant{.value = 0.6f});
-		auto burstBuff = Requires(cond && !normalCond, Constant{.value = 0.6f});
+		auto normalBuff = Requires{.requirement = cond && !burstCond, .ret = Constant{.value = 0.6f}};
+		auto burstBuff = Requires{.requirement = cond && !normalCond, .ret = Constant{.value = 0.6f}};
 
 		return Set::Setup{
 			.twoPc{

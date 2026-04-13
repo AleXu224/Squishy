@@ -1,7 +1,6 @@
 #pragma once
 
 #include "formula/base.hpp"
-#include "percentage.hpp"
 #include "stats/loadout.hpp"
 
 

@@ -24,7 +24,7 @@ const Weapon::Data Weapon::Datas::thrillingTalesOfDragonSlayers{
 		auto multiplier1 = WeaponMultiplier(true, {0.2400, 0.3000, 0.3600, 0.4200, 0.4800});
 
 		auto cond = IsActive("thrillingTalesCond");
-		auto buff = Requires(cond && !Requirement::selfBuff, multiplier1);
+		auto buff = Requires{.requirement = cond && !Requirement::selfBuff, .ret = multiplier1};
 
 		return Data::Setup{
 			.mods{

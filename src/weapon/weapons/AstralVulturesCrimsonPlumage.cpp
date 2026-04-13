@@ -29,12 +29,12 @@ const Weapon::Data Weapon::Datas::astralVulturesCrimsonPlumage{
 		auto multiplier6 = WeaponMultiplier(true, {0.2400, 0.3000, 0.3600, 0.4200, 0.4800});
 
 		auto cond = IsActive("astralVulturesCrimsonPlumage");
-		auto condBuff = Requires(cond, multiplier1);
+		auto condBuff = Requires{.requirement = cond, .ret = multiplier1};
 
-		auto otherElementCount = Min(OtherElementCount{}, 2);
+		auto otherElementCount = Min{.val1 = OtherElementCount{}, .val2 = ConstantInt{.value = 2}};
 
-		auto chargedBuff = Evaluator(Index(otherElementCount, true, std::array{multiplier2, multiplier3, multiplier4}));
-		auto burstBuff = Evaluator(Index(otherElementCount, true, std::array{multiplier2, multiplier5, multiplier6}));
+		auto chargedBuff = Evaluator{.evaluated = Index{.index = otherElementCount, .isPercentage = true, .indexable = std::array{multiplier2, multiplier3, multiplier4}}};
+		auto burstBuff = Evaluator{.evaluated = Index{.index = otherElementCount, .isPercentage = true, .indexable = std::array{multiplier2, multiplier5, multiplier6}}};
 
 		return Data::Setup{
 			.mods{

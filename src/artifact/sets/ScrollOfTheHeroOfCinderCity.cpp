@@ -47,22 +47,10 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 			auto [optKey1, optKey2] = getOptKeys(element);
 
 			return std::tuple{
-				Requires(
-					IsActive(optKey1),
-					Constant{.value = 0.12f}
-				),
-				Requires(
-					anyOpt1 && IsCharacterElement{element},
-					Constant{.value = 0.12f}
-				),
-				Requires(
-					IsActive(optKey1) && IsActive(optKey2),
-					Constant(0.28)
-				),
-				Requires(
-					anyOpt2 && IsCharacterElement{element},
-					Constant{.value = 0.28f}
-				)
+				Requires{.requirement = IsActive(optKey1), .ret = Constant{.value = 0.12f}},
+				Requires{.requirement = anyOpt1 && IsCharacterElement{.element = element}, .ret = Constant{.value = 0.12f}},
+				Requires{.requirement = IsActive(optKey1) && IsActive(optKey2), .ret = Constant{.value = 0.28f}},
+				Requires{.requirement = anyOpt2 && IsCharacterElement{.element = element}, .ret = Constant{.value = 0.28f}}
 			};
 		};
 
@@ -74,14 +62,8 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 			Stats::ModsSheet optMods2{};
 
 			for (const auto &element2: Misc::characterElements) {
-				auto formula2_2 = Requires(
-					IsActive(optKey1) && IsCharacterElement{element2},
-					Constant{.value = 0.12f}
-				);
-				auto formula4_2 = Requires(
-					IsActive(optKey2) && IsCharacterElement{element2},
-					Constant{.value = 0.28f}
-				);
+				auto formula2_2 = Requires{.requirement = IsActive(optKey1) && IsCharacterElement{.element = element2}, .ret = Constant{.value = 0.12f}};
+				auto formula4_2 = Requires{.requirement = IsActive(optKey2) && IsCharacterElement{.element = element2}, .ret = Constant{.value = 0.28f}};
 				if (element == element2) {
 					optMods1.teamPreMod.fromElement(element2).DMG = formula1 + formula2_2;
 					optMods2.teamPreMod.fromElement(element2).DMG = formula3 + formula4_2;
@@ -94,14 +76,14 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 				.key = optKey1,
 				.name = scrollOfTheHeroStrings.at(element)[2],
 				.teamBuff = true,
-				.displayCondition = ElementCountOthers{element} >= 1 && !IsCharacterElement{element},
+				.displayCondition = ElementCountOthers{.element = element} >= 1 && !IsCharacterElement{.element = element},
 				.mods = optMods1,
 			});
 			opts.emplace_back(Option::Boolean{
 				.key = optKey2,
 				.name = scrollOfTheHeroStrings.at(element)[3],
 				.teamBuff = true,
-				.displayCondition = IsActive(optKey1) && ElementCountOthers{element} >= 1 && !IsCharacterElement{element},
+				.displayCondition = IsActive(optKey1) && ElementCountOthers{.element = element} >= 1 && !IsCharacterElement{.element = element},
 				.mods = optMods2,
 			});
 

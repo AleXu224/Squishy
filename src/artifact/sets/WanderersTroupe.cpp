@@ -7,8 +7,8 @@ const Artifact::Set Artifact::Sets::wanderersTroupe{
 	.goodKey{"WanderersTroupe"},
 	.name = "Wanderer's Troupe",
 	.setup = []() -> Set::Setup {
-		auto fourPcCond = IsCharacterWeaponType(Misc::WeaponType::catalyst) || IsCharacterWeaponType(Misc::WeaponType::bow);
-		auto fourPcBuff = Requires(fourPcCond, Constant{.value = 0.35f});
+		auto fourPcCond = IsCharacterWeaponType{.weaponType = Misc::WeaponType::catalyst} || IsCharacterWeaponType{.weaponType = Misc::WeaponType::bow};
+		auto fourPcBuff = Requires{.requirement = fourPcCond, .ret = Constant{.value = 0.35f}};
 
 		return Set::Setup{
 			.twoPc{

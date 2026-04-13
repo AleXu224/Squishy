@@ -42,7 +42,7 @@ const Character::Data Character::Datas::columbina{
 
 		auto p3Buff = Min{
 			.val1 = total.hp / ConstantFlat{.value = 1000.f} * 0.002f,
-			.val2 = 0.07f,
+			.val2 = Constant{.value = 0.07f},
 		};
 
 		auto c1Elevation = Requires{
@@ -152,7 +152,7 @@ const Character::Data Character::Datas::columbina{
 						.DMG = burstBuff,
 					},
 				},
-				.moonsignLevel = ConstantInt(1),
+				.moonsignLevel = ConstantInt{.value = 1},
 			},
 			.opts{
 				.burst{
@@ -427,7 +427,7 @@ const Character::Data Character::Datas::columbina{
 						.element = Misc::Element::hydro,
 						.formula = total.hp * 0.12f,
 						.modifier = ShieldModifier{
-							.elementBonus{2.5f},
+							.elementBonus{.value = 2.5f},
 						},
 					},
 					Node::Mods{

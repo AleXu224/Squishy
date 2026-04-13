@@ -7,7 +7,7 @@ const Artifact::Set Artifact::Sets::crimsonWitchOfFlames{
 	.goodKey{"CrimsonWitchOfFlames"},
 	.name = "Crimson Witch of Flames",
 	.setup = []() -> Set::Setup {
-		auto fourPcDMG = Requires(IsActive("crimsonWitchSkill"), Constant{.value = 0.075f});
+		auto fourPcDMG = Requires{.requirement = IsActive("crimsonWitchSkill"), .ret = Constant{.value = 0.075f}};
 
 		return Set::Setup{
 			.twoPc{

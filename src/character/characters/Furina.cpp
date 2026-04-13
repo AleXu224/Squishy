@@ -37,33 +37,33 @@ const Character::Data Character::Datas::furina{
 			.elseVal = GetInt("furinaFanfareC1"),
 		};
 
-		auto a4Points = Requires(
-			Requirement::passive2,
-			total.hp / ConstantFlat{.value = 1000.f}
-		);
-		auto a4DmgIncrease = Clamp(a4Points * 0.007f, 0.f, 0.28f);
+		auto a4Points = Requires{
+			.requirement = Requirement::passive2,
+			.ret = total.hp / ConstantFlat{.value = 1000.f},
+		};
+		auto a4DmgIncrease = Clamp{.val1 = a4Points * 0.007f, .min = 0.f, .max = 0.28f};
 
-		auto c2FanfareAboveLimit = Requires(
-			Requirement::constellation2 && GetInt("furinaFanfareC1") >= 400,
-			GetFloat("furinaAboveFanfareC2")
-		);
-		auto c2HpIncrease = Clamp(c2FanfareAboveLimit * Constant{.value = 0.0035f}, 0.f, 1.4f);
+		auto c2FanfareAboveLimit = Requires{
+			.requirement = Requirement::constellation2 && GetInt("furinaFanfareC1") >= 400,
+			.ret = GetFloat("furinaAboveFanfareC2"),
+		};
+		auto c2HpIncrease = Clamp{.val1 = c2FanfareAboveLimit * Constant{.value = 0.0035f}, .min = 0.f, .max = 1.4f};
 
 		auto c6Active = IsActive("furinaCenterOfAttention");
 		auto c6Pneuma = IsActive("furinaC6Pneuma");
 		auto c6Infusion = IfElse{
-			Requirement::constellation6 && c6Active,
-			Infusion{Misc::Element::hydro},
-			NoInfusion{},
+			.requirement = Requirement::constellation6 && c6Active,
+			.trueVal = Infusion{.element = Misc::Element::hydro},
+			.elseVal = NoInfusion{},
 		};
-		auto c6DmgIncrease = Requires(
-			Requirement::constellation6 && c6Active,
-			0.18f * total.hp + Requires(c6Pneuma, 0.25f * total.hp)
-		);
-		auto c6Healing = Requires(
-			Requirement::constellation6,
-			0.04 * total.hp
-		);
+		auto c6DmgIncrease = Requires{
+			.requirement = Requirement::constellation6 && c6Active,
+			.ret = 0.18f * total.hp + Requires{.requirement = c6Pneuma, .ret = 0.25f * total.hp},
+		};
+		auto c6Healing = Requires{
+			.requirement = Requirement::constellation6 && c6Active,
+			.ret = 0.18f * total.hp + Requires{.requirement = c6Pneuma, .ret = 0.25f * total.hp},
+		};
 
 		return Data::Setup{
 			.mods{

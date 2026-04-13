@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base.hpp"
-
+#include "percentage.hpp"
 
 namespace Formula {
 	template<IntFormula T, std::ranges::random_access_range V>
@@ -10,7 +10,7 @@ namespace Formula {
 		bool isPercentage = true;
 		V indexable;
 
-		using RetType = std::remove_cvref_t<decltype(std::declval<V>().at(std::declval<size_t>()))>;
+		using RetType = std::ranges::range_value_t<V>;
 
 		NodeType<RetType> fold(const Context &ctx, const FoldArgs &args) const {
 			auto foldIndex = index.fold(ctx, args);
@@ -29,8 +29,13 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return Percentage({}, eval(context), isPercentage);
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			auto ret = eval(context);
+			if constexpr (fmt::is_formattable<decltype(ret)>::value) {
+				return Percentage({}, eval(context), isPercentage);
+			} else {
+				return ret.print(context, prevStep);
+			}
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {
@@ -39,7 +44,7 @@ namespace Formula {
 	};
 
 	template<class T>
-	struct Evaluator : FormulaBase<FormulaType<T>> {
+	struct Evaluator : FormulaBase<FormulaType<FormulaType<T>>> {
 		T evaluated;
 		bool isPercentage = false;
 

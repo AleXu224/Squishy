@@ -29,27 +29,27 @@ const Character::Data Character::Datas::xilonen{
 		auto phecCount = PHECCount{};
 		auto resDecreaseMult = 0.f - Multiplier(EntryType::multiplier, LevelableTalent::skill, {0.0900, 0.1200, 0.1500, 0.1800, 0.2100, 0.2400, 0.2700, 0.3000, 0.3300, 0.3600, 0.3900, 0.4200, 0.4500, 0.4800, 0.5100});
 		auto phecDecreaseCond = samplesActivated && phecCount >= 2;
-		auto pyroRes = Requires(phecDecreaseCond && ElementCount{Misc::Element::pyro} >= 1, resDecreaseMult);
-		auto hydroRes = Requires(phecDecreaseCond && ElementCount{Misc::Element::hydro} >= 1, resDecreaseMult);
-		auto electroRes = Requires(phecDecreaseCond && ElementCount{Misc::Element::electro} >= 1, resDecreaseMult);
-		auto cryoRes = Requires(phecDecreaseCond && ElementCount{Misc::Element::cryo} >= 1, resDecreaseMult);
-		auto geoRes = Requires((samplesActivated && phecCount <= 2) || Requirement::constellation2, resDecreaseMult);
+		auto pyroRes = Requires{.requirement = phecDecreaseCond && ElementCount{.element = Misc::Element::pyro} >= 1, .ret = resDecreaseMult};
+		auto hydroRes = Requires{.requirement = phecDecreaseCond && ElementCount{.element = Misc::Element::hydro} >= 1, .ret = resDecreaseMult};
+		auto electroRes = Requires{.requirement = phecDecreaseCond && ElementCount{.element = Misc::Element::electro} >= 1, .ret = resDecreaseMult};
+		auto cryoRes = Requires{.requirement = phecDecreaseCond && ElementCount{.element = Misc::Element::cryo} >= 1, .ret = resDecreaseMult};
+		auto geoRes = Requires{.requirement = (samplesActivated && phecCount <= 2) || Requirement::constellation2, .ret = resDecreaseMult};
 
-		auto a1DmgIncrease = Requires(phecCount < 2 && Requirement::passive1, Constant{.value = 0.3f});
+		auto a1DmgIncrease = Requires{.requirement = phecCount < 2 && Requirement::passive1, .ret = Constant{.value = 0.3f}};
 
-		auto a4DefIncrease = Requires(Requirement::passive2 && IsActive("xilonenNightsoulBurstTriggered"), Constant{.value = 0.2f});
+		auto a4DefIncrease = Requires{.requirement = Requirement::passive2 && IsActive("xilonenNightsoulBurstTriggered"), .ret = Constant{.value = 0.2f}};
 
 		auto c2BuffCond = Requirement::constellation2 && samplesActivated;
-		auto c2GeoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::geo}, Constant{.value = 0.5f});
-		auto c2PyroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::pyro}, Constant{.value = 0.45f});
-		auto c2HydroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::hydro}, Constant{.value = 0.45f});
-		auto c2CryoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::cryo}, Constant{.value = 0.60f});
+		auto c2GeoBuff = Requires{.requirement = c2BuffCond && IsTargetCharacterElement{.element = Misc::Element::geo}, .ret = Constant{.value = 0.5f}};
+		auto c2PyroBuff = Requires{.requirement = c2BuffCond && IsTargetCharacterElement{.element = Misc::Element::pyro}, .ret = Constant{.value = 0.45f}};
+		auto c2HydroBuff = Requires{.requirement = c2BuffCond && IsTargetCharacterElement{.element = Misc::Element::hydro}, .ret = Constant{.value = 0.45f}};
+		auto c2CryoBuff = Requires{.requirement = c2BuffCond && IsTargetCharacterElement{.element = Misc::Element::cryo}, .ret = Constant{.value = 0.60f}};
 
-		auto c4DmgBuff = total.def * Requires(Requirement::constellation4 && IsActive("xilonenC4AfterUse"), Constant{.value = 0.65f});
+		auto c4DmgBuff = total.def * Requires{.requirement = Requirement::constellation4 && IsActive("xilonenC4AfterUse"), .ret = Constant{.value = 0.65f}};
 
 		auto c6Imperishable = IsActive("xilonenC6Imperishable");
-		auto c6Buff = Requires(Requirement::constellation6 && c6Imperishable, total.def * 3.f);
-		auto c6Healing = Requires(Requirement::constellation6, total.def * 1.2f);
+		auto c6Buff = Requires{.requirement = Requirement::constellation6 && c6Imperishable, .ret = total.def * 3.f};
+		auto c6Healing = Requires{.requirement = Requirement::constellation6, .ret = total.def * 1.2f};
 
 		return Data::Setup{
 			.mods{

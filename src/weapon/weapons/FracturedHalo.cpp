@@ -26,14 +26,14 @@ const Weapon::Data Weapon::Datas::fracturedHalo{
 
 		auto cond1 = IsActive("fracturedHaloCond1");
 		auto buff1 = Requires{
-			cond1,
-			multiplier1,
+			.requirement = cond1,
+			.ret = multiplier1,
 		};
 
 		auto cond2 = IsActive("fracturedHaloCond2");
 		auto buff2 = Requires{
-			cond2 && cond1,
-			multiplier3,
+			.requirement = cond2 && cond1,
+			.ret = multiplier3,
 		};
 
 		return Data::Setup{

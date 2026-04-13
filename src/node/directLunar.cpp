@@ -11,7 +11,7 @@ namespace Node {
 	using namespace Formula::Operators;
 
 	template<Misc::SkillStat skillStat>
-	struct _DirectLunarNodeElement {
+	struct _DirectLunarNodeElement : Formula::FormulaBase<float> {
 		Misc::LunarDamageType damageType{};
 
 		[[nodiscard]] constexpr const Formula::FloatNode &switchLunarDamageType() const {
@@ -26,8 +26,8 @@ namespace Node {
 			std::unreachable();
 		}
 
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
-			return switchLunarDamageType().compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return switchLunarDamageType().fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
@@ -66,18 +66,18 @@ namespace Node {
 		const Formula::FloatNode &formula,
 		const Formula::Modifier &modifier
 	) {
-		auto totalDMG = modifier.DMG + _DirectLunarNodeElement<Misc::SkillStat::DMG>(damageType) + Modifiers::total().allLunar.DMG;
-		auto totalMultiplicativeDMG = modifier.multiplicativeDMG + _DirectLunarNodeElement<Misc::SkillStat::multiplicativeDMG>(damageType) + Modifiers::total().allLunar.multiplicativeDMG;
-		auto totalAdditiveDMG = modifier.additiveDMG + _DirectLunarNodeElement<Misc::SkillStat::additiveDMG>(damageType) + Modifiers::total().allLunar.additiveDMG;
-		auto totalElevation = modifier.elevation + _DirectLunarNodeElement<Misc::SkillStat::elevation>(damageType) + Modifiers::total().allLunar.elevation;
-		auto totalCritRate = Formula::Clamp(modifier.critRate + _DirectLunarNodeElement<Misc::SkillStat::critRate>(damageType) + Modifiers::total().allLunar.critRate + Modifiers::total().cr + Stats::fromElement(Modifiers::total(), Misc::lunarDamageTypeToElement(damageType)).critRate, 0.f, 1.f);
-		auto totalCritDMG = modifier.critDMG + _DirectLunarNodeElement<Misc::SkillStat::critDMG>(damageType) + Modifiers::total().allLunar.critDMG + Modifiers::total().cd + Stats::fromElement(Modifiers::total(), Misc::lunarDamageTypeToElement(damageType)).critDMG;
+		auto totalDMG = modifier.DMG + _DirectLunarNodeElement<Misc::SkillStat::DMG>({}, damageType) + Modifiers::total().allLunar.DMG;
+		auto totalMultiplicativeDMG = modifier.multiplicativeDMG + _DirectLunarNodeElement<Misc::SkillStat::multiplicativeDMG>({}, damageType) + Modifiers::total().allLunar.multiplicativeDMG;
+		auto totalAdditiveDMG = modifier.additiveDMG + _DirectLunarNodeElement<Misc::SkillStat::additiveDMG>({}, damageType) + Modifiers::total().allLunar.additiveDMG;
+		auto totalElevation = modifier.elevation + _DirectLunarNodeElement<Misc::SkillStat::elevation>({}, damageType) + Modifiers::total().allLunar.elevation;
+		auto totalCritRate = Formula::Clamp({}, modifier.critRate + _DirectLunarNodeElement<Misc::SkillStat::critRate>({}, damageType) + Modifiers::total().allLunar.critRate + Modifiers::total().cr + Stats::fromElement(Modifiers::total(), Misc::lunarDamageTypeToElement(damageType)).critRate, 0.f, 1.f);
+		auto totalCritDMG = modifier.critDMG + _DirectLunarNodeElement<Misc::SkillStat::critDMG>({}, damageType) + Modifiers::total().allLunar.critDMG + Modifiers::total().cd + Stats::fromElement(Modifiers::total(), Misc::lunarDamageTypeToElement(damageType)).critDMG;
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula;
-		auto emBonus = (6.f * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
+		auto emBonus = (6.f * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat({}, 2000.f));
 		auto dmgBonus = (1.0f + emBonus + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyResMultiplier(Misc::AttackSource::burst, Misc::lunarDamageTypeToElement(damageType));
+		auto enemy = Formula::EnemyResMultiplier({}, Misc::AttackSource::burst, Misc::lunarDamageTypeToElement(damageType));
 		auto elevation = 1.0f + totalElevation;
 
 		auto finalMultiplier = getDirectLunarMultiplier(damageType);

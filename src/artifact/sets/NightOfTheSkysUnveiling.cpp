@@ -12,8 +12,8 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 
 		auto cond = IsActive("nightOfTheSkysUnveilingCond");
 		auto buff = Requires{
-			cond,
-			IfElse{
+			.requirement = cond,
+			.ret = IfElse{
 				.requirement = moonsignLevel >= 2,
 				.trueVal = Constant{.value = 0.3f},
 				.elseVal = Requires{

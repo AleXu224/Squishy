@@ -30,31 +30,28 @@ const Character::Data Character::Datas::chasca{
 		auto electroCount = ElementCountOthers{.element = Misc::Element::electro};
 		auto cryoCount = ElementCountOthers{.element = Misc::Element::cryo};
 
-		auto pyroCond = Requires(pyroCount >= 1, Constant{.value = 1.f});
-		auto hydroCond = Requires(hydroCount >= 1, Constant{.value = 1.f});
-		auto electroCond = Requires(electroCount >= 1, Constant{.value = 1.f});
-		auto cryoCond = Requires(cryoCount >= 1, Constant{.value = 1.f});
+		auto pyroCond = Requires{.requirement = pyroCount >= 1, .ret = Constant{.value = 1.f}};
+		auto hydroCond = Requires{.requirement = hydroCount >= 1, .ret = Constant{.value = 1.f}};
+		auto electroCond = Requires{.requirement = electroCount >= 1, .ret = Constant{.value = 1.f}};
+		auto cryoCond = Requires{.requirement = cryoCount >= 1, .ret = Constant{.value = 1.f}};
 
-		auto c2BonusStack = Requires(Requirement::constellation2, ConstantInt(1));
+		auto c2BonusStack = Requires{.requirement = Requirement::constellation2, .ret = ConstantInt{.value = 1}};
 
-		auto a1Count = Requires(pyroCount >= 1, ConstantInt(1))
-					 + Requires(hydroCount >= 1, ConstantInt(1))
-					 + Requires(electroCount >= 1, ConstantInt(1))
-					 + Requires(cryoCount >= 1, ConstantInt(1));
-		auto a1Buff = Requires(
-			Requirement::passive1,
-			Index(
-				Min(
-					a1Count + c2BonusStack,
-					3
-				),
-				true,
-				std::array{0.f, 0.15f, 0.35f, 0.65f}
-			)
-		);
+		auto a1Count = Requires{.requirement = pyroCount >= 1, .ret = ConstantInt{.value = 1}}
+					 + Requires{.requirement = hydroCount >= 1, .ret = ConstantInt{.value = 1}}
+					 + Requires{.requirement = electroCount >= 1, .ret = ConstantInt{.value = 1}}
+					 + Requires{.requirement = cryoCount >= 1, .ret = ConstantInt{.value = 1}};
+		auto a1Buff = Requires{
+			.requirement = Requirement::passive1,
+			.ret = Index{
+				.index = Min{.val1 = a1Count + c2BonusStack, .val2 = ConstantInt{.value = 3}},
+				.isPercentage = true,
+				.indexable = std::array{0.f, 0.15f, 0.35f, 0.65f}
+			},
+		};
 
 		auto c6Cond = IsActive("chascaC6");
-		auto c6Buff = Requires(c6Cond && Requirement::constellation6 && Requirement::passive1, Constant{.value = 1.2f});
+		auto c6Buff = Requires{.requirement = c6Cond && Requirement::constellation6 && Requirement::passive1, .ret = Constant{.value = 1.2f}};
 
 		auto shadowhuntShellDmg = Modifier{
 			.critDMG = c6Buff,
@@ -242,7 +239,7 @@ const Character::Data Character::Datas::chasca{
 					Node::Info{
 						.name = "Shining Shadowhunt Shell DMG Multiplier",
 						.type = Utils::EntryType::multiplier,
-						.formula = Requires(a1Buff != 0.f, 1.f + a1Buff),
+						.formula = Requires{.requirement = a1Buff != 0.f, .ret = 1.f + a1Buff},
 					},
 				},
 				.passive2{

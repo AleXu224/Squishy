@@ -31,7 +31,7 @@ const Character::Data Character::Datas::zibai{
 			.ret = total.def
 				 * (0.6f + Requires{
 						.requirement = Requirement::constellation2 && Requirement::ascendantGleam,
-						.ret = Constant(5.5f - 0.6f),
+						.ret = Constant{.value = 5.5f - 0.6f},
 					}),
 		};
 
@@ -46,7 +46,7 @@ const Character::Data Character::Datas::zibai{
 
 		auto p3Buff = Min{
 			.val1 = total.def / ConstantFlat{.value = 100.f} * 0.007f,
-			.val2 = 0.14f,
+			.val2 = Constant{.value = 0.14f},
 		};
 
 		auto c1Cond = IsActive("zibaiC1Cond");
@@ -85,7 +85,7 @@ const Character::Data Character::Datas::zibai{
 						.multiplicativeDMG = p3Buff,
 					},
 				},
-				.moonsignLevel = ConstantInt(1),
+				.moonsignLevel = ConstantInt{.value = 1},
 			},
 			.opts{
 				.passive1{
