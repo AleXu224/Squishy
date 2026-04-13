@@ -14,7 +14,7 @@ const Artifact::Set Artifact::Sets::huskOfOpulentDreams{
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.def_ = Constant(0.3f)},
+					.preMod{.def_ = Constant{.value = 0.3f}},
 				},
 			},
 			.fourPc{

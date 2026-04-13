@@ -13,8 +13,7 @@
 
 namespace Modifiers {
 	using namespace Formula::Operators;
-	using namespace Formula::Compiled::Operators;
-	struct PreModFrm {
+	struct PreModFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode characterKitStat;
 		Formula::FloatNode characterInstanceStat;
 		Formula::FloatNode weaponPassiveStat;
@@ -24,16 +23,17 @@ namespace Modifiers {
 		Formula::FloatNode teamPreStat;
 		Formula::FloatNode activePreStat;
 		Formula::FloatNode teamResonances;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return characterKitStat.compile(context)
-				 + characterInstanceStat.compile(context)
-				 + weaponPassiveStat.compile(context)
-				 + weaponInstanceStat.compile(context)
-				 + artifactSetStat.compile(context)
-				 + artifactSubStats.compile(context)
-				 + teamPreStat.compile(context)
-				 + activePreStat.compile(context)
-				 + teamResonances.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = characterKitStat
+					 + characterInstanceStat
+					 + weaponPassiveStat
+					 + weaponInstanceStat
+					 + artifactSetStat
+					 + artifactSubStats
+					 + teamPreStat
+					 + activePreStat
+					 + teamResonances;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {

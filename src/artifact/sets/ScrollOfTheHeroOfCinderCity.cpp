@@ -49,11 +49,11 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 			return std::tuple{
 				Requires(
 					IsActive(optKey1),
-					Constant(0.12f)
+					Constant{.value = 0.12f}
 				),
 				Requires(
 					anyOpt1 && IsCharacterElement{element},
-					Constant(0.12f)
+					Constant{.value = 0.12f}
 				),
 				Requires(
 					IsActive(optKey1) && IsActive(optKey2),
@@ -61,7 +61,7 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 				),
 				Requires(
 					anyOpt2 && IsCharacterElement{element},
-					Constant(0.28f)
+					Constant{.value = 0.28f}
 				)
 			};
 		};
@@ -76,11 +76,11 @@ const Artifact::Set Artifact::Sets::scrollOfTheHeroOfCinderCity{
 			for (const auto &element2: Misc::characterElements) {
 				auto formula2_2 = Requires(
 					IsActive(optKey1) && IsCharacterElement{element2},
-					Constant(0.12f)
+					Constant{.value = 0.12f}
 				);
 				auto formula4_2 = Requires(
 					IsActive(optKey2) && IsCharacterElement{element2},
-					Constant(0.28f)
+					Constant{.value = 0.28f}
 				);
 				if (element == element2) {
 					optMods1.teamPreMod.fromElement(element2).DMG = formula1 + formula2_2;

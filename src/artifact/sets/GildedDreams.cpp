@@ -8,13 +8,13 @@ const Artifact::Set Artifact::Sets::gildedDreams{
 	.name = "Gilded Dreams",
 	.setup = []() -> Set::Setup {
 		auto sameElementAtk = 0.14f * SameElementCount{};
-		auto otherElementEm = ConstantFlat(50.f) * OtherElementCount{};
+		auto otherElementEm = ConstantFlat{.value = 50.f} * OtherElementCount{};
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
 					.preMod{
-						.em = ConstantFlat(80.f),
+						.em = ConstantFlat{.value = 80.f},
 					},
 				},
 			},

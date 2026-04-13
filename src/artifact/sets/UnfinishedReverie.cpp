@@ -13,7 +13,7 @@ const Artifact::Set Artifact::Sets::unfinishedReverie{
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.atk_ = Constant(0.18f)},
+					.preMod{.atk_ = Constant{.value = 0.18f}},
 				},
 			},
 			.fourPc{

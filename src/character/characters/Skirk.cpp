@@ -28,9 +28,9 @@ const Character::Data Character::Datas::skirk{
 	.setup = []() -> Data::Setup {
 		auto serpentsSubtletyBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.1932, 0.2077, 0.2222, 0.2415, 0.2560, 0.2705, 0.2898, 0.3092, 0.3285, 0.3478, 0.3671, 0.3865, 0.4106, 0.4348, 0.4589});
 		auto burstStacksUsed = IfElse{
-			Requirement::constellation2,
-			GetFloat("skirkBurstStacksUsedC2"),
-			GetFloat("skirkBurstStacksUsed"),
+			.requirement = Requirement::constellation2,
+			.trueVal = GetFloat("skirkBurstStacksUsedC2"),
+			.elseVal = GetFloat("skirkBurstStacksUsed"),
 		};
 		auto burstBuff = burstStacksUsed * total.atk * serpentsSubtletyBonus;
 
@@ -40,46 +40,46 @@ const Character::Data Character::Datas::skirk{
 		auto oneRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0660, 0.0720, 0.0780, 0.0840, 0.0900, 0.0960, 0.1020, 0.1080, 0.1140, 0.1200, 0.1260, 0.1320, 0.1380, 0.1440, 0.1500});
 		auto twoRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0880, 0.0960, 0.1040, 0.1120, 0.1200, 0.1280, 0.1360, 0.1440, 0.1520, 0.1600, 0.1680, 0.1760, 0.1840, 0.1920, 0.2000});
 		auto threeRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.1100, 0.1200, 0.1300, 0.1400, 0.1500, 0.1600, 0.1700, 0.1800, 0.1900, 0.2000, 0.2100, 0.2200, 0.2300, 0.2400, 0.2500});
-		auto burstNaBuff = Requires(
-			riftsAbsorbed && Requirement::passive1,
-			Evaluator(
-				Index(
-					riftsAbsorbedCount,
-					true,
-					std::array{zeroRiftstBonus, oneRiftstBonus, twoRiftstBonus, threeRiftstBonus}
-				),
-				true
-			)
-		);
+		auto burstNaBuff = Requires{
+			.requirement = riftsAbsorbed && Requirement::passive1,
+			.ret = Evaluator{
+				.evaluated = Index{
+					.index = riftsAbsorbedCount,
+					.isPercentage = true,
+					.indexable = std::array{zeroRiftstBonus, oneRiftstBonus, twoRiftstBonus, threeRiftstBonus}
+				},
+				.isPercentage = true
+			}
+		};
 
 		auto a4Stacks = GetInt("skirkA4Stacks");
-		auto a4NormalMult = Index(
-			a4Stacks,
-			true,
-			std::array{0.f, 0.1f, 0.2f, 0.7f}
-		);
-		auto a4BurstMult = Index(
-			a4Stacks,
-			true,
-			std::array{0.f, 0.05f, 0.15f, 0.6f}
-		);
+		auto a4NormalMult = Index{
+			.index = a4Stacks,
+			.isPercentage = true,
+			.indexable = std::array{0.f, 0.1f, 0.2f, 0.7f}
+		};
+		auto a4BurstMult = Index{
+			.index = a4Stacks,
+			.isPercentage = true,
+			.indexable = std::array{0.f, 0.05f, 0.15f, 0.6f}
+		};
 
-		auto cryoCount = ElementCount{Misc::Element::cryo};
-		auto hydroCount = ElementCount{Misc::Element::hydro};
-		auto passiveTalentIncrease = Requires(
-			(cryoCount + hydroCount) == 4 && cryoCount >= 1 && hydroCount >= 1,
-			ConstantInt(1)
-		);
+		auto cryoCount = ElementCount{.element = Misc::Element::cryo};
+		auto hydroCount = ElementCount{.element = Misc::Element::hydro};
+		auto passiveTalentIncrease = Requires{
+			.requirement = (cryoCount + hydroCount) == 4 && cryoCount >= 1 && hydroCount >= 1,
+			.ret = ConstantInt{.value = 1}
+		};
 
 		auto c2Cond = IsActive("skirkC2Cond");
-		auto c2Buff = Requires(Requirement::constellation2 && c2Cond, Constant(0.6f));
+		auto c2Buff = Requires{.requirement = Requirement::constellation2 && c2Cond, .ret = Constant{.value = 0.6f}};
 
 		auto c4AtkBuff = Requires{
-			Requirement::constellation4,
-			Index{
-				a4Stacks,
-				true,
-				std::array{0.f, 0.1f, 0.2f, 0.5f},
+			.requirement = Requirement::constellation4,
+			.ret = Index{
+				.index = a4Stacks,
+				.isPercentage = true,
+				.indexable = std::array{0.f, 0.1f, 0.2f, 0.5f},
 			}
 		};
 
@@ -158,12 +158,12 @@ const Character::Data Character::Datas::skirk{
 							Node::Info{
 								.name = "Seven-Phase Flash Normal Attack Mult",
 								.type = Utils::EntryType::multiplier,
-								.formula = Requires(IsActive("skirkA4Stacks"), 1.f + a4NormalMult),
+								.formula = Requires{.requirement = IsActive("skirkA4Stacks"), .ret = 1.f + a4NormalMult},
 							},
 							Node::Info{
 								.name = "Elemental Burst Mult",
 								.type = Utils::EntryType::multiplier,
-								.formula = Requires(IsActive("skirkA4Stacks"), 1.f + a4BurstMult),
+								.formula = Requires{.requirement = IsActive("skirkA4Stacks"), .ret = 1.f + a4BurstMult},
 							},
 						},
 					},
@@ -384,28 +384,28 @@ const Character::Data Character::Datas::skirk{
 						.name = "Crystal Blade DMG",
 						.element = Misc::Element::cryo,
 						.source = Misc::AttackSource::charged,
-						.formula = Requires(Requirement::passive1 && Requirement::constellation1, total.atk * 5.f),
+						.formula = Requires{.requirement = Requirement::passive1 && Requirement::constellation1, .ret = total.atk * 5.f},
 					},
 				},
 				.constellation6{
 					Node::Atk{
 						.name = "Elemental Burst Coordinated Attack",
 						.source = Misc::AttackSource::burst,
-						.formula = Requires(Requirement::passive1 && Requirement::constellation6, total.atk * 6.f),
+						.formula = Requires{.requirement = Requirement::passive1 && Requirement::constellation6, .ret = total.atk * 6.f},
 						.modifier{.multiplicativeDMG = a4BurstMult},
 					},
 					Node::Atk{
 						.name = "Normal Attack Coordinated Attack",
 						.element = Misc::Element::cryo,
 						.source = Misc::AttackSource::normal,
-						.formula = Requires(Requirement::passive1 && Requirement::constellation6, total.atk * 1.5f),
+						.formula = Requires{.requirement = Requirement::passive1 && Requirement::constellation6, .ret = total.atk * 1.5f},
 						.modifier{.multiplicativeDMG = a4NormalMult},
 					},
 					Node::Atk{
 						.name = "Normal Attack Coordinated Attack",
 						.element = Misc::Element::cryo,
 						.source = Misc::AttackSource::charged,
-						.formula = Requires(Requirement::passive1 && Requirement::constellation6, total.atk * 1.5f),
+						.formula = Requires{.requirement = Requirement::passive1 && Requirement::constellation6, .ret = total.atk * 1.5f},
 					},
 				},
 			},

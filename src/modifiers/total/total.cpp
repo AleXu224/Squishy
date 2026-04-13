@@ -15,8 +15,7 @@
 
 namespace Modifiers {
 	using namespace Formula::Operators;
-	using namespace Formula::Compiled::Operators;
-	struct TotalFrm {
+	struct TotalFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode characterKitStat;
 		Formula::FloatNode weaponPassiveStat;
 		Formula::FloatNode artifactSetStat;
@@ -25,13 +24,14 @@ namespace Modifiers {
 		Formula::FloatNode preModStat;
 		SheetMemberIdentifier name;
 
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return characterKitStat.compile(context)
-				 + weaponPassiveStat.compile(context)
-				 + artifactSetStat.compile(context)
-				 + teamPostStat.compile(context)
-				 + activePostStat.compile(context)
-				 + preModStat.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = characterKitStat
+					 + weaponPassiveStat
+					 + artifactSetStat
+					 + teamPostStat
+					 + activePostStat
+					 + preModStat;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
@@ -53,17 +53,18 @@ namespace Modifiers {
 				 + preMod;
 		}
 	};
-	struct TeamTotalFrm {
+	struct TeamTotalFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode teamPreStat;
 		Formula::FloatNode teamPostStat;
 		Formula::FloatNode activePreStat;
 		Formula::FloatNode activePostStat;
 		SheetMemberIdentifier name;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return teamPreStat.compile(context)
-				 + teamPostStat.compile(context)
-				 + activePreStat.compile(context)
-				 + activePostStat.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = teamPreStat
+					 + teamPostStat
+					 + activePreStat
+					 + activePostStat;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -78,19 +79,20 @@ namespace Modifiers {
 				 + activePostStat.eval(newContext);
 		}
 	};
-	struct DisplayTotalFrm {
+	struct DisplayTotalFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode characterKitStat;
 		Formula::FloatNode weaponPassiveStat;
 		Formula::FloatNode artifactSetStat;
 		Formula::FloatNode teamPostStat;
 		Formula::FloatNode preModStat;
 		SheetMemberIdentifier name;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return characterKitStat.compile(context)
-				 + weaponPassiveStat.compile(context)
-				 + artifactSetStat.compile(context)
-				 + teamPostStat.compile(context)
-				 + preModStat.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = characterKitStat
+					 + weaponPassiveStat
+					 + artifactSetStat
+					 + teamPostStat
+					 + preModStat;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -106,18 +108,19 @@ namespace Modifiers {
 				 + preModStat.eval(newContext);
 		}
 	};
-	struct TotalTalentsFrm {
+	struct TotalTalentsFrm : Formula::FormulaBase<int> {
 		Formula::IntNode characterKitTalent;
 		Formula::IntNode characterInstanceTalent;
 		Formula::IntNode weaponPassiveTalent;
 		Formula::IntNode artifactSetTalent;
 		Formula::IntNode teamTalent;
-		[[nodiscard]] Formula::Compiled::IntNode compile(const Formula::Context &context) const {
-			return characterKitTalent.compile(context)
-				 + characterInstanceTalent.compile(context)
-				 + weaponPassiveTalent.compile(context)
-				 + artifactSetTalent.compile(context)
-				 + teamTalent.compile(context);
+		[[nodiscard]] Formula::IntNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = characterKitTalent
+					 + characterInstanceTalent
+					 + weaponPassiveTalent
+					 + artifactSetTalent
+					 + teamTalent;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -132,15 +135,16 @@ namespace Modifiers {
 				 + teamTalent.eval(context);
 		}
 	};
-	struct TotalEnemyFrm {
+	struct TotalEnemyFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode teamStat;
 		Formula::FloatNode teamResonanceStat;
 		Formula::FloatNode instanceStat;
 		SheetMemberIdentifier name;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return teamStat.compile(context)
-				 + teamResonanceStat.compile(context)
-				 + instanceStat.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = teamStat
+					 + teamResonanceStat
+					 + instanceStat;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

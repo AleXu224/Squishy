@@ -11,8 +11,8 @@ namespace Reaction {
 	using namespace Formula::Operators;
 	[[nodiscard]] static Formula::FloatNode makeAmplifyingFormula(float multiplier, Misc::Reaction reaction) {
 		auto emBonus = 2.78f * (Modifiers::total().em / (Modifiers::total().em + 1400.f));
-		auto reactionBonus = Formula::ReactionStat<Misc::SkillStat::DMG>(reaction);
-		return Formula::Constant(multiplier) * (1 + emBonus + reactionBonus);
+		auto reactionBonus = Formula::ReactionStat<Misc::SkillStat::DMG>{.reaction = reaction};
+		return multiplier * (1 + emBonus + reactionBonus);
 	}
 	struct Amplifying {
 		std::string_view name;

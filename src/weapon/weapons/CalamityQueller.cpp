@@ -31,8 +31,8 @@ const Weapon::Data Weapon::Datas::calamityQueller{
 				  * stacks
 				  * IfElse{
 					  .requirement = offField,
-					  .trueVal = Constant(2.f),
-					  .elseVal = Constant(1.f),
+					  .trueVal = Constant{.value = 2.f},
+					  .elseVal = Constant{.value = 1.f},
 				  };
 
 		return Data::Setup{

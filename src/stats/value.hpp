@@ -1,10 +1,8 @@
 #pragma once
 
 #include "cassert"
-#include "formula/compiled/constant.hpp"
-#include "formula/compiled/operators.hpp"// IWYU pragma: keep
-#include "formula/formulaContext.hpp"
-#include "formula/node.hpp"
+#include "formula/base.hpp"
+#include "formula/operators.hpp"// IWYU pragma: keep
 
 
 namespace Stats {
@@ -17,13 +15,13 @@ namespace Stats {
 		T constant = T{};
 		std::array<Formula::NodeType<T>, Count> modifiers{};
 
-		[[nodiscard]] inline Formula::Compiled::NodeType<T> compile(const Formula::Context &context) const {
-			using namespace Formula::Compiled::Operators;
-			Formula::Compiled::NodeType<T> ret = Formula::Compiled::Constant<T>{.value = constant};
+		[[nodiscard]] inline Formula::NodeType<T> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			using namespace Formula::Operators;
+			Formula::NodeType<T> ret = Formula::ConstantBase<T>{.value = constant};
 
 			for (const auto &modifier: modifiers) {
 				if (!modifier.hasValue()) continue;
-				ret = ret + modifier.compile(context);
+				ret = ret + modifier.fold(context, args);
 			}
 
 			return ret;

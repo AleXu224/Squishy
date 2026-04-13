@@ -1,9 +1,6 @@
 #pragma once
 
-#include "compiled/intermediary.hpp"
-#include "fmt/core.h"
-#include "formula/formulaContext.hpp"
-#include "step.hpp"
+#include "formula/base.hpp"
 
 
 namespace Formula {
@@ -13,18 +10,18 @@ namespace Formula {
 	};
 
 	template<class T>
-	concept CompileFuncLike = requires(T t) {
-		{ t(std::declval<const Context &>()) } -> Compiled::FloatFormula;
+	concept FoldFuncLike = requires(T t) {
+		{ t(std::declval<const Context &>(), std::declval<const FoldArgs &>()) } -> FloatFormula;
 	};
 
-	template<CompileFuncLike T, EvalFuncLike V>
+	template<FoldFuncLike T, EvalFuncLike V>
 	struct Custom {
-		T compileFunc;
+		T foldFunc;
 		V func;
 		bool isPercentage = false;
 
-		[[nodiscard]] auto compile(const Context &context) const {
-			return compileFunc(context);
+		[[nodiscard]] auto fold(const Context &context, const FoldArgs &args) const {
+			return foldFunc(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

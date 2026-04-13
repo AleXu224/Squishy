@@ -15,21 +15,21 @@ const Artifact::Set Artifact::Sets::silkenMoonsSerenade{
 			cond,
 			IfElse{
 				.requirement = moonsignLevel >= 2,
-				.trueVal = ConstantFlat(120.f),
+				.trueVal = ConstantFlat{.value = 120.f},
 				.elseVal = Requires{
 					.requirement = moonsignLevel >= 1,
-					.ret = ConstantFlat(60.f),
+					.ret = ConstantFlat{.value = 60.f},
 				},
 			}
 		};
 
-		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant(0.1f)};
+		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant{.value = 0.1f}};
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
 					.preMod{
-						.er = Constant(0.2f),
+						.er = Constant{.value = 0.2f},
 					},
 				},
 			},

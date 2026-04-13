@@ -41,13 +41,13 @@ const Character::Data Character::Datas::columbina{
 		};
 
 		auto p3Buff = Min{
-			.val1 = total.hp / ConstantFlat(1000.f) * 0.002f,
+			.val1 = total.hp / ConstantFlat{.value = 1000.f} * 0.002f,
 			.val2 = 0.07f,
 		};
 
 		auto c1Elevation = Requires{
 			.requirement = Requirement::constellation1,
-			.ret = Constant(0.015f),
+			.ret = Constant{.value = 0.015f},
 		};
 
 		auto c2CondLunarCharged = IsActive("columbinaC2LunarBrillianceLunarCharged");
@@ -67,16 +67,16 @@ const Character::Data Character::Datas::columbina{
 		};
 		auto c2HpBuff = Requires{
 			.requirement = Requirement::constellation2 && (c2CondLunarCharged || c2CondLunarBloom || c2CondLunarCrystallize),
-			.ret = Constant(0.40f),
+			.ret = Constant{.value = 0.40f},
 		};
 		auto c2Elevation = Requires{
 			.requirement = Requirement::constellation2,
-			.ret = Constant(0.07f),
+			.ret = Constant{.value = 0.07f},
 		};
 
 		auto c3Elevation = Requires{
 			.requirement = Requirement::constellation3,
-			.ret = Constant(0.015f),
+			.ret = Constant{.value = 0.015f},
 		};
 
 		auto c4CondLunarCharged = IsActive("columbinaC4KuuvahkiInterferenceLunarCharged");
@@ -84,24 +84,24 @@ const Character::Data Character::Datas::columbina{
 		auto c4CondLunarCrystallize = IsActive("columbinaC4KuuvahkiInterferenceLunarCrystallize");
 		auto c4BuffLunarCharged = Requires{
 			.requirement = Requirement::constellation4 && c4CondLunarCharged,
-			.ret = Constant(0.125f) * total.hp,
+			.ret = Constant{.value = 0.125f} * total.hp,
 		};
 		auto c4BuffLunarBloom = Requires{
 			.requirement = Requirement::constellation4 && c4CondLunarBloom,
-			.ret = Constant(0.025f) * total.hp,
+			.ret = Constant{.value = 0.025f} * total.hp,
 		};
 		auto c4BuffLunarCrystallize = Requires{
 			.requirement = Requirement::constellation4 && c4CondLunarCrystallize,
-			.ret = Constant(0.125f) * total.hp,
+			.ret = Constant{.value = 0.125f} * total.hp,
 		};
 		auto c4Elevation = Requires{
 			.requirement = Requirement::constellation4,
-			.ret = Constant(0.015f),
+			.ret = Constant{.value = 0.015f},
 		};
 
 		auto c5Elevation = Requires{
 			.requirement = Requirement::constellation5,
-			.ret = Constant(0.03f),
+			.ret = Constant{.value = 0.03f},
 		};
 
 		auto c6CondLunarCharged = IsActive("columbinaC6LunarCharged");
@@ -109,23 +109,23 @@ const Character::Data Character::Datas::columbina{
 		auto c6CondLunarCrystallize = IsActive("columbinaC6LunarCrystallize");
 		auto c6BuffLunarCharged = Requires{
 			.requirement = Requirement::constellation6 && c6CondLunarCharged,
-			.ret = Constant(0.8f),
+			.ret = Constant{.value = 0.8f},
 		};
 		auto c6BuffLunarBloom = Requires{
 			.requirement = Requirement::constellation6 && c6CondLunarBloom,
-			.ret = Constant(0.8f),
+			.ret = Constant{.value = 0.8f},
 		};
 		auto c6BuffLunarCrystallize = Requires{
 			.requirement = Requirement::constellation6 && c6CondLunarCrystallize,
-			.ret = Constant(0.8f),
+			.ret = Constant{.value = 0.8f},
 		};
 		auto c6HydroBuff = Requires{
 			.requirement = Requirement::constellation6 && (c6CondLunarCharged || c6CondLunarBloom || c6CondLunarCrystallize),
-			.ret = Constant(0.8f),
+			.ret = Constant{.value = 0.8f},
 		};
 		auto c6Elevation = Requires{
 			.requirement = Requirement::constellation6,
-			.ret = Constant(0.07f),
+			.ret = Constant{.value = 0.07f},
 		};
 
 		return Data::Setup{

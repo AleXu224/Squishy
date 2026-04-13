@@ -9,7 +9,7 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 	.setup = []() -> Set::Setup {
 		auto fourPcOffFieldDmg = Requires(
 			IsActive("goldenTroupeOffField"),
-			Constant(0.25f)
+			Constant{.value = 0.25f}
 		);
 
 		return Set::Setup{
@@ -17,7 +17,7 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 				.mods{
 					.preMod{
 						.skill{
-							.DMG = Constant(0.2f),
+							.DMG = Constant{.value = 0.2f},
 						},
 					},
 				},
@@ -33,7 +33,7 @@ const Artifact::Set Artifact::Sets::goldenTroupe{
 				.mods{
 					.preMod{
 						.skill{
-							.DMG = Constant(0.25f)
+							.DMG = Constant{.value = 0.25f}
 								 + fourPcOffFieldDmg,
 						},
 					},

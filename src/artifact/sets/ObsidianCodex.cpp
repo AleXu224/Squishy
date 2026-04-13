@@ -7,8 +7,8 @@ const Artifact::Set Artifact::Sets::obsidianCodex{
 	.goodKey{"ObsidianCodex"},
 	.name = "Obsidian Codex",
 	.setup = []() -> Set::Setup {
-		auto twoPcDMG = Requires(IsActive("obsidianCodexNightsoul"), Constant(0.15f));
-		auto fourPcCr = Requires(IsActive("obsidianCodexConsumed"), Constant(0.4f));
+		auto twoPcDMG = Requires(IsActive("obsidianCodexNightsoul"), Constant{.value = 0.15f});
+		auto fourPcCr = Requires(IsActive("obsidianCodexConsumed"), Constant{.value = 0.4f});
 
 		return Set::Setup{
 			.twoPc{

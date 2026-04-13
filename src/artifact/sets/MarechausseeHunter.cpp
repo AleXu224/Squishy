@@ -14,10 +14,10 @@ const Artifact::Set Artifact::Sets::marechausseeHunter{
 				.mods{
 					.preMod{
 						.normal{
-							.DMG = Constant(0.15f),
+							.DMG = Constant{.value = 0.15f},
 						},
 						.charged{
-							.DMG = Constant(0.15f),
+							.DMG = Constant{.value = 0.15f},
 						},
 					},
 				},

@@ -35,9 +35,9 @@ const Character::Data Character::Datas::citlali{
 		auto c1BuffDisplay = Requires(Requirement::constellation1 && condC1, 2.f * total.em);
 		auto c1Buff = Requires(!Requirement::selfBuff, c1BuffDisplay);
 
-		auto c2EmBuff = Requires(Requirement::constellation2, ConstantFlat(125.f));
+		auto c2EmBuff = Requires(Requirement::constellation2, ConstantFlat{.value = 125.f});
 		auto condC2 = IsActive("citlaliC2");
-		auto c2TeamEmDisplay = Requires(Requirement::constellation2 && condC2, ConstantFlat(250.f));
+		auto c2TeamEmDisplay = Requires(Requirement::constellation2 && condC2, ConstantFlat{.value = 250.f});
 		auto c2TeamEm = Requires(!Requirement::selfBuff, c2TeamEmDisplay);
 		auto c2Res = Requires(Requirement::constellation2 && Requirement::passive1 && condA1, Constant(-0.2f));
 

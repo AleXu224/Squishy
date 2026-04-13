@@ -1,7 +1,7 @@
 #pragma once
 
 #include "character/instance.hpp"
-#include "formula/formulaContext.hpp"
+#include "formula/base.hpp"
 #include "solution.hpp"
 #include "team/instance.hpp"
 

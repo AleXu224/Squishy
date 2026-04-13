@@ -7,12 +7,12 @@ const Artifact::Set Artifact::Sets::maidenBeloved{
 	.goodKey{"MaidenBeloved"},
 	.name = "Maiden Beloved",
 	.setup = []() -> Set::Setup {
-		auto fourPcBuff = Requires(IsActive("maidenBelovedCond"), Constant(0.2f));
+		auto fourPcBuff = Requires(IsActive("maidenBelovedCond"), Constant{.value = 0.2f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.hb = Constant(0.15f)},
+					.preMod{.hb = Constant{.value = 0.15f}},
 				},
 			},
 			.fourPc{

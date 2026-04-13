@@ -3,12 +3,11 @@
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "fmt/core.h"
+#include "formula/base.hpp"
 #include "formula/character.hpp"
 #include "formula/clamp.hpp"
-#include "formula/compiled/teamCharacter.hpp"
 #include "formula/constant.hpp"
 #include "formula/operators.hpp"
-#include "intermediary.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
@@ -17,16 +16,16 @@
 
 namespace Formula {
 	template<FormulaLike T>
-	struct TeamCharacter {
+	struct TeamCharacter : FormulaBase<FormulaType<T>> {
 		size_t index = 0;
 		T formula;
 
 		using RetType = FormulaType<T>;
 
-		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
 			const auto &character = context.team.characters.at(index);
-			if (!character) return Compiled::Constant<RetType>{.value = {}};
-			return formula.compile(context.withSource(character->state));
+			if (!character) return ConstantBase<RetType>{.value = {}};
+			return formula.fold(context.withSource(character->state), args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
@@ -48,15 +47,15 @@ namespace Formula {
 	};
 
 	template<FormulaLike T>
-	struct ActiveCharacter {
+	struct ActiveCharacter : FormulaBase<FormulaType<T>> {
 		T formula;
 
 		using RetType = FormulaType<T>;
 
-		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
 			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
-			if (!character) return Compiled::Constant<RetType>{.value = {}};
-			return formula.compile(context.withSource(character->state));
+			if (!character) return ConstantBase<RetType>{.value = {}};
+			return formula.fold(context.withSource(character->state), args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
@@ -78,13 +77,13 @@ namespace Formula {
 	};
 
 	template<FormulaLike T>
-	struct PreviousCharacter {
+	struct PreviousCharacter : FormulaBase<FormulaType<T>> {
 		T formula;
 
 		using RetType = FormulaType<T>;
 
-		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) const {
-			return formula.compile(context.withSource(context.prevSource));
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+			return formula.fold(context.withSource(context.prevSource), args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
@@ -101,17 +100,17 @@ namespace Formula {
 	};
 
 	template<ArithmeticFormula T>
-	struct TeamEvalSum {
+	struct TeamEvalSum : FormulaBase<FormulaType<T>> {
 		T formula;
 
 		using RetType = FormulaType<T>;
-		[[nodiscard]] Formula::Compiled::NodeType<RetType> compile(const Context &context) {
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
 			using namespace Formula::Operators;
 			return (TeamCharacter{.index = 0, .formula = formula}
 					+ TeamCharacter{.index = 1, .formula = formula}
 					+ TeamCharacter{.index = 2, .formula = formula}
 					+ TeamCharacter{.index = 3, .formula = formula})
-				.compile(context);
+				.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) {
@@ -134,11 +133,7 @@ namespace Formula {
 		}
 	};
 
-	struct TeamInfusion {
-		[[nodiscard]] static Compiled::ElementNode compile(const Context &context) {
-			return Compiled::ConstantElement{.value = eval(context)};
-		}
-
+	struct TeamInfusion : FormulaBase<Utils::JankyOptional<Misc::Element>, Type::constant> {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			auto elem = eval(context);
 			if (elem.has_value()) {
@@ -168,14 +163,14 @@ namespace Formula {
 		}
 	};
 
-	struct TeamMoonsignLevel {
-		[[nodiscard]] static Compiled::IntNode compile(const Context &context) {
+	struct TeamMoonsignLevel : FormulaBase<int32_t> {
+		[[nodiscard]] static IntNode fold(const Context &context, const FoldArgs &args) {
 			using namespace Formula::Operators;
 			return (TeamCharacter{.index = 0, .formula = CharacterMoonsignLevel{}}
 					+ TeamCharacter{.index = 1, .formula = CharacterMoonsignLevel{}}
 					+ TeamCharacter{.index = 2, .formula = CharacterMoonsignLevel{}}
 					+ TeamCharacter{.index = 3, .formula = CharacterMoonsignLevel{}})
-				.compile(context);
+				.fold(context, args);
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -198,11 +193,7 @@ namespace Formula {
 		}
 	};
 
-	struct TeamCharacterCount {
-		[[nodiscard]] static Compiled::IntNode compile(const Context &context) {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
-
+	struct TeamCharacterCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			return fmt::format("Team character count {}", eval(context));
 		}
@@ -217,12 +208,8 @@ namespace Formula {
 		}
 	};
 
-	struct CharacterTeamInfusion {
+	struct CharacterTeamInfusion : FormulaBase<Utils::JankyOptional<Misc::Element>, Type::constant> {
 		Formula::ElementNode val;
-
-		[[nodiscard]] Compiled::ElementNode compile(const Context &context) const {
-			return Compiled::ConstantElement{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			auto elem = eval(context);
@@ -240,37 +227,37 @@ namespace Formula {
 		}
 	};
 
-	struct NonMoonsignCharacterBuff {
-		[[nodiscard]] static Compiled::FloatNode compile(const Formula::Context &context) {
+	struct NonMoonsignCharacterBuff : FormulaBase<float> {
+		[[nodiscard]] static FloatNode fold(const Formula::Context &context, const FoldArgs &args) {
 			using namespace Formula::Operators;
 
 			if (context.source.stats.sheet.moonsignLevel.eval(context) >= 1) {
-				return Formula::Constant{0.0f}.compile(context);
+				return Formula::Constant{.value = 0.0f}.fold(context, args);
 			}
 
-			Formula::NodeType<float> totalBuff = Formula::Constant{0.0f};
+			Formula::NodeType<float> totalBuff = Formula::Constant{.value = 0.0f};
 
 			switch (context.source.stats.base.element) {
 				case Misc::Element::pyro:
 				case Misc::Element::electro:
 				case Misc::Element::cryo:
-					totalBuff = totalBuff + ((Modifiers::total().atk / Formula::ConstantFlat(100.f)) * Formula::Constant{0.009f});
+					totalBuff = totalBuff + ((Modifiers::total().atk / 100.f) * 0.009f);
 					break;
 				case Misc::Element::hydro:
-					totalBuff = totalBuff + ((Modifiers::total().hp / Formula::ConstantFlat(1000.f)) * Formula::Constant{0.0006f});
+					totalBuff = totalBuff + ((Modifiers::total().hp / 1000.f) * 0.0006f);
 					break;
 				case Misc::Element::geo:
-					totalBuff = totalBuff + ((Modifiers::total().def / Formula::ConstantFlat(100.f)) * Formula::Constant{0.01f});
+					totalBuff = totalBuff + ((Modifiers::total().def / 100.f) * 0.01f);
 					break;
 				case Misc::Element::anemo:
 				case Misc::Element::dendro:
-					totalBuff = totalBuff + ((Modifiers::total().em / Formula::ConstantFlat(100.f)) * Formula::Constant{0.0225f});
+					totalBuff = totalBuff + ((Modifiers::total().em / 100.f) * 0.0225f);
 					break;
 				default:
 					break;
 			}
 
-			return totalBuff.compile(context);
+			return totalBuff.fold(context, args);
 		}
 
 		[[nodiscard]] static std::string print(const Formula::Context &context, Step) {
@@ -308,8 +295,8 @@ namespace Formula {
 		}
 	};
 
-	struct NonMoonsignCharacterTeamBuff {
-		[[nodiscard]] static Compiled::FloatNode compile(const Context &context) {
+	struct NonMoonsignCharacterTeamBuff : FormulaBase<float> {
+		[[nodiscard]] static FloatNode fold(const Context &context, const FoldArgs &args) {
 			using namespace Formula::Operators;
 			auto totalBuff = TeamCharacter{.index = 0, .formula = NonMoonsignCharacterBuff{}}
 						   + TeamCharacter{.index = 1, .formula = NonMoonsignCharacterBuff{}}
@@ -318,9 +305,9 @@ namespace Formula {
 
 			Formula::Min ret{
 				.val1 = totalBuff,
-				.val2 = 0.36f,
+				.val2 = Constant{.value = 0.36f},
 			};
-			return ret.compile(context);
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -340,76 +327,14 @@ namespace Formula {
 		}
 	};
 
-	struct LunarDmgDistribution {
+	struct ActiveCharacterFilter : FormulaBase<float> {
 		Formula::FloatNode formula;
 
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
-			return Compiled::LunarDmgDistribution{
-				.char1 = TeamCharacter{.index = 0, .formula = formula}.compile(context),
-				.char2 = TeamCharacter{.index = 1, .formula = formula}.compile(context),
-				.char3 = TeamCharacter{.index = 2, .formula = formula}.compile(context),
-				.char4 = TeamCharacter{.index = 3, .formula = formula}.compile(context),
-			}
-				.wrap();
-		}
-
-		[[nodiscard]] std::string print(const Context &context, Step step) const {
-			std::array values{
-				std::pair{
-					TeamCharacter{.index = 0, .formula = formula},
-					TeamCharacter{.index = 0, .formula = formula}.eval(context),
-				},
-				std::pair{
-					TeamCharacter{.index = 1, .formula = formula},
-					TeamCharacter{.index = 1, .formula = formula}.eval(context),
-				},
-				std::pair{
-					TeamCharacter{.index = 2, .formula = formula},
-					TeamCharacter{.index = 2, .formula = formula}.eval(context),
-				},
-				std::pair{
-					TeamCharacter{.index = 3, .formula = formula},
-					TeamCharacter{.index = 3, .formula = formula}.eval(context),
-				},
-			};
-
-			std::sort(values.begin(), values.end(), [](auto &&val1, auto &&val2) {
-				return val1.second > val2.second;
-			});
-
-			using namespace Formula::Operators;
-
-			return (values.at(0).first
-					+ values.at(1).first * Constant(0.5f)
-					+ values.at(2).first * Constant(1.f / 12.f)
-					+ values.at(3).first * Constant(1.f / 12.f))
-				.print(context, step);
-		}
-
-		[[nodiscard]] float eval(const Context &context) const {
-			std::array<float, 4> values{
-				TeamCharacter{.index = 0, .formula = formula}.eval(context),
-				TeamCharacter{.index = 1, .formula = formula}.eval(context),
-				TeamCharacter{.index = 2, .formula = formula}.eval(context),
-				TeamCharacter{.index = 3, .formula = formula}.eval(context),
-			};
-
-			std::sort(values.begin(), values.end(), std::greater<float>());
-
-			return values.at(0)
-				 + (values.at(1) * 0.5f)
-				 + ((values.at(2) + values.at(3)) * (1.f / 12.f));
-		}
-	};
-
-	struct ActiveCharacterFilter {
-		Formula::FloatNode formula;
-
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
 			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
-			if (!activeCharacter) return Compiled::ConstantFloat{.value = 0};
-			if (context.source.instanceKey != activeCharacter->instanceKey) return Compiled::ConstantFloat{.value = 0};
-			return formula.compile(context);
+			if (!activeCharacter) return ConstantFlat{.value = 0};
+			if (context.source.instanceKey != activeCharacter->instanceKey) return ConstantFlat{.value = 0};
+			return formula.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step step) const {

@@ -20,8 +20,17 @@ file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h" "
 add_library(squishy_lib ${all_files})
 target_compile_features(squishy_lib PUBLIC cxx_std_23)
 set_target_properties(squishy_lib PROPERTIES CXX_EXTENSIONS OFF)
-target_include_directories(squishy_lib PUBLIC src)
+target_include_directories(squishy_lib PUBLIC src src_common)
+target_compile_definitions(squishy_lib PUBLIC GENSHIN)
 add_dependencies(squishy_lib Assets)
+
+# file(GLOB_RECURSE all_zzz_files CONFIGURE_DEPENDS "src_zzz/*.cpp" "src_zzz/*.cc" "src_zzz/*.h" "src_zzz/*.hpp")
+
+# add_library(squishy_zzz_lib ${all_zzz_files})
+# target_compile_features(squishy_zzz_lib PUBLIC cxx_std_23)
+# set_target_properties(squishy_zzz_lib PROPERTIES CXX_EXTENSIONS OFF LINKER_LANGUAGE CXX)
+# target_include_directories(squishy_zzz_lib PUBLIC src_zzz src_common)
+# target_compile_definitions(squishy_zzz_lib PUBLIC ZZZ)
 
 if (MSVC)
     # target_compile_options(squishy_lib PUBLIC /fsanitize=address)
@@ -50,12 +59,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glaze)
 target_link_libraries(squishy_lib PUBLIC glaze::glaze)
+# target_link_libraries(squishy_zzz_lib PUBLIC glaze::glaze)
 
 find_package(nfd CONFIG REQUIRED)
 target_link_libraries(squishy_lib PRIVATE nfd::nfd)
+# target_link_libraries(squishy_zzz_lib PRIVATE nfd::nfd)
 
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
+add_executable(squishy_test main_zzz.cpp)
+target_link_libraries(squishy_test PRIVATE squishy_lib)
 
 add_executable(squishyBench EXCLUDE_FROM_ALL benchmark.cpp)
 target_link_libraries(squishyBench PRIVATE squishy_lib)

@@ -39,7 +39,7 @@ const Character::Data Character::Datas::neuvillette{
 		auto a4Cond = IsActive("neuvilletteA4");
 		auto a4Buff = Requires(
 			Requirement::passive2 && a4Cond,
-			0.006f * (GetFloat("neuvilletteA4") - ConstantFlat(30.f))
+			0.006f * (GetFloat("neuvilletteA4") - ConstantFlat{.value = 30.f})
 		);
 
 		auto c2Buff = Requires(Requirement::constellation2, a1Stacks * 0.14f);

@@ -1,16 +1,15 @@
 #pragma once
 
-#include "formulaContext.hpp"
+#include "formula/base.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/stat.hpp"
-#include "step.hpp"
 
 namespace Formula {
-	struct Stat {
+	struct Stat : FormulaBase<float> {
 		::Stat stat;
 
-		[[nodiscard]] auto compile(const Context &context) const {
-			return Stats::fromStat(Modifiers::total(), stat).compile(context);
+		[[nodiscard]] auto fold(const Context &context, const FoldArgs &args) const {
+			return Stats::fromStat(Modifiers::total(), stat).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {

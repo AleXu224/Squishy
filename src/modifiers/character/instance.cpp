@@ -7,11 +7,11 @@
 #include "stats/value.hpp"
 
 namespace Modifiers::Character {
-	struct InstanceStats {
+	struct InstanceStats : Formula::FormulaBase<float> {
 		SheetMember<Stats::Sheet<Stats::Value<float, 2>>> stat;
 		SheetMemberIdentifier member;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.source.stats.sheet.stats).compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return stat.resolve(context.source.stats.sheet.stats).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
@@ -23,10 +23,10 @@ namespace Modifiers::Character {
 		}
 	};
 
-	struct InstanceTalents {
+	struct InstanceTalents : Formula::FormulaBase<int32_t> {
 		TalentMember<Talents<Stats::Value<int32_t, 1>>> stat;
-		[[nodiscard]] Formula::Compiled::IntNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.source.stats.sheet.talents).compile(context);
+		[[nodiscard]] Formula::IntNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return stat.resolve(context.source.stats.sheet.talents).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {

@@ -8,12 +8,12 @@ const Artifact::Set Artifact::Sets::paleFlame{
 	.name = "Pale Flame",
 	.setup = []() -> Set::Setup {
 		auto fourPcAtk = GetFloat("paleFlameStacks") * 0.09f;
-		auto fourPcPhys = Requires(GetInt("paleFlameStacks") >= 2, Constant(0.25f));
+		auto fourPcPhys = Requires(GetInt("paleFlameStacks") >= 2, Constant{.value = 0.25f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.physical{.DMG = Constant(0.25f)}},
+					.preMod{.physical{.DMG = Constant{.value = 0.25f}}},
 				},
 			},
 			.fourPc{

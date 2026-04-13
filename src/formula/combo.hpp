@@ -1,16 +1,13 @@
 #pragma once
 
 #include "combo/override.hpp"
-#include "compiled/node.hpp"
-#include "compiled/operators.hpp"
-#include "fmt/core.h"
-#include "formula/node.hpp"
-#include "formulaContext.hpp"
+#include "formula/base.hpp"
+#include "formula/operators.hpp"
 #include <vector>
 
 
 namespace Formula {
-	struct Combo {
+	struct Combo : FormulaBase<float> {
 		struct Entry {
 			float multiplier;
 			std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction;
@@ -18,15 +15,15 @@ namespace Formula {
 		};
 		std::vector<Entry> nodes;
 
-		[[nodiscard]] inline Formula::Compiled::FloatNode compile(const Context &context) const {
-			using namespace Formula::Compiled::Operators;
-			Formula::Compiled::FloatNode ret = Formula::Compiled::ConstantFloat();
+		FloatNode fold(const Context &ctx, const FoldArgs &args) const {
+			using namespace Formula::Operators;
+			FloatNode ret = ConstantFlat{.value{}};
 
 			for (const auto &node: nodes) {
-				ret = ret + (Formula::Compiled::FloatNode(Formula::Compiled::ConstantFloat{.value = node.multiplier}) * node.node.compile(context.withReaction(node.reaction)));
+				ret = ret + (Constant{.value = node.multiplier} * node.node.fold(ctx.withReaction(node.reaction), args));
 			}
 
-			return ret;
+			return ret.fold(ctx, args);
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
@@ -44,7 +41,7 @@ namespace Formula {
 	};
 
 	template<class T>
-	struct ComboOptionOverride {
+	struct ComboOptionOverride : FormulaBase<typename T::RetType> {
 		::Combo::Overrides overrides;
 		T node;
 
@@ -61,9 +58,9 @@ namespace Formula {
 			return ret;
 		}
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			return runFor(context, [&node = node](const Context &context) {
-				return node.compile(context);
+		NodeType<NodeType<T>> fold(const Context &ctx, const FoldArgs &args) const {
+			return runFor(ctx, [&node = node, &args](const Context &context) {
+				return node.fold(context, args);
 			});
 		}
 

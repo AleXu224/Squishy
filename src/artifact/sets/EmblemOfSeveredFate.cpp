@@ -11,7 +11,7 @@ const Artifact::Set Artifact::Sets::emblemOfSeveredFate{
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.er = Constant(0.2f)},
+					.preMod{.er = Constant{.value = 0.2f}},
 				},
 			},
 			.fourPc{

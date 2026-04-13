@@ -7,14 +7,14 @@ const Artifact::Set Artifact::Sets::crimsonWitchOfFlames{
 	.goodKey{"CrimsonWitchOfFlames"},
 	.name = "Crimson Witch of Flames",
 	.setup = []() -> Set::Setup {
-		auto fourPcDMG = Requires(IsActive("crimsonWitchSkill"), Constant(0.075f));
+		auto fourPcDMG = Requires(IsActive("crimsonWitchSkill"), Constant{.value = 0.075f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
 					.preMod{
 						.pyro{
-							.DMG = Constant(0.15f),
+							.DMG = Constant{.value = 0.15f},
 						},
 					},
 				},
@@ -34,11 +34,11 @@ const Artifact::Set Artifact::Sets::crimsonWitchOfFlames{
 				.mods{
 					.preMod{
 						.pyro{.DMG = fourPcDMG},
-						.vape{.DMG = Constant(0.15f)},
-						.melt{.DMG = Constant(0.15f)},
-						.burning{.DMG = Constant(0.4f)},
-						.overloaded{.DMG = Constant(0.4f)},
-						.burgeon{.DMG = Constant(0.4f)},
+						.vape{.DMG = Constant{.value = 0.15f}},
+						.melt{.DMG = Constant{.value = 0.15f}},
+						.burning{.DMG = Constant{.value = 0.4f}},
+						.overloaded{.DMG = Constant{.value = 0.4f}},
+						.burgeon{.DMG = Constant{.value = 0.4f}},
 					},
 				},
 			},

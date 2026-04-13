@@ -3,8 +3,9 @@
 #include "character/key.hpp"
 #include "team/key.hpp"
 
+#include "formula/base.hpp"
 #include "formula/constant.hpp"
-#include "formula/formulaContext.hpp"
+
 
 #include "node/node.hpp"
 #include "option/option.hpp"
@@ -88,7 +89,7 @@ namespace UI {
 		std::optional<std::map<uint32_t, std::reference_wrapper<Option::Types>>> options;
 		std::optional<std::reference_wrapper<const Stats::ModsSheet>> modsSheet{};
 		std::shared_ptr<UI::ModsGenerator> modsGenerator = std::make_shared<ModsGenerator>();
-		Formula::BoolNode displayCondition = Formula::ConstantBool(true);
+		Formula::BoolNode displayCondition = Formula::ConstantBool({}, true);
 
 		[[nodiscard]] Child build(const Element &) const;
 	};

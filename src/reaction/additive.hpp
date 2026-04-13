@@ -12,8 +12,8 @@ namespace Reaction {
 	[[nodiscard]] static Formula::FloatNode makeAdditiveFormula(float multiplier, Misc::Reaction reaction) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
 		auto emBonus = (5.f * Modifiers::total().em) / (Modifiers::total().em + 1200.f);
-		auto reactionBonus = Formula::ReactionStat<Misc::SkillStat::DMG>(reaction);
-		return Formula::Constant(multiplier) * levelMultiplier * (1.f + emBonus + reactionBonus);
+		auto reactionBonus = Formula::ReactionStat<Misc::SkillStat::DMG>{.reaction = reaction};
+		return multiplier * levelMultiplier * (1.f + emBonus + reactionBonus);
 	}
 	struct Additive {
 		std::string_view name;

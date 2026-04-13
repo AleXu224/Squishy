@@ -40,24 +40,24 @@ const Character::Data Character::Datas::illuga{
 			.requirement = Requirement::passive1 && a1Cond && !Requirement::selfBuff,
 			.ret = IfElse{
 				.requirement = Requirement::constellation6,
-				.trueVal = Constant(0.10f),
-				.elseVal = Constant(0.05f),
+				.trueVal = Constant{.value = 0.10f},
+				.elseVal = Constant{.value = 0.05f},
 			},
 		};
 		auto a1CdBuff = Requires{
 			.requirement = Requirement::passive1 && a1Cond && !Requirement::selfBuff,
 			.ret = IfElse{
 				.requirement = Requirement::constellation6,
-				.trueVal = Constant(0.30f),
-				.elseVal = Constant(0.10f),
+				.trueVal = Constant{.value = 0.30f},
+				.elseVal = Constant{.value = 0.10f},
 			},
 		};
 		auto a1EmBuff = Requires{
 			.requirement = Requirement::passive1 && Requirement::ascendantGleam && a1Cond && !Requirement::selfBuff,
 			.ret = IfElse{
 				.requirement = Requirement::constellation6,
-				.trueVal = ConstantFlat(80.f),
-				.elseVal = ConstantFlat(50.f),
+				.trueVal = ConstantFlat{.value = 80.f},
+				.elseVal = ConstantFlat{.value = 50.f},
 			},
 		};
 
@@ -66,11 +66,11 @@ const Character::Data Character::Datas::illuga{
 			.requirement = Requirement::passive2 && burstCond,
 			.ret = IfElse{
 				.requirement = a4Count >= 3,
-				.trueVal = Constant(0.24f) * total.em,
+				.trueVal = Constant{.value = 0.24f} * total.em,
 				.elseVal = IfElse{
 					.requirement = a4Count == 2,
-					.trueVal = Constant(0.14f) * total.em,
-					.elseVal = Constant(0.07f) * total.em,
+					.trueVal = Constant{.value = 0.14f} * total.em,
+					.elseVal = Constant{.value = 0.07f} * total.em,
 				},
 			},
 		};
@@ -78,18 +78,18 @@ const Character::Data Character::Datas::illuga{
 			.requirement = Requirement::passive2 && burstCond,
 			.ret = IfElse{
 				.requirement = a4Count >= 3,
-				.trueVal = Constant(1.6f) * total.em,
+				.trueVal = Constant{.value = 1.6f} * total.em,
 				.elseVal = IfElse{
 					.requirement = a4Count == 2,
-					.trueVal = Constant(0.96f) * total.em,
-					.elseVal = Constant(0.48f) * total.em,
+					.trueVal = Constant{.value = 0.96f} * total.em,
+					.elseVal = Constant{.value = 0.48f} * total.em,
 				},
 			},
 		};
 
 		auto c4Buff = Requires{
 			.requirement = Requirement::constellation4 && burstCond,
-			.ret = ConstantFlat(200.f),
+			.ret = ConstantFlat{.value = 200.f},
 		};
 
 

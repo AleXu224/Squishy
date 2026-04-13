@@ -11,7 +11,7 @@ const Artifact::Set Artifact::Sets::thunderingFury{
 			.twoPc{
 				.mods{
 					.preMod{
-						.electro{.DMG = Constant(0.15f)},
+						.electro{.DMG = Constant{.value = 0.15f}},
 					},
 				},
 			},
@@ -19,11 +19,11 @@ const Artifact::Set Artifact::Sets::thunderingFury{
 				.opts{},
 				.mods{
 					.preMod{
-						.aggravate{.DMG = Constant(0.2f)},
-						.superconduct{.DMG = Constant(0.4f)},
-						.electroCharged{.DMG = Constant(0.4f)},
-						.overloaded{.DMG = Constant(0.4f)},
-						.hyperbloom{.DMG = Constant(0.4f)},
+						.aggravate{.DMG = Constant{.value = 0.2f}},
+						.superconduct{.DMG = Constant{.value = 0.4f}},
+						.electroCharged{.DMG = Constant{.value = 0.4f}},
+						.overloaded{.DMG = Constant{.value = 0.4f}},
+						.hyperbloom{.DMG = Constant{.value = 0.4f}},
 					},
 				},
 			},

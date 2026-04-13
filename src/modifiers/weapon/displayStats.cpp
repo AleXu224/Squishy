@@ -6,11 +6,10 @@
 
 namespace Modifiers::Weapon {
 	using namespace Formula::Operators;
-	using namespace Formula::Compiled::Operators;
-	struct DisplayFrm {
+	struct DisplayFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode weaponInstance;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return weaponInstance.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return weaponInstance.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {

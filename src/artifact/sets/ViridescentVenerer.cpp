@@ -20,7 +20,7 @@ const Artifact::Set Artifact::Sets::viridescentVenerer{
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.anemo{.DMG = Constant(0.15f)}},
+					.preMod{.anemo{.DMG = Constant{.value = 0.15f}}},
 				},
 			},
 			.fourPc{
@@ -48,7 +48,7 @@ const Artifact::Set Artifact::Sets::viridescentVenerer{
 				},
 				.mods{
 					.preMod{
-						.swirl{.DMG = Constant(0.6f)},
+						.swirl{.DMG = Constant{.value = 0.6f}},
 					},
 					.enemy{
 						.resistance{

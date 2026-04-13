@@ -12,10 +12,18 @@
 
 
 namespace Weapon {
-	using IsActive = Formula::impl_IsActive;
-	using GetFloat = Formula::impl_GetFloat;
-	using GetInt = Formula::impl_GetInt;
-	using GetIndex = Formula::impl_GetIndex;
+	static inline auto IsActive(const Utils::HashedString &name) {
+		return Formula::impl_IsActive{.name = name};
+	}
+	static inline auto GetFloat(const Utils::HashedString &name, float defaultValue = 0.f) {
+		return Formula::impl_GetFloat{.name = name, .defaultValue = defaultValue};
+	}
+	static inline auto GetInt(const Utils::HashedString &name, uint32_t defaultValue = 0) {
+		return Formula::impl_GetInt{.name = name, .defaultValue = defaultValue};
+	}
+	static inline auto GetIndex(const Utils::HashedString &name, uint32_t defaultValue = 0) {
+		return Formula::impl_GetIndex{.name = name, .defaultValue = defaultValue};
+	}
 
 	using SubStat = Stats::WeaponBase::SubStat;
 

@@ -1,20 +1,18 @@
 #pragma once
 
-#include "fmt/core.h"
-#include "formulaContext.hpp"
+#include "formula/base.hpp"
 #include "reaction/reaction.hpp"
-#include "step.hpp"
 
 namespace Formula {
-	struct AmplifyingMultiplier {
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+	struct AmplifyingMultiplier : FormulaBase<float> {
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
 			switch (context.reaction.index()) {
 				case 0:
-					return Compiled::ConstantFloat{.value = 1.f};
+					return ConstantFlat{.value = 1.f};
 				case 1:
-					return std::get<1>(context.reaction)->formula.compile(context);
+					return std::get<1>(context.reaction)->formula.fold(context, args);
 				case 2:
-					return Compiled::ConstantFloat{.value = 1.f};
+					return ConstantFlat{.value = 1.f};
 			}
 			std::unreachable();
 		}
@@ -35,15 +33,15 @@ namespace Formula {
 			std::unreachable();
 		}
 	};
-	struct AdditiveMultiplier {
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
+	struct AdditiveMultiplier : FormulaBase<float> {
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
 			switch (context.reaction.index()) {
 				case 0:
-					return Compiled::ConstantFloat{.value = 0.f};
+					return ConstantFlat{.value = 0.f};
 				case 1:
-					return Compiled::ConstantFloat{.value = 0.f};
+					return ConstantFlat{.value = 0.f};
 				case 2:
-					return std::get<2>(context.reaction)->formula.compile(context);
+					return std::get<2>(context.reaction)->formula.fold(context, args);
 			}
 			std::unreachable();
 		}

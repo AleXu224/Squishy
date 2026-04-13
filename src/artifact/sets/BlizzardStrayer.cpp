@@ -10,13 +10,13 @@ const Artifact::Set Artifact::Sets::blizzardStrayer{
 		auto fourPcCryoCond = IsActive("blizzardStrayerCryo");
 		auto fourPcFrozenCond = IsActive("blizzardStrayerFrozen");
 
-		auto fourPcBuffCryo = Requires(fourPcCryoCond, Constant(0.2f));
-		auto fourPcBuffFrozen = Requires(fourPcCryoCond && fourPcFrozenCond, Constant(0.2f));
+		auto fourPcBuffCryo = Requires(fourPcCryoCond, Constant{.value = 0.2f});
+		auto fourPcBuffFrozen = Requires(fourPcCryoCond && fourPcFrozenCond, Constant{.value = 0.2f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.cryo{.DMG = Constant(0.15f)}},
+					.preMod{.cryo{.DMG = Constant{.value = 0.15f}}},
 				},
 			},
 			.fourPc{

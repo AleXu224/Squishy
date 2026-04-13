@@ -12,11 +12,11 @@ namespace Reaction {
 	using namespace Formula::Operators;
 	[[nodiscard]] static Formula::FloatNode makeTransformativeFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Element element) {
 		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
-		auto emBonus = (Formula::ConstantFlat(16.f) * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
+		auto emBonus = (Formula::ConstantFlat{.value = 16.f} * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat{.value = 2000.f});
 		auto reactionBonus = modifier.DMG;
-		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
-		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate, 0.f, 1.f) * modifier.critDMG;
-		return Formula::Constant(multiplier) * levelMultiplier * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
+		auto resMultiplier = Formula::EnemyResMultiplier{.attackSource{}, .element = element};
+		auto critMultiplier = 1.f + Formula::Clamp{.val1 = modifier.critRate, .min = 0.f, .max = 1.f} * modifier.critDMG;
+		return multiplier * levelMultiplier * (1.f + emBonus + reactionBonus) * resMultiplier * critMultiplier;
 	}
 
 	[[nodiscard]] static Formula::FloatNode makeLunarTransformativeFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Element element) {
@@ -25,13 +25,13 @@ namespace Reaction {
 		const auto &allLunar = Modifiers::total().allLunar;
 		const auto &elemental = Stats::fromElement(Modifiers::total(), element);
 
-		auto emBonus = (Formula::ConstantFlat(6.f) * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat(2000.f));
+		auto emBonus = (Formula::ConstantFlat{.value = 6.f} * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat{.value = 2000.f});
 		auto reactionBaseMultiplier = modifier.multiplicativeDMG + allLunar.multiplicativeDMG;
 		auto reactionElevation = modifier.elevation + allLunar.elevation;
 		auto reactionBonus = modifier.DMG + allLunar.DMG;
-		auto resMultiplier = Formula::EnemyResMultiplier({}, element);
-		auto critMultiplier = 1.f + Formula::Clamp(modifier.critRate + allLunar.critRate + elemental.critRate + Modifiers::total().cr, 0.f, 1.f) * (modifier.critDMG + allLunar.critDMG + elemental.critDMG + Modifiers::total().cd);
-		return Formula::Constant(multiplier)
+		auto resMultiplier = Formula::EnemyResMultiplier{.attackSource{}, .element = element};
+		auto critMultiplier = 1.f + Formula::Clamp{.val1 = modifier.critRate + allLunar.critRate + elemental.critRate + Modifiers::total().cr, .min = 0.f, .max = 1.f} * (modifier.critDMG + allLunar.critDMG + elemental.critDMG + Modifiers::total().cd);
+		return multiplier
 			 * levelMultiplier
 			 * (1.f + reactionBaseMultiplier)
 			 * (1.f + reactionElevation)

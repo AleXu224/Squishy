@@ -1,6 +1,6 @@
 #pragma once
 
-#include "formula/formulaContext.hpp"
+#include "formula/base.hpp"
 #include "percentage.hpp"
 #include "stats/loadout.hpp"
 
@@ -10,13 +10,9 @@ namespace Formula {
 		return values.at(source.loadout().weapon->sheet.refinement - 1);
 	}
 
-	struct WeaponMultiplierValue {
+	struct WeaponMultiplierValue : FormulaBase<float, Type::constant> {
 		bool isPercentage = false;
 		std::array<float, 5> values;
-
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
-			return Compiled::ConstantFloat{.value = _getRefinementMultiplier(values, context.source)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			const auto &multiplier = _getRefinementMultiplier(values, context.source);
@@ -29,10 +25,10 @@ namespace Formula {
 	};
 
 	[[nodiscard]] inline auto WeaponMultiplier(auto stat, const std::array<float, 5> &values) {
-		return stat * WeaponMultiplierValue(true, values);
+		return stat * WeaponMultiplierValue({}, true, values);
 	}
 
 	[[nodiscard]] inline auto WeaponMultiplier(bool isPercentage, const std::array<float, 5> &values) {
-		return WeaponMultiplierValue(isPercentage, values);
+		return WeaponMultiplierValue({}, isPercentage, values);
 	}
 }// namespace Formula

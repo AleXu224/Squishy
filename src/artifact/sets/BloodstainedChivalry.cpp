@@ -7,12 +7,12 @@ const Artifact::Set Artifact::Sets::bloodstainedChivalry{
 	.goodKey{"BloodstainedChivalry"},
 	.name = "Bloodstained Chivalry",
 	.setup = []() -> Set::Setup {
-		auto fourPcBuff = Requires(IsActive("bloodstainedChivalry"), Constant(0.5f));
+		auto fourPcBuff = Requires(IsActive("bloodstainedChivalry"), Constant{.value = 0.5f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.physical{.DMG = Constant(0.25f)}},
+					.preMod{.physical{.DMG = Constant{.value = 0.25f}}},
 				},
 			},
 			.fourPc{

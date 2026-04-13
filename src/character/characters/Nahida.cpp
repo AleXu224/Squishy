@@ -37,7 +37,7 @@ const Character::Data Character::Datas::nahida{
 			IfElse{
 				pyroCount == 2,
 				burst2PyroCharacters,
-				Constant(0.f),
+				Constant{.value = 0.f},
 			},
 		};
 		auto burstSkillBuff = Requires(insideField, burstPyroMultiplier);
@@ -48,15 +48,15 @@ const Character::Data Character::Datas::nahida{
 			Min(0.25f * maxEm, 250.f)
 		);
 
-		auto a4Points = Clamp(total.em - ConstantFlat(200.f), 0.f, 800.f);
+		auto a4Points = Clamp(total.em - ConstantFlat{.value = 200.f}, 0.f, 800.f);
 		auto a4TriKarmaDmg = Requires(Requirement::passive2, a4Points * 0.001);
 		auto a4TriKarmaCr = Requires(Requirement::passive2, a4Points * 0.0003);
 
 		auto c2OpponentMarked = IsActive("nahidaC2OpponentsMarked");
 		auto c2ReactionTriggered = c2OpponentMarked && IsActive("nahidaC2ReactionTriggered");
-		auto c2CritRate = Requires(Requirement::constellation2 && c2OpponentMarked, Constant(0.2f));
-		auto c2CritDMG = Requires(Requirement::constellation2 && c2OpponentMarked, Constant(1.f));
-		auto c2EnemyDef = Requires(Requirement::constellation2 && c2ReactionTriggered, Constant(0.3f));
+		auto c2CritRate = Requires(Requirement::constellation2 && c2OpponentMarked, Constant{.value = 0.2f});
+		auto c2CritDMG = Requires(Requirement::constellation2 && c2OpponentMarked, Constant{.value = 1.f});
+		auto c2EnemyDef = Requires(Requirement::constellation2 && c2ReactionTriggered, Constant{.value = 0.3f});
 
 		auto c4EmBuff = Requires(
 			Requirement::constellation4 && IsActive("nahidaC4OpponentsAffected"),

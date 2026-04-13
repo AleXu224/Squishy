@@ -5,7 +5,7 @@
 
 namespace Formula {
 	struct HealModifier {
-		FloatNode hb{Constant(0.f)};
-		FloatNode incHb{Constant(0.f)};
+		FloatNode hb{Constant({}, 0.f)};
+		FloatNode incHb{Constant({}, 0.f)};
 	};
 }// namespace Formula

@@ -2,7 +2,7 @@
 
 #include "formula/constant.hpp"
 #include "formula/node.hpp"
-#include "formula/requires.hpp"
+#include "formula/requirement.hpp"
 #include "node/entry.hpp"
 #include "utility"
 
@@ -10,15 +10,15 @@ namespace Utils {
 	static inline Formula::BoolNode slotToCondition(const Node::CharacterSlot &entry) {
 		switch (entry) {
 			case Node::CharacterSlot::normal:
-				return Formula::ConstantBool(true);
+				return Formula::ConstantBool({}, true);
 			case Node::CharacterSlot::charged:
-				return Formula::ConstantBool(true);
+				return Formula::ConstantBool({}, true);
 			case Node::CharacterSlot::plunge:
-				return Formula::ConstantBool(true);
+				return Formula::ConstantBool({}, true);
 			case Node::CharacterSlot::skill:
-				return Formula::ConstantBool(true);
+				return Formula::ConstantBool({}, true);
 			case Node::CharacterSlot::burst:
-				return Formula::ConstantBool(true);
+				return Formula::ConstantBool({}, true);
 			case Node::CharacterSlot::passive1:
 				return Requirement::passive1;
 			case Node::CharacterSlot::passive2:

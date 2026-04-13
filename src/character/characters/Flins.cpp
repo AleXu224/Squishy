@@ -30,7 +30,7 @@ const Character::Data Character::Datas::flins{
 
 		auto a1Buff = Requires{
 			moonsignLevel >= 2 && Requirement::passive1,
-			Constant(0.2f),
+			Constant{.value = 0.2f},
 		};
 
 		auto a4Buff = Requires{
@@ -52,16 +52,16 @@ const Character::Data Character::Datas::flins{
 
 		auto c4Buff = Requires{
 			Requirement::constellation4,
-			Constant(0.2f)
+			Constant{.value = 0.2f}
 		};
 
 		auto c6BuffSelf = Requires{
 			Requirement::constellation6,
-			Constant(0.3f),
+			Constant{.value = 0.3f},
 		};
 		auto c6BuffTeam = Requires{
 			Requirement::constellation6 && moonsignLevel >= 2,
-			Constant(0.1f),
+			Constant{.value = 0.1f},
 		};
 
 		return Data::Setup{

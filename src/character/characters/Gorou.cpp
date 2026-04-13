@@ -38,7 +38,7 @@ const Character::Data Character::Datas::gorou{
 		auto a1Cond = IsActive("gorouBurstActive");
 		auto a1Buff = Requires{
 			.requirement = Requirement::passive1 && a1Cond,
-			.ret = Constant(0.25f),
+			.ret = Constant{.value = 0.25f},
 		};
 
 		auto a4BuffSkillDMG = Requires{
@@ -52,15 +52,15 @@ const Character::Data Character::Datas::gorou{
 
 		auto c6BuffStandingFirm = Requires{
 			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} == 1,
-			.ret = Constant(0.10f),
+			.ret = Constant{.value = 0.10f},
 		};
 		auto c6BuffImpregnable = Requires{
 			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} == 2,
-			.ret = Constant(0.20f),
+			.ret = Constant{.value = 0.20f},
 		};
 		auto c6BuffCrunch = Requires{
 			.requirement = Requirement::constellation6 && (skillCond || a1Cond) && ElementCount{.element = Misc::Element::geo} >= 3,
-			.ret = Constant(0.40f),
+			.ret = Constant{.value = 0.40f},
 		};
 		auto c6Buff = c6BuffStandingFirm + c6BuffImpregnable + c6BuffCrunch;
 

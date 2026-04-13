@@ -6,11 +6,11 @@
 #include "stats/value.hpp"
 
 namespace Modifiers::Enemy {
-	struct InstanceStats {
+	struct InstanceStats : Formula::FormulaBase<float> {
 		SheetMember<Stats::EnemySheet<Stats::Value<float, 0>>> stat;
 		SheetMemberIdentifier member;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.enemy.sheet).compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return stat.resolve(context.enemy.sheet).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

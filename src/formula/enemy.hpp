@@ -1,19 +1,18 @@
 #pragma once
 
-#include "compiled/requires.hpp"
-#include "element.hpp"
-#include "fmt/core.h"
-#include "formulaContext.hpp"
+#include "elemental.hpp"
+#include "formula/base.hpp"
+#include "formula/requires.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
-#include "step.hpp"
 
 
 namespace Formula {
-	struct EnemyDef {
-		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
-			using namespace Compiled::Operators;
-			return ((Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy().DEFReduction.compile(context)) * Compiled::ConstantFloat{.value = 5.f}.wrap() * Modifiers::totalEnemy().level.compile(context)) + Compiled::ConstantFloat{.value = 500.f}.wrap();
+	struct EnemyDef : FormulaBase<float> {
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			using namespace Operators;
+			auto ret = ((1.f - Modifiers::totalEnemy().DEFReduction) * 5.f * Modifiers::totalEnemy().level) + ConstantFlat{.value = 500.f};
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -25,14 +24,15 @@ namespace Formula {
 		}
 	};
 
-	struct EnemyDefMultiplier {
-		[[nodiscard]] Compiled::FloatNode compile(const Formula::Context &context) const {
-			using namespace Compiled::Operators;
-			const auto characterLevel = Compiled::ConstantFloat{.value = static_cast<float>(context.source.stats.sheet.level)}.wrap();
-			const auto enemyLevel = Modifiers::totalEnemy().level.compile(context);
-			const auto k = (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy().DEFReduction.compile(context)) * (Compiled::ConstantFloat{.value = 1.f}.wrap() - Modifiers::totalEnemy().DEFIgnored.compile(context));
+	struct EnemyDefMultiplier : FormulaBase<float> {
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			using namespace Operators;
+			const auto characterLevel = ConstantFlat{.value = static_cast<float>(context.source.stats.sheet.level)};
+			const auto enemyLevel = Modifiers::totalEnemy().level;
+			const auto k = (1.f - Modifiers::totalEnemy().DEFReduction) * (1.f - Modifiers::totalEnemy().DEFIgnored);
 
-			return (characterLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()) / (k * (enemyLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()) + (characterLevel + Compiled::ConstantFloat{.value = 100.f}.wrap()));
+			auto ret = (characterLevel + ConstantFlat{.value = 100.f}) / (k * (enemyLevel + ConstantFlat{.value = 100.f}) + (characterLevel + ConstantFlat{.value = 100.f}));
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
@@ -48,26 +48,27 @@ namespace Formula {
 		}
 	};
 
-	struct EnemyResMultiplier {
+	struct EnemyResMultiplier : FormulaBase<float> {
 		Utils::JankyOptional<Misc::AttackSource> attackSource{};
 		Utils::JankyOptional<Misc::Element> element;
 
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
-			using namespace Compiled::Operators;
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+			using namespace Operators;
 			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any character that has either
 			// an infusion or res shred that relies on artifact stats then this will break
 			const auto attackElement = getElement(attackSource, element, context);
-			auto RES = Stats::fromEnemyResElement(Modifiers::totalEnemy().resistance, attackElement).eval(context);
+			auto RES = Stats::fromEnemyResElement(Modifiers::totalEnemy().resistance, attackElement);
 
-			return Compiled::IfElseMaker(
-				Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.f}.wrap(),
-				Compiled::ConstantFloat{.value = 1.f}.wrap() - (Compiled::ConstantFloat{.value = RES}.wrap() / Compiled::ConstantFloat{.value = 2.f}.wrap()),
-				Compiled::IfElseMaker(
-					Compiled::ConstantFloat{.value = RES}.wrap() < Compiled::ConstantFloat{.value = 0.75f}.wrap(),
-					Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = RES}.wrap(),
-					Compiled::ConstantFloat{.value = 1.f}.wrap() - Compiled::ConstantFloat{.value = 4.f}.wrap() * Compiled::ConstantFloat{.value = RES}.wrap() + Compiled::ConstantFloat{.value = 1.f}.wrap()
-				)
-			);
+			auto ret = IfElse{
+				.requirement = RES < 0.f,
+				.trueVal = 1.f - (RES / 2.f),
+				.elseVal = IfElse{
+					.requirement = RES < 0.75f,
+					.trueVal = 1.f - RES,
+					.elseVal = 1.f - (4.f * RES + 1.f),
+				},
+			};
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

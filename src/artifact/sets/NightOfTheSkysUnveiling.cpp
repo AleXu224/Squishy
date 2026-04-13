@@ -15,21 +15,21 @@ const Artifact::Set Artifact::Sets::nightOfTheSkysUnveiling{
 			cond,
 			IfElse{
 				.requirement = moonsignLevel >= 2,
-				.trueVal = Constant(0.3f),
+				.trueVal = Constant{.value = 0.3f},
 				.elseVal = Requires{
 					.requirement = moonsignLevel >= 1,
-					.ret = Constant(0.15f),
+					.ret = Constant{.value = 0.15f},
 				},
 			}
 		};
 
-		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant(0.1f)};
+		auto gleamingMoonBuff = Requires{.requirement = cond, .ret = Constant{.value = 0.1f}};
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
 					.preMod{
-						.em = ConstantFlat(80.f),
+						.em = ConstantFlat{.value = 80.f},
 					},
 				},
 			},

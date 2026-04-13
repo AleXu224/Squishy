@@ -35,17 +35,17 @@ const Character::Data Character::Datas::xilonen{
 		auto cryoRes = Requires(phecDecreaseCond && ElementCount{Misc::Element::cryo} >= 1, resDecreaseMult);
 		auto geoRes = Requires((samplesActivated && phecCount <= 2) || Requirement::constellation2, resDecreaseMult);
 
-		auto a1DmgIncrease = Requires(phecCount < 2 && Requirement::passive1, Constant(0.3f));
+		auto a1DmgIncrease = Requires(phecCount < 2 && Requirement::passive1, Constant{.value = 0.3f});
 
-		auto a4DefIncrease = Requires(Requirement::passive2 && IsActive("xilonenNightsoulBurstTriggered"), Constant(0.2f));
+		auto a4DefIncrease = Requires(Requirement::passive2 && IsActive("xilonenNightsoulBurstTriggered"), Constant{.value = 0.2f});
 
 		auto c2BuffCond = Requirement::constellation2 && samplesActivated;
-		auto c2GeoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::geo}, Constant(0.5f));
-		auto c2PyroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::pyro}, Constant(0.45f));
-		auto c2HydroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::hydro}, Constant(0.45f));
-		auto c2CryoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::cryo}, Constant(0.60f));
+		auto c2GeoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::geo}, Constant{.value = 0.5f});
+		auto c2PyroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::pyro}, Constant{.value = 0.45f});
+		auto c2HydroBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::hydro}, Constant{.value = 0.45f});
+		auto c2CryoBuff = Requires(c2BuffCond && IsTargetCharacterElement{Misc::Element::cryo}, Constant{.value = 0.60f});
 
-		auto c4DmgBuff = total.def * Requires(Requirement::constellation4 && IsActive("xilonenC4AfterUse"), Constant(0.65f));
+		auto c4DmgBuff = total.def * Requires(Requirement::constellation4 && IsActive("xilonenC4AfterUse"), Constant{.value = 0.65f});
 
 		auto c6Imperishable = IsActive("xilonenC6Imperishable");
 		auto c6Buff = Requires(Requirement::constellation6 && c6Imperishable, total.def * 3.f);

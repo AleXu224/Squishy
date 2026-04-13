@@ -5,8 +5,8 @@
 namespace Formula {
 	template<class T_elementBonus = Constant, class T_shield_ = Constant, class T_additiveHp = Constant>
 	struct ShieldModifier {
-		T_elementBonus elementBonus{1.f};
-		T_shield_ shield_{};
-		T_additiveHp additiveHp{};
+		T_elementBonus elementBonus{{}, 1.f};
+		T_shield_ shield_{{}, 0.f};
+		T_additiveHp additiveHp{{}, 0.f};
 	};
 }// namespace Formula

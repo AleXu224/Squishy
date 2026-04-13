@@ -30,10 +30,10 @@ const Character::Data Character::Datas::chasca{
 		auto electroCount = ElementCountOthers{.element = Misc::Element::electro};
 		auto cryoCount = ElementCountOthers{.element = Misc::Element::cryo};
 
-		auto pyroCond = Requires(pyroCount >= 1, Constant(1.f));
-		auto hydroCond = Requires(hydroCount >= 1, Constant(1.f));
-		auto electroCond = Requires(electroCount >= 1, Constant(1.f));
-		auto cryoCond = Requires(cryoCount >= 1, Constant(1.f));
+		auto pyroCond = Requires(pyroCount >= 1, Constant{.value = 1.f});
+		auto hydroCond = Requires(hydroCount >= 1, Constant{.value = 1.f});
+		auto electroCond = Requires(electroCount >= 1, Constant{.value = 1.f});
+		auto cryoCond = Requires(cryoCount >= 1, Constant{.value = 1.f});
 
 		auto c2BonusStack = Requires(Requirement::constellation2, ConstantInt(1));
 
@@ -54,7 +54,7 @@ const Character::Data Character::Datas::chasca{
 		);
 
 		auto c6Cond = IsActive("chascaC6");
-		auto c6Buff = Requires(c6Cond && Requirement::constellation6 && Requirement::passive1, Constant(1.2f));
+		auto c6Buff = Requires(c6Cond && Requirement::constellation6 && Requirement::passive1, Constant{.value = 1.2f});
 
 		auto shadowhuntShellDmg = Modifier{
 			.critDMG = c6Buff,

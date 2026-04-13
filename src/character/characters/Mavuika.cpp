@@ -37,17 +37,17 @@ const Character::Data Character::Datas::mavuika{
 		auto chargedIncrease = burstStacks * chargedIncreaseMultiplier * total.atk;
 
 		auto a1 = IsActive("mavuikaA1");
-		auto a1Buff = Requires(a1 && Requirement::passive1, Constant(0.3f));
+		auto a1Buff = Requires(a1 && Requirement::passive1, Constant{.value = 0.3f});
 
 		auto c4 = Requirement::constellation4;
-		auto c4Buff = Requires(c4, Constant(0.1f));
+		auto c4Buff = Requires(c4, Constant{.value = 0.1f});
 
 		auto a4 = IsActive("mavuikaA4");
 		auto a4Stacks = GetInt("mavuikaA4");
 		auto a4Decay = IfElse(
 			c4,
-			Constant(1.f),
-			((ConstantFlat(20.f) - a4Stacks) / ConstantFlat(20.f))
+			Constant{.value = 1.f},
+			((ConstantFlat(20.f) - a4Stacks) / ConstantFlat{.value = 20.f})
 		);
 		auto a4Buff = Requires(
 			burstActive && a4 && Requirement::passive2,
@@ -55,17 +55,17 @@ const Character::Data Character::Datas::mavuika{
 		);
 
 		auto c1 = IsActive("mavuikaC1");
-		auto c1Buff = Requires(c1 && Requirement::constellation1, Constant(0.4f));
+		auto c1Buff = Requires(c1 && Requirement::constellation1, Constant{.value = 0.4f});
 
 		auto c2Ring = IsActive("mavuikaC2Ring");
 		auto c2Flamestrider = IsActive("mavuikaC2Flamestrider");
-		auto c2BaseBuff = Requires(Requirement::constellation2 && (c2Ring || c2Flamestrider), ConstantFlat(200.f));
-		auto c2RingBuff = Requires(Requirement::constellation2 && c2Ring, Constant(0.2f));
+		auto c2BaseBuff = Requires(Requirement::constellation2 && (c2Ring || c2Flamestrider), ConstantFlat{.value = 200.f});
+		auto c2RingBuff = Requires(Requirement::constellation2 && c2Ring, Constant{.value = 0.2f});
 		auto c2NormalFlamestriderBuff = Requires(Requirement::constellation2 && c2Flamestrider, 0.6f * total.atk);
 		auto c2ChargedFlamestriderBuff = Requires(Requirement::constellation2 && c2Flamestrider, 0.9f * total.atk);
 		auto c2BurstFlamestriderBuff = Requires(Requirement::constellation2 && c2Flamestrider, 1.2f * total.atk);
 
-		auto c6DefRes = Requires(Requirement::constellation6 && c2Flamestrider, Constant(0.2f));
+		auto c6DefRes = Requires(Requirement::constellation6 && c2Flamestrider, Constant{.value = 0.2f});
 
 		return Data::Setup{
 			.mods{

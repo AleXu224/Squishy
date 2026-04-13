@@ -6,11 +6,11 @@
 #include "stats/value.hpp"
 
 namespace Modifiers::Team {
-	struct ResonanceFrm {
+	struct ResonanceFrm : Formula::FormulaBase<float> {
 		SheetMember<Stats::Sheet<Stats::Value<float, 1>>> stat;
 		SheetMemberIdentifier member;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.team.resonances).compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return stat.resolve(context.team.resonances).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
@@ -21,11 +21,11 @@ namespace Modifiers::Team {
 			return stat.resolve(context.team.resonances).get(context);
 		}
 	};
-	struct EnemyResonanceFrm {
+	struct EnemyResonanceFrm : Formula::FormulaBase<float> {
 		SheetMember<Stats::EnemySheet<Stats::Value<float, 1>>> stat;
 		SheetMemberIdentifier member;
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			return stat.resolve(context.team.resonancesEnemy).compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return stat.resolve(context.team.resonancesEnemy).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

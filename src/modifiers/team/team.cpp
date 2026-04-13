@@ -14,23 +14,19 @@
 namespace Modifiers::Team {
 	using namespace Formula::Operators;
 	template<class T>
-	struct Frm {
+	struct Frm : Formula::FormulaBase<RetType<T>> {
 		T characterStat;
 		T weaponStat;
 		T artifactStat;
 		using Ret = RetType<T>;
-		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
-			Formula::Compiled::NodeType<Ret> ret = Formula::Compiled::Constant<Ret>{};
-			for (const auto &character: context.team.characters) {
-				using namespace Formula::Compiled::Operators;
-				if (!character) continue;// Val is a constant of 0 by default, no need to do anything
-				auto newContext = context.withSource(character->state);
-				ret = ret
-					+ characterStat.compile(newContext)
-					+ weaponStat.compile(newContext)
-					+ artifactStat.compile(newContext);
-			}
-			return ret;
+		[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto formula = characterStat + weaponStat + artifactStat;
+			Formula::NodeType<Ret> ret = Formula::TeamCharacter{.index = 0, .formula = formula}
+									   + Formula::TeamCharacter{.index = 1, .formula = formula}
+									   + Formula::TeamCharacter{.index = 2, .formula = formula}
+									   + Formula::TeamCharacter{.index = 3, .formula = formula};
+
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -56,26 +52,23 @@ namespace Modifiers::Team {
 		}
 	};
 
-	struct FrmActive {
+	struct FrmActive : Formula::FormulaBase<float> {
 		Formula::FloatNode characterStat;
 		Formula::FloatNode weaponStat;
 		Formula::FloatNode artifactStat;
 
 		using Ret = float;
-		[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
-			Formula::Compiled::NodeType<Ret> ret = Formula::Compiled::Constant<Ret>{};
+		[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			Formula::NodeType<Ret> ret = Formula::ConstantBase<Ret>{};
 			auto activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
 			if (!activeCharacter || activeCharacter->instanceKey != context.source.instanceKey) return ret;
-			for (const auto &character: context.team.characters) {
-				using namespace Formula::Compiled::Operators;
-				if (!character) continue;// Val is a constant of 0 by default, no need to do anything
-				auto newContext = context.withSource(character->state);
-				ret = ret
-					+ characterStat.compile(newContext)
-					+ weaponStat.compile(newContext)
-					+ artifactStat.compile(newContext);
-			}
-			return ret;
+
+			auto formula = characterStat + weaponStat + artifactStat;
+			ret = Formula::TeamCharacter{.index = 0, .formula = formula}
+				+ Formula::TeamCharacter{.index = 1, .formula = formula}
+				+ Formula::TeamCharacter{.index = 2, .formula = formula}
+				+ Formula::TeamCharacter{.index = 3, .formula = formula};
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {

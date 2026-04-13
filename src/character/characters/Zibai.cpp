@@ -41,36 +41,36 @@ const Character::Data Character::Datas::zibai{
 		};
 		auto a4EmBuff = Requires{
 			.requirement = Requirement::passive2,
-			.ret = ConstantFlat(60.f) * ElementCountOthers{.element = Misc::Element::hydro}
+			.ret = ConstantFlat{.value = 60.f} * ElementCountOthers{.element = Misc::Element::hydro}
 		};
 
 		auto p3Buff = Min{
-			.val1 = total.def / ConstantFlat(100.f) * 0.007f,
+			.val1 = total.def / ConstantFlat{.value = 100.f} * 0.007f,
 			.val2 = 0.14f,
 		};
 
 		auto c1Cond = IsActive("zibaiC1Cond");
 		auto c1Buff = Requires{
 			.requirement = Requirement::constellation1 && c1Cond,
-			.ret = Constant(2.2f),
+			.ret = Constant{.value = 2.2f},
 		};
 
 		auto c2Cond = IsActive("zibaiC2Cond");
 		auto c2Buff = Requires{
 			.requirement = Requirement::constellation2 && c2Cond,
-			.ret = Constant(0.3f),
+			.ret = Constant{.value = 0.3f},
 		};
 
 		auto c4Cond = IsActive("zibaiC4Cond");
 		auto c4Buff = Requires{
 			.requirement = Requirement::constellation4 && c4Cond,
-			.ret = Constant(1.5f),
+			.ret = Constant{.value = 1.5f},
 		};
 
 		auto c6Cond = GetFloat("zibaiC6Cond");
 		auto c6Buff = Requires{
 			.requirement = Requirement::constellation6,
-			.ret = Constant(0.016f) * c6Cond,
+			.ret = Constant{.value = 0.016f} * c6Cond,
 		};
 
 		return Data::Setup{

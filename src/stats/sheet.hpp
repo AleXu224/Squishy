@@ -8,6 +8,10 @@
 #include "stats/helpers.hpp"
 
 
+namespace Formula {
+	using ElementNode = NodeType<Utils::JankyOptional<Misc::Element>>;
+}
+
 namespace Stats {
 	template<class T>
 	struct EnemySheet {
@@ -190,6 +194,6 @@ namespace Stats {
 		Formula::ElementNode infusion = Formula::NoInfusion{};
 		Formula::ElementNode teamInfusion = Formula::NoInfusion{};
 
-		Formula::IntNode moonsignLevel = Formula::ConstantInt{0};
+		Formula::IntNode moonsignLevel = Formula::ConstantInt{.value = 0};
 	};
 }// namespace Stats

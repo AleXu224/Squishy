@@ -15,7 +15,7 @@ const Artifact::Set Artifact::Sets::deepwoodMemories{
 				.mods{
 					.preMod{
 						.dendro{
-							.DMG = Constant(0.15f),
+							.DMG = Constant{.value = 0.15f},
 						},
 					},
 				},

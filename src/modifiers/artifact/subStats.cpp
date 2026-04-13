@@ -5,35 +5,15 @@
 #include "stats/loadout.hpp"
 
 namespace Modifiers::Artifact {
-	struct CompiledSubStat : Formula::Compiled::FormulaBase<float> {
+	struct SubStatFormula : Formula::FormulaBase<float> {
 		SheetMember<Stats::Sheet<float>> stat;
 		SheetMemberIdentifier member;
 
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			float total = 0.f;
-			for (const auto &artifact: context.source.loadout().artifact.sheet.equippedArtifacts) {
-				if (!artifact.has_value()) continue;
-				total += stat.resolve(*artifact.value());
-			}
-			return total;
-		}
-
-		[[nodiscard]] std::string print() const {
-			return fmt::format("SubStat<{}>", member.getName());
-		}
-	};
-	struct SubStatFormula {
-		SheetMember<Stats::Sheet<float>> stat;
-		SheetMemberIdentifier member;
-
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			if (&context.active != &context.source || !member.isArtifactStat()) {
-				return Formula::Compiled::ConstantFloat{.value = eval(context)};
+				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
-			return CompiledSubStat{
-				.stat = stat,
-				.member = member,
-			};
+			return *this;
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

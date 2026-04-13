@@ -8,12 +8,12 @@ const Artifact::Set Artifact::Sets::noblesseOblige{
 	.name = "Noblesse Oblige",
 	.setup = []() -> Set::Setup {
 		auto fourPcCond = IsActive("noblesseBurst");
-		auto fourPcBuff = Requires(fourPcCond, Constant(0.2f));
+		auto fourPcBuff = Requires(fourPcCond, Constant{.value = 0.2f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.burst{.DMG = Constant(0.2f)}},
+					.preMod{.burst{.DMG = Constant{.value = 0.2f}}},
 				},
 			},
 			.fourPc{

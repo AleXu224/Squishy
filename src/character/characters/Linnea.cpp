@@ -41,7 +41,7 @@ const Character::Data Character::Datas::linnea{
 		auto p3Buff = Requires{Requirement::passive3, ConstantInt(1)};
 
 		auto c1Cond = IsActive("linneaC1");
-		auto c6StackMultiplier = IfElse{Requirement::constellation6, Constant(2.f), Constant(1.f)};
+		auto c6StackMultiplier = IfElse{Requirement::constellation6, Constant{.value = 2.f}, Constant{.value = 2.f}};
 		auto c1Buff = Requires{
 			Requirement::constellation1 && c1Cond,
 			total.def * 0.75f * c6StackMultiplier,
@@ -55,13 +55,13 @@ const Character::Data Character::Datas::linnea{
 		auto c2Buff = Requires{
 			PreviousCharacter{IsCharacterElement{Misc::Element::geo} || IsCharacterElement{Misc::Element::hydro}}
 				&& c2Cond && Requirement::constellation2,
-			Constant(0.4f),
+			Constant{.value = 0.4f},
 		};
-		auto c2LumiBuff = Requires{Requirement::constellation2, Constant(1.5f)};
+		auto c2LumiBuff = Requires{Requirement::constellation2, Constant{.value = 1.5f}};
 
-		auto c4Buff = Requires{Requirement::constellation4 && c2Cond, Constant(0.25f)};
+		auto c4Buff = Requires{Requirement::constellation4 && c2Cond, Constant{.value = 0.25f}};
 
-		auto c6Buff = Requires{Requirement::constellation6, Constant(0.25f)};
+		auto c6Buff = Requires{Requirement::constellation6, Constant{.value = 0.25f}};
 
 		return Data::Setup{
 			.mods{

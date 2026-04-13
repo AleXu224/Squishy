@@ -30,7 +30,7 @@ using namespace squi;
 
 			if (node.formula.eval(ctx) == 0.f) continue;
 			skillEntries.emplace_back(Gesture{
-				.onClick = [out = node.formula.compile(ctx).print()](const Gesture::State &state) {
+				.onClick = [out = node.formula.fold(ctx, {}).print(ctx)](const Gesture::State &state) {
 					std::println("{}", out);
 				},
 				.child = UI::Tooltip{
@@ -48,7 +48,7 @@ using namespace squi;
 
 		auto ret3 = modsGenerator->generate(ctx, &transparent);
 		skillEntries.insert(skillEntries.end(), ret3.begin(), ret3.end());
-		
+
 		if (modsSheet.has_value()) {
 			auto ret2 = decodeModsSheet(modsSheet->get(), ctx, &transparent);
 			skillEntries.insert(skillEntries.end(), ret2.begin(), ret2.end());

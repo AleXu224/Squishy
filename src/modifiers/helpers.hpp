@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Talents.hpp"
-#include "formula/formulaContext.hpp"
+#include "formula/base.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/damageElement.hpp"
 #include "misc/enemyProps.hpp"

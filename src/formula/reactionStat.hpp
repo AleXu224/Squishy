@@ -1,8 +1,6 @@
 #pragma once
 
-#include "fmt/core.h"
-#include "formula/formulaContext.hpp"
-#include "formula/step.hpp"
+#include "formula/base.hpp"
 #include "misc/reaction.hpp"
 #include "misc/skillStat.hpp"
 #include "modifiers/total/total.hpp"
@@ -11,7 +9,7 @@
 
 namespace Formula {
 	template<Misc::SkillStat skillStat>
-	struct ReactionStat {
+	struct ReactionStat : FormulaBase<float> {
 		Misc::Reaction reaction;
 
 		[[nodiscard]] constexpr const FloatNode &get() const {
@@ -54,8 +52,8 @@ namespace Formula {
 			std::unreachable();
 		}
 
-		[[nodiscard]] constexpr auto compile(const Context &context) const {
-			return get().compile(context);
+		[[nodiscard]] constexpr auto fold(const Context &context, const FoldArgs &args) const {
+			return get().fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {

@@ -10,10 +10,10 @@ const Artifact::Set Artifact::Sets::aubadeOfMorningstarAndMoon{
 		auto cond = IsActive("aubade4pcOffField");
 		auto buff = Requires{
 			.requirement = cond,
-			.ret = Constant(0.2f)
+			.ret = Constant{.value = 0.2f}
 				 + Requires{
 					 .requirement = Requirement::ascendantGleam,
-					 .ret = Constant(0.4f),
+					 .ret = Constant{.value = 0.4f},
 				 },
 		};
 
@@ -21,7 +21,7 @@ const Artifact::Set Artifact::Sets::aubadeOfMorningstarAndMoon{
 			.twoPc{
 				.mods{
 					.preMod{
-						.em = ConstantFlat(80.f),
+						.em = ConstantFlat{.value = 80.f},
 					},
 				},
 			},

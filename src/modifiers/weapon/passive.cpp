@@ -8,15 +8,15 @@
 namespace Modifiers::Weapon::Passive {
 	template<auto Stats::ModsSheet::*location, class StatMember>
 	struct FormulaMaker {
-		struct Frm {
+		struct Frm : Formula::FormulaBase<RetType<typename StatMember::RetType>> {
 			StatMember stat;
 			SheetMemberIdentifier member;
 			using Ret = RetType<typename StatMember::RetType>;
 
-			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
+			[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 				auto node = stat.resolve(std::invoke(location, context.source.loadout().weapon->data->data.mods));
-				if (!node.hasValue()) return Formula::Compiled::Constant<Ret>{};
-				return node.compile(context);
+				if (!node.hasValue()) return Formula::ConstantBase<Ret>{};
+				return node.fold(context, args);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

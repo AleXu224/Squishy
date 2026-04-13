@@ -10,7 +10,7 @@ namespace Node {
 	struct Mods {
 		Stats::ModsSheet mods{};
 		std::string_view name = "Mods Display";
-		Formula::FloatNode _formula = Formula::ConstantFlat(0);
+		Formula::FloatNode _formula = Formula::ConstantFlat({}, 0);
 
 		Data _data = ModsData{
 			.mods = mods,

@@ -53,7 +53,7 @@ struct CharacterCardsContents : StatelessWidget {
 								 std::views::join(statsToDisplay),
 								 Utils::trueFalse
 							 )) {
-							auto formula = Formula::Stat{stat};
+							auto formula = Formula::Stat{.stat = stat};
 							ret.emplace_back(UI::StatDisplay{
 								.isTransparent = transparent,
 								.stat = StatValue{.stat = stat, .value = formula.eval(ctx)},

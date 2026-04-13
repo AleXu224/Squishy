@@ -6,14 +6,14 @@
 
 namespace Modifiers::Artifact {
 	using namespace Formula::Operators;
-	struct DisplayStatsFrm {
+	struct DisplayStatsFrm : Formula::FormulaBase<float> {
 		Formula::FloatNode sheetPre;
 		Formula::FloatNode sheetPost;
 
-		[[nodiscard]] Formula::Compiled::FloatNode compile(const Formula::Context &context) const {
-			using namespace Formula::Compiled::Operators;
-			return sheetPre.compile(context)
-				 + sheetPost.compile(context);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = sheetPre
+					 + sheetPost;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {

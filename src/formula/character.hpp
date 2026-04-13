@@ -2,20 +2,14 @@
 
 #include "character/data.hpp"
 #include "character/instance.hpp"
-#include "compiled/constant.hpp"
-#include "compiled/max.hpp"
-#include "fmt/core.h"
-#include "formula/intermediary.hpp"
+#include "formula/base.hpp"
+#include "formula/clamp.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 
 
 namespace Formula {
-	struct CharacterLevel {
-		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
-
+	struct CharacterLevel : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("Character level {}", eval(context));
 		}
@@ -25,11 +19,7 @@ namespace Formula {
 		}
 	};
 
-	struct CharacterConstellation {
-		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
-
+	struct CharacterConstellation : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("Character constellation {}", eval(context));
 		}
@@ -39,11 +29,7 @@ namespace Formula {
 		}
 	};
 
-	struct CharacterAscension {
-		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
-
+	struct CharacterAscension : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("Character ascension {}", eval(context));
 		}
@@ -53,11 +39,7 @@ namespace Formula {
 		}
 	};
 
-	struct CharacterMoonsignLevel {
-		[[nodiscard]] inline Compiled::IntNode compile(const Context &context) const {
-			return context.source.stats.sheet.moonsignLevel.compile(context);
-		}
-
+	struct CharacterMoonsignLevel : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
 			return fmt::format("Character Moonsign Level {}", eval(context));
 		}
@@ -67,12 +49,8 @@ namespace Formula {
 		}
 	};
 
-	struct IsCharacterWeaponType {
+	struct IsCharacterWeaponType : FormulaBase<bool, Type::constant> {
 		Misc::WeaponType type;
-
-		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is character {} ({})", Utils::Stringify(type), eval(context));
@@ -83,12 +61,8 @@ namespace Formula {
 		}
 	};
 
-	struct IsTargetCharacterWeaponType {
+	struct IsTargetCharacterWeaponType : FormulaBase<bool, Type::constant> {
 		Misc::WeaponType type;
-
-		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is target character {} ({})", Utils::Stringify(type), eval(context));
@@ -99,12 +73,8 @@ namespace Formula {
 		}
 	};
 
-	struct IsCharacterId {
+	struct IsCharacterId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
-
-		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is character id {} ({})", id, eval(context));
@@ -115,12 +85,8 @@ namespace Formula {
 		}
 	};
 
-	struct IsActiveCharacterId {
+	struct IsActiveCharacterId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
-
-		[[nodiscard]] inline Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("Is character id {} ({})", id, eval(context));
@@ -133,20 +99,20 @@ namespace Formula {
 
 
 	template<FormulaLike T>
-	struct MaxCharacter {
+	struct MaxCharacter : FormulaBase<FormulaType<T>> {
 		T formula;
 
 		using RetType = FormulaType<T>;
 
-		[[nodiscard]] inline auto compile(const Context &context) const {
-			Compiled::NodeType<RetType> ret = Compiled::Constant<RetType>{};
+		NodeType<RetType> fold(const Context &ctx, const FoldArgs &args) const {
+			NodeType<RetType> ret = ConstantBase<RetType>{};
 
-			for (const auto &character: context.team.characters) {
+			for (const auto &character: ctx.team.characters) {
 				if (!character) continue;
-				ret = Compiled::Max{.val1 = ret, .val2 = formula.compile(context.withSource(character->state))}.wrap();
+				ret = Max{.val1 = ret, .val2 = formula.fold(ctx.withSource(character->state), args)};
 			}
 
-			return ret;
+			return ret.fold(ctx, args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {

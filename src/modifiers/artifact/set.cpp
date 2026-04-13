@@ -8,13 +8,13 @@
 namespace Modifiers::Artifact::Set {
 	using namespace Formula::Operators;
 	template<class Ret>
-	struct SetFormula {
+	struct SetFormula : Formula::FormulaBase<RetType<Ret>> {
 		Ret sheet1;
 		Ret sheet2;
-		[[nodiscard]] auto compile(const Formula::Context &context) const {
-			using namespace Formula::Compiled::Operators;
-			return sheet1.compile(context)
-				 + sheet2.compile(context);
+		[[nodiscard]] auto fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			auto ret = sheet1
+					 + sheet2;
+			return ret.fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
@@ -29,17 +29,17 @@ namespace Modifiers::Artifact::Set {
 
 	template<auto Stats::ModsSheet::*location, std::optional<Stats::ArtifactBonus> Stats::Artifact::*location2, class StatMember>
 	struct SheetFormulaMaker {
-		struct Frm {
+		struct Frm : Formula::FormulaBase<RetType<typename StatMember::RetType>> {
 			StatMember stat;
 			using Ret = RetType<typename StatMember::RetType>;
 
-			[[nodiscard]] Formula::Compiled::NodeType<Ret> compile(const Formula::Context &context) const {
+			[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 				const auto &bonus = std::invoke(location2, context.source.loadout().artifact);
-				if (!bonus) return Formula::Compiled::Constant<Ret>{};
+				if (!bonus) return Formula::ConstantBase<Ret>{.value = {}};
 				const auto &val = bonus.value();
 				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr->mods));
-				if (!mod.hasValue()) return Formula::Compiled::Constant<Ret>{};
-				return mod.compile(context);
+				if (!mod.hasValue()) return Formula::ConstantBase<Ret>{.value = {}};
+				return mod.fold(context, args);
 			}
 
 			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {

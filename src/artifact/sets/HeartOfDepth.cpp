@@ -8,12 +8,12 @@ const Artifact::Set Artifact::Sets::heartOfDepth{
 	.name = "Heart of Depth",
 	.setup = []() -> Set::Setup {
 		auto fourPcCond = IsActive("heartOfDepthSkill");
-		auto fourPcBuff = Requires(fourPcCond, Constant(0.3f));
+		auto fourPcBuff = Requires(fourPcCond, Constant{.value = 0.3f});
 
 		return Set::Setup{
 			.twoPc{
 				.mods{
-					.preMod{.hydro{.DMG = Constant(0.15f)}},
+					.preMod{.hydro{.DMG = Constant{.value = 0.15f}}},
 				},
 			},
 			.fourPc{

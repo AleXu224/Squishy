@@ -1,17 +1,13 @@
 #pragma once
 
-#include "fmt/core.h"
+#include "formula/base.hpp"
 #include "option/option.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 
 namespace Formula {
-	struct impl_IsActive {
+	struct impl_IsActive : FormulaBase<bool, Type::constant> {
 		Utils::HashedString name;
-
-		[[nodiscard]] Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", name.str);
@@ -38,12 +34,8 @@ namespace Formula {
 		}
 	};
 
-	struct impl_IsActivePassive {
+	struct impl_IsActivePassive : FormulaBase<bool, Type::constant> {
 		Utils::HashedString name;
-
-		[[nodiscard]] Compiled::BoolNode compile(const Context &context) const {
-			return Compiled::ConstantBool{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			return fmt::format("{}", name.str);
@@ -70,13 +62,9 @@ namespace Formula {
 		}
 	};
 
-	struct impl_GetFloat {
+	struct impl_GetFloat : FormulaBase<float, Type::constant> {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
-
-		[[nodiscard]] Compiled::FloatNode compile(const Context &context) const {
-			return Compiled::ConstantFloat{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));
@@ -100,13 +88,9 @@ namespace Formula {
 		}
 	};
 
-	struct impl_GetInt {
+	struct impl_GetInt : FormulaBase<int32_t, Type::constant> {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;
-
-		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));
@@ -130,13 +114,9 @@ namespace Formula {
 		}
 	};
 
-	struct impl_GetIndex {
+	struct impl_GetIndex : FormulaBase<int32_t, Type::constant> {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0;
-
-		[[nodiscard]] Compiled::IntNode compile(const Context &context) const {
-			return Compiled::ConstantInt{.value = eval(context)};
-		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return fmt::format("{} {}", name.str, eval(context));

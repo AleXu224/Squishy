@@ -214,38 +214,47 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.allLunar...> allLunar{};
 	};
 
+
+	template<class T, class Formula>
+	[[nodiscard]] inline auto formulaFactory(auto... params) {
+		if constexpr (::Formula::template FormulaConcept<Formula, typename T::RetType>) {
+			return Formula({}, params...);
+		} else {
+			return Formula(params...);
+		}
+	}
 	template<class T, class Formula>
 	[[nodiscard]] inline Stats::Sheet<T>::_SkillValue statSkillValueFactory(auto... params) {
 		return {
-			.DMG = Formula(params.DMG...),
-			.additiveDMG = Formula(params.additiveDMG...),
-			.multiplicativeDMG = Formula(params.multiplicativeDMG...),
-			.elevation = Formula(params.elevation...),
-			.critRate = Formula(params.critRate...),
-			.critDMG = Formula(params.critDMG...),
+			.DMG = formulaFactory<T, Formula>(params.DMG...),
+			.additiveDMG = formulaFactory<T, Formula>(params.additiveDMG...),
+			.multiplicativeDMG = formulaFactory<T, Formula>(params.multiplicativeDMG...),
+			.elevation = formulaFactory<T, Formula>(params.elevation...),
+			.critRate = formulaFactory<T, Formula>(params.critRate...),
+			.critDMG = formulaFactory<T, Formula>(params.critDMG...),
 		};
 	}
 
 	template<class T, class Formula, class... Params>
 	[[nodiscard]] inline Stats::Sheet<T> statFactory(Params... params) {
 		return Stats::Sheet<T>{
-			.hp = Formula(params.hp...),
-			.hp_ = Formula(params.hp_...),
-			.baseHp = Formula(params.baseHp...),
-			.atk = Formula(params.atk...),
-			.atk_ = Formula(params.atk_...),
-			.baseAtk = Formula(params.baseAtk...),
-			.additionalAtk = Formula(params.additionalAtk...),
-			.def = Formula(params.def...),
-			.def_ = Formula(params.def_...),
-			.baseDef = Formula(params.baseDef...),
-			.er = Formula(params.er...),
-			.em = Formula(params.em...),
-			.cr = Formula(params.cr...),
-			.cd = Formula(params.cd...),
-			.hb = Formula(params.hb...),
-			.incHb = Formula(params.incHb...),
-			.shield_ = Formula(params.shield_...),
+			.hp = formulaFactory<T, Formula>(params.hp...),
+			.hp_ = formulaFactory<T, Formula>(params.hp_...),
+			.baseHp = formulaFactory<T, Formula>(params.baseHp...),
+			.atk = formulaFactory<T, Formula>(params.atk...),
+			.atk_ = formulaFactory<T, Formula>(params.atk_...),
+			.baseAtk = formulaFactory<T, Formula>(params.baseAtk...),
+			.additionalAtk = formulaFactory<T, Formula>(params.additionalAtk...),
+			.def = formulaFactory<T, Formula>(params.def...),
+			.def_ = formulaFactory<T, Formula>(params.def_...),
+			.baseDef = formulaFactory<T, Formula>(params.baseDef...),
+			.er = formulaFactory<T, Formula>(params.er...),
+			.em = formulaFactory<T, Formula>(params.em...),
+			.cr = formulaFactory<T, Formula>(params.cr...),
+			.cd = formulaFactory<T, Formula>(params.cd...),
+			.hb = formulaFactory<T, Formula>(params.hb...),
+			.incHb = formulaFactory<T, Formula>(params.incHb...),
+			.shield_ = formulaFactory<T, Formula>(params.shield_...),
 
 			.pyro = statSkillValueFactory<T, Formula>(params.pyro...),
 			.hydro = statSkillValueFactory<T, Formula>(params.hydro...),

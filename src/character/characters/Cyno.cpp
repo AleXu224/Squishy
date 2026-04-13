@@ -27,12 +27,12 @@ const Character::Data Character::Datas::cyno{
 	.setup = []() -> Data::Setup {
 		auto burstEmBonus = Requires(
 			IsActive("burstActive"),
-			ConstantFlat(100.f)
+			ConstantFlat{.value = 100.f}
 		);
 
 		auto a1Skill = Requires(
 			Requirement::passive1 && IsActive("endseerStance"),
-			Constant(0.35f)
+			Constant{.value = 0.35f}
 		);
 		auto a1SkillMod = Modifier{
 			.DMG = a1Skill

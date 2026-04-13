@@ -39,7 +39,7 @@ const Character::Data Character::Datas::escoffier{
 		);
 
 		auto condC1 = IsActive("escoffierC1");
-		auto c1Buff = Requires(Requirement::constellation1 && Requirement::passive1 && ((hydroCount + cryoCount) >= 4) && condC1, Constant(0.6f));
+		auto c1Buff = Requires(Requirement::constellation1 && Requirement::passive1 && ((hydroCount + cryoCount) >= 4) && condC1, Constant{.value = 0.6f});
 
 		auto condC2 = IsActive("escoffierC2");
 		auto c2BuffDisplay = Requires(Requirement::constellation2 && condC2, 2.4f * total.atk);

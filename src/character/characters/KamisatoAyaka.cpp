@@ -29,16 +29,16 @@ const Character::Data Character::Datas::kamisatoAyaka{
 		auto afterSprintingInfusion = IfElse(afterSprinting, Infusion{Misc::Element::cryo}, NoInfusion{});
 
 		auto a1Cond = IsActive("ayakaA1");
-		auto a1Buff = Requires(Requirement::passive1 && a1Cond, Constant(0.3f));
+		auto a1Buff = Requires(Requirement::passive1 && a1Cond, Constant{.value = 0.3f});
 
 		auto a4Cond = IsActive("ayakaA4");
-		auto a4Buff = Requires(Requirement::passive2 && a4Cond, Constant(0.18f));
+		auto a4Buff = Requires(Requirement::passive2 && a4Cond, Constant{.value = 0.18f});
 
 		auto c4Cond = IsActive("ayakaC4");
-		auto c4Def = Requires(Requirement::constellation4 && c4Cond, Constant(0.3f));
+		auto c4Def = Requires(Requirement::constellation4 && c4Cond, Constant{.value = 0.3f});
 
 		auto c6Cond = IsActive("ayakaC6");
-		auto c6Buff = Requires(Requirement::constellation6 && c6Cond, Constant(2.98f));
+		auto c6Buff = Requires(Requirement::constellation6 && c6Cond, Constant{.value = 2.98f});
 
 		return Data::Setup{
 			.mods{

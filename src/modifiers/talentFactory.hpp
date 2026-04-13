@@ -30,9 +30,9 @@ namespace Modifiers {
 	template<class T, class Formula>
 	[[nodiscard]] inline Talents<T> talentFactory(auto... params) {
 		return {
-			.normal = Formula(params.normal...),
-			.skill = Formula(params.skill...),
-			.burst = Formula(params.burst...),
+			.normal = Formula({}, params.normal...),
+			.skill = Formula({}, params.skill...),
+			.burst = Formula({}, params.burst...),
 		};
 	}
 }// namespace Modifiers
