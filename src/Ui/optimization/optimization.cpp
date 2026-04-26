@@ -1,5 +1,5 @@
 #include "optimization.hpp"
-#include "Ui/combo/nodePicker.hpp"
+#include "UI/combo/nodePicker.hpp"
 #include "optimization/optimize.hpp"
 #include "optimizationResult.hpp"
 #include "optimizationSetChooser.hpp"

@@ -1,6 +1,6 @@
 #include "artifactEditor.hpp"
 
-#include "Ui/utils/editorItem.hpp"
+#include "UI/utils/editorItem.hpp"
 #include "artifact/sets.hpp"
 #include "stats/artifact.hpp"
 

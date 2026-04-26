@@ -1,8 +1,8 @@
 #include "teamCharacterBuffsCard.hpp"
-#include "Ui/character/characterCardBanner.hpp"
-#include "Ui/option/toggleOption.hpp"
-#include "Ui/option/valueListOption.hpp"
-#include "Ui/utils/displayCard.hpp"
+#include "UI/character/characterCardBanner.hpp"
+#include "UI/option/toggleOption.hpp"
+#include "UI/option/valueListOption.hpp"
+#include "UI/utils/displayCard.hpp"
 
 #include "character/data.hpp"
 #include "store.hpp"

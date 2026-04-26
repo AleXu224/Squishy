@@ -1,6 +1,6 @@
 #include "optionPicker.hpp"
-#include "Ui/utils/displayCard.hpp"
-#include "Ui/utils/masonry.hpp"
+#include "UI/utils/displayCard.hpp"
+#include "UI/utils/masonry.hpp"
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "ranges"

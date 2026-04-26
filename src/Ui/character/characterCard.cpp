@@ -1,8 +1,8 @@
 #include "characterCard.hpp"
 
-#include "Ui/utils/card.hpp"
-#include "Ui/utils/statDisplay.hpp"
-#include "Ui/utils/trueFalse.hpp"
+#include "UI/utils/card.hpp"
+#include "UI/utils/statDisplay.hpp"
+#include "UI/utils/trueFalse.hpp"
 #include "characterCardBanner.hpp"
 #include "characterEditor.hpp"
 #include "characterPage.hpp"

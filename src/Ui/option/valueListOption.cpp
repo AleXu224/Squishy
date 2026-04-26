@@ -2,7 +2,7 @@
 
 #include "store.hpp"
 
-#include "Ui/utils/decodeModsSheet.hpp"
+#include "UI/utils/decodeModsSheet.hpp"
 
 #include "ranges"
 #include "vector"

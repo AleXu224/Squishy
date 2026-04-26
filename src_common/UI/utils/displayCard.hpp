@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ui/utils/skillHeader.hpp"
+#include "UI/utils/skillHeader.hpp"
 #include "card.hpp"
 #include "core/core.hpp"
 #include "widgets/box.hpp"

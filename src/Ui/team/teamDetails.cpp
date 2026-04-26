@@ -1,6 +1,6 @@
 #include "teamDetails.hpp"
 
-#include "Ui/character/characterDetails.hpp"
+#include "UI/character/characterDetails.hpp"
 
 #include "character/data.hpp"
 #include "store.hpp"

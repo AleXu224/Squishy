@@ -1,6 +1,8 @@
 #include "characterSheet.hpp"
 
+#include "formula/custom.hpp"
 #include "formula/formula.hpp"
+#include "formula/prefix.hpp"
 #include "formula/teamCharacter.hpp"
 #include "stats/loadout.hpp"
 

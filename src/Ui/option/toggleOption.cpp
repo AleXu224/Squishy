@@ -1,5 +1,5 @@
 #include "toggleOption.hpp"
-#include "Ui/utils/decodeModsSheet.hpp"
+#include "UI/utils/decodeModsSheet.hpp"
 #include "store.hpp"
 #include "theme.hpp"
 #include "widgets/box.hpp"

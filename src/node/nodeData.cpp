@@ -1,6 +1,6 @@
 #include "nodeData.hpp"
 
-#include "Ui/elementToColor.hpp"
+#include "UI/elementToColor.hpp"
 #include "formula/elemental.hpp"
 
 squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {

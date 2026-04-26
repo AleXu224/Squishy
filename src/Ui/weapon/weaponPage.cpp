@@ -1,6 +1,6 @@
 #include "weaponPage.hpp"
-#include "Ui/weapon/weaponEditor.hpp"
-#include "Ui/weapon/weaponSelector.hpp"
+#include "UI/weapon/weaponEditor.hpp"
+#include "UI/weapon/weaponSelector.hpp"
 #include "store.hpp"
 #include "weapon/data.hpp"
 #include "weaponCard.hpp"

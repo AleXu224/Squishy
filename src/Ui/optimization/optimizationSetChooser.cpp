@@ -1,8 +1,8 @@
 #include "optimizationSetChooser.hpp"
-#include "Ui/option/toggleOption.hpp"
-#include "Ui/option/valueListOption.hpp"
+#include "UI/option/toggleOption.hpp"
+#include "UI/option/valueListOption.hpp"
 
-#include "Ui/utils/card.hpp"
+#include "UI/utils/card.hpp"
 #include "artifact/key.hpp"
 #include "artifact/sets.hpp"
 #include "widgets/column.hpp"

@@ -15,6 +15,13 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" $<TARG
 add_custom_command(TARGET Assets PRE_BUILD
 COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/assets" ${PROJECT_BINARY_DIR}/assets)
 
+file(GLOB_RECURSE all_common_files CONFIGURE_DEPENDS "src_common/*.cpp" "src_common/*.cc" "src_common/*.h" "src_common/*.hpp")
+
+add_library(squishy_common_lib ${all_common_files})
+target_compile_features(squishy_common_lib PUBLIC cxx_std_23)
+set_target_properties(squishy_common_lib PROPERTIES CXX_EXTENSIONS OFF)
+target_include_directories(squishy_common_lib PUBLIC src_common)
+
 file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "src/*.cc" "src/*.h" "src/*.hpp")
 
 add_library(squishy_lib ${all_files})
@@ -24,13 +31,12 @@ target_include_directories(squishy_lib PUBLIC src src_common)
 target_compile_definitions(squishy_lib PUBLIC GENSHIN)
 add_dependencies(squishy_lib Assets)
 
-# file(GLOB_RECURSE all_zzz_files CONFIGURE_DEPENDS "src_zzz/*.cpp" "src_zzz/*.cc" "src_zzz/*.h" "src_zzz/*.hpp")
+file(GLOB_RECURSE all_zzz_files CONFIGURE_DEPENDS "src_zzz/*.cpp" "src_zzz/*.cc" "src_zzz/*.h" "src_zzz/*.hpp")
 
-# add_library(squishy_zzz_lib ${all_zzz_files})
-# target_compile_features(squishy_zzz_lib PUBLIC cxx_std_23)
-# set_target_properties(squishy_zzz_lib PROPERTIES CXX_EXTENSIONS OFF LINKER_LANGUAGE CXX)
-# target_include_directories(squishy_zzz_lib PUBLIC src_zzz src_common)
-# target_compile_definitions(squishy_zzz_lib PUBLIC ZZZ)
+add_library(squishy_zzz_lib ${all_zzz_files})
+target_compile_features(squishy_zzz_lib PUBLIC cxx_std_23)
+set_target_properties(squishy_zzz_lib PROPERTIES CXX_EXTENSIONS OFF LINKER_LANGUAGE CXX)
+target_compile_definitions(squishy_zzz_lib PUBLIC ZZZ)
 
 if (MSVC)
     # target_compile_options(squishy_lib PUBLIC /fsanitize=address)
@@ -42,12 +48,13 @@ else()
     # target_link_options(squishy_lib PUBLIC -fsanitize=undefined,thread)
 endif()
 
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(squishy_lib PUBLIC fmt::fmt)
-
 add_subdirectory(glt)
 include_directories(glt/include)
-target_link_libraries(squishy_lib PUBLIC glt)
+target_link_libraries(squishy_lib PUBLIC glt squishy_common_lib)
+target_link_libraries(squishy_zzz_lib PUBLIC glt squishy_common_lib)
+target_include_directories(squishy_zzz_lib PUBLIC src_zzz src_common)
+target_link_libraries(squishy_common_lib PUBLIC glt)
+add_dependencies(squishy_zzz_lib Assets)
 
 include(FetchContent)
 
@@ -59,16 +66,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glaze)
 target_link_libraries(squishy_lib PUBLIC glaze::glaze)
-# target_link_libraries(squishy_zzz_lib PUBLIC glaze::glaze)
+target_link_libraries(squishy_zzz_lib PUBLIC glaze::glaze)
 
 find_package(nfd CONFIG REQUIRED)
 target_link_libraries(squishy_lib PRIVATE nfd::nfd)
-# target_link_libraries(squishy_zzz_lib PRIVATE nfd::nfd)
+target_link_libraries(squishy_zzz_lib PRIVATE nfd::nfd)
+
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(squishy_lib PUBLIC fmt::fmt)
+target_link_libraries(squishy_zzz_lib PUBLIC fmt::fmt)
 
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
-add_executable(squishy_test main_zzz.cpp)
-target_link_libraries(squishy_test PRIVATE squishy_lib)
+add_executable(squishy_zzz main_zzz.cpp)
+target_link_libraries(squishy_zzz PRIVATE squishy_zzz_lib)
 
 add_executable(squishyBench EXCLUDE_FROM_ALL benchmark.cpp)
 target_link_libraries(squishyBench PRIVATE squishy_lib)

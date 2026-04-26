@@ -1,11 +1,12 @@
 #include "decodeModsSheet.hpp"
 
-#include "Ui/elementToColor.hpp"
+#include "UI/utils/skillEntry.hpp"
+#include "UI/elementToColor.hpp"
 #include "misc/element.hpp"
 #include "modifiers/enemyFactory.hpp"
 #include "modifiers/helpers.hpp"
 #include "modifiers/statFactory.hpp"
-#include "skillEntry.hpp"
+#include "modifiers/talentFactory.hpp"
 #include "stats/helpers.hpp"
 #include "widgets/tooltip.hpp"
 
@@ -72,9 +73,9 @@ namespace {
 	[[nodiscard]] Children decodeTalentsSheet(std::string_view prefix, bool &transparent, const Stats::ModsSheet::_Talents &sheet, const Formula::Context &ctx) {
 		Children ret;
 
-		addItem(sheet.normal, Modifiers::EnemyNameFactory::level, ret, ctx, transparent, prefix);
-		addItem(sheet.skill, Modifiers::EnemyNameFactory::DEFReduction, ret, ctx, transparent, prefix);
-		addItem(sheet.burst, Modifiers::EnemyNameFactory::DEFIgnored, ret, ctx, transparent, prefix);
+		addItem(sheet.normal, Modifiers::TalentNameFactory::normal, ret, ctx, transparent, prefix);
+		addItem(sheet.skill, Modifiers::TalentNameFactory::skill, ret, ctx, transparent, prefix);
+		addItem(sheet.burst, Modifiers::TalentNameFactory::burst, ret, ctx, transparent, prefix);
 		return ret;
 	}
 

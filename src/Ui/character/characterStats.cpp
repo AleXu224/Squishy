@@ -1,10 +1,10 @@
 #include "characterStats.hpp"
 
-#include "Ui/elementToColor.hpp"
-#include "Ui/utils/displayCard.hpp"
-#include "Ui/utils/statDisplay.hpp"
-#include "Ui/utils/tag.hpp"
-#include "Ui/utils/trueFalse.hpp"
+#include "UI/elementToColor.hpp"
+#include "UI/utils/displayCard.hpp"
+#include "UI/utils/statDisplay.hpp"
+#include "UI/utils/tag.hpp"
+#include "UI/utils/trueFalse.hpp"
 
 #include "character/data.hpp"
 #include "characterEditor.hpp"

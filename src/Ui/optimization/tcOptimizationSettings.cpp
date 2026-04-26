@@ -1,6 +1,6 @@
 #include "tcOptimizationSettings.hpp"
 
-#include "Ui/weapon/weaponCard.hpp"
+#include "UI/weapon/weaponCard.hpp"
 #include "modifiers/artifact/subStats.hpp"
 #include "ranges"
 #include "store.hpp"

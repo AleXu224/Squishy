@@ -1,6 +1,6 @@
 #include "artifactPage.hpp"
 
-#include "Ui/artifact/artifactEditor.hpp"
+#include "UI/artifact/artifactEditor.hpp"
 #include "artifactCard.hpp"
 #include "store.hpp"
 #include "widgets/button.hpp"

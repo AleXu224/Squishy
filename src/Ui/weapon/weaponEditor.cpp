@@ -1,6 +1,6 @@
 #include "weaponEditor.hpp"
 
-#include "Ui/utils/editorItem.hpp"
+#include "UI/utils/editorItem.hpp"
 #include "misc/ascension.hpp"
 #include "observer.hpp"
 #include "weapon/weapons.hpp"

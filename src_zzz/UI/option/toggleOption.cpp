@@ -1,0 +1,111 @@
+#include "toggleOption.hpp"
+#include "UI/utils/decodeModsSheet.hpp"
+#include "store.hpp"
+#include "theme.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/container.hpp"
+#include "widgets/fontIcon.hpp"
+#include "widgets/row.hpp"
+
+using namespace squi;
+
+struct ToggleBox : StatelessWidget {
+	// Args
+	Key key;
+	Args widget{};
+	bool active = false;
+
+	[[nodiscard]] Child build(const Element &element) const {
+		auto accent = Theme::of(element).accent;
+
+		return Box{
+			.widget{
+				.width = 20.f,
+				.height = 20.f,
+			},
+			.color = active ? accent : Color{0.f, 0.f, 0.f, 0.1f},
+			.borderColor{1.f, 1.f, 1.f, 0.60},
+			.borderWidth = active ? 0.f : 1.f,
+			.borderRadius{4.f},
+			.borderPosition = squi::Box::BorderPosition::outset,
+			.child = active ? FontIcon{.color{0.f, 0.f, 0.f, 1.0f}, .icon = 0xe5ca} : Child{},
+		};
+	}
+};
+
+void UI::ToggleOption::State::initState() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
+
+void UI::ToggleOption::State::widgetUpdated() {
+	mods = decodeOption(widget->option, widget->ctx);
+}
+
+squi::core::Child UI::ToggleOption::State::build(const Element &element) {
+	auto hasMods = !mods.empty();
+
+	return Box{
+		.widget = widget->widget,
+		.color = hasMods ? Color::css(0x0, 0.3f) : Color::transparent,
+		.borderRadius = 4.f,
+		.child = Column{
+			.children{
+				Button{
+					.widget{
+						.width = Size::Expand,
+					},
+					.theme = Button::Theme::Subtle(),
+					.onClick = [this]() {
+						setState([&]() {
+							widget->option.active = !widget->option.active;
+						});
+						if (widget->onToggle) {
+							widget->onToggle(widget->option.active);
+						}
+						std::visit(
+							Utils::overloaded{
+								[](const Agent::InstanceKey &key) {
+									::Store::agents.at(key).updateEvent.notify();
+								},
+								[](const Team::InstanceKey &key) {
+									auto &team = ::Store::teams.at(key);
+									for (const auto &agent: team.stats.agents) {
+										if (!agent) continue;
+										agent->updateEvent.notify();
+									}
+								},
+							},
+							widget->instanceKey
+						);
+					},
+					.child = Row{
+						.crossAxisAlignment = Row::Alignment::center,
+						.spacing = 8.f,
+						.children{
+							ToggleBox{
+								.active = widget->option.active,
+							},
+							Container{
+								.widget{.height = Size::Shrink},
+								.child = Text{
+									.text = std::string(widget->option.name),
+									.lineWrap = true,
+								},
+							},
+						},
+					},
+				},
+				hasMods//
+					? Column{
+						  .widget{
+							  .padding = 4.f,
+						  },
+						  .children = mods,
+					  }
+					: Child{},
+			},
+		},
+	};
+}

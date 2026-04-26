@@ -1,8 +1,8 @@
 #include "characterTransformativeReactions.hpp"
 
-#include "Ui/elementToColor.hpp"
-#include "Ui/utils/displayCard.hpp"
-#include "Ui/utils/skillEntry.hpp"
+#include "UI/elementToColor.hpp"
+#include "UI/utils/displayCard.hpp"
+#include "UI/utils/skillEntry.hpp"
 #include "character/data.hpp"
 #include "reaction/transformative.hpp"
 #include "utils.hpp"

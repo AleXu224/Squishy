@@ -11,6 +11,10 @@
 #include "formula/genshinConcepts.hpp"
 #endif
 
+#ifdef ZZZ
+#include "formula/zzzConcepts.hpp"
+#endif
+
 namespace Formula {
 	template<class T>
 	concept GeneralFormulaConcept = requires(T t) {
@@ -21,7 +25,7 @@ namespace Formula {
 
 	template<class T, class V>
 	concept FormulaConcept = requires(T t, V v) {
-		requires std::same_as<typename T::RetType, V>;
+		requires std::same_as<typename std::remove_cvref_t<T>::RetType, V>;
 		{ t.eval(std::declval<const Formula::Context &>()) } -> std::same_as<V>;
 		{ t.getType() } -> std::convertible_to<Type>;
 	};

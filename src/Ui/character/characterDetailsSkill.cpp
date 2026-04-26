@@ -1,10 +1,10 @@
 #include "characterDetailsSkill.hpp"
 
-#include "Ui/option/toggleOption.hpp"
-#include "Ui/option/valueListOption.hpp"
-#include "Ui/utils/decodeModsSheet.hpp"
-#include "Ui/utils/displayCard.hpp"
-#include "Ui/utils/skillEntry.hpp"
+#include "UI/option/toggleOption.hpp"
+#include "UI/option/valueListOption.hpp"
+#include "UI/utils/decodeModsSheet.hpp"
+#include "UI/utils/displayCard.hpp"
+#include "UI/utils/skillEntry.hpp"
 #include "widgets/container.hpp"
 #include "widgets/gestureDetector.hpp"
 

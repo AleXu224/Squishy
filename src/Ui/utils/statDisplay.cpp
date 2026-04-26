@@ -1,6 +1,6 @@
 #include "statDisplay.hpp"
-#include "Ui/elementToColor.hpp"
-#include "skillEntry.hpp"
+#include "UI/elementToColor.hpp"
+#include "UI/utils/skillEntry.hpp"
 #include "widgets/container.hpp"
 
 using namespace squi;

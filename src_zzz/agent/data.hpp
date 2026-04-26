@@ -3,23 +3,23 @@
 #include "key.hpp"
 #include "node/node.hpp"
 #include "option/option.hpp"
-#include "stats/character.hpp"
-#include "stats/characterBase.hpp"
+#include "stats/agent.hpp"
+#include "stats/agentBase.hpp"
 #include "string_view"
 
 
-namespace Character {
+namespace Agent {
 	struct Data {
 		struct Setup {
 			Stats::ModsSheet mods{};
-			Option::CharacterList opts{};
-			Node::CharacterList nodes{};
+			Option::AgentList opts{};
+			Node::AgentList nodes{};
 		};
 
 		DataKey key;
 		std::string_view goodKey;
 		std::string_view name;
-		Stats::CharacterBase baseStats;
+		Stats::AgentBase baseStats;
 		std::function<Setup(void)> setup;
 
 		std::unique_ptr<Setup> data = [](const std::function<Setup(void)> &setup) {
@@ -33,4 +33,4 @@ namespace Character {
 			);
 		}
 	};
-}// namespace Character
+}// namespace Agent

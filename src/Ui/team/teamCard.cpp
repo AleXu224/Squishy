@@ -1,7 +1,7 @@
 #include "teamCard.hpp"
 
-#include "Ui/utils/card.hpp"
-#include "Ui/utils/skillHeader.hpp"
+#include "UI/utils/card.hpp"
+#include "UI/utils/skillHeader.hpp"
 #include "character/data.hpp"
 #include "core/app.hpp"
 #include "teamDetails.hpp"
@@ -60,7 +60,7 @@ squi::core::Child UI::TeamCard::State::build(const Element &element) {
 								std::optional<App> app;
 								App::addMainThreadTask([&]() {
 									app.emplace(
-										Engine::WindowOptions{
+										glt::Engine::WindowOptions{
 											.name = "Team Details",
 											.width = 1280,
 											.height = 720,

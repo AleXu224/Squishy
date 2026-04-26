@@ -1,7 +1,7 @@
 #include "teamEditor.hpp"
 
-#include "Ui/character/characterSelector.hpp"
-#include "Ui/utils/editorItem.hpp"
+#include "UI/character/characterSelector.hpp"
+#include "UI/utils/editorItem.hpp"
 #include "character/data.hpp"
 #include "character/instance.hpp"
 #include "character/key.hpp"

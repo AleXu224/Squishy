@@ -1,7 +1,7 @@
 #include "characterOptions.hpp"
 
-#include "Ui/utils/displayCard.hpp"
-#include "Ui/utils/selector.hpp"
+#include "UI/utils/displayCard.hpp"
+#include "UI/utils/selector.hpp"
 
 
 using namespace squi;

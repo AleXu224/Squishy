@@ -1,6 +1,6 @@
 #include "teamBuffs.hpp"
-#include "Ui/elementToColor.hpp"
-#include "Ui/utils/masonry.hpp"
+#include "UI/elementToColor.hpp"
+#include "UI/utils/masonry.hpp"
 
 #include "store.hpp"
 #include "teamCharacterBuffsCard.hpp"

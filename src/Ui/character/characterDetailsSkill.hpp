@@ -13,7 +13,7 @@
 
 #include "modifiers/statFactory.hpp"
 
-#include "Ui/utils/skillEntry.hpp"
+#include "UI/utils/skillEntry.hpp"
 #include "widgets/tooltip.hpp"
 #include <map>
 

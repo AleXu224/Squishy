@@ -1,6 +1,6 @@
 #include "characterPage.hpp"
 
-#include "Ui/character/characterDetails.hpp"
+#include "UI/character/characterDetails.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/sideNav.hpp"
 

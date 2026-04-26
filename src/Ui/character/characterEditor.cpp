@@ -1,6 +1,6 @@
 #include "characterEditor.hpp"
 
-#include "Ui/utils/editorItem.hpp"
+#include "UI/utils/editorItem.hpp"
 #include "character/data.hpp"
 #include "misc/ascension.hpp"
 #include "observer.hpp"

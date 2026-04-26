@@ -5,7 +5,7 @@
 #include "utils/storageFolder.hpp"
 #include "weapon/weapons.hpp"
 
-#include "Ui/home/homePage.hpp"
+#include "UI/home/homePage.hpp"
 
 #include "theme.hpp"
 #include <GLFW/glfw3.h>

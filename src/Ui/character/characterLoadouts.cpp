@@ -1,6 +1,6 @@
 #include "characterLoadouts.hpp"
 
-#include "Ui/loadout/loadoutCard.hpp"
+#include "UI/loadout/loadoutCard.hpp"
 #include "observer.hpp"
 #include "ranges"
 #include "store.hpp"

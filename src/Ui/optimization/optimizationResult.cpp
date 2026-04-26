@@ -1,6 +1,6 @@
 #include "optimizationResult.hpp"
 
-#include "Ui/artifact/artifactCard.hpp"
+#include "UI/artifact/artifactCard.hpp"
 #include "artifact/sets.hpp"
 #include "store.hpp"
 #include "widgets/box.hpp"

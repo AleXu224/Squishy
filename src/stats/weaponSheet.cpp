@@ -1,6 +1,7 @@
 #include "weaponSheet.hpp"
 
-#include "formula/formula.hpp"
+#include "formula/custom.hpp"
+#include "formula/prefix.hpp"
 #include "stats/loadout.hpp"
 #include "stats/weapon.hpp"
 #include "weapon/data.hpp"

@@ -1,0 +1,26 @@
+#pragma once
+
+#include "core/core.hpp"
+
+#include "agent/key.hpp"
+#include "option/valueList.hpp"
+#include "team/key.hpp"
+
+
+namespace UI {
+	using namespace squi;
+	struct ValueListOption : StatefulWidget {
+		// Args
+		Key key;
+		Args widget{};
+		Option::ValueList &option;
+		std::variant<Agent::InstanceKey, Team::InstanceKey> instanceKey{};
+		std::function<void(std::optional<uint8_t>)> onChange;
+
+		Formula::Context ctx;
+
+		struct State : WidgetState<ValueListOption> {
+			Child build(const Element &element) override;
+		};
+	};
+}// namespace UI

@@ -1,10 +1,10 @@
 #include "homePage.hpp"
 
-#include "Ui/artifact/artifactPage.hpp"
-#include "Ui/character/characterList.hpp"
-#include "Ui/settings/settingsPage.hpp"
-#include "Ui/team/teamPage.hpp"
-#include "Ui/weapon/weaponPage.hpp"
+#include "UI/artifact/artifactPage.hpp"
+#include "UI/character/characterList.hpp"
+#include "UI/settings/settingsPage.hpp"
+#include "UI/team/teamPage.hpp"
+#include "UI/weapon/weaponPage.hpp"
 #include "widgets/topNav.hpp"
 
 
