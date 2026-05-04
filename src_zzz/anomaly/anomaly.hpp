@@ -11,8 +11,8 @@ namespace Anomaly {
 	using namespace Formula::Operators;
 	[[nodiscard]] static Formula::FloatNode makeAnomalyFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Attribute attribute) {
 		auto baseDmg = Modifiers::combat().atk * multiplier;
-		auto dmgMod = modifier.DMG;
-		auto attributeMod = Modifiers::combat().fromAttribute(attribute).DMG;
+		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
+		auto anomalyMod = modifier.DMG;
 		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
 		auto defMod = Formula::EnemyDefMultiplier{};
 		// FIXME: stunMod, dmg taken
@@ -21,7 +21,7 @@ namespace Anomaly {
 
 		return baseDmg
 			 * (1.f + dmgMod)
-			 * (1.f + attributeMod)
+			 * (1.f + anomalyMod)
 			 * resMod
 			 * defMod
 			 * apBonus

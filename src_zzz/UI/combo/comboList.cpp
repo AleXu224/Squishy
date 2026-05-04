@@ -83,8 +83,7 @@ namespace {
 									auto &combos = agent.combos;
 
 									combos.erase(widget->comboKey);
-									// FIXME: optimization
-									// agent.optimizationOptions->removeComboIfSelected(widget->comboKey);
+									agent.optimizationOptions->removeComboIfSelected(widget->comboKey);
 									agent.updateEvent.notify();
 								},
 								.child = "Delete",

@@ -31,11 +31,11 @@ namespace Agent {
 	}
 
 
-	// static constexpr struct Character {
-	// 	static constexpr Formula::CharacterLevel level{};
-	// 	static constexpr Formula::CharacterConstellation constellation{};
-	// 	static constexpr Formula::CharacterAscension ascension{};
-	// } character{};
+	// static constexpr struct Agent {
+	// 	static constexpr Formula::AgentLevel level{};
+	// 	static constexpr Formula::AgentConstellation constellation{};
+	// 	static constexpr Formula::AgentAscension ascension{};
+	// } agent{};
 
 	using EntryType = Utils::EntryType;
 

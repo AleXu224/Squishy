@@ -50,8 +50,8 @@ namespace Formula {
 
 		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
 			using namespace Operators;
-			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any character that has either
-			// an infusion or res shred that relies on artifact stats then this will break
+			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any agent that has either
+			// an infusion or res shred that relies on disc stats then this will break
 			const auto attackElement = getAttribute(attackSource, element, context);
 			auto RES = Stats::fromEnemyResAttribute(Modifiers::enemy().resistance, attackElement);
 

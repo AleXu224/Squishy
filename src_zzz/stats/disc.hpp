@@ -79,7 +79,7 @@ namespace Stats {
 
 			struct MainStat {
 				Stat stat;
-				uint8_t level = 20;
+				uint8_t level = 15;
 				uint8_t rarity = 5;
 			};
 			std::array<MainStat, 6> mainStats{

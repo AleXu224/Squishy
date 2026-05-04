@@ -6,6 +6,8 @@
 #include "UI/combo/comboDisplay.hpp"
 #include "UI/disc/discCard.hpp"
 #include "UI/engine/engineCard.hpp"
+#include "UI/optimization/optimization.hpp"
+#include "UI/optimization/tcOptimization.hpp"
 #include "UI/utils/card.hpp"
 #include "UI/utils/masonry.hpp"
 #include "agent/data.hpp"
@@ -367,26 +369,25 @@ squi::core::Child UI::AgentDetails::State::build(const Element &element) {
 					.agentKey = widget->agentKey,
 				},
 				makeMainContent(widget->agentKey, widget->teamKey, widget->enemyKey),
-				// FIXME: optimization
-				// std::visit(//
-				// 	Utils::overloaded{
-				// 		[&](const Stats::Disc::Slotted &lotted) -> Child {
-				// 			return UI::Optimization{
-				// 				.agentKey = widget->agentKey,
-				// 				.teamKey = widget->teamKey,
-				// 				.enemyKey = widget->enemyKey,
-				// 			};
-				// 		},
-				// 		[&](const Stats::Disc::Theorycraft &theorycraft) -> Child {
-				// 			return UI::TCOptimization{
-				// 				.agentKey = widget->agentKey,
-				// 				.teamKey = widget->teamKey,
-				// 				.enemyKey = widget->enemyKey,
-				// 			};
-				// 		},
-				// 	},
-				// 	agent.state.loadout().disc.equipped
-				// ),
+				std::visit(//
+					Utils::overloaded{
+						[&](const Stats::Disc::Slotted &lotted) -> Child {
+							return UI::Optimization{
+								.agentKey = widget->agentKey,
+								.teamKey = widget->teamKey,
+								.enemyKey = widget->enemyKey,
+							};
+						},
+						[&](const Stats::Disc::Theorycraft &theorycraft) -> Child {
+							return UI::TCOptimization{
+								.agentKey = widget->agentKey,
+								.teamKey = widget->teamKey,
+								.enemyKey = widget->enemyKey,
+							};
+						},
+					},
+					agent.state.loadout().disc.equipped
+				),
 			},
 		},
 	};

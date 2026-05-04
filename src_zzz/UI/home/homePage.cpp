@@ -3,8 +3,8 @@
 #include "UI/agent/agentList.hpp"
 #include "UI/disc/discPage.hpp"
 // #include "UI/settings/settingsPage.hpp"
-// #include "UI/team/teamPage.hpp"
 #include "UI/engine/enginePage.hpp"
+#include "UI/team/teamPage.hpp"
 #include "widgets/topNav.hpp"
 
 
@@ -23,11 +23,11 @@ squi::Child UI::HomePage::build(const squi::Element &) const {
 				.icon = 0xe7fd,
 				.content = AgentList{},
 			},
-			// TopNav::Page{
-			// 	.name{"Teams"},
-			// 	.icon = 0xf233,
-			// 	.content = TeamPage{},
-			// },
+			TopNav::Page{
+				.name{"Teams"},
+				.icon = 0xf233,
+				.content = TeamPage{},
+			},
 			TopNav::Page{
 				.name{"Engines"},
 				.icon = 0xf889,

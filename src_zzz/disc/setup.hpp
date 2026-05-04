@@ -3,6 +3,7 @@
 #include "formula/base.hpp"           // IWYU pragma: export
 #include "formula/multiplier.hpp"     // IWYU pragma: export
 #include "formula/option.hpp"         // IWYU pragma: export
+#include "formula/requires.hpp"       // IWYU pragma: export
 #include "modifiers/total/base.hpp"   // IWYU pragma: export
 #include "modifiers/total/initial.hpp"// IWYU pragma: export
 #include "modifiers/total/total.hpp"  // IWYU pragma: export
@@ -11,7 +12,7 @@
 #include "set.hpp"                    // IWYU pragma: export
 
 
-namespace Artifact {
+namespace Disc {
 	static inline auto IsActive(const Utils::HashedString &name) {
 		return Formula::impl_IsActive{.name = name};
 	}
@@ -25,11 +26,11 @@ namespace Artifact {
 		return Formula::impl_GetIndex{.name = name, .defaultValue = defaultValue};
 	}
 
-	// static constexpr struct Character {
-	// 	static constexpr Formula::CharacterLevel level{};
-	// 	static constexpr Formula::CharacterConstellation constellation{};
-	// 	static constexpr Formula::CharacterAscension ascension{};
-	// } character{};
+	// static constexpr struct Agent {
+	// 	static constexpr Formula::AgentLevel level{};
+	// 	static constexpr Formula::AgentConstellation constellation{};
+	// 	static constexpr Formula::AgentAscension ascension{};
+	// } agent{};
 
 	using EntryType = Utils::EntryType;
 
@@ -38,5 +39,5 @@ namespace Artifact {
 	static inline const auto &combat = Modifiers::combat();
 	static inline const auto &enemy = Modifiers::enemy();
 	static inline const auto &skills = Modifiers::skills();
-};// namespace Artifact
+};// namespace Disc
 using namespace Formula;

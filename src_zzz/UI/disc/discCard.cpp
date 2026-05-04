@@ -1,5 +1,6 @@
 #include "discCard.hpp"
 
+#include "UI/agent/agentSelector.hpp"
 #include "UI/disc/discEditor.hpp"
 // #include "UI/agent/agentSelector.hpp"
 #include "UI/utils/card.hpp"
@@ -141,15 +142,13 @@ struct DiscCardContent : StatelessWidget {
 				.width = Size::Expand,
 			},
 			.theme = equippedAgent ? Button::Theme::Accent(element) : Button::Theme::Standard(),
-			// FIXME: add this back once agent selector is implemented
-			.disabled = true,
-			// .onClick = [&]() {
-			// 	Navigator::of(element).pushOverlay(UI::AgentSelector{
-			// 		.onSelect = [this](Agent::InstanceKey instanceKey) {
-			// 			disc.equipOn(instanceKey);
-			// 		},
-			// 	});
-			// },
+			.onClick = [&]() {
+				Navigator::of(element).pushOverlay(UI::AgentSelector{
+					.onSelect = [this](Agent::InstanceKey instanceKey) {
+						disc.equipOn(instanceKey);
+					},
+				});
+			},
 			.child = equippedAgent ? std::string(Store::agents.at(equippedAgent).state.stats.data.name) : "Unequipped",
 		};
 

@@ -1,0 +1,130 @@
+#include "teamCard.hpp"
+
+#include "UI/utils/card.hpp"
+#include "UI/utils/skillHeader.hpp"
+#include "agent/data.hpp"
+#include "core/app.hpp"
+#include "teamDetails.hpp"
+#include "teamEditor.hpp"
+
+#include "store.hpp"
+#include "widgets/box.hpp"
+#include "widgets/button.hpp"
+#include "widgets/column.hpp"
+#include "widgets/gestureDetector.hpp"
+#include "widgets/image.hpp"
+#include "widgets/navigator.hpp"
+#include "widgets/row.hpp"
+
+
+using namespace squi;
+
+struct TeamAvatar : StatelessWidget {
+	// Args
+	Key key;
+	Agent::Instance *agent;
+
+	[[nodiscard]] Child build(const Element &) const {
+		return Box{
+			.widget{
+				.width = 64.f,
+				.height = 64.f,
+			},
+			.color{1.f, 1.f, 1.f, 0.1f},
+			.borderRadius{4.f},
+			.child = agent
+					   ? Image{
+							 .fit = Image::Fit::contain,
+							 .image = ImageProvider::fromFile(std::format("assets/Agents/{}/avatar.png", agent->state.stats.data.name))
+						 }
+					   : Child{},
+		};
+	}
+};
+
+squi::core::Child UI::TeamCard::State::build(const Element &element) {
+	auto &team = ::Store::teams.at(widget->teamKey);
+
+	return Card{
+		.child = Column{
+			.children{
+				Gesture{
+					.onClick = [this](Gesture::State) {
+						Navigator::of(this).push(UI::TeamDetails{
+							.teamKey = widget->teamKey,
+						});
+					},
+					.onUpdate = [this](Gesture::State state) {
+						if (state.hovered && state.isKeyPressedOrRepeat(GestureMouseKey::middle)) {
+							auto thread = std::thread([teamKey = widget->teamKey]() {
+								std::optional<App> app;
+								App::addMainThreadTask([&]() {
+									app.emplace(
+										glt::Engine::WindowOptions{
+											.name = "Team Details",
+											.width = 1280,
+											.height = 720,
+										},
+										UI::TeamDetails{
+											.enableBackButton = false,
+											.teamKey = teamKey,
+										}
+									);
+								}).wait();
+								app->initialize();
+								app->finished.wait();
+							});
+							thread.detach();
+						}
+					},
+					.child = UI::SkillHeader{
+						.name = team.name,
+					},
+				},
+				Row{
+					.widget{
+						.height = Size::Shrink,
+						.padding = 8.f,
+					},
+					.justifyContent = Row::JustifyContent::spaceBetween,
+					.children{
+						TeamAvatar{.agent = team.stats.agents.at(0)},
+						TeamAvatar{.agent = team.stats.agents.at(1)},
+						TeamAvatar{.agent = team.stats.agents.at(2)},
+					},
+				},
+				Row{
+					.widget{
+						.height = Size::Shrink,
+						.padding = 4.f,
+					},
+					.spacing = 4.f,
+					.children{
+						Button{
+							.theme = Button::Theme::Standard(),
+							.onClick = [this]() {
+								Navigator::of(this).pushOverlay(UI::TeamEditor{
+									.instance = ::Store::teams.at(widget->teamKey),
+									.onSubmit = [](const Team::Instance &team) {
+										auto &teamInStore = ::Store::teams.at(team.instanceKey) = team;
+										teamInStore.updateEvent.notify();
+										::Store::teamListUpdateEvent.notify();
+									},
+								});
+							},
+							.child = "Edit",
+						},
+						Button{
+							.theme = Button::Theme::Standard(),
+							.onClick = [this]() {
+								::Store::teams.erase(widget->teamKey);
+								::Store::teamListUpdateEvent.notify();
+							},
+							.child = "Delete",
+						},
+					},
+				},
+			},
+		},
+	};
+}
