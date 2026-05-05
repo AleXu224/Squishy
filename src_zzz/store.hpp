@@ -9,7 +9,7 @@
 #include "unordered_map"
 
 
-// #include "serialization/good/IGOOD.hpp"
+#include "serialization/zod/IZOD.hpp"
 
 namespace Store {
 	inline std::unordered_map<Agent::InstanceKey, Agent::Instance> agents{};
@@ -38,7 +38,7 @@ namespace Store {
 	inline uint32_t windowHeight = 720;
 	inline bool maximized = false;
 
-	Agent::Instance &createAgent(Agent::DataKey dataKey, Engine::InstanceKey engine = {});
+	Agent::Instance &createAgent(Agent::DataKey dataKey);
 	Engine::Instance &createEngine(Engine::DataKey dataKey);
 	Disc::Instance &createDisc(Disc::SetKey setKey);
 	Team::Instance &createTeam(std::string_view name = "");
@@ -46,6 +46,6 @@ namespace Store {
 	extern void saveToFile(const std::string &path);
 	extern void loadFromFile(const std::string &path);
 
-	// extern Serialization::Good::IGOOD saveToGOOD();
-	// extern void loadFromGOOD(const Serialization::Good::IGOOD &);
+	extern Serialization::Zod::IZOD saveToZOD();
+	extern void loadFromZOD(const Serialization::Zod::IZOD &);
 }// namespace Store

@@ -2,6 +2,7 @@
 #include "core/app.hpp"
 #include "disc/sets.hpp"
 #include "engine/engines.hpp"
+#include "utils/storageFolder.hpp"
 
 #include "UI/home/homePage.hpp"
 #include "store.hpp"
@@ -11,7 +12,8 @@ int main() {
 	Agent::initAgents();
 	Disc::initDiscs();
 
-	// FIXME: saves
+	auto fileSavePath = Utils::getStorageFolder().value() / "Squishy" / "save_zzz.sqsh";
+	::Store::loadFromFile(fileSavePath.string());
 
 	using namespace squi;
 
@@ -49,4 +51,6 @@ int main() {
 	};
 	app.initialize();
 	App::runAllWindows();
+
+	::Store::saveToFile(fileSavePath.string());
 }
