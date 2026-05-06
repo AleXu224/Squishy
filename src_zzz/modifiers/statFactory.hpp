@@ -16,6 +16,7 @@ namespace Modifiers {
 			static constexpr auto multiplicativeDMG = SkillType{V, &TT::_SkillValue::multiplicativeDMG};
 			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
 			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
+			static constexpr auto daze = SkillType{V, &TT::_SkillValue::daze};
 		};
 
 		static constexpr auto hp = &TT::hp;
@@ -81,6 +82,7 @@ namespace Modifiers {
 			static constexpr auto multiplicativeDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::multiplicativeDMG);
 			static constexpr auto critRate = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critRate);
 			static constexpr auto critDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critDMG);
+			static constexpr auto daze = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::daze);
 		};
 
 		static constexpr auto hp = Modifiers::SheetMemberIdentifier(::Stat::hp);
@@ -147,6 +149,7 @@ namespace Modifiers {
 			static constexpr Formula<V.multiplicativeDMG...> multiplicativeDMG{};
 			static constexpr Formula<V.critRate...> critRate{};
 			static constexpr Formula<V.critDMG...> critDMG{};
+			static constexpr Formula<V.daze...> daze{};
 		};
 
 		static constexpr Formula<Params.hp...> hp{};
@@ -221,6 +224,7 @@ namespace Modifiers {
 			.multiplicativeDMG = formulaFactory<T, Formula>(params.multiplicativeDMG...),
 			.critRate = formulaFactory<T, Formula>(params.critRate...),
 			.critDMG = formulaFactory<T, Formula>(params.critDMG...),
+			.daze = formulaFactory<T, Formula>(params.daze...),
 		};
 	}
 

@@ -9,6 +9,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const AtkData &node) {
 				return Utils::attributeToColor(Formula::getAttribute(node.source, node.attribute, ctx));
 			},
+			[&](const DazeData &node) {
+				return squi::Color::gray;
+			},
 			[&](const CustomAtkData &node) {
 				return Utils::attributeToColor(node.attribute);
 			},
@@ -29,6 +32,9 @@ bool Node::getOptimizable(const Data &data) {
 	return std::visit(
 		Utils::overloaded{
 			[&](const AtkData &) {
+				return true;
+			},
+			[&](const DazeData &) {
 				return true;
 			},
 			[&](const CustomAtkData &) {

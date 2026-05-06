@@ -354,6 +354,13 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 														ctx
 													);
 												},
+												[&](const Node::DazeData &data) {
+													attribute = Formula::getAttribute(
+														data.source,
+														data.attribute,
+														ctx
+													);
+												},
 												[&](const Node::CustomAtkData &data) {
 													attribute = data.attribute;
 												},

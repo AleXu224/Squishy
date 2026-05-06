@@ -49,6 +49,7 @@ namespace Stats {
 		Stat::hp,
 		Stat::atk,
 		Stat::def,
+		Stat::impact,
 		Stat::ap,
 		Stat::am,
 		Stat::er,

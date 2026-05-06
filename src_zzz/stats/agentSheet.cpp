@@ -52,6 +52,19 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 		}
 	};
 
+	// Impact
+	this->base.impact.modifiers.at(0) = Formula::Prefix{
+		.prefix = "Agent Base",
+		.val = Formula::Custom{
+			.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
+				return Formula::ConstantFlat{.value = context.source.stats.base.baseImpact};
+			},
+			.func = [](const Formula::Context &context) {
+				return context.source.stats.base.baseImpact;
+			}
+		}
+	};
+
 	// Anomaly Proficiency
 	this->base.ap.modifiers.at(0) = Formula::Prefix{
 		.prefix = "Agent Base",

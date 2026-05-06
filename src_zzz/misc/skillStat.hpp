@@ -14,6 +14,7 @@ namespace Misc {
 		multiplicativeDMG,
 		critRate,
 		critDMG,
+		daze,
 	};
 
 	static inline std::vector<SkillStat> skillStats{
@@ -22,6 +23,7 @@ namespace Misc {
 		SkillStat::multiplicativeDMG,
 		SkillStat::critRate,
 		SkillStat::critDMG,
+		SkillStat::daze,
 	};
 }// namespace Misc
 
@@ -49,6 +51,8 @@ namespace Utils {
 				return "Crit Rate";
 			case Misc::SkillStat::critDMG:
 				return "Crit DMG";
+			case Misc::SkillStat::daze:
+				return "Daze";
 		}
 		std::unreachable();
 	}

@@ -19,6 +19,11 @@ namespace Node {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 	};
 
+	struct DazeData {
+		Utils::JankyOptional<Misc::Attribute> attribute{};
+		Utils::JankyOptional<Misc::AttackSource> source{};
+	};
+
 	struct CustomAtkData {
 		Misc::Attribute attribute;
 	};
@@ -35,12 +40,15 @@ namespace Node {
 		squi::utils::Container<Stats::ModsSheet> mods;
 	};
 
-	using Data = std::variant<AtkData, CustomAtkData, InfoData, HealData, ModsData>;
+	using Data = std::variant<AtkData, DazeData, CustomAtkData, InfoData, HealData, ModsData>;
 
 	[[nodiscard]] constexpr bool isPercentage(const Data &data) {
 		return std::visit(
 			Utils::overloaded{
 				[](const AtkData &) {
+					return false;
+				},
+				[](const DazeData &) {
 					return false;
 				},
 				[](const CustomAtkData &) {

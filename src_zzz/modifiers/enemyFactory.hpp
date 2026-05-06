@@ -23,6 +23,9 @@ namespace Modifiers {
 		static constexpr auto baseDef = &TT::baseDef;
 		static constexpr auto DEFReduction = &TT::DEFReduction;
 		static constexpr auto DEFIgnored = &TT::DEFIgnored;
+		static constexpr auto dazeRes = &TT::dazeRes;
+		static constexpr auto daze = &TT::daze;
+		static constexpr auto dazeTaken = &TT::dazeTaken;
 		static constexpr auto resistance = Skill<&TT::resistance>();
 	};
 
@@ -40,6 +43,9 @@ namespace Modifiers {
 		static constexpr auto baseDef = SheetMemberIdentifier(Misc::EnemyStat::baseDef);
 		static constexpr auto DEFReduction = SheetMemberIdentifier(Misc::EnemyStat::DEFReduction);
 		static constexpr auto DEFIgnored = SheetMemberIdentifier(Misc::EnemyStat::DEFIgnored);
+		static constexpr auto dazeRes = SheetMemberIdentifier(Misc::EnemyStat::dazeRes);
+		static constexpr auto daze = SheetMemberIdentifier(Misc::EnemyStat::daze);
+		static constexpr auto dazeTaken = SheetMemberIdentifier(Misc::EnemyStat::dazeTaken);
 		static constexpr auto resistance = Skill<Misc::EnemyResistances::resistance>();
 	};
 
@@ -58,6 +64,9 @@ namespace Modifiers {
 		static constexpr Formula<Params.baseDef...> baseDef{};
 		static constexpr Formula<Params.DEFReduction...> DEFReduction{};
 		static constexpr Formula<Params.DEFIgnored...> DEFIgnored{};
+		static constexpr Formula<Params.dazeRes...> dazeRes{};
+		static constexpr Formula<Params.daze...> daze{};
+		static constexpr Formula<Params.dazeTaken...> dazeTaken{};
 		static constexpr _SkillValue<Params.resistance...> resistance{};
 	};
 
@@ -68,6 +77,9 @@ namespace Modifiers {
 			.baseDef = Formula({}, params.baseDef...),
 			.DEFReduction = Formula({}, params.DEFReduction...),
 			.DEFIgnored = Formula({}, params.DEFIgnored...),
+			.dazeRes = Formula({}, params.dazeRes...),
+			.daze = Formula({}, params.daze...),
+			.dazeTaken = Formula({}, params.dazeTaken...),
 			.resistance{
 				.physical = Formula({}, params.resistance.physical...),
 				.fire = Formula({}, params.resistance.fire...),

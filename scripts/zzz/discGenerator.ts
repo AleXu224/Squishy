@@ -41,7 +41,7 @@ const retHeader: string = `#pragma once
 #include "disc/setup.hpp"
 
 namespace Disc::Sets {
-	const extern Disc::Set ${camelCase(data.name)};
+	const extern Disc::Set ${camelCase(data.caseableName)};
 }// namespace Disc::Sets
 `;
 

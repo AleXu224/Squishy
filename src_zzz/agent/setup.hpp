@@ -8,6 +8,7 @@
 #include "modifiers/total/initial.hpp"// IWYU pragma: export
 #include "modifiers/total/total.hpp"  // IWYU pragma: export
 #include "node/atkNode.hpp"           // IWYU pragma: export
+#include "node/dazeNode.hpp"          // IWYU pragma: export
 #include "node/infoNode.hpp"          // IWYU pragma: export
 
 // #include "node/healNode.hpp"         // IWYU pragma: export

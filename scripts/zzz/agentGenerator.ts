@@ -82,12 +82,16 @@ function skillContentsGenerator(skill: SkillData, source: string): string {
                     },`;
                 continue;
             }
+            let type = "Atk";
+            if (param.name.toLowerCase().includes("daze")) {
+                type = "Daze";
+            }
             const value = Object.values(param.param)[0];
             const sourceStr = `\n						.source = Misc::AttackSource::${source},`;
             ret += `
-                    Node::Atk{
+                    Node::${type}{
                         .name = "${param.name}",${sourceStr}
-                        .formula = Multiplier(combat.atk, LevelableSkill::${source}, ${(value.main / 10000).toFixed(4)}f, ${(value.growth / 10000).toFixed(4)}f)
+                        .formula = Multiplier(${type == "Atk" ? "combat.atk" : "combat.impact"}, LevelableSkill::${source}, ${(value.main / 10000).toFixed(4)}f, ${(value.growth / 10000).toFixed(4)}f)
                     },`;
         }
     }

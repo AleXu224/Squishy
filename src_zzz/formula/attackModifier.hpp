@@ -10,5 +10,6 @@ namespace Formula {
 		Formula::FloatNode multiplicativeDMG{Formula::Constant({}, 0.f)};
 		Formula::FloatNode critRate{Formula::Constant({}, 0.f)};
 		Formula::FloatNode critDMG{Formula::Constant({}, 0.f)};
+		Formula::FloatNode daze{Formula::Constant({}, 0.f)};
 	};
 }// namespace Formula

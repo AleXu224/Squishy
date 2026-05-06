@@ -12,6 +12,9 @@ namespace Misc {
 		baseDef,
 		DEFReduction,
 		DEFIgnored,
+		dazeRes,
+		daze,
+		dazeTaken,
 	};
 	enum class EnemyResistances : uint8_t {
 		resistance,
@@ -30,6 +33,12 @@ namespace Utils {
 				return "DEF Reduction";
 			case Misc::EnemyStat::DEFIgnored:
 				return "DEF Ignored";
+			case Misc::EnemyStat::dazeRes:
+				return "Daze RES";
+			case Misc::EnemyStat::daze:
+				return "Daze%";
+			case Misc::EnemyStat::dazeTaken:
+				return "Daze Taken%";
 		}
 		std::unreachable();
 	}
@@ -49,6 +58,9 @@ namespace Utils {
 				return false;
 			case Misc::EnemyStat::DEFReduction:
 			case Misc::EnemyStat::DEFIgnored:
+			case Misc::EnemyStat::dazeRes:
+			case Misc::EnemyStat::daze:
+			case Misc::EnemyStat::dazeTaken:
 				return true;
 		}
 		std::unreachable();

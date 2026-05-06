@@ -48,6 +48,9 @@ namespace Stats {
 		_Value baseDef{};
 		_Value DEFReduction{};
 		_Value DEFIgnored{};
+		_Value dazeRes{};
+		_Value daze{};
+		_Value dazeTaken{};
 		_SkillValue resistance{};
 	};
 
@@ -60,6 +63,7 @@ namespace Stats {
 			_Value multiplicativeDMG{};
 			_Value critRate{};
 			_Value critDMG{};
+			_Value daze{};
 
 			[[nodiscard]] static consteval auto getMembers() {
 				return std::array{
@@ -68,6 +72,7 @@ namespace Stats {
 					&_SkillValue::multiplicativeDMG,
 					&_SkillValue::critRate,
 					&_SkillValue::critDMG,
+					&_SkillValue::daze,
 				};
 			}
 
@@ -92,6 +97,8 @@ namespace Stats {
 						return self.critRate;
 					case Misc::SkillStat::critDMG:
 						return self.critDMG;
+					case Misc::SkillStat::daze:
+						return self.daze;
 				}
 				std::unreachable();
 			}
