@@ -90,7 +90,7 @@ function skillContentsGenerator(skill: SkillData, source: string): string {
             const sourceStr = `\n						.source = Misc::AttackSource::${source},`;
             ret += `
                     Node::${type}{
-                        .name = "${param.name}",${sourceStr}
+                        .name = "${param.name.replace(" Multiplier", "")}",${sourceStr}
                         .formula = Multiplier(${type == "Atk" ? "combat.atk" : "combat.impact"}, LevelableSkill::${source}, ${(value.main / 10000).toFixed(4)}f, ${(value.growth / 10000).toFixed(4)}f)
                     },`;
         }
