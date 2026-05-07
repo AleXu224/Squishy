@@ -106,6 +106,19 @@ squi::core::Child UI::TeamAgentBuffsCard::State::build(const Element &element) {
 					));
 				}
 			}
+			if (agent.state.loadout().disc.bonus3.has_value()) {
+				for (auto &opt: agent.state.loadout().disc.bonus3->bonusPtr->opts) {
+					if (!isTeamBuff(opt)) continue;
+					parseOption(agent.state.options.at(
+						std::visit(
+							[](auto &&opt) {
+								return opt.key.hash;
+							},
+							opt
+						)
+					));
+				}
+			}
 
 			for (const auto &[optPtr, condition]: Option::AgentList::getMembersAndConditions()) {
 				if (!condition.eval(ctx)) continue;

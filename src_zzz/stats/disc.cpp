@@ -21,7 +21,7 @@ namespace {
 		uint8_t count = 0;
 	};
 	struct OccurenceMapper {
-		std::array<Occurence, 5> occurences{};
+		std::array<Occurence, 6> occurences{};
 
 		Occurence &get(const ::Disc::SetKey &key) {
 			for (auto &occurence: occurences) {
@@ -60,6 +60,7 @@ void Stats::Disc::refreshStats() {
 	OccurenceMapper mapper{};
 	bonus1 = std::nullopt;
 	bonus2 = std::nullopt;
+	bonus3 = std::nullopt;
 	for (auto &disc: sheet.equippedDiscs) {
 		disc = std::nullopt;
 	}
@@ -67,7 +68,7 @@ void Stats::Disc::refreshStats() {
 	std::visit(
 		Utils::overloaded{
 			[&](const Stats::Disc::Slotted &slotted) {
-				for (const auto &[artPtr, index]: std::views::zip(Stats::Disc::Slotted::getMembers(), std::views::iota(0, 5))) {
+				for (const auto &[artPtr, index]: std::views::zip(Stats::Disc::Slotted::getMembers(), std::views::iota(0, 6))) {
 					auto artId = std::invoke(artPtr, slotted);
 					if (!artId) continue;
 					auto &disc = Store::discs.at(artId);

@@ -76,7 +76,8 @@ namespace {
 		}
 		const auto &discOpts1 = agent.state.loadout().disc.bonus1;
 		const auto &discOpts2 = agent.state.loadout().disc.bonus2;
-		for (const auto &bonus: {discOpts1, discOpts2}) {
+		const auto &discOpts3 = agent.state.loadout().disc.bonus3;
+		for (const auto &bonus: {discOpts1, discOpts2, discOpts3}) {
 			if (!bonus) continue;
 			for (const auto &opt: bonus->bonusPtr->opts) {
 				auto key = std::visit(
