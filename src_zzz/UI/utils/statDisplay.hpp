@@ -9,6 +9,8 @@ namespace UI {
 		// Args
 		Key key;
 		bool isTransparent;
+		bool showRolls = false;
+		uint32_t rarity = 5;
 		StatValue stat;
 
 		[[nodiscard]] Child build(const Element &) const;

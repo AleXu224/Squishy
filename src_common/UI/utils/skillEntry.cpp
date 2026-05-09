@@ -27,10 +27,21 @@ using namespace squi;
 						.widget{
 							.height = Size::Shrink,
 						},
-						.child = Text{
-							.text = std::string(name),
-							.lineWrap = true,
-							.color = color,
+						.child = Row{
+							.spacing = 4.f,
+							.children{
+								Text{
+									.text = std::string(name),
+									.lineWrap = true,
+									.color = color,
+								},
+								nameSuffix.has_value()//
+									? Text{
+										  .text = nameSuffix.value(),
+										  .color = nameSuffixColor,
+									  }
+									: Child{},
+							},
 						},
 					},
 					value.has_value()//

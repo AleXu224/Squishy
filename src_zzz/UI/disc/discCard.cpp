@@ -2,7 +2,6 @@
 
 #include "UI/agent/agentSelector.hpp"
 #include "UI/disc/discEditor.hpp"
-// #include "UI/agent/agentSelector.hpp"
 #include "UI/utils/card.hpp"
 #include "UI/utils/statDisplay.hpp"
 #include "UI/utils/tag.hpp"
@@ -129,6 +128,8 @@ struct DiscCardContent : StatelessWidget {
 					if (!substat.stat.has_value()) continue;
 					ret.emplace_back(UI::StatDisplay{
 						.isTransparent = transparent,
+						.showRolls = true,
+						.rarity = disc.rarity,
 						.stat = substat,
 					});
 				}
