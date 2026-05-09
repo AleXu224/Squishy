@@ -55,7 +55,7 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 							.spacing = 4.f,
 							.children{
 								UI::Tag{.sourceStr = std::format("Lvl {}", loadout.stats.sheet.level)},
-								UI::Tag{.sourceStr = std::format("C{}", loadout.stats.sheet.mindscape)},
+								UI::Tag{.sourceStr = std::format("M{}", loadout.stats.sheet.mindscape)},
 							},
 						},
 					},

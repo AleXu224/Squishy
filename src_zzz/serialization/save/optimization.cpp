@@ -43,16 +43,11 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		}(),
 		.twoPcSets = options.twoPcSets,
 		.fourPcSets = options.fourPcSets,
-		.threeRainbow = options.threeRainbow,
-		.fiveRainbow = options.fiveRainbow,
 	};
 }
 
 ::Optimization::Options Serialization::Save::Optimization::toInstance() const {
 	::Optimization::Options ret{};
-
-	ret.threeRainbow = threeRainbow;
-	ret.fiveRainbow = fiveRainbow;
 
 	for (const auto &[key, value]: twoPcSets) {
 		ret.twoPcSets[key] = value;

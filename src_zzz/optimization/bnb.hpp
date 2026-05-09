@@ -12,16 +12,17 @@ namespace Optimization {
 		Agent::Instance &agent,
 		const Formula::Context &ctx,
 		const Formula::FloatNode &node,
-		const std::optional<Stats::DiscBonus> &bonus1,
-		const std::optional<Stats::DiscBonus> &bonus2,
+		BnbState &state,
 		const std::optional<uint32_t> &splitSlot
 	) {
 		auto &loadout = agent.state.loadout();
 		std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(discs);
 
 		// Check if this branch can possibly be good enough to be worth considering
-		if (bonus1.has_value()) loadout.disc.bonus1.emplace(bonus1.value());
-		if (bonus2.has_value()) loadout.disc.bonus2.emplace(bonus2.value());
+		if (!state.isValid()) {
+			return;
+		}
+		state.applySets(loadout);
 		loadout.disc.sheet.equippedDiscs[0] = &statsForSlot[0];
 		loadout.disc.sheet.equippedDiscs[1] = &statsForSlot[1];
 		loadout.disc.sheet.equippedDiscs[2] = &statsForSlot[2];
@@ -57,6 +58,8 @@ namespace Optimization {
 					if (val > solutions.minScore) {
 						maxVal = std::max(val, maxVal);
 						minVal = std::min(val, minVal);
+					} else {
+						state.subtractCountForIndex(i, disc->set);
 					}
 
 					return val <= solutions.minScore;
@@ -80,14 +83,8 @@ namespace Optimization {
 				equipped.five = five->key;
 				equipped.six = six->key;
 				loadout.disc.refreshStats();
-				if (loadout.disc.bonus1.has_value()) {
-					if (!bonus1.has_value()) continue;
-					if (loadout.disc.bonus1.value().bonusPtr != bonus1.value().bonusPtr) continue;
-				}
-				if (loadout.disc.bonus2.has_value()) {
-					if (!bonus2.has_value()) continue;
-					if (loadout.disc.bonus2.value().bonusPtr != bonus2.value().bonusPtr) continue;
-				}
+				SlotHash hash(loadout.disc.bonus1, loadout.disc.bonus2, loadout.disc.bonus3);
+				if (hash != state.targetHash) continue;
 				auto dmg = node.eval(ctx);
 				solutions.addSolution(equipped, dmg);
 			}
@@ -116,7 +113,21 @@ namespace Optimization {
 		copy1.entries.at(maxVarianceSlot) = std::vector(maxVarianceEntry.begin(), std::next(maxVarianceEntry.begin(), static_cast<int32_t>(midPoint)));
 		copy2.entries.at(maxVarianceSlot) = std::vector(std::next(maxVarianceEntry.begin(), static_cast<int32_t>(midPoint)), maxVarianceEntry.end());
 
-		bnb(copy1, solutions, agent, ctx, node, bonus1, bonus2, splitSlotRet);
-		bnb(copy2, solutions, agent, ctx, node, bonus1, bonus2, splitSlotRet);
+		auto countsFirst = state.countSetsForDiscs(copy1.entries.at(maxVarianceSlot));
+		auto countsSecond = std::array<uint32_t, 3>{
+			state.sets[0].countsForSlot[maxVarianceSlot] - countsFirst[0],
+			state.sets[1].countsForSlot[maxVarianceSlot] - countsFirst[1],
+			state.sets[2].countsForSlot[maxVarianceSlot] - countsFirst[2]
+		};
+		{
+			auto stateCopy1 = state;
+			stateCopy1.setCountsForIndex(maxVarianceSlot, countsFirst);
+			bnb(copy1, solutions, agent, ctx, node, stateCopy1, splitSlotRet);
+		}
+		{
+			auto stateCopy2 = state;
+			stateCopy2.setCountsForIndex(maxVarianceSlot, countsSecond);
+			bnb(copy2, solutions, agent, ctx, node, stateCopy2, splitSlotRet);
+		}
 	}
 }// namespace Optimization

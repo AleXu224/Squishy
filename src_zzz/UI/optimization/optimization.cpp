@@ -40,34 +40,6 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 			.spacing = 3.f,
 			.children{
 				Expander{
-					.title = "Enable 3 rainbow",
-					.subtitle = "Having a 2pc set and three other discs that don't make up any set. Disabling this will drastically speed up the optimization",
-					.action{
-						ToggleSwitch{
-							.active = agent.optimizationOptions->threeRainbow,
-							.onToggle = [this, storage = agent.optimizationOptions](bool active) {
-								setState([&]() {
-									storage->threeRainbow = active;
-								});
-							},
-						},
-					},
-				},
-				Expander{
-					.title = "Enable 5 rainbow",
-					.subtitle = "Having no 2pc or 4pc set. Disabling this will drastically speed up the optimization",
-					.action{
-						ToggleSwitch{
-							.active = agent.optimizationOptions->fiveRainbow,
-							.onToggle = [this, storage = agent.optimizationOptions](bool active) {
-								setState([&]() {
-									storage->fiveRainbow = active;
-								});
-							},
-						},
-					},
-				},
-				Expander{
 					.title = "Enabled sets and bonuses",
 					.subtitle = "Select which sets and bonuses will be used in the optimization",
 					.action{
@@ -129,7 +101,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 										});
 									},
 									.child = agent.optimizationOptions->nodeSource.has_value()//
-											   ? std::visit(                                      //
+											   ? std::visit(                                  //
 													 [](auto &&node) -> std::string {
 														 return std::string(node.resolve({}).name);
 													 },

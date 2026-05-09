@@ -47,112 +47,87 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		};
 	}
 
-	std::vector<DiscFilter> filters{};
+	std::vector<BnbState> states{};
 
 	auto [enabledTwoPiece, enabledFourPiece] = options.makeEnabledSets();
 
 	// 4pc filters
 	for (const auto &key: enabledFourPiece) {
-		DiscFilter pattern{};
+		BnbState state{
+			.emptySlotAllowance = 0,
+		};
 		const auto &set = Disc::sets.at(key);
-		pattern.bonus1.emplace(Stats::DiscBonus{
+		state.sets[0] = BnbState::Set{
+			.set = key,
+			.filledSlotCountRequirement = 4,
+		};
+		state.bonuses[0] = Stats::DiscBonus{
 			.setPtr = &set,
 			.bonusPtr = &set.data.twoPc,
-		});
-		pattern.bonus2.emplace(Stats::DiscBonus{
+		};
+		state.bonuses[1] = Stats::DiscBonus{
 			.setPtr = &set,
 			.bonusPtr = &set.data.fourPc,
-		});
-		for (auto &entry: pattern.filters) {
-			entry.set = key;
-		}
-		filters.emplace_back(pattern);
+		};
 
-		for (size_t i = 0; i < 6; i++) {
-			bool skipFilter = false;
-			for (size_t j = 0; j < 6; j++) {
-				if (j == i) continue;
-				if (counts.at(key.key).at(j) == 0) {
-					skipFilter = true;
-					break;
-				}
-			}
-			if (skipFilter) continue;
-			auto ret = pattern;
-			ret.filters.at(i).set = std::nullopt;
-			ret.filters.at(i).notSet = key;
-			filters.emplace_back(ret);
+		for (const auto &key2: enabledTwoPiece) {
+			if (key == key2) continue;
+			const auto &set2 = Disc::sets.at(key2);
+			state.sets[1] = BnbState::Set{
+				.set = key2,
+				.filledSlotCountRequirement = 2,
+			};
+			state.bonuses[2] = Stats::DiscBonus{
+				.setPtr = &set2,
+				.bonusPtr = &set2.data.twoPc,
+			};
+			state.targetHash = SlotHash(state.bonuses[0], state.bonuses[1], state.bonuses[2]);
+			states.emplace_back(state);
 		}
 	}
 
-	// 2pc filters
-	for (auto it = enabledTwoPiece.begin(); it != enabledTwoPiece.end(); it++) {
-		auto key = *it;
-		const auto &set = Disc::sets.at(key);
-		for (size_t i = 0; i < 6; i++) {
-			if (counts.at(key.key).at(i) == 0) continue;
-			for (size_t j = i + 1; j < 6; j++) {
-				if (counts.at(key.key).at(j) == 0) continue;
-				DiscFilter ret{};
-				ret.bonus1.emplace(Stats::DiscBonus{
-					.setPtr = &set,
-					.bonusPtr = &set.data.twoPc,
-				});
-				ret.filters.at(i).set = key;
-				ret.filters.at(j).set = key;
-				if (options.threeRainbow) {
-					auto retCopy = ret;
-					std::vector<DiscSlotFilter *> otherSlots{};
-					for (size_t k = 0; k < 6; k++) {
-						if (k == i || k == j) continue;
-						otherSlots.emplace_back(&retCopy.filters.at(k));
-						retCopy.filters.at(k).notSet = key;
-					}
-					for (auto &slot: otherSlots) {
-						slot->notSet = {};
-						filters.emplace_back(retCopy);
-						slot->notSet = key;
-					}
-				}
-
-				// 2pc2pc
-				for (auto it2 = std::next(it); it2 != enabledTwoPiece.end(); it2++) {
-					auto key2 = *it2;
-					if (key == key2) continue;
-					const auto &set2 = Disc::sets.at(key2);
-					ret.bonus2.emplace(Stats::DiscBonus{
-						.setPtr = &set2,
-						.bonusPtr = &set2.data.twoPc,
-					});
-					for (size_t k = 0; k < 6; k++) {
-						if (k == i || k == j) continue;
-						if (counts.at(key2.key).at(k) == 0) continue;
-						auto retSwapped = ret;
-						// Swap the positions
-						if (k < i) {
-							retSwapped.bonus2.emplace(retSwapped.bonus1.value());
-							retSwapped.bonus1.emplace(Stats::DiscBonus{
-								.setPtr = &set2,
-								.bonusPtr = &set2.data.twoPc,
-							});
-						}
-						for (size_t l = k + 1; l < 6; l++) {
-							if (l == i || l == j) continue;
-							if (counts.at(key2.key).at(l) == 0) continue;
-							auto ret2 = retSwapped;
-							ret2.filters.at(k).set = key2;
-							ret2.filters.at(l).set = key2;
-
-							filters.emplace_back(ret2);
-						}
-					}
-				}
+	for (auto it1 = enabledTwoPiece.begin(); it1 != enabledTwoPiece.end(); it1++) {
+		for (auto it2 = std::next(it1); it2 != enabledTwoPiece.end(); it2++) {
+			for (auto it3 = std::next(it2); it3 != enabledTwoPiece.end(); it3++) {
+				const auto &key1 = *it1;
+				const auto &key2 = *it2;
+				const auto &key3 = *it3;
+				if (key1 == key2 || key1 == key3 || key2 == key3) continue;
+				BnbState state{
+					.emptySlotAllowance = 0,
+				};
+				const auto &set1 = Disc::sets.at(key1);
+				const auto &set2 = Disc::sets.at(key2);
+				const auto &set3 = Disc::sets.at(key3);
+				state.sets[0] = BnbState::Set{
+					.set = key1,
+					.filledSlotCountRequirement = 2,
+				};
+				state.sets[1] = BnbState::Set{
+					.set = key2,
+					.filledSlotCountRequirement = 2,
+				};
+				state.sets[2] = BnbState::Set{
+					.set = key3,
+					.filledSlotCountRequirement = 2,
+				};
+				state.bonuses[0] = Stats::DiscBonus{
+					.setPtr = &set1,
+					.bonusPtr = &set1.data.twoPc,
+				};
+				state.bonuses[1] = Stats::DiscBonus{
+					.setPtr = &set2,
+					.bonusPtr = &set2.data.twoPc,
+				};
+				state.bonuses[2] = Stats::DiscBonus{
+					.setPtr = &set3,
+					.bonusPtr = &set3.data.twoPc,
+				};
+				state.targetHash = SlotHash(state.bonuses[0], state.bonuses[1], state.bonuses[2]);
+				states.emplace_back(state);
 			}
 		}
 	}
-	// Rainbow filter
-	if (options.fiveRainbow)
-		filters.emplace_back(DiscFilter{});
 
 	auto end_filterGen = std::chrono::high_resolution_clock::now();
 	std::println("filter gen {}", std::chrono::duration_cast<std::chrono::microseconds>(end_filterGen - start_filterGen));
@@ -183,7 +158,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	Solutions solutions{};
 	std::atomic<uint64_t> combed = 0;
-	auto filterCount = filters.size();
+	auto stateCount = states.size();
 
 	auto start = std::chrono::high_resolution_clock::now();
 	static uint64_t runID = 0;
@@ -193,8 +168,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	std::for_each(
 		std::execution::parallel_unsequenced_policy{},
-		filters.begin(), filters.end(),
-		[&initialDiscs, &combed, &solutions, &optimizedNode = preCompiledNode, &agent_original = agent, filterCount, &initialCtx = ctx, runID = runID](const DiscFilter &filter) {
+		states.begin(), states.end(),
+		[&initialDiscs, &combed, &solutions, &optimizedNode = preCompiledNode, &agent_original = agent, stateCount, &initialCtx = ctx, runID = runID](BnbState &state) {
 			thread_local uint64_t localRunID = runID;
 			thread_local OptimizationThreadData threadData{agent_original, initialCtx};
 
@@ -204,7 +179,8 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				localRunID = runID;
 			}
 
-			auto filtered = filter.filter(initialDiscs);
+			auto filtered = initialDiscs.removeUnused(state);
+			filtered.assignCounts(state);
 			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5
 			// This however could help in figuring out the single best solution when a single build is requested
 			// filtered.removeInferior();
@@ -213,18 +189,19 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				if (!filtered.empty()) slot = filtered.front()->key;
 			}
 			threadData.agent.state.loadout().disc.refreshStats();
+			state.applySets(threadData.agent.state.loadout());
 
 			{
 				Formula::enableAllocator = true;
 				auto node = optimizedNode.fold(threadData.ctx, {});
 
-				bnb(filtered, solutions, threadData.agent, threadData.ctx, node, filter.bonus1, filter.bonus2, {});
+				bnb(filtered, solutions, threadData.agent, threadData.ctx, node, state, {});
 			}
 			Formula::enableAllocator = false;
 			Formula::NodeAllocator::reset();
 
 			combed++;
-			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), filterCount, (static_cast<float>(combed) / static_cast<float>(filterCount)) * 100.f);
+			std::println("Max dmg: {} {}/{} ({}%)", solutions.maxScore, combed.load(), stateCount, (static_cast<float>(combed) / static_cast<float>(stateCount)) * 100.f);
 		}
 	);
 

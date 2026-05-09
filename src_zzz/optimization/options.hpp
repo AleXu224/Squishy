@@ -1,8 +1,8 @@
 #pragma once
 
+#include "combo/source.hpp"
 #include "disc/key.hpp"
 #include "disc/sets.hpp"
-#include "combo/source.hpp"
 #include "optional"
 #include "unordered_map"
 
@@ -12,8 +12,6 @@ namespace Optimization {
 		std::optional<Combo::Source::Types> nodeSource;
 		std::unordered_map<Disc::SetKey, bool> twoPcSets{};
 		std::unordered_map<Disc::SetKey, bool> fourPcSets{};
-		bool threeRainbow = true;
-		bool fiveRainbow = true;
 		bool useEquippedDiscs = true;
 
 		Options() {

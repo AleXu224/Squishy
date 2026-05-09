@@ -34,173 +34,173 @@ const Agent::Data Agent::Datas::alice{
             .nodes{
                 .basic{
                     Node::Atk{
-                        .name = "1st-Hit DMG Multiplier",
+                        .name = "1st-Hit DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 0.5510f, 0.0510f)
                     },
                     Node::Atk{
-                        .name = "2nd-Hit DMG Multiplier",
+                        .name = "2nd-Hit DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 0.8800f, 0.0800f)
                     },
                     Node::Atk{
-                        .name = "3rd-Hit DMG Multiplier",
+                        .name = "3rd-Hit DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 0.6610f, 0.0610f)
                     },
                     Node::Atk{
-                        .name = "4th-Hit DMG Multiplier",
+                        .name = "4th-Hit DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 1.1190f, 0.1020f)
                     },
                     Node::Atk{
-                        .name = "5th-Hit DMG Multiplier",
+                        .name = "5th-Hit DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 1.3030f, 0.1190f)
                     },
                     Node::Atk{
-                        .name = "5th-Hit (Enhanced) DMG Multiplier",
+                        .name = "5th-Hit (Enhanced) DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 2.1830f, 0.1990f)
                     },
                     Node::Daze{
-                        .name = "1st-Hit Daze Multiplier",
+                        .name = "1st-Hit Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 0.3970f, 0.0190f)
                     },
                     Node::Daze{
-                        .name = "2nd-Hit Daze Multiplier",
+                        .name = "2nd-Hit Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 0.6980f, 0.0320f)
                     },
                     Node::Daze{
-                        .name = "3rd-Hit Daze Multiplier",
+                        .name = "3rd-Hit Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 0.5990f, 0.0280f)
                     },
                     Node::Daze{
-                        .name = "4th-Hit Daze Multiplier",
+                        .name = "4th-Hit Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 1.0510f, 0.0480f)
                     },
                     Node::Daze{
-                        .name = "5th-Hit Daze Multiplier",
+                        .name = "5th-Hit Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 1.3170f, 0.0600f)
                     },
                     Node::Daze{
-                        .name = "5th-Hit (Enhanced) Daze Multiplier",
+                        .name = "5th-Hit (Enhanced) Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 2.1090f, 0.0960f)
                     },
                     Node::Atk{
-                        .name = "One-Staged Charged Attack DMG Multiplier",
+                        .name = "One-Staged Charged Attack DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 1.8890f, 0.1720f)
                     },
                     Node::Atk{
-                        .name = "Two-Staged Charged Attack DMG Multiplier",
+                        .name = "Two-Staged Charged Attack DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 3.0440f, 0.2770f)
                     },
                     Node::Atk{
-                        .name = "Three-Staged Charged Attack DMG Multiplier",
+                        .name = "Three-Staged Charged Attack DMG",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.atk, LevelableSkill::basic, 9.6570f, 0.8780f)
                     },
                     Node::Daze{
-                        .name = "One-Staged Charged Daze Multiplier",
+                        .name = "One-Staged Charged Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 0.5530f, 0.0260f)
                     },
                     Node::Daze{
-                        .name = "Two-Staged Charged Daze Multiplier",
+                        .name = "Two-Staged Charged Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 0.7760f, 0.0360f)
                     },
                     Node::Daze{
-                        .name = "Three-Staged Charged Daze Multiplier",
+                        .name = "Three-Staged Charged Daze",
 						.source = Misc::AttackSource::basic,
                         .formula = Multiplier(combat.impact, LevelableSkill::basic, 1.9720f, 0.0900f)
                     },
                 },
                 .dodge{
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::dodge,
                         .formula = Multiplier(combat.atk, LevelableSkill::dodge, 0.7530f, 0.0690f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::dodge,
                         .formula = Multiplier(combat.impact, LevelableSkill::dodge, 0.3390f, 0.0160f)
                     },
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::dodge,
                         .formula = Multiplier(combat.atk, LevelableSkill::dodge, 2.8400f, 0.2590f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::dodge,
                         .formula = Multiplier(combat.impact, LevelableSkill::dodge, 2.1950f, 0.1000f)
                     },
                 },
                 .assist{
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.atk, LevelableSkill::assist, 1.6330f, 0.1490f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.impact, LevelableSkill::assist, 1.4690f, 0.0670f)
                     },
                     Node::Daze{
-                        .name = "Light Defensive Daze Multiplier",
+                        .name = "Light Defensive Daze",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.impact, LevelableSkill::assist, 2.4420f, 0.1110f)
                     },
                     Node::Daze{
-                        .name = "Heavy Defensive Daze Multiplier",
+                        .name = "Heavy Defensive Daze",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.impact, LevelableSkill::assist, 3.0860f, 0.1410f)
                     },
                     Node::Daze{
-                        .name = "Chain Defensive Daze Multiplier",
+                        .name = "Chain Defensive Daze",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.impact, LevelableSkill::assist, 1.5020f, 0.0690f)
                     },
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.atk, LevelableSkill::assist, 3.3270f, 0.3030f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::assist,
                         .formula = Multiplier(combat.impact, LevelableSkill::assist, 2.5840f, 0.1180f)
                     },
                 },
                 .special{
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.atk, LevelableSkill::special, 0.6240f, 0.0570f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.impact, LevelableSkill::special, 0.5610f, 0.0260f)
                     },
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.atk, LevelableSkill::special, 4.6000f, 0.4190f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.impact, LevelableSkill::special, 3.4520f, 0.1570f)
                     },
@@ -210,12 +210,12 @@ const Agent::Data Agent::Datas::alice{
                         .formula = Multiplier(Utils::EntryType::energy, LevelableSkill::special, 40.f, 0.f)
                     },
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.atk, LevelableSkill::special, 5.3200f, 0.4840f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::special,
                         .formula = Multiplier(combat.impact, LevelableSkill::special, 4.0530f, 0.1850f)
                     },
@@ -227,22 +227,22 @@ const Agent::Data Agent::Datas::alice{
                 },
                 .chain{
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::chain,
                         .formula = Multiplier(combat.atk, LevelableSkill::chain, 6.6630f, 0.6060f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::chain,
                         .formula = Multiplier(combat.impact, LevelableSkill::chain, 2.0470f, 0.0940f)
                     },
                     Node::Atk{
-                        .name = "DMG Multiplier",
+                        .name = "DMG",
 						.source = Misc::AttackSource::chain,
                         .formula = Multiplier(combat.atk, LevelableSkill::chain, 22.6200f, 2.0570f)
                     },
                     Node::Daze{
-                        .name = "Daze Multiplier",
+                        .name = "Daze",
 						.source = Misc::AttackSource::chain,
                         .formula = Multiplier(combat.impact, LevelableSkill::chain, 2.4260f, 0.1110f)
                     },

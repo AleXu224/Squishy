@@ -30,7 +30,7 @@ using namespace squi;
 						.borderRadius = 4.f,
 						.child = Image{
 							.fit = squi::Image::Fit::contain,
-							.image = ImageProvider::fromFile(std::format("assets/Discs/{}/{}.png", Disc::sets.at(::Store::discs.at(disc).set).name, Utils::Stringify(partition))),
+							.image = ImageProvider::fromFile(std::format("assets/Discs/{}/icon.png", Disc::sets.at(::Store::discs.at(disc).set).name)),
 						},
 					});
 				}

@@ -5,11 +5,128 @@
 #include "disc/slot.hpp"
 #include "ranges"
 #include "stats/disc.hpp"
+#include "stats/loadout.hpp"
 #include <algorithm>
 #include <optional>
 
 
 namespace Optimization {
+	struct SlotHash {
+		uint64_t hash;
+
+		SlotHash() : hash(0) {}
+
+		SlotHash(const Disc::SetKey &key1, const Disc::SetKey &key2, const Disc::SetKey &key3) {
+			uint32_t min_val = std::min({key1.key, key2.key, key3.key});
+			uint32_t max_val = std::max({key1.key, key2.key, key3.key});
+
+			uint32_t mid_val = (key1.key + key2.key + key3.key) - min_val - max_val;
+
+			hash = (static_cast<uint64_t>(max_val) << 42) | (static_cast<uint64_t>(mid_val) << 21) | static_cast<uint64_t>(min_val);
+		}
+		SlotHash(const std::optional<Stats::DiscBonus> &key1, const std::optional<Stats::DiscBonus> &key2, const std::optional<Stats::DiscBonus> &key3) {
+			uint32_t key1Val = key1.has_value() ? key1.value().setPtr->key.key : 0;
+			uint32_t key2Val = key2.has_value() ? key2.value().setPtr->key.key : 0;
+			uint32_t key3Val = key3.has_value() ? key3.value().setPtr->key.key : 0;
+
+			uint32_t min_val = std::min({key1Val, key2Val, key3Val});
+			uint32_t max_val = std::max({key1Val, key2Val, key3Val});
+
+			uint32_t mid_val = (key1Val + key2Val + key3Val) - min_val - max_val;
+
+			hash = (static_cast<uint64_t>(max_val) << 42) | (static_cast<uint64_t>(mid_val) << 21) | static_cast<uint64_t>(min_val);
+		}
+
+		auto operator<=>(const SlotHash &) const = default;
+	};
+
+	struct BnbState {
+		struct Set {
+			Disc::SetKey set;
+			uint8_t filledSlotCountRequirement;
+			std::array<uint32_t, 6> countsForSlot{};
+
+			[[nodiscard]] uint8_t getSlotCount() const {
+				uint8_t count = 0;
+				for (const auto &countForSlot: countsForSlot) {
+					if (countForSlot > 0) count++;
+				}
+				return count;
+			}
+
+			[[nodiscard]] bool isValid() const {
+				if (!set) return true;
+				return getSlotCount() >= filledSlotCountRequirement;
+			}
+		};
+
+		std::array<std::optional<Stats::DiscBonus>, 3> bonuses{};
+
+		uint8_t emptySlotAllowance;
+		SlotHash targetHash;
+		std::array<Set, 3> sets{};
+
+		[[nodiscard]] bool isValid() const {
+			for (const auto &set: sets) {
+				if (!set.isValid()) return false;
+			}
+			std::array<uint32_t, 6> totalCountsForSlot{};
+			for (uint8_t i = 0; i < 6; i++) {
+				totalCountsForSlot[i] = sets[0].countsForSlot[i]
+									  + sets[1].countsForSlot[i]
+									  + sets[2].countsForSlot[i];
+			}
+			uint8_t totalEmptyCount = 6;
+			for (const auto &countForSlot: totalCountsForSlot) {
+				if (countForSlot > 0) totalEmptyCount--;
+			}
+			if (totalEmptyCount > emptySlotAllowance) return false;
+			return true;
+		}
+
+		void applySets(Stats::Loadout &loadout) const {
+			uint32_t index = 0;
+			constexpr std::array bonusSlots{&Stats::Disc::bonus1, &Stats::Disc::bonus2, &Stats::Disc::bonus3};
+			for (const auto &bonus: bonuses) {
+				loadout.disc.*bonusSlots[index++] = bonus;
+			}
+		}
+
+		std::array<uint32_t, 3> countSetsForDiscs(const std::vector<Disc::Instance *> &discs) const {
+			std::array<uint32_t, 3> counts{};
+			for (const auto &disc: discs) {
+				for (size_t i = 0; i < 3; i++) {
+					if (sets[i].set && disc->set == sets[i].set) {
+						counts[i]++;
+						break;
+					}
+				}
+			}
+			return counts;
+		}
+
+		std::array<uint32_t, 3> getCountsForIndex(size_t index) const {
+			return std::array<uint32_t, 3>{sets[0].countsForSlot[index], sets[1].countsForSlot[index], sets[2].countsForSlot[index]};
+		}
+
+		void setCountsForIndex(size_t index, const std::array<uint32_t, 3> &counts) {
+			for (size_t i = 0; i < 3; i++) {
+				sets[i].countsForSlot[index] = counts[i];
+			}
+		}
+
+		void subtractCountForIndex(size_t index, Disc::SetKey set) {
+			for (size_t i = 0; i < 3; i++) {
+				if (sets[i].set == set) {
+					if (sets[i].countsForSlot[index] > 0) {
+						sets[i].countsForSlot[index]--;
+					}
+					return;
+				}
+			}
+		}
+	};
+
 	uint64_t getHash(Stat mainStat, std::optional<Stat> sub1, std::optional<Stat> sub2, std::optional<Stat> sub3, std::optional<Stat> sub4) {
 		uint64_t mainStatVal = static_cast<uint8_t>(mainStat);
 		uint8_t sub1Val = sub1.transform([](Stat &val) {
@@ -89,6 +206,38 @@ namespace Optimization {
 				 * entries[3].size()
 				 * entries[4].size()
 				 * entries[5].size();
+		}
+
+		FilteredDiscs removeUnused(const BnbState &state) const {
+			// If some kind of rainbow build is required then this is not gonna be able to do anything so just return the same filter
+			// Only required to check the last one since they are filled in order
+			if (!state.bonuses[2].has_value()) {
+				return *this;
+			}
+			std::array<Disc::SetKey, 3> requiredSets{};
+			for (size_t i = 0; i < 3; i++) {
+				requiredSets[i] = state.bonuses[i]->setPtr->key;
+			}
+			FilteredDiscs ret = *this;
+			for (size_t i = 0; i < 6; i++) {
+				auto &entryVec = ret.entries[i];
+				entryVec.erase(
+					std::remove_if(entryVec.begin(), entryVec.end(), [&](Disc::Instance *entry) {
+						for (const auto &requiredSet: requiredSets) {
+							if (entry->set == requiredSet) return false;
+						}
+						return true;
+					}),
+					entryVec.end()
+				);
+			}
+			return ret;
+		}
+
+		void assignCounts(BnbState &state) const {
+			for (size_t i = 0; i < 6; i++) {
+				state.setCountsForIndex(i, state.countSetsForDiscs(entries[i]));
+			}
 		}
 
 		void removeInferior() {

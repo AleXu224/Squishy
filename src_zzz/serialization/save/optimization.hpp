@@ -10,8 +10,6 @@ namespace Serialization::Save {
 		std::optional<ComboSourceTypes> nodeSource;
 		std::unordered_map<::Disc::SetKey, bool> twoPcSets{};
 		std::unordered_map<::Disc::SetKey, bool> fourPcSets{};
-		bool threeRainbow = true;
-		bool fiveRainbow = true;
 
 		static Optimization fromInstance(const ::Optimization::Options &);
 		::Optimization::Options toInstance() const;
