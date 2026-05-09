@@ -12,7 +12,6 @@
 #include <functional>
 
 
-
 namespace Modifiers {
 	template<class T>
 	using StatType = T::_Value T::*;
@@ -151,9 +150,13 @@ namespace Modifiers {
 						case Stat::def:
 						case Stat::def_:
 						case Stat::ap:
+						case Stat::am_:
 						case Stat::pen:
+						case Stat::penRatio:
 						case Stat::cr:
 						case Stat::cd:
+						case Stat::impact_:
+						case Stat::er:
 							return true;
 						default:
 							return false;

@@ -165,6 +165,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	runID++;
 
 	auto preCompiledNode = optimizedNode.fold(ctx, {.enableGates = true});
+	// auto preCompiledNode = optimizedNode;
 
 	std::for_each(
 		std::execution::parallel_unsequenced_policy{},
@@ -194,6 +195,16 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			{
 				Formula::enableAllocator = true;
 				auto node = optimizedNode.fold(threadData.ctx, {});
+				// auto node = optimizedNode;
+
+				// threadData.agent.state.loadout().disc.getSlotted() = prevLoadout;
+				// threadData.agent.state.loadout().disc.refreshStats();
+				// auto evalVal = node.eval(threadData.ctx);
+				// auto printVal = node.print(threadData.ctx);
+
+				// auto node2 = optimizedNode.fold(threadData.ctx, {});
+				// auto evalVal2 = node2.eval(threadData.ctx);
+				// auto printVal2 = node2.print(threadData.ctx);
 
 				bnb(filtered, solutions, threadData.agent, threadData.ctx, node, state, {});
 			}

@@ -26,7 +26,7 @@ int main() {
 				.stats{
 					.sheet{
 						.level{.constant = 70.f},
-						.baseDef{.constant = 36.f},
+						.baseDef{.constant = 60.f},
 					},
 				},
 			},

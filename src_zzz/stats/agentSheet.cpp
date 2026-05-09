@@ -135,6 +135,8 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 		Stat::er,
 		Stat::cr,
 		Stat::cd,
+		Stat::pen,
+		Stat::penRatio,
 	};
 	for (const auto &stat: transferableStats) {
 		this->initial.fromStat(stat).modifiers.at(0) = Modifiers::base().fromStat(stat);
