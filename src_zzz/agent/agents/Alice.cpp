@@ -32,11 +32,52 @@ const Agent::Data Agent::Datas::alice{
 		auto coreAnomalyTimer = GetFloat("aliceAnomalyTimer");
 		auto coreDisorderBuff = coreAnomalyTimer * 0.18f * combat.atk;
 
+		auto coreApBuff = Requires{
+			.requirement = SpecialtyCountOthers{.specialty = Misc::Specialty::anomaly} >= 1
+						|| SpecialtyCountOthers{.specialty = Misc::Specialty::support} >= 1,
+			.ret = Max{
+					   .val1 = combat.am - ConstantFlat{.value = 140.f},
+					   .val2 = ConstantFlat{.value = 0.f},
+				   }
+				 * ConstantFlat{.value = 1.6f},
+		};
+
+		auto m1Cond = IsActive("aliceMindscape1");
+		auto m1Buff = Requires{
+			.requirement = m1Cond && Requirement::mindscape1,
+			.ret = Constant{.value = 0.2f},
+		};
+
+		auto m2Buff = Requires{
+			.requirement = Requirement::mindscape2,
+			.ret = Constant{.value = 0.15f},
+		};
+
+		auto m4Buff = Requires{
+			.requirement = Requirement::mindscape4 && IsSourceAgentId{.id = 1401},
+			.ret = Constant{.value = -0.1f},
+		};
+
 		return Data::Setup{
 			.mods{
 				.combat{
+					.ap = coreApBuff,
 					.assaultDisorder{
 						.additiveDMG = coreDisorderBuff,
+					},
+				},
+				.teamCombat{
+					.assault{
+						.DMG = m2Buff,
+					},
+					.assaultDisorder{
+						.DMG = m2Buff,
+					},
+				},
+				.enemy{
+					.DEFReduction = m1Buff,
+					.resistance{
+						.physical = m4Buff,
 					},
 				},
 			},
@@ -51,6 +92,17 @@ const Agent::Data Agent::Datas::alice{
 								.assaultDisorder{
 									.additiveDMG = coreDisorderBuff,
 								},
+							},
+						},
+					},
+				},
+				.mindscape1{
+					Option::Boolean{
+						.key = "aliceMindscape1",
+						.name = "After triggering Assault against an enemy",
+						.mods{
+							.enemy{
+								.DEFReduction = m1Buff,
 							},
 						},
 					},
@@ -280,6 +332,50 @@ const Agent::Data Agent::Datas::alice{
 						.name = "Daze",
 						.source = Misc::AttackSource::chain,
 						.formula = Multiplier(combat.impact, LevelableSkill::chain, 2.4260f, 0.1110f)
+					},
+				},
+				.core{
+					Node::Mods{
+						.mods{
+							.combat{
+								.ap = coreApBuff,
+							},
+						},
+					},
+				},
+				.mindscape2{
+					Node::Mods{
+						.mods{
+							.teamCombat{
+								.assault{
+									.DMG = m2Buff,
+								},
+								.assaultDisorder{
+									.DMG = m2Buff,
+								},
+							},
+						},
+					},
+				},
+				.mindscape4{
+					Node::Mods{
+						.mods{
+							.enemy{
+								.resistance{
+									.physical = m4Buff,
+								},
+							},
+						},
+					},
+				},
+				.mindscape6{
+					Node::CustomAtk{
+						.name = "Extra attack DMG",
+						.attribute = Misc::Attribute::physical,
+						.formula = combat.ap * 33.0f,
+						.modifier{
+							.critRate = Constant{.value = 1.f},
+						},
 					},
 				},
 			},

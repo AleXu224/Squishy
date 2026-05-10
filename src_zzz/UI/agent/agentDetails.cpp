@@ -306,7 +306,7 @@ namespace {
 					.widget{
 						.padding = Padding{8.f, 8.f},
 					},
-					.columnCount = UI::Grid::MinSize{250.f},
+					.columnCount = UI::Grid::MinSize{200.f},
 					.spacing = 4.f,
 					.children = [&]() {
 						Children ret;

@@ -51,6 +51,23 @@ namespace Formula {
 		}
 	};
 
+	struct SpecialtyCountOthers : FormulaBase<int32_t, Type::constant> {
+		::Misc::Specialty specialty;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{} count {}", Utils::Stringify(specialty), eval(context));
+		}
+
+		[[nodiscard]] int32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &agent: context.team.agents) {
+				if (!agent || &agent->state == &context.source) continue;
+				if (agent->state.stats.base.specialty == specialty) ret++;
+			}
+			return ret;
+		}
+	};
+
 	struct IsTargetAgentSpecialty : FormulaBase<bool, Type::constant> {
 		Misc::Specialty specialty;
 
@@ -84,6 +101,18 @@ namespace Formula {
 
 		[[nodiscard]] bool eval(const Context &context) const {
 			return context.active.stats.data.key.key == id;
+		}
+	};
+
+	struct IsSourceAgentId : FormulaBase<bool, Type::constant> {
+		uint32_t id;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Is source agent id {} ({})", id, eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			return context.source.stats.data.key.key == id;
 		}
 	};
 
