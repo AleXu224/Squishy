@@ -4,7 +4,9 @@
 #include "disc/key.hpp"
 #include "disc/sets.hpp"
 #include "optional"
+#include "stats/disc.hpp"
 #include "unordered_map"
+#include <map>
 
 
 namespace Optimization {
@@ -12,12 +14,25 @@ namespace Optimization {
 		std::optional<Combo::Source::Types> nodeSource;
 		std::unordered_map<Disc::SetKey, bool> twoPcSets{};
 		std::unordered_map<Disc::SetKey, bool> fourPcSets{};
+		std::map<Stat, bool> partition4MainStats{};
+		std::map<Stat, bool> partition5MainStats{};
+		std::map<Stat, bool> partition6MainStats{};
 		bool useEquippedDiscs = true;
 
 		Options() {
 			for (const auto &[key, set]: Disc::sets) {
 				twoPcSets[key] = true;
 				fourPcSets[key] = true;
+			}
+
+			for (const auto &mainStat: Stats::Disc::partition4) {
+				partition4MainStats[mainStat] = true;
+			}
+			for (const auto &mainStat: Stats::Disc::partition5) {
+				partition5MainStats[mainStat] = true;
+			}
+			for (const auto &mainStat: Stats::Disc::partition6) {
+				partition6MainStats[mainStat] = true;
 			}
 		}
 

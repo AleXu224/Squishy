@@ -43,6 +43,10 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		}(),
 		.twoPcSets = options.twoPcSets,
 		.fourPcSets = options.fourPcSets,
+		.partition4MainStats = options.partition4MainStats,
+		.partition5MainStats = options.partition5MainStats,
+		.partition6MainStats = options.partition6MainStats,
+		.useEquippedDiscs = options.useEquippedDiscs,
 	};
 }
 
@@ -55,7 +59,17 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 	for (const auto &[key, value]: fourPcSets) {
 		ret.fourPcSets[key] = value;
 	}
+	for (const auto &[key, value]: partition4MainStats) {
+		ret.partition4MainStats[key] = value;
+	}
+	for (const auto &[key, value]: partition5MainStats) {
+		ret.partition5MainStats[key] = value;
+	}
+	for (const auto &[key, value]: partition6MainStats) {
+		ret.partition6MainStats[key] = value;
+	}
 
+	ret.useEquippedDiscs = useEquippedDiscs;
 
 	if (nodeSource.has_value()) {
 		ret.nodeSource = std::visit(//

@@ -24,6 +24,22 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	auto start_filterGen = std::chrono::high_resolution_clock::now();
 
+	artifacts.erase(
+		std::remove_if(artifacts.begin(), artifacts.end(), [&](const Artifact::Instance &artifact) {
+			switch (artifact.slot) {
+				case Artifact::Slot::sands:
+					return !options.sandsMainStats.at(artifact.mainStat);
+				case Artifact::Slot::goblet:
+					return !options.gobletMainStats.at(artifact.mainStat);
+				case Artifact::Slot::circlet:
+					return !options.circletMainStats.at(artifact.mainStat);
+				default:
+					return false;
+			}
+		}),
+		artifacts.end()
+	);
+
 	std::unordered_map<uint32_t, std::array<size_t, 5>> counts{};
 
 	for (const auto &[key, set]: Artifact::sets) {

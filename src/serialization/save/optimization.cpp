@@ -43,8 +43,12 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		}(),
 		.twoPcSets = options.twoPcSets,
 		.fourPcSets = options.fourPcSets,
+		.sandsMainStats = options.sandsMainStats,
+		.gobletMainStats = options.gobletMainStats,
+		.circletMainStats = options.circletMainStats,
 		.threeRainbow = options.threeRainbow,
 		.fiveRainbow = options.fiveRainbow,
+		.useEquippedArtifacts = options.useEquippedArtifacts,
 	};
 }
 
@@ -53,6 +57,7 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 
 	ret.threeRainbow = threeRainbow;
 	ret.fiveRainbow = fiveRainbow;
+	ret.useEquippedArtifacts = useEquippedArtifacts;
 
 	for (const auto &[key, value]: twoPcSets) {
 		ret.twoPcSets[key] = value;
@@ -60,7 +65,15 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 	for (const auto &[key, value]: fourPcSets) {
 		ret.fourPcSets[key] = value;
 	}
-
+	for (const auto &[key, value]: sandsMainStats) {
+		ret.sandsMainStats[key] = value;
+	}
+	for (const auto &[key, value]: gobletMainStats) {
+		ret.gobletMainStats[key] = value;
+	}
+	for (const auto &[key, value]: circletMainStats) {
+		ret.circletMainStats[key] = value;
+	}
 
 	if (nodeSource.has_value()) {
 		ret.nodeSource = std::visit(//

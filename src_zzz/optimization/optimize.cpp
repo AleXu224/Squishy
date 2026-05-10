@@ -24,6 +24,22 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	auto start_filterGen = std::chrono::high_resolution_clock::now();
 
+	discs.erase(
+		std::remove_if(discs.begin(), discs.end(), [&](const Disc::Instance &disc) {
+			switch (disc.partition) {
+				case Disc::Partition::four:
+					return !options.partition4MainStats.at(disc.mainStat);
+				case Disc::Partition::five:
+					return !options.partition5MainStats.at(disc.mainStat);
+				case Disc::Partition::six:
+					return !options.partition6MainStats.at(disc.mainStat);
+				default:
+					return false;
+			}
+		}),
+		discs.end()
+	);
+
 	std::unordered_map<uint32_t, std::array<size_t, 6>> counts{};
 
 	for (const auto &[key, set]: Disc::sets) {

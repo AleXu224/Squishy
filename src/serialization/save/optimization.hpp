@@ -10,8 +10,12 @@ namespace Serialization::Save {
 		std::optional<ComboSourceTypes> nodeSource;
 		std::unordered_map<::Artifact::SetKey, bool> twoPcSets{};
 		std::unordered_map<::Artifact::SetKey, bool> fourPcSets{};
+		std::map<Stat, bool> sandsMainStats{};
+		std::map<Stat, bool> gobletMainStats{};
+		std::map<Stat, bool> circletMainStats{};
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
+		bool useEquippedArtifacts = true;
 
 		static Optimization fromInstance(const ::Optimization::Options &);
 		::Optimization::Options toInstance() const;

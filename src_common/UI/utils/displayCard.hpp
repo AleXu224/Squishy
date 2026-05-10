@@ -32,15 +32,13 @@ namespace UI {
 							.subtitle = subtitle,
 						},
 						squi::Column{
-							.widget{
-								.height = squi::Size::Shrink,
-							},
 							.children = children,
 						},
 						footer.empty()
 							? Child{}
 							: Box{
 								  .widget{
+									  .height = Size::Wrap,
 									  .padding = 4.f,
 								  },
 								  .color = squi::Color::css(0xFFFFFF, 0.1f),

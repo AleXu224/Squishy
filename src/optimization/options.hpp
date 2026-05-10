@@ -4,7 +4,9 @@
 #include "artifact/sets.hpp"
 #include "combo/source.hpp"
 #include "optional"
+#include "stats/artifact.hpp"
 #include "unordered_map"
+#include <map>
 
 
 namespace Optimization {
@@ -12,6 +14,9 @@ namespace Optimization {
 		std::optional<Combo::Source::Types> nodeSource;
 		std::unordered_map<Artifact::SetKey, bool> twoPcSets{};
 		std::unordered_map<Artifact::SetKey, bool> fourPcSets{};
+		std::map<Stat, bool> sandsMainStats{};
+		std::map<Stat, bool> gobletMainStats{};
+		std::map<Stat, bool> circletMainStats{};
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
 		bool useEquippedArtifacts = true;
@@ -20,6 +25,15 @@ namespace Optimization {
 			for (const auto &[key, set]: Artifact::sets) {
 				twoPcSets[key] = true;
 				fourPcSets[key] = true;
+			}
+			for (const auto &mainStat: Stats::Artifact::sands) {
+				sandsMainStats[mainStat] = true;
+			}
+			for (const auto &mainStat: Stats::Artifact::goblet) {
+				gobletMainStats[mainStat] = true;
+			}
+			for (const auto &mainStat: Stats::Artifact::circlet) {
+				circletMainStats[mainStat] = true;
 			}
 		}
 

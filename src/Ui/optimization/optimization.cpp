@@ -1,6 +1,7 @@
 #include "optimization.hpp"
 #include "UI/combo/nodePicker.hpp"
 #include "optimization/optimize.hpp"
+#include "optimizationMainStatChooser.hpp"
 #include "optimizationResult.hpp"
 #include "optimizationSetChooser.hpp"
 #include "store.hpp"
@@ -83,6 +84,15 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 							},
 							.child = "Configure",
 						},
+					},
+				},
+				Expander{
+					.title = "Enabled main stats",
+					.subtitle = "Choose which main stats will be used in the optimization",
+					.content = OptimizationMainStatChooser{
+						.sandsMainStats = character.optimizationOptions->sandsMainStats,
+						.gobletMainStats = character.optimizationOptions->gobletMainStats,
+						.circletMainStats = character.optimizationOptions->circletMainStats,
 					},
 				},
 				Expander{
