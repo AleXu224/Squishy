@@ -2,6 +2,7 @@
 #include "UI/character/characterCardBanner.hpp"
 #include "UI/option/toggleOption.hpp"
 #include "UI/option/valueListOption.hpp"
+#include "UI/option/valueSliderOption.hpp"
 #include "UI/utils/displayCard.hpp"
 
 #include "character/data.hpp"
@@ -48,6 +49,14 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 						[&](Option::ValueList &opt) {
 							if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
 							ret.emplace_back(UI::ValueListOption{
+								.option = opt,
+								.instanceKey = team.instanceKey,
+								.ctx = ctx,
+							});
+						},
+						[&](Option::ValueSlider &opt) {
+							if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
+							ret.emplace_back(UI::ValueSliderOption{
 								.option = opt,
 								.instanceKey = team.instanceKey,
 								.ctx = ctx,

@@ -17,6 +17,12 @@ std::vector<Serialization::Save::OptionTypes> Serialization::Save::optionsFromIn
 						.index = opt.currentIndex,
 					});
 				},
+				[&](const Option::ValueSlider &opt) {
+					ret.emplace_back(Serialization::Save::ValueSliderOption{
+						.hash = key,
+						.value = opt.value,
+					});
+				},
 			},
 			option
 		);
@@ -38,6 +44,9 @@ void Serialization::Save::optionsToInstance(const std::vector<OptionTypes> &opti
 							[](const Option::ValueList &val) {
 								std::println("Wrong opt selected while loading save {}", val.key.str);
 							},
+							[](const Option::ValueSlider &val) {
+								std::println("Wrong opt selected while loading save {}", val.key.str);
+							},
 						},
 						target.at(opt.hash)
 					);
@@ -51,6 +60,26 @@ void Serialization::Save::optionsToInstance(const std::vector<OptionTypes> &opti
 							},
 							[&](Option::ValueList &val) {
 								val.currentIndex = opt.index;
+							},
+							[](const Option::ValueSlider &val) {
+								std::println("Wrong opt selected while loading save {}", val.key.str);
+							},
+						},
+						target.at(opt.hash)
+					);
+				},
+				[&](const Serialization::Save::ValueSliderOption &opt) {
+					if (!target.contains(opt.hash)) return;
+					std::visit(
+						Utils::overloaded{
+							[](const Option::Boolean &val) {
+								std::println("Wrong opt selected while loading save {}", val.key.str);
+							},
+							[&](Option::ValueList &val) {
+								std::println("Wrong opt selected while loading save {}", val.key.str);
+							},
+							[&](Option::ValueSlider &val) {
+								val.value = opt.value;
 							},
 						},
 						target.at(opt.hash)

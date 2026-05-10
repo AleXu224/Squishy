@@ -2,6 +2,7 @@
 #include "UI/option/toggleOption.hpp"
 #include "UI/option/valueListOption.hpp"
 
+#include "UI/option/valueSliderOption.hpp"
 #include "UI/utils/card.hpp"
 #include "disc/key.hpp"
 #include "disc/sets.hpp"
@@ -89,6 +90,14 @@ namespace {
 										[&](Option::ValueList &opt) {
 											if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(widget->ctx)) return;
 											ret.emplace_back(UI::ValueListOption{
+												.option = opt,
+												.instanceKey = instanceKey,
+												.ctx = widget->ctx,
+											});
+										},
+										[&](Option::ValueSlider &opt) {
+											if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(widget->ctx)) return;
+											ret.emplace_back(UI::ValueSliderOption{
 												.option = opt,
 												.instanceKey = instanceKey,
 												.ctx = widget->ctx,

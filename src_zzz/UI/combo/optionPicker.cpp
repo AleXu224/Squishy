@@ -143,6 +143,9 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 										[&](const Option::ValueList &opt) {
 											return std::string{opt.prefix};
 										},
+										[&](const Option::ValueSlider &opt) {
+											return std::string{opt.name};
+										},
 									},
 									opt
 								),
@@ -160,6 +163,13 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 												.key = agent->instanceKey,
 												.hash = opt.key.hash,
 												.value = opt.currentIndex,
+											};
+										},
+										[&](const Option::ValueSlider &opt) {
+											return Combo::Option{
+												.key = agent->instanceKey,
+												.hash = opt.key.hash,
+												.value = Combo::ComboFloatOption{opt.getValue()},
 											};
 										},
 									},

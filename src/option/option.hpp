@@ -4,13 +4,14 @@
 #include "boolean.hpp"
 #include "utils/hashedString.hpp"
 #include "valueList.hpp"
+#include "valueSlider.hpp"
 #include "variant"
 #include <functional>
 #include <unordered_map>
 
 
 namespace Option {
-	using Types = std::variant<Boolean, ValueList>;
+	using Types = std::variant<Boolean, ValueList, ValueSlider>;
 
 	using TypesMap = std::unordered_map<uint32_t, Types>;
 
@@ -23,17 +24,46 @@ namespace Option {
 				[](const Option::ValueList &option) {
 					return option.currentIndex.has_value();
 				},
+				[](const Option::ValueSlider &option) {
+					return true;
+				},
 			},
 			options.at(key.hash)
 		);
 	}
 
 	[[nodiscard]] inline float getFloat(const TypesMap &options, const Utils::HashedString &key, float defaultValue = 0.f) {
-		return static_cast<float>(std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue));
+		return std::visit(
+			Utils::overloaded{
+				[](const Option::Boolean &option) {
+					return option.active ? 1.f : 0.f;
+				},
+				[&defaultValue](const Option::ValueList &option) {
+					return static_cast<float>(option.getValue().value_or(defaultValue));
+				},
+				[](const Option::ValueSlider &option) {
+					return option.getValue();
+				},
+			},
+			options.at(key.hash)
+		);
 	}
 
 	[[nodiscard]] inline uint32_t getInt(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
-		return std::get<Option::ValueList>(options.at(key.hash)).getValue().value_or(defaultValue);
+		return static_cast<uint32_t>(std::visit(
+			Utils::overloaded{
+				[](const Option::Boolean &option) -> float {
+					return option.active ? 1 : 0;
+				},
+				[&defaultValue](const Option::ValueList &option) -> float {
+					return option.getValue().value_or(defaultValue);
+				},
+				[](const Option::ValueSlider &option) -> float {
+					return option.getValue();
+				},
+			},
+			options.at(key.hash)
+		));
 	}
 
 	[[nodiscard]] inline uint32_t getIndex(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {

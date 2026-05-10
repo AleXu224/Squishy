@@ -2,6 +2,7 @@
 
 #include "UI/option/toggleOption.hpp"
 #include "UI/option/valueListOption.hpp"
+#include "UI/option/valueSliderOption.hpp"
 #include "UI/utils/decodeModsSheet.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/skillEntry.hpp"
@@ -83,6 +84,14 @@ using namespace squi;
 						[&](Option::ValueList &opt) {
 							if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
 							ret.emplace_back(UI::ValueListOption{
+								.option = opt,
+								.instanceKey = instanceKey,
+								.ctx = ctx,
+							});
+						},
+						[&](Option::ValueSlider &opt) {
+							if (opt.displayCondition.hasValue() && !opt.displayCondition.eval(ctx)) return;
+							ret.emplace_back(UI::ValueSliderOption{
 								.option = opt,
 								.instanceKey = instanceKey,
 								.ctx = ctx,

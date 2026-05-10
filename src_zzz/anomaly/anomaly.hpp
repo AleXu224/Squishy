@@ -10,9 +10,27 @@
 namespace Anomaly {
 	using namespace Formula::Operators;
 	[[nodiscard]] static Formula::FloatNode makeAnomalyFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Attribute attribute) {
-		auto baseDmg = Modifiers::combat().atk * multiplier;
+		auto baseDmg = Modifiers::combat().atk * multiplier + modifier.additiveDMG + Modifiers::combat().allAnomaly.additiveDMG;
 		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
-		auto anomalyMod = modifier.DMG;
+		auto anomalyMod = modifier.DMG + Modifiers::combat().allAnomaly.DMG;
+		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
+		auto defMod = Formula::EnemyDefMultiplier{};
+		// FIXME: stunMod, dmg taken
+		auto apBonus = Modifiers::combat().ap / Formula::ConstantFlat{.value = 100.f};
+		auto buffLevelMod = 1.f + (Formula::AgentLevel{} - 1.f) / Formula::ConstantFlat{.value = 59.f};
+
+		return baseDmg
+			 * (1.f + dmgMod)
+			 * (1.f + anomalyMod)
+			 * resMod
+			 * defMod
+			 * apBonus
+			 * buffLevelMod;
+	}
+	[[nodiscard]] static Formula::FloatNode makeDisorderFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, const Stats::Sheet<Formula::FloatNode>::_SkillValue &disorderModifier, float multiplier, Misc::Attribute attribute) {
+		auto baseDmg = Modifiers::combat().atk * multiplier + modifier.additiveDMG + disorderModifier.additiveDMG + Modifiers::combat().allAnomaly.additiveDMG + Modifiers::combat().disorder.additiveDMG;
+		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
+		auto anomalyMod = modifier.DMG + disorderModifier.DMG + Modifiers::combat().allAnomaly.DMG;
 		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
 		auto defMod = Formula::EnemyDefMultiplier{};
 		// FIXME: stunMod, dmg taken
@@ -75,36 +93,42 @@ namespace Anomaly {
 			.multiplier = 4.5f + 5.f * 2.f * 0.5f,
 			.attribute = Misc::Attribute::fire,
 			.modifier = Modifiers::combat().burn,
+			.formula = makeDisorderFormula(Modifiers::combat().burn, Modifiers::combat().burnDisorder, 4.5f + 5.f * 2.f * 0.5f, Misc::Attribute::fire)
 		};
 		const static inline Anomaly shockDisorder = Anomaly{
 			.name = "Shock Disorder",
 			.multiplier = 4.5f + 5.f * 1.25f,
 			.attribute = Misc::Attribute::electric,
 			.modifier = Modifiers::combat().shock,
+			.formula = makeDisorderFormula(Modifiers::combat().shock, Modifiers::combat().shockDisorder, 4.5f + 5.f * 1.25f, Misc::Attribute::electric)
 		};
 		const static inline Anomaly frozenDisorder = Anomaly{
 			.name = "Frozen Disorder",
 			.multiplier = 4.5f + 5.f * 0.075f,
 			.attribute = Misc::Attribute::ice,
 			.modifier = Modifiers::combat().shatter,
+			.formula = makeDisorderFormula(Modifiers::combat().shatter, Modifiers::combat().frozenDisorder, 4.5f + 5.f * 0.075f, Misc::Attribute::ice)
 		};
 		const static inline Anomaly frozenFrostDisorder = Anomaly{
 			.name = "Frozen Disorder (Frost)",
 			.multiplier = 6.f + 5.f * 0.75f,
 			.attribute = Misc::Attribute::ice,
 			.modifier = Modifiers::combat().shatter,
+			.formula = makeDisorderFormula(Modifiers::combat().shatter, Modifiers::combat().frozenDisorder, 6.f + 5.f * 0.75f, Misc::Attribute::ice)
 		};
 		const static inline Anomaly assaultDisorder = Anomaly{
 			.name = "Assault Disorder",
 			.multiplier = 4.5f + 5.f * 0.075f,
 			.attribute = Misc::Attribute::physical,
 			.modifier = Modifiers::combat().assault,
+			.formula = makeDisorderFormula(Modifiers::combat().assault, Modifiers::combat().assaultDisorder, 4.5f + 5.f * 0.075f, Misc::Attribute::physical)
 		};
 		const static inline Anomaly corruptionDisorder = Anomaly{
 			.name = "Corruption Disorder",
 			.multiplier = 4.5f + 5.f * 2.f * 0.625f,
 			.attribute = Misc::Attribute::ether,
 			.modifier = Modifiers::combat().corruption,
+			.formula = makeDisorderFormula(Modifiers::combat().corruption, Modifiers::combat().corruptionDisorder, 4.5f + 5.f * 2.f * 0.625f, Misc::Attribute::ether)
 		};
 	}// namespace List
 }// namespace Anomaly

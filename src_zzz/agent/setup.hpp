@@ -4,6 +4,7 @@
 #include "formula/base.hpp"           // IWYU pragma: export
 #include "formula/multiplier.hpp"     // IWYU pragma: export
 #include "formula/option.hpp"         // IWYU pragma: export
+#include "formula/requires.hpp"       // IWYU pragma: export
 #include "modifiers/total/base.hpp"   // IWYU pragma: export
 #include "modifiers/total/initial.hpp"// IWYU pragma: export
 #include "modifiers/total/total.hpp"  // IWYU pragma: export

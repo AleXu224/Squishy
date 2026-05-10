@@ -70,6 +70,9 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 												[](const std::optional<uint8_t> &val) -> decltype(ComboOption::value) {
 													return ComboOptionValueList{val};
 												},
+												[](const ::Combo::ComboFloatOption &val) -> decltype(ComboOption::value) {
+													return ComboOptionValueSlider{val.value};
+												},
 											},
 											opt.value
 										),
@@ -96,6 +99,9 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 												},
 												[](const std::optional<uint8_t> &val) -> decltype(ComboOption::value) {
 													return ComboOptionValueList{val};
+												},
+												[](const ::Combo::ComboFloatOption &val) -> decltype(ComboOption::value) {
+													return ComboOptionValueSlider{val.value};
 												},
 											},
 											opt.value
@@ -186,6 +192,9 @@ std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::co
 												[](const ComboOptionValueList &val) -> decltype(::Combo::Option::value) {
 													return val.value;
 												},
+												[](const ComboOptionValueSlider &val) -> decltype(::Combo::Option::value) {
+													return ::Combo::ComboFloatOption{val.value};
+												},
 											},
 											opt.value
 										),
@@ -212,6 +221,9 @@ std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::co
 												},
 												[](const ComboOptionValueList &val) -> decltype(::Combo::Option::value) {
 													return val.value;
+												},
+												[](const ComboOptionValueSlider &val) -> decltype(::Combo::Option::value) {
+													return ::Combo::ComboFloatOption{val.value};
 												},
 											},
 											opt.value

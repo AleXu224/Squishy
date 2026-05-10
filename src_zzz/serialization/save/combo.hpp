@@ -52,7 +52,11 @@ namespace Serialization::Save {
 		std::optional<uint8_t> value;
 	};
 
-	using ComboOptionTypes = std::variant<ComboOptionBool, ComboOptionValueList>;
+	struct ComboOptionValueSlider {
+		float value;
+	};
+
+	using ComboOptionTypes = std::variant<ComboOptionBool, ComboOptionValueList, ComboOptionValueSlider>;
 
 	struct ComboOption {
 		Agent::InstanceKey key;
@@ -135,6 +139,11 @@ struct glz::meta<Serialization::Save::ComboOptionBool> {
 template<>
 struct glz::meta<Serialization::Save::ComboOptionValueList> {
 	using T = Serialization::Save::ComboOptionValueList;
+	static constexpr auto value = object(&T::value);
+};
+template<>
+struct glz::meta<Serialization::Save::ComboOptionValueSlider> {
+	using T = Serialization::Save::ComboOptionValueSlider;
 	static constexpr auto value = object(&T::value);
 };
 template<>

@@ -3,6 +3,7 @@
 #include "UI/combo/nodePicker.hpp"
 #include "UI/option/toggleOption.hpp"
 #include "UI/option/valueListOption.hpp"
+#include "UI/option/valueSliderOption.hpp"
 #include "UI/utils/card.hpp"
 #include "UI/utils/masonry.hpp"
 #include "UI/utils/tag.hpp"
@@ -230,6 +231,30 @@ namespace {
 											std::visit(
 												[&](auto &&entry) {
 													value = newVal;
+													entry.optionUpdateEvent.notify();
+													widget->comboUpdateEvent.notify();
+												},
+												widget->entry
+											);
+										},
+										.ctx = ctx.withSource(agent.state),
+									},
+								});
+							},
+							[&](::Combo::ComboFloatOption &value) {
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(agent.state.options.at(opt.hash)));
+								auto &optRef = std::get<Option::ValueSlider>(localOptions.at(opt.hash));
+								optRef.value = value.value;
+								ret.emplace_back(ComboEditorOptionContainer{
+									.entry = widget->entry,
+									.option = opt,
+									.child = UI::ValueSliderOption{
+										.option = optRef,
+										.instanceKey = agent.instanceKey,
+										.onChange = [&](float newVal) {
+											std::visit(
+												[&](auto &&entry) {
+													value.value = newVal;
 													entry.optionUpdateEvent.notify();
 													widget->comboUpdateEvent.notify();
 												},

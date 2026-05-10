@@ -144,13 +144,23 @@ const Agent::Data Agent::Datas::${camelCase(data.caseableName)}{
             .nodes{
                 .basic{${skillContentsGenerator(contentsNanoka.skill.basic, "basic")}
                 },
-                .dodge{${skillContentsGenerator(contentsNanoka.skill.dodge, "dodge")}
+                .dashAttack{${skillContentsGenerator(contentsNanoka.skill.dodge, "dodge")}
                 },
-                .assist{${skillContentsGenerator(contentsNanoka.skill.assist, "assist")}
+                .dodgeCounter{
+                },
+                .quickAssist{${skillContentsGenerator(contentsNanoka.skill.assist, "assist")}
+                },
+                .defensiveAssist{
+                },
+                .assistFollowup{
                 },
                 .special{${skillContentsGenerator(contentsNanoka.skill.special, "special")}
                 },
+                .exspecial{
+                },
                 .chain{${skillContentsGenerator(contentsNanoka.skill.chain, "chain")}
+                },
+                .ultimate{
                 },
             },
         };

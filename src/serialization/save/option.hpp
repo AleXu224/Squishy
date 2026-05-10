@@ -23,7 +23,14 @@ namespace Serialization::Save {
 		auto operator<=>(const ValueListOption &) const = default;
 	};
 
-	using OptionTypes = std::variant<Serialization::Save::BooleanOption, Serialization::Save::ValueListOption>;
+	struct ValueSliderOption {
+		uint32_t hash{};
+		float value{};
+
+		auto operator<=>(const ValueSliderOption &) const = default;
+	};
+
+	using OptionTypes = std::variant<Serialization::Save::BooleanOption, Serialization::Save::ValueListOption, Serialization::Save::ValueSliderOption>;
 
 	std::vector<OptionTypes> optionsFromInstance(const Option::TypesMap &options);
 	void optionsToInstance(const std::vector<OptionTypes> &options, Option::TypesMap &target);
@@ -38,6 +45,11 @@ template<>
 struct glz::meta<Serialization::Save::ValueListOption> {
 	using T = Serialization::Save::ValueListOption;
 	static constexpr auto value = object(&T::hash, &T::index);
+};
+template<>
+struct glz::meta<Serialization::Save::ValueSliderOption> {
+	using T = Serialization::Save::ValueSliderOption;
+	static constexpr auto value = object(&T::hash, &T::value);
 };
 template<>
 struct glz::meta<Serialization::Save::OptionTypes> {
