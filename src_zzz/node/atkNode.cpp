@@ -10,10 +10,10 @@
 
 namespace Node {
 	using namespace Formula::Operators;
-	template<Misc::SkillStat skillStat>
 	struct _NodeAttribute : Formula::FormulaBase<float> {
 		Utils::JankyOptional<Misc::Attribute> attribute{};
 		Utils::JankyOptional<Misc::AttackSource> source{};
+		Misc::SkillStat skillStat;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(source, attribute, context)), skillStat).fold(context, args);
@@ -35,9 +35,9 @@ namespace Node {
 		}
 	};
 
-	template<Misc::SkillStat skillStat>
 	struct _NodeSkill : Formula::FormulaBase<float> {
 		Utils::JankyOptional<Misc::AttackSource> source{};
+		Misc::SkillStat skillStat;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			if (!source.has_value()) return Formula::Constant{.value = 0.f};
@@ -61,15 +61,15 @@ namespace Node {
 		}
 	};
 
-	template<Misc::SkillStat skillStat>
 	[[nodiscard]] static constexpr auto _getTotal(
 		Utils::JankyOptional<Misc::Attribute> attackAttribute,
 		const Utils::JankyOptional<Misc::AttackSource> &atkSource,
+		const Misc::SkillStat skillStat,
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::combat().all, skillStat);
-		auto attributeStats = _NodeAttribute<skillStat>({}, attackAttribute, atkSource);
-		auto skillStats = _NodeSkill<skillStat>({}, atkSource);
+		auto attributeStats = _NodeAttribute({}, attackAttribute, atkSource, skillStat);
+		auto skillStats = _NodeSkill({}, atkSource, skillStat);
 
 		return allStats + attributeStats + skillStats + formula;
 	}
@@ -80,11 +80,11 @@ namespace Node {
 		const Formula::FloatNode &formula,
 		const Formula::Modifier &modifier
 	) {
-		auto totalDMG = _getTotal<Misc::SkillStat::DMG>(attribute, source, modifier.DMG);
-		auto totalAdditiveDMG = _getTotal<Misc::SkillStat::additiveDMG>(attribute, source, modifier.additiveDMG);
-		auto totalMultiplicativeDMG = _getTotal<Misc::SkillStat::multiplicativeDMG>(attribute, source, modifier.multiplicativeDMG);
-		auto totalCritRate = Formula::Clamp({}, _getTotal<Misc::SkillStat::critRate>(attribute, source, modifier.critRate) + Modifiers::combat().cr, 0.f, 1.f);
-		auto totalCritDMG = _getTotal<Misc::SkillStat::critDMG>(attribute, source, modifier.critDMG) + Modifiers::combat().cd;
+		auto totalDMG = _getTotal(attribute, source, Misc::SkillStat::DMG, modifier.DMG);
+		auto totalAdditiveDMG = _getTotal(attribute, source, Misc::SkillStat::additiveDMG, modifier.additiveDMG);
+		auto totalMultiplicativeDMG = _getTotal(attribute, source, Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
+		auto totalCritRate = Formula::Clamp({}, _getTotal(attribute, source, Misc::SkillStat::critRate, modifier.critRate) + Modifiers::combat().cr, 0.f, 1.f);
+		auto totalCritDMG = _getTotal(attribute, source, Misc::SkillStat::critDMG, modifier.critDMG) + Modifiers::combat().cd;
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
