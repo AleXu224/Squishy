@@ -108,7 +108,7 @@ namespace Serialization::Save {
 		}
 		::Stats::Loadout ret{
 			.engineInstanceKey = usedEngineInstanceKey,
-			.engine = &::Store::engines.at(usedEngineInstanceKey).stats,
+			.engine = usedEngineInstanceKey ? &::Store::engines.at(usedEngineInstanceKey).stats : nullptr,
 			.disc{
 				.equipped = std::visit(
 					Utils::overloaded{

@@ -17,6 +17,7 @@ namespace Agent {
 		};
 
 		DataKey key;
+		uint32_t factionId;
 		std::string_view goodKey;
 		std::string_view name;
 		Stats::AgentBase baseStats;

@@ -4,6 +4,57 @@ import { camelCase } from "https://deno.land/x/case@2.2.0/mod.ts";
 import { ManifestNanoka } from "../manifestNanoka.d.ts";
 import { statMap } from "./mapped.ts";
 
+interface TalentMultiplier {
+	values: number[];
+	isPercentage: boolean;
+}
+
+function formatCppFloat(value: number, isPercentage: boolean): string {
+	const floatValue = isPercentage ? value / 100 : value;
+	return Number.isInteger(floatValue) ? `${floatValue}.f` : `${floatValue}f`;
+}
+
+function extractVaryingTalentNumbers(talents: Engine["talents"]): TalentMultiplier[] {
+	const orderedDescriptions = Object.entries(talents)
+		.sort(([left], [right]) => parseInt(left) - parseInt(right))
+		.map(([, talent]) => talent.desc.replaceAll(/<color=[^>]+>|<\/color>/g, ""));
+
+	if (orderedDescriptions.length === 0) return [];
+
+	const extractedValues = orderedDescriptions.map(desc => {
+		const matches = [...desc.matchAll(/(\d+(?:\.\d+)?)(%)?/g)];
+		return matches.map(match => ({
+			value: parseFloat(match[1]),
+			isPercentage: match[2] === "%",
+		}));
+	});
+
+	const firstEntry = extractedValues[0];
+	for (const values of extractedValues) {
+		if (values.length !== firstEntry.length) {
+			throw new Error("Talent descriptions do not have matching numeric token counts across overclocks");
+		}
+	}
+
+	const varyingValues: TalentMultiplier[] = [];
+	for (let index = 0; index < firstEntry.length; index++) {
+		const valuesAtIndex = extractedValues.map(values => values[index].value);
+		const isPercentage = firstEntry[index].isPercentage;
+		if (!extractedValues.every(values => values[index].isPercentage === isPercentage)) {
+			throw new Error("Talent descriptions do not have matching percentage tokens across overclocks");
+		}
+
+		if (!valuesAtIndex.every(value => value === valuesAtIndex[0])) {
+			varyingValues.push({
+				values: valuesAtIndex,
+				isPercentage,
+			});
+		}
+	}
+
+	return varyingValues;
+}
+
 if (Deno.args[0] == undefined) {
 	console.error("Usage: engineGenerator.ts <engine id>\neg: deno run .\\scripts\\zzz\\engineGenerator.ts 14140");
 	Deno.exit(1);
@@ -37,7 +88,12 @@ const data = {
 	type: Object.values(contents.weapon_type).pop()?.toLowerCase(),
 	subStat: statMap.get(contents.rand_property.name),
 	icon: `https://static.nanoka.cc/assets/zzz/${contents.icon.split("/").pop()?.replace(".png", ".webp")}`,
+	talentNumbers: extractVaryingTalentNumbers(contents.talents),
 };
+
+const talentMultiplierStr = data.talentNumbers
+	.map((entry, index) => `\n\t\tauto multiplier${index + 1} = EngineMultiplier(${entry.isPercentage}, {${entry.values.map(value => formatCppFloat(value, entry.isPercentage)).join(", ")}});`)
+	.join("");
 
 const retHeader: string = `#pragma once
 
@@ -65,7 +121,7 @@ const Engine::Data Engine::Datas::${camelCase(data.caseableName)}{
 			.value = ${(contents.rand_property.value / 10000).toFixed(3)},
 		},
 	},
-	.setup = []() {
+	.setup = []() {${talentMultiplierStr}
 		return Data::Setup{};
 	},
 };
@@ -73,6 +129,8 @@ const Engine::Data Engine::Datas::${camelCase(data.caseableName)}{
 
 console.log(retHeader);
 console.log(retSource);
+
+console.log(data.talentNumbers);
 
 console.log(data.icon);
 

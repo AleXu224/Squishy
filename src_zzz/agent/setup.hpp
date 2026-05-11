@@ -7,6 +7,7 @@
 #include "formula/option.hpp"         // IWYU pragma: export
 #include "formula/requirement.hpp"    // IWYU pragma: export
 #include "formula/requires.hpp"       // IWYU pragma: export
+#include "formula/teamAgent.hpp"      // IWYU pragma: export
 #include "modifiers/total/base.hpp"   // IWYU pragma: export
 #include "modifiers/total/initial.hpp"// IWYU pragma: export
 #include "modifiers/total/total.hpp"  // IWYU pragma: export
@@ -15,13 +16,6 @@
 #include "node/dazeNode.hpp"          // IWYU pragma: export
 #include "node/infoNode.hpp"          // IWYU pragma: export
 #include "node/modsNode.hpp"          // IWYU pragma: export
-
-
-// #include "node/healNode.hpp"         // IWYU pragma: export
-// #include "node/infoNode.hpp"         // IWYU pragma: export
-// #include "node/modsNode.hpp"         // IWYU pragma: export
-// #include "node/shieldNode.hpp"       // IWYU pragma: export
-
 
 namespace Agent {
 	static inline auto IsActive(const Utils::HashedString &name) {
@@ -38,11 +32,11 @@ namespace Agent {
 	}
 
 
-	// static constexpr struct Agent {
-	// 	static constexpr Formula::AgentLevel level{};
-	// 	static constexpr Formula::AgentConstellation constellation{};
-	// 	static constexpr Formula::AgentAscension ascension{};
-	// } agent{};
+	static constexpr struct Agent {
+		static constexpr Formula::AgentLevel level{};
+		// static constexpr Formula::AgentConstellation constellation{};
+		// static constexpr Formula::AgentAscension ascension{};
+	} agent{};
 
 	using EntryType = Utils::EntryType;
 

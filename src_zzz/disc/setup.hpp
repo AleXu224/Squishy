@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formula/agent.hpp"          // IWYU pragma: export
 #include "formula/base.hpp"           // IWYU pragma: export
 #include "formula/multiplier.hpp"     // IWYU pragma: export
 #include "formula/option.hpp"         // IWYU pragma: export

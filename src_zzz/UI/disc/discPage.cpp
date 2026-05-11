@@ -54,15 +54,37 @@ namespace {
 [[nodiscard]] std::vector<Disc::Instance *> UI::DiscPage::State::getFilteredList() const {
 	std::vector<Disc::Instance *> ret;
 
+	std::vector<Stat> requiredSubStats{};
+	bool allEnabled = true;
+	for (const auto &[subStat, enabled]: subStatFilter) {
+		if (enabled) {
+			requiredSubStats.push_back(subStat);
+		} else {
+			allEnabled = false;
+		}
+	}
+
 	for (auto &[_, disc]: ::Store::discs) {
 		if (!partitionFilter.at(disc.partition)) continue;
 		if (!mainStatFilter.at(disc.mainStat)) continue;
-		bool subStatFound = false;
-		for (const auto &substat: disc.subStats) {
-			if (!substat.stat) continue;
-			if (subStatFilter.at(substat.stat.value())) subStatFound = true;
+		if (!allEnabled) {
+			bool subStatFound = false;
+			for (const auto &requiredSubStat: requiredSubStats) {
+				bool hasSubStat = false;
+				for (const auto &subStat: disc.subStats) {
+					if (subStat.stat == requiredSubStat) {
+						hasSubStat = true;
+						break;
+					}
+				}
+				if (!hasSubStat) {
+					subStatFound = false;
+					break;
+				}
+				subStatFound = true;
+			}
+			if (!subStatFound) continue;
 		}
-		if (!subStatFound) continue;
 		ret.emplace_back(&disc);
 	}
 

@@ -1,14 +1,10 @@
 #include "store.hpp"
 
-#include "agent/agents.hpp"
-
 #include "glaze/glaze.hpp"// IWYU pragma: keep
 // #include "serialization/save/key.hpp"// IWYU pragma: keep
 #include "serialization/save/save.hpp"
 
 Agent::Instance &Store::createAgent(Agent::DataKey dataKey) {
-	auto &data = Agent::list.at(dataKey);
-
 	++lastAgentId;
 	auto entry = agents.emplace(lastAgentId, Agent::Instance(lastAgentId, dataKey));
 

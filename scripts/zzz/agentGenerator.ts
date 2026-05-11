@@ -5,6 +5,57 @@ import lowerCase from "https://deno.land/x/case@2.2.0/lowerCase.ts";
 import { NanokaAgent, SkillData } from "./agentTypeNanoka.d.ts";
 import { ManifestNanoka } from "../manifestNanoka.d.ts";
 
+interface CoreMultiplier {
+    values: number[];
+    isPercentage: boolean;
+}
+
+function formatCppFloat(value: number, isPercentage: boolean): string {
+    const floatValue = isPercentage ? value / 100 : value;
+    return Number.isInteger(floatValue) ? `${floatValue}.f` : `${floatValue}f`;
+}
+
+function extractVaryingPassiveNumbers(passiveLevels: NanokaAgent["passive"]["level"]): CoreMultiplier[] {
+    const orderedDescriptions = Object.values(passiveLevels)
+        .sort((left, right) => left.level - right.level)
+        .map(level => level.desc.map(desc => desc.replaceAll(/<color=[^>]+>|<\/color>/g, "")).join("\n"));
+
+    if (orderedDescriptions.length === 0) return [];
+
+    const extractedValues = orderedDescriptions.map(desc => {
+        const matches = [...desc.matchAll(/(\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)(%)?/g)];
+        return matches.map(match => ({
+            value: parseFloat(match[1].replaceAll(",", "")),
+            isPercentage: match[2] === "%",
+        }));
+    });
+
+    const firstEntry = extractedValues[0];
+    for (const values of extractedValues) {
+        if (values.length !== firstEntry.length) {
+            throw new Error("Passive descriptions do not have matching numeric token counts across core levels");
+        }
+    }
+
+    const varyingValues: CoreMultiplier[] = [];
+    for (let index = 0; index < firstEntry.length; index++) {
+        const valuesAtIndex = extractedValues.map(values => values[index].value);
+        const isPercentage = firstEntry[index].isPercentage;
+        if (!extractedValues.every(values => values[index].isPercentage === isPercentage)) {
+            throw new Error("Passive descriptions do not have matching percentage tokens across core levels");
+        }
+
+        if (!valuesAtIndex.every(value => value === valuesAtIndex[0])) {
+            varyingValues.push({
+                values: valuesAtIndex,
+                isPercentage,
+            });
+        }
+    }
+
+    return varyingValues;
+}
+
 if (Deno.args[0] == undefined) {
     console.error("Usage: agentGenerator.ts <characer id>\neg: deno run .\\scripts\\zzz\\agentGenerator.ts 1401");
     Deno.exit(1);
@@ -37,9 +88,14 @@ const data = {
     caseableName: contentsNanoka.name.replaceAll("'", ""),
     coreStat1: statMap.get(contentsNanoka.extra_level["1"].extra[Object.keys(contentsNanoka.extra_level["1"].extra)[0]].name),
     coreStat2: statMap.get(contentsNanoka.extra_level["1"].extra[Object.keys(contentsNanoka.extra_level["1"].extra)[1]].name),
+    coreMultipliers: extractVaryingPassiveNumbers(contentsNanoka.passive.level),
     icon: `https://static.nanoka.cc/assets/zzz/${contentsNanoka.partner_info.icon_path.split("/").pop()?.replace(".png", ".webp")}`,
     iconCard: `https://static.nanoka.cc/assets/zzz/${contentsNanoka.icon}.webp`,
 };
+
+const coreMultiplierStr = data.coreMultipliers
+    .map((entry, index) => `\n        auto multiplier${index + 1} = CoreMultiplier(${entry.isPercentage}, {${entry.values.map(value => formatCppFloat(value, entry.isPercentage)).join(", ")}});`)
+    .join("");
 
 const promotionUpgradeHp = new Float32Array(6);
 const promotionUpgradeDef = new Float32Array(6);
@@ -114,6 +170,7 @@ const retSource: string = `#include "${pascalCase(data.caseableName)}.hpp"
 
 const Agent::Data Agent::Datas::${camelCase(data.caseableName)}{
     .key{${data.key}},
+    .factionId = ${Object.keys(contentsNanoka.camp).length > 0 ? Object.keys(contentsNanoka.camp)[0] : 0},
     .goodKey{"${pascalCase(data.caseableName)}"},
     .name{"${data.name}"},
     .baseStats{
@@ -138,6 +195,7 @@ const Agent::Data Agent::Datas::${camelCase(data.caseableName)}{
         .coreStat2Upgrade = {${strGenerator(coreStat2Upgrade).join(", ")}},
     },
     .setup = []() -> Data::Setup {
+${coreMultiplierStr}
         return Data::Setup{
             .mods{},
             .opts{},

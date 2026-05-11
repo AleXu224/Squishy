@@ -1,6 +1,5 @@
 #include "agentList.hpp"
 
-#include "agent/agents.hpp"
 #include "agentCard.hpp"
 #include "agentDataSelector.hpp"
 #include "store.hpp"
@@ -19,8 +18,6 @@ squi::core::Child UI::AgentList::State::build(const Element &element) {
 		.onClick = [this]() {
 			Navigator::of(*this->element).pushOverlay(AgentDataSelector{
 				.onSelect = [](Agent::DataKey dataKey) {
-					const auto &agentData = Agent::list.at(dataKey);
-
 					++Store::lastAgentId;
 					auto agent = Store::agents.emplace(Store::lastAgentId, Agent::Instance({Store::lastAgentId}, dataKey));
 

@@ -4,6 +4,7 @@
 #include "agent/instance.hpp"
 #include "formula/base.hpp"
 #include "formula/clamp.hpp"
+#include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 
@@ -26,6 +27,17 @@ namespace Formula {
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
 			return context.source.stats.sheet.mindscape;
+		}
+	};
+
+	template<LevelableSkill skill>
+	struct AgentSkill : FormulaBase<int32_t, Type::constant> {
+		[[nodiscard]] inline std::string print(const Context &context, Step) const {
+			return fmt::format("{} lvl {}", Utils::Stringify(skill), eval(context));
+		}
+
+		[[nodiscard]] inline int32_t eval(const Context &context) const {
+			return Modifiers::skills().fromSkill(skill).eval(context) + 1;
 		}
 	};
 
@@ -63,6 +75,23 @@ namespace Formula {
 			for (const auto &agent: context.team.agents) {
 				if (!agent || &agent->state == &context.source) continue;
 				if (agent->state.stats.base.specialty == specialty) ret++;
+			}
+			return ret;
+		}
+	};
+
+	struct FactionCountOthers : FormulaBase<int32_t, Type::constant> {
+		uint32_t factionId;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("{} faction count {}", factionId, eval(context));
+		}
+
+		[[nodiscard]] int32_t eval(const Context &context) const {
+			uint32_t ret = 0;
+			for (const auto &agent: context.team.agents) {
+				if (!agent || &agent->state == &context.source) continue;
+				if (agent->state.stats.data.factionId == factionId) ret++;
 			}
 			return ret;
 		}

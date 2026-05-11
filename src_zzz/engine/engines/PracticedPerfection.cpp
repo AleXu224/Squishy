@@ -16,6 +16,38 @@ const Engine::Data Engine::Datas::practicedPerfection{
 		},
 	},
 	.setup = []() {
-		return Data::Setup{};
+		auto multiplier1 = EngineMultiplier(false, {60.f, 69.f, 78.f, 87.f, 96.f});
+		auto multiplier2 = EngineMultiplier(true, {0.2f, 0.23f, 0.26f, 0.29f, 0.32f});
+
+		auto cond = IsActive("practicedPerfectionCond");
+		auto buff = Requires{
+			.requirement = cond,
+			.ret = multiplier2 * GetFloat("practicedPerfectionCond"),
+		};
+
+		return Data::Setup{
+			.mods{
+				.combat{
+					.am = multiplier1,
+					.physical{
+						.DMG = buff,
+					},
+				},
+			},
+			.opts{
+				Option::ValueList{
+					.key = "practicedPerfectionCond",
+					.prefix = "After inflicting Assault",
+					.values{1, 2},
+					.mods{
+						.combat{
+							.physical{
+								.DMG = buff,
+							},
+						},
+					},
+				},
+			},
+		};
 	},
 };

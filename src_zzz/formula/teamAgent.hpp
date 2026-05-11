@@ -102,6 +102,29 @@ namespace Formula {
 		}
 	};
 
+	template<FormulaLike T>
+	struct SourceAgent : FormulaBase<FormulaType<T>> {
+		T formula;
+
+		using RetType = FormulaType<T>;
+
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+			return formula.fold(context.withSource(context.active), args);
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			return fmt::format(
+				"{} {}",
+				context.active.stats.data.name,
+				formula.print(context.withSource(context.active), prevStep)
+			);
+		}
+
+		[[nodiscard]] RetType eval(const Context &context) const {
+			return formula.eval(context.withSource(context.active));
+		}
+	};
+
 	template<ArithmeticFormula T>
 	struct TeamEvalSum : FormulaBase<FormulaType<T>> {
 		T formula;

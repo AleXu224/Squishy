@@ -5,6 +5,7 @@
 
 const Agent::Data Agent::Datas::alice{
 	.key{1401},
+	.factionId = 11,
 	.goodKey{"Alice"},
 	.name{"Alice"},
 	.baseStats{

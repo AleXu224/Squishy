@@ -2,6 +2,7 @@
 
 #include "formula/base.hpp"
 #include "formula/cast.hpp"
+#include "formula/index.hpp"
 #include "formula/operators.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/skill.hpp"
@@ -76,5 +77,13 @@ namespace Formula {
 
 	[[nodiscard]] inline auto Multiplier(Utils::EntryType type, LevelableSkill skill, float base, float grow) {
 		return MultiplierValue({}, skill, base, grow, type);
+	}
+
+	[[nodiscard]] static inline auto CoreMultiplier(bool isPercentage, const std::array<float, 7> &values) {
+		return Formula::Index{
+			.index = Modifiers::skills().core,
+			.isPercentage = isPercentage,
+			.indexable = values,
+		};
 	}
 }// namespace Formula
