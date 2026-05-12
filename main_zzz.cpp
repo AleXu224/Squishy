@@ -17,7 +17,7 @@ int main() {
 
 	using namespace squi;
 
-	auto enemy = ::Store::enemies.insert(
+	::Store::enemies.insert(
 		{
 			0,
 			Enemy::Instance{

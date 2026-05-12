@@ -19,7 +19,7 @@ squi::core::Child UI::AgentList::State::build(const Element &element) {
 			Navigator::of(*this->element).pushOverlay(AgentDataSelector{
 				.onSelect = [](Agent::DataKey dataKey) {
 					++Store::lastAgentId;
-					auto agent = Store::agents.emplace(Store::lastAgentId, Agent::Instance({Store::lastAgentId}, dataKey));
+					Store::agents.emplace(Store::lastAgentId, Agent::Instance({Store::lastAgentId}, dataKey));
 
 					Store::agentListUpdateEvent.notify();
 				},

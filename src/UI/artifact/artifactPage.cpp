@@ -54,15 +54,37 @@ namespace {
 [[nodiscard]] std::vector<Artifact::Instance *> UI::ArtifactPage::State::getFilteredList() const {
 	std::vector<Artifact::Instance *> ret;
 
+	std::vector<Stat> requiredSubStats{};
+	bool allEnabled = true;
+	for (const auto &[subStat, enabled]: subStatFilter) {
+		if (enabled) {
+			requiredSubStats.push_back(subStat);
+		} else {
+			allEnabled = false;
+		}
+	}
+
 	for (auto &[_, artifact]: ::Store::artifacts) {
 		if (!slotFilter.at(artifact.slot)) continue;
 		if (!mainStatFilter.at(artifact.mainStat)) continue;
-		bool subStatFound = false;
-		for (const auto &substat: artifact.subStats) {
-			if (!substat.stat) continue;
-			if (subStatFilter.at(substat.stat.value())) subStatFound = true;
+		if (!allEnabled) {
+			bool subStatFound = false;
+			for (const auto &requiredSubStat: requiredSubStats) {
+				bool hasSubStat = false;
+				for (const auto &subStat: artifact.subStats) {
+					if (subStat.stat == requiredSubStat) {
+						hasSubStat = true;
+						break;
+					}
+				}
+				if (!hasSubStat) {
+					subStatFound = false;
+					break;
+				}
+				subStatFound = true;
+			}
+			if (!subStatFound) continue;
 		}
-		if (!subStatFound) continue;
 		ret.emplace_back(&artifact);
 	}
 
