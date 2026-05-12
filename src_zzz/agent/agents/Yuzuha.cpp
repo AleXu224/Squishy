@@ -222,7 +222,7 @@ const Agent::Data Agent::Datas::yuzuha{
 					},
 					Node::Info{
 						.name = "Sugarburst Sparkles Anomaly Buildup Rate Increase",
-						.type = Utils::EntryType::energy,
+						.type = Utils::EntryType::multiplier,
 						.formula = 0.07f + skills.basic * 0.015f
 					},
 					Node::Atk{
@@ -232,7 +232,7 @@ const Agent::Data Agent::Datas::yuzuha{
 					},
 					Node::Info{
 						.name = "Sugarburst Sparkles - Max Anomaly Buildup Rate Increase",
-						.type = Utils::EntryType::energy,
+						.type = Utils::EntryType::multiplier,
 						.formula = 0.07f + skills.basic * 0.015f
 					},
 					Node::Atk{

@@ -209,7 +209,7 @@ namespace Stats {
 			Stat::def_,
 			Stat::am_,
 			Stat::impact_,
-			Stat::er,
+			Stat::er_,
 		};
 
 		static inline std::vector mainStats{
@@ -222,7 +222,7 @@ namespace Stats {
 			Stat::er,
 			Stat::am_,
 			Stat::impact_,
-			Stat::er,
+			Stat::er_,
 			Stat::cr,
 			Stat::cd,
 			Stat::ap,

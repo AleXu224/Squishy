@@ -57,7 +57,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Reaction Bonus {:.1f}", eval(context));
+			return Formula::Percentage("Reaction Bonus", eval(context), true);
 		}
 
 		[[nodiscard]] constexpr float eval(const Context &context) const {

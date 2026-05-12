@@ -17,7 +17,7 @@ const Disc::Set Disc::Sets::moonlightLullaby{
 			.twoPc{
 				.mods{
 					.initial{
-						.er = Constant{.value = 0.2f},
+						.er_ = Constant{.value = 0.2f},
 					},
 				},
 			},

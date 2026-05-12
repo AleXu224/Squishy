@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "formulaBase.hpp"
 #include "step.hpp"
+#include "utils/stringify.hpp"
 
 
 namespace Formula {
@@ -14,9 +15,9 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			if constexpr (std::is_same_v<T, float>) {
 				if constexpr (percentage) {
-					return fmt::format("{:.1f}%", value * 100.f);
+					return fmt::format("{}%", Utils::formatFloat(value * 100.f));
 				} else {
-					return fmt::format("{:.1f}", value);
+					return fmt::format("{}", Utils::formatFloat(value));
 				}
 			} else if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, bool>) {
 				return fmt::format("{}", value);

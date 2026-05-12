@@ -30,13 +30,14 @@ namespace Modifiers::Agent {
 
 	struct InstanceSkills : Formula::FormulaBase<int32_t> {
 		SkillMember<Skills<Stats::Value<int32_t, 2>>> stat;
+		SheetMemberIdentifier member;
+
 		[[nodiscard]] Formula::IntNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			return stat.resolve(context.source.stats.sheet.skills).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &, Formula::Step) const {
-			// FIXME:: add this
-			return "";
+		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			return std::format("{} Lvl {}", member.getName(), stat.resolve(context.source.stats.sheet.skills).get(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Formula::Context &context) const {
@@ -57,7 +58,7 @@ namespace Modifiers::Agent {
 		return ret;
 	}
 	const Skills<Formula::IntNode> &instanceSkills() {
-		static auto ret = skillFactory<Formula::IntNode, InstanceSkills>(SkillPointerFactory<Skills<Stats::Value<int32_t, 2>>>{});
+		static auto ret = skillFactory<Formula::IntNode, InstanceSkills>(SkillPointerFactory<Skills<Stats::Value<int32_t, 2>>>{}, SkillNameFactory{});
 		return ret;
 	}
 }// namespace Modifiers::Agent

@@ -9,7 +9,7 @@ export const statMap = new Map<string, string>([
     ["Anomaly Proficiency", "ap"],
     ["CRIT Rate", "cr"],
     ["CRIT DMG", "cd"],
-    ["Energy Regen", "er"],
+    ["Energy Regen", "er_"],
     ["Physical DMG Bonus", "physicalDmg"],
     ["Fire DMG Bonus", "fireDmg"],
     ["Electric DMG Bonus", "electricDmg"],

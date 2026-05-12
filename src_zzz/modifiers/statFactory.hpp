@@ -26,6 +26,7 @@ namespace Modifiers {
 		static constexpr auto def = &TT::def;
 		static constexpr auto def_ = &TT::def_;
 		static constexpr auto er = &TT::er;
+		static constexpr auto er_ = &TT::er_;
 		static constexpr auto ap = &TT::ap;
 		static constexpr auto ap_ = &TT::ap_;
 		static constexpr auto am = &TT::am;
@@ -92,6 +93,7 @@ namespace Modifiers {
 		static constexpr auto def = Modifiers::SheetMemberIdentifier(::Stat::def);
 		static constexpr auto def_ = Modifiers::SheetMemberIdentifier(::Stat::def_);
 		static constexpr auto er = Modifiers::SheetMemberIdentifier(::Stat::er);
+		static constexpr auto er_ = Modifiers::SheetMemberIdentifier(::Stat::er_);
 		static constexpr auto ap = Modifiers::SheetMemberIdentifier(::Stat::ap);
 		static constexpr auto ap_ = Modifiers::SheetMemberIdentifier(::Stat::ap_);
 		static constexpr auto am = Modifiers::SheetMemberIdentifier(::Stat::am);
@@ -159,6 +161,7 @@ namespace Modifiers {
 		static constexpr Formula<Params.def...> def{};
 		static constexpr Formula<Params.def_...> def_{};
 		static constexpr Formula<Params.er...> er{};
+		static constexpr Formula<Params.er_...> er_{};
 		static constexpr Formula<Params.ap...> ap{};
 		static constexpr Formula<Params.ap_...> ap_{};
 		static constexpr Formula<Params.am...> am{};
@@ -238,6 +241,7 @@ namespace Modifiers {
 			.def = formulaFactory<T, Formula>(params.def...),
 			.def_ = formulaFactory<T, Formula>(params.def_...),
 			.er = formulaFactory<T, Formula>(params.er...),
+			.er_ = formulaFactory<T, Formula>(params.er_...),
 			.ap = formulaFactory<T, Formula>(params.ap...),
 			.ap_ = formulaFactory<T, Formula>(params.ap_...),
 			.am = formulaFactory<T, Formula>(params.am...),

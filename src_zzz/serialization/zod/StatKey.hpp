@@ -13,7 +13,7 @@ namespace Serialization::Zod {
 		{"atk_", Stat::atk_},
 		{"def", Stat::def},
 		{"def_", Stat::def_},
-		{"enerRegen_", Stat::er},
+		{"enerRegen_", Stat::er_},
 		{"anomProf", Stat::ap},
 		{"anomMas_", Stat::am_},
 		{"crit_", Stat::cr},

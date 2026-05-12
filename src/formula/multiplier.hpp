@@ -56,7 +56,7 @@ namespace Formula {
 
 	struct LevelMultiplier : FormulaBase<float, Type::constant> {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Level Multiplier {:.1f}", eval(context));
+			return Formula::Percentage("Level Multiplier", eval(context), true);
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {

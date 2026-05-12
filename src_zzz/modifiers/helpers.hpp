@@ -156,7 +156,7 @@ namespace Modifiers {
 						case Stat::cr:
 						case Stat::cd:
 						case Stat::impact_:
-						case Stat::er:
+						case Stat::er_:
 							return true;
 						default:
 							return false;

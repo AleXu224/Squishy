@@ -2,6 +2,7 @@
 
 #include "array"
 #include "fmt/core.h"
+#include "formula/percentage.hpp"
 #include "misc/element.hpp"
 #include "unordered_map"
 #include "utility"
@@ -317,9 +318,6 @@ namespace Utils {
 	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
 		if (!stat.stat.has_value()) return "0";
-		if (Utils::isPercentage(stat.stat)) {
-			return fmt::format("{:.1f}%", stat.value * 100.f);
-		}
-		return fmt::format("{:.0f}", stat.value);
+		return Formula::Percentage("", stat.value, Utils::isPercentage(stat.stat));
 	}
 }// namespace Utils

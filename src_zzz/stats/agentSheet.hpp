@@ -14,7 +14,7 @@ namespace Stats {
 
 		// Promotion and base
 		Stats::Sheet<Stats::Value<float, 2>> base{
-			.er{.constant = 1.f},
+			.er{.constant = 1.2f},
 			.cr{.constant = 0.05f},
 			.cd{.constant = 0.5f},
 		};

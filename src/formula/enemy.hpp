@@ -16,7 +16,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Enemy DEF {:.1f}%", eval(context));
+			return Formula::Percentage("Enemy DEF", eval(context), true);
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
@@ -36,7 +36,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Enemy DEF Multiplier {:.1f}%", eval(context) * 100.f);
+			return Formula::Percentage("Enemy DEF Multiplier", eval(context), true);
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
@@ -72,7 +72,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Enemy RES Multiplier {:.1f}%", eval(context) * 100.f);
+			return Formula::Percentage("Enemy RES Multiplier", eval(context), true);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

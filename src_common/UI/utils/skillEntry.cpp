@@ -1,9 +1,9 @@
 #include "skillEntry.hpp"
+#include "utils/stringify.hpp"
 #include "widgets/box.hpp"
 #include "widgets/container.hpp"
 #include "widgets/row.hpp"
 #include "widgets/text.hpp"
-
 
 using namespace squi;
 [[nodiscard]] squi::core::Child UI::SkillEntry::build(const Element &) const {
@@ -46,7 +46,7 @@ using namespace squi;
 					},
 					value.has_value()//
 						? Text{
-							  .text = isPercentage ? std::format("{:.1f}%", value.value() * 100.f) : std::format("{:.0f}", value.value()),
+							  .text = Utils::formatFloat(isPercentage ? value.value() * 100.f : value.value()) + (isPercentage ? "%" : ""),
 						  }
 						: Child{},
 				},

@@ -37,7 +37,12 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
 			if (val >= min && val <= max) return val1.print(context, prevStep);
-			return fmt::format("clamp({}, {}, {})", val1.print(context, Step::none), min, max);
+			return fmt::format(
+				"clamp({}, {}, {})",
+				val1.print(context, Step::none),
+				Utils::formatFloat(isPercentage ? min * RetType{100} : min),
+				Utils::formatFloat(isPercentage ? max * RetType{100} : max)
+			);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

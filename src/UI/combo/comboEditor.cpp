@@ -472,7 +472,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 												},
 												entry.source
 											);
-											return std::format("{:.1f}", node.formula.eval(newCtx.withOverrides(&overrides)));
+											return Utils::formatFloat(node.formula.eval(newCtx.withOverrides(&overrides)));
 										}();
 									},
 									[&](const ::Combo::StateChangeEntry &entry) {

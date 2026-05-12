@@ -110,6 +110,7 @@ namespace Stats {
 		_Value def{};
 		_Value def_{};
 		_Value er{};
+		_Value er_{};
 		_Value ap{};
 		_Value ap_{};
 		_Value am{};

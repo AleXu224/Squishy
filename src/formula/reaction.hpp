@@ -18,7 +18,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Reaction Multiplier {:.1f}%", eval(context) * 100.f);
+			return Percentage("Reaction Multiplier", eval(context), true);
 		}
 
 		[[nodiscard]] static constexpr float eval(const Context &context) {
@@ -47,7 +47,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Reaction Bonus {:.1f}", eval(context));
+			return Percentage("Reaction Bonus", eval(context), true);
 		}
 
 		[[nodiscard]] static constexpr float eval(const Context &context) {

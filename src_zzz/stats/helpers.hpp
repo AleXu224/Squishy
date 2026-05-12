@@ -79,6 +79,8 @@ namespace Stats {
 				return sheet.def_;
 			case Stat::er:
 				return sheet.er;
+			case Stat::er_:
+				return sheet.er_;
 			case Stat::ap:
 				return sheet.ap;
 			case Stat::ap_:
@@ -204,6 +206,8 @@ namespace Stats {
 				return Sheet.def_;
 			case Stat::er:
 				return Sheet.er;
+			case Stat::er_:
+				return Sheet.er_;
 			case Stat::ap:
 				return Sheet.ap;
 			case Stat::ap_:

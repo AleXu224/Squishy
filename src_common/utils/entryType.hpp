@@ -17,10 +17,10 @@ namespace Utils {
 			case EntryType::multiplier:
 				return Formula::Percentage({}, value, true);
 			case EntryType::seconds:
-				return std::format("{:.1f}s", value);
+				return std::format("{}s", Utils::formatFloat(value));
 			case EntryType::points:
 			case EntryType::energy:
-				return std::format("{:.0f}", value);
+				return std::format("{}", Utils::formatFloat(value));
 		}
 		std::unreachable();
 	}

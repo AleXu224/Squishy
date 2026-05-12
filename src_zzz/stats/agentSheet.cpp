@@ -121,6 +121,7 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 		{Stat::atk, Stat::atk_},
 		{Stat::def, Stat::def_},
 		{Stat::hp, Stat::hp_},
+		{Stat::er, Stat::er_},
 		{Stat::am, Stat::am_},
 		{Stat::ap, Stat::ap_},
 		{Stat::impact, Stat::impact_},
@@ -132,7 +133,6 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 	}
 
 	std::vector<Stat> transferableStats = {
-		Stat::er,
 		Stat::cr,
 		Stat::cd,
 		Stat::pen,

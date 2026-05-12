@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fmt/core.h"
+#include "formula/percentage.hpp"
 #include "misc/attribute.hpp"
 #include "utility"
 #include "utils/isPercentage.hpp"// IWYU pragma: keep
@@ -42,6 +43,7 @@ enum class Stat : uint8_t {
 	electricDmg,
 	etherDmg,
 	allDmg,
+	er_,
 };
 
 namespace Stats {
@@ -66,6 +68,7 @@ namespace Stats {
 			Stat::def,
 			Stat::def_,
 			Stat::er,
+			Stat::er_,
 			Stat::ap,
 			Stat::ap_,
 			Stat::am,
@@ -93,7 +96,7 @@ namespace Stats {
 			Stat::atk_,
 			Stat::def,
 			Stat::def_,
-			Stat::er,
+			Stat::er_,
 			Stat::ap,
 			Stat::ap_,
 			Stat::am,
@@ -114,7 +117,6 @@ namespace Stats {
 			Stat::atk_,
 			Stat::def,
 			Stat::def_,
-			Stat::er,
 			Stat::ap,
 			Stat::cr,
 			Stat::cd,
@@ -167,7 +169,7 @@ namespace Stats {
 			{Stat::def, {std::array{15.f, 20.f, 25.f, 30.f, 35.f, 40.f, 45.f, 50.f, 55.f, 60.f}, std::array{31.f, 39.f, 47.f, 54.f, 62.f, 70.f, 78.f, 85.f, 93.f, 101.f, 109.f, 116.f, 124.f}, std::array{46.f, 55.f, 64.f, 74.f, 83.f, 92.f, 101.f, 110.f, 120.f, 129.f, 138.f, 147.f, 156.f, 166.f, 175.f, 184.f}}},
 			{Stat::def_, {std::array{0.0400f, 0.0533f, 0.0667f, 0.0800f, 0.0933f, 0.1067f, 0.1200f, 0.1333f, 0.1467f, 0.1600f}, std::array{0.0800f, 0.1000f, 0.1200f, 0.1400f, 0.1600f, 0.1800f, 0.2000f, 0.2200f, 0.2400f, 0.2600f, 0.2800f, 0.3000f, 0.3200f}, std::array{0.1200f, 0.1440f, 0.1680f, 0.1920f, 0.2160f, 0.2400f, 0.2640f, 0.2880f, 0.3120f, 0.3360f, 0.3600f, 0.3840f, 0.4080f, 0.4320f, 0.4560f, 0.4800f}}},
 			{Stat::electricDmg, {std::array{0.0250f, 0.0333f, 0.0417f, 0.0500f, 0.0583f, 0.0667f, 0.0750f, 0.0833f, 0.0917f, 0.1000f}, std::array{0.0500f, 0.0625f, 0.0750f, 0.0875f, 0.1000f, 0.1125f, 0.1250f, 0.1375f, 0.1500f, 0.1625f, 0.1750f, 0.1875f, 0.2000f}, std::array{0.0750f, 0.0900f, 0.1050f, 0.1200f, 0.1350f, 0.1500f, 0.1650f, 0.1800f, 0.1950f, 0.2100f, 0.2250f, 0.2400f, 0.2550f, 0.2700f, 0.2850f, 0.3000f}}},
-			{Stat::er, {std::array{0.0500f, 0.0667f, 0.0833f, 0.1000f, 0.1167f, 0.1333f, 0.1500f, 0.1667f, 0.1833f, 0.2000f}, std::array{0.1000f, 0.1250f, 0.1500f, 0.1750f, 0.2000f, 0.2250f, 0.2500f, 0.2750f, 0.3000f, 0.3250f, 0.3500f, 0.3750f, 0.4000f}, std::array{0.1500f, 0.1800f, 0.2100f, 0.2400f, 0.2700f, 0.3000f, 0.3300f, 0.3600f, 0.3900f, 0.4200f, 0.4500f, 0.4800f, 0.5100f, 0.5400f, 0.5700f, 0.6000f}}},
+			{Stat::er_, {std::array{0.0500f, 0.0667f, 0.0833f, 0.1000f, 0.1167f, 0.1333f, 0.1500f, 0.1667f, 0.1833f, 0.2000f}, std::array{0.1000f, 0.1250f, 0.1500f, 0.1750f, 0.2000f, 0.2250f, 0.2500f, 0.2750f, 0.3000f, 0.3250f, 0.3500f, 0.3750f, 0.4000f}, std::array{0.1500f, 0.1800f, 0.2100f, 0.2400f, 0.2700f, 0.3000f, 0.3300f, 0.3600f, 0.3900f, 0.4200f, 0.4500f, 0.4800f, 0.5100f, 0.5400f, 0.5700f, 0.6000f}}},
 			{Stat::etherDmg, {std::array{0.0250f, 0.0333f, 0.0417f, 0.0500f, 0.0583f, 0.0667f, 0.0750f, 0.0833f, 0.0917f, 0.1000f}, std::array{0.0500f, 0.0625f, 0.0750f, 0.0875f, 0.1000f, 0.1125f, 0.1250f, 0.1375f, 0.1500f, 0.1625f, 0.1750f, 0.1875f, 0.2000f}, std::array{0.0750f, 0.0900f, 0.1050f, 0.1200f, 0.1350f, 0.1500f, 0.1650f, 0.1800f, 0.1950f, 0.2100f, 0.2250f, 0.2400f, 0.2550f, 0.2700f, 0.2850f, 0.3000f}}},
 			{Stat::fireDmg, {std::array{0.0250f, 0.0333f, 0.0417f, 0.0500f, 0.0583f, 0.0667f, 0.0750f, 0.0833f, 0.0917f, 0.1000f}, std::array{0.0500f, 0.0625f, 0.0750f, 0.0875f, 0.1000f, 0.1125f, 0.1250f, 0.1375f, 0.1500f, 0.1625f, 0.1750f, 0.1875f, 0.2000f}, std::array{0.0750f, 0.0900f, 0.1050f, 0.1200f, 0.1350f, 0.1500f, 0.1650f, 0.1800f, 0.1950f, 0.2100f, 0.2250f, 0.2400f, 0.2550f, 0.2700f, 0.2850f, 0.3000f}}},
 			{Stat::hp, {std::array{183.f, 244.f, 305.f, 366.f, 427.f, 488.f, 549.f, 610.f, 671.f, 732.f}, std::array{367.f, 459.f, 551.f, 642.f, 734.f, 826.f, 918.f, 1009.f, 1101.f, 1193.f, 1285.f, 1376.f, 1468.f}, std::array{550.f, 660.f, 770.f, 880.f, 990.f, 1100.f, 1210.f, 1320.f, 1430.f, 1540.f, 1650.f, 1760.f, 1870.f, 1980.f, 2090.f, 2200.f}}},
@@ -281,7 +283,7 @@ namespace Utils {
 			case Stat::hp_:
 			case Stat::atk_:
 			case Stat::def_:
-			case Stat::er:
+			case Stat::er_:
 			case Stat::ap_:
 			case Stat::am_:
 			case Stat::cr:
@@ -323,6 +325,8 @@ namespace Utils {
 				return "DEF%";
 			case Stat::er:
 				return "Energy Regen";
+			case Stat::er_:
+				return "Energy Regen%";
 			case Stat::ap:
 				return "Anomaly Proficiency";
 			case Stat::ap_:
@@ -368,9 +372,6 @@ namespace Utils {
 	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
 		if (!stat.stat.has_value()) return "0";
-		if (Utils::isPercentage(stat.stat)) {
-			return fmt::format("{:.1f}%", stat.value * 100.f);
-		}
-		return fmt::format("{:.0f}", stat.value);
+		return Formula::Percentage("", stat.value, Utils::isPercentage(stat.stat));
 	}
 }// namespace Utils

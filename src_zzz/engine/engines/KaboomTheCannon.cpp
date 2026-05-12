@@ -11,7 +11,7 @@ const Engine::Data Engine::Datas::kaboomTheCannon{
 		.rarity = 4,
 		.baseAtk = 42,
 		.subStat{
-			.stat = Stat::er,
+			.stat = Stat::er_,
 			.value = 0.200,
 		},
 	},
