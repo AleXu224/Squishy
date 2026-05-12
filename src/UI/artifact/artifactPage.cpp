@@ -213,7 +213,6 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 							.heading = "Main stat",
 							.action = ScrollView{
 								.widget{.width = Size::Wrap, .height = Size::Shrink},
-								.scrollWidget{.width = Size::Wrap},
 								.alignment = Flex::Alignment::center,
 								.direction = Axis::Horizontal,
 								.children{mainStatFilter},
@@ -223,7 +222,6 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 							.heading = "Sub stat",
 							.action = ScrollView{
 								.widget{.width = Size::Wrap, .height = Size::Shrink},
-								.scrollWidget{.width = Size::Wrap},
 								.alignment = Flex::Alignment::center,
 								.direction = Axis::Horizontal,
 								.children{subStatFilter},
