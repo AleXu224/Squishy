@@ -3,6 +3,8 @@
 #include "formula/agent.hpp"
 #include "formula/enemy.hpp"
 #include "formula/operators.hpp"
+#include "formula/requirement.hpp"
+#include "formula/requires.hpp"
 #include "misc/attribute.hpp"
 #include "string_view"
 
@@ -15,7 +17,8 @@ namespace Anomaly {
 		auto anomalyMod = modifier.DMG + Modifiers::combat().allAnomaly.DMG;
 		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
 		auto defMod = Formula::EnemyDefMultiplier{};
-		// FIXME: stunMod, dmg taken
+		// FIXME: dmg taken
+		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		auto apBonus = Modifiers::combat().ap / Formula::ConstantFlat{.value = 100.f};
 		auto buffLevelMod = 1.f + (Formula::AgentLevel{} - 1.f) / Formula::ConstantFlat{.value = 59.f};
 
@@ -25,7 +28,8 @@ namespace Anomaly {
 			 * resMod
 			 * defMod
 			 * apBonus
-			 * buffLevelMod;
+			 * buffLevelMod
+			 * (1.f + stunMod);
 	}
 	[[nodiscard]] static Formula::FloatNode makeDisorderFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Attribute attribute) {
 		auto baseDmg = Modifiers::combat().atk * multiplier + modifier.additiveDMG + Modifiers::combat().disorder.additiveDMG;
@@ -33,7 +37,8 @@ namespace Anomaly {
 		auto anomalyMod = modifier.DMG + Modifiers::combat().disorder.DMG;
 		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
 		auto defMod = Formula::EnemyDefMultiplier{};
-		// FIXME: stunMod, dmg taken
+		// FIXME: dmg taken
+		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		auto apBonus = Modifiers::combat().ap / Formula::ConstantFlat{.value = 100.f};
 		auto buffLevelMod = 1.f + (Formula::AgentLevel{} - 1.f) / Formula::ConstantFlat{.value = 59.f};
 
@@ -43,7 +48,8 @@ namespace Anomaly {
 			 * resMod
 			 * defMod
 			 * apBonus
-			 * buffLevelMod;
+			 * buffLevelMod
+			 * (1.f + stunMod);
 	}
 
 	struct Anomaly {

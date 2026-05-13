@@ -7,7 +7,7 @@
 #include "formula/teamCharacter.hpp"
 
 
-Stats::Team::Team() : infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::TeamMoonsignLevel{}) {
+Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), infusion(Formula::TeamInfusion{}), moonsignLevel(Formula::TeamMoonsignLevel{}) {
 	using namespace Formula::Operators;
 
 	auto IsActive = [](const Utils::HashedString &str) {

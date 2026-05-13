@@ -3,21 +3,32 @@
 #include "formula/constant.hpp"
 #include "formula/requirement.hpp"
 
-std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14> Option::CharacterList::getMembersAndConditions() {
-	return std::array<std::pair<const std::vector<Option::Types> Option::CharacterList::*, Formula::BoolNode>, 14>{
-		std::pair{&CharacterList::normal, Formula::ConstantBool({}, true)},
-		std::pair{&CharacterList::charged, Formula::ConstantBool({}, true)},
-		std::pair{&CharacterList::plunge, Formula::ConstantBool({}, true)},
-		std::pair{&CharacterList::skill, Formula::ConstantBool({}, true)},
-		std::pair{&CharacterList::burst, Formula::ConstantBool({}, true)},
-		std::pair{&CharacterList::passive1, Requirement::passive1},
-		std::pair{&CharacterList::passive2, Requirement::passive2},
-		std::pair{&CharacterList::passive3, Requirement::passive3},
-		std::pair{&CharacterList::constellation1, Requirement::constellation1},
-		std::pair{&CharacterList::constellation2, Requirement::constellation2},
-		std::pair{&CharacterList::constellation3, Requirement::constellation3},
-		std::pair{&CharacterList::constellation4, Requirement::constellation4},
-		std::pair{&CharacterList::constellation5, Requirement::constellation5},
-		std::pair{&CharacterList::constellation6, Requirement::constellation6},
-	};
+[[nodiscard]] Formula::BoolNode Option::CharacterList::conditionFromCharacterSlot(Node::CharacterSlot slot) {
+	switch (slot) {
+		case Node::CharacterSlot::normal:
+		case Node::CharacterSlot::charged:
+		case Node::CharacterSlot::plunge:
+		case Node::CharacterSlot::skill:
+		case Node::CharacterSlot::burst:
+			return Formula::ConstantBool({}, true);
+		case Node::CharacterSlot::passive1:
+			return Requirement::passive1;
+		case Node::CharacterSlot::passive2:
+			return Requirement::passive2;
+		case Node::CharacterSlot::passive3:
+			return Requirement::passive3;
+		case Node::CharacterSlot::constellation1:
+			return Requirement::constellation1;
+		case Node::CharacterSlot::constellation2:
+			return Requirement::constellation2;
+		case Node::CharacterSlot::constellation3:
+			return Requirement::constellation3;
+		case Node::CharacterSlot::constellation4:
+			return Requirement::constellation4;
+		case Node::CharacterSlot::constellation5:
+			return Requirement::constellation5;
+		case Node::CharacterSlot::constellation6:
+			return Requirement::constellation6;
+	}
+	std::unreachable();
 }

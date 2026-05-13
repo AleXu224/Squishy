@@ -77,6 +77,10 @@ find_package(fmt CONFIG REQUIRED)
 target_link_libraries(squishy_lib PUBLIC fmt::fmt)
 target_link_libraries(squishy_zzz_lib PUBLIC fmt::fmt)
 
+find_package(range-v3 CONFIG REQUIRED)
+target_link_libraries(squishy_lib PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3)
+target_link_libraries(squishy_zzz_lib PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3)
+
 add_executable(squishy main.cpp)
 target_link_libraries(squishy PRIVATE squishy_lib)
 add_executable(squishy_zzz main_zzz.cpp)

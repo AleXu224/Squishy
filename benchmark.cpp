@@ -142,7 +142,7 @@ namespace {
 		std::mt19937 mt(rd());
 		std::uniform_int_distribution<unsigned short> levelGen(1, 90);
 
-		Stats::Team team{};
+		Stats::Team team{1};
 		team.characters.at(0) = &character;
 		team.characters.at(1) = &character;
 		team.characters.at(2) = &character;

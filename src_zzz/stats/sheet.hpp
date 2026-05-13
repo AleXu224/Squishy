@@ -45,6 +45,7 @@ namespace Stats {
 		};
 
 		_Value level{};
+		_Value stunMod{};
 		_Value baseDef{};
 		_Value DEFReduction{};
 		_Value DEFIgnored{};

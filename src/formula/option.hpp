@@ -84,8 +84,13 @@ namespace Formula {
 							[](const bool &active) {
 								return active ? 1.f : 0.f;
 							},
-							[this](const std::optional<uint8_t> &currentIndex) {
-								return static_cast<float>(currentIndex.has_value() ? currentIndex.value() : defaultValue);
+							[&](const std::optional<uint8_t> &currentIndex) -> float {
+								auto &values = std::get<Option::ValueList>(context.source.options.at(name.hash)).values;
+								if (currentIndex.has_value() && currentIndex.value() < values.size()) {
+									return values.at(currentIndex.value());
+								} else {
+									return defaultValue;
+								}
 							},
 							[](const ::Combo::ComboFloatOption &value) {
 								return value.value;

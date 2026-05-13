@@ -12,6 +12,6 @@ namespace Team {
 		std::string name{};
 		squi::VoidObservable updateEvent{};
 
-		Stats::Team stats{};
+		Stats::Team stats{instanceKey};
 	};
 }// namespace Team

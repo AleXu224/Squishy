@@ -129,9 +129,10 @@ squi::core::Child UI::TeamAgentBuffsCard::State::build(const Element &element) {
 				}
 			}
 
-			for (const auto &[optPtr, condition]: Option::AgentList::getMembersAndConditions()) {
+			for (const auto &slot: Node::agentSlots) {
+				auto condition = Option::AgentList::conditionFromAgentSlot(slot);
 				if (!condition.eval(ctx)) continue;
-				auto &optList = std::invoke(optPtr, agent.state.stats.data.data->opts);
+				auto &optList = agent.state.stats.data.data->opts.fromAgentSlot(slot);
 				for (auto &optionData: optList) {
 					bool isTeamBuff = std::visit(
 						[](auto &&opt) {

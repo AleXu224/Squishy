@@ -9,6 +9,7 @@
 namespace Misc {
 	enum class EnemyStat : uint8_t {
 		level,
+		stunMod,
 		baseDef,
 		DEFReduction,
 		DEFIgnored,
@@ -27,6 +28,8 @@ namespace Utils {
 		switch (stats) {
 			case Misc::EnemyStat::level:
 				return "Level";
+			case Misc::EnemyStat::stunMod:
+				return "Stun Modifier";
 			case Misc::EnemyStat::baseDef:
 				return "Base DEF";
 			case Misc::EnemyStat::DEFReduction:
@@ -56,6 +59,7 @@ namespace Utils {
 			case Misc::EnemyStat::level:
 			case Misc::EnemyStat::baseDef:
 				return false;
+			case Misc::EnemyStat::stunMod:
 			case Misc::EnemyStat::DEFReduction:
 			case Misc::EnemyStat::DEFIgnored:
 			case Misc::EnemyStat::dazeRes:

@@ -60,8 +60,13 @@ namespace {
 		Children ret;
 
 		addItem(sheet.level, Modifiers::EnemyNameFactory::level, ret, ctx, transparent, prefix);
+		addItem(sheet.stunMod, Modifiers::EnemyNameFactory::stunMod, ret, ctx, transparent, prefix);
+		addItem(sheet.baseDef, Modifiers::EnemyNameFactory::baseDef, ret, ctx, transparent, prefix);
 		addItem(sheet.DEFReduction, Modifiers::EnemyNameFactory::DEFReduction, ret, ctx, transparent, prefix);
 		addItem(sheet.DEFIgnored, Modifiers::EnemyNameFactory::DEFIgnored, ret, ctx, transparent, prefix);
+		addItem(sheet.dazeRes, Modifiers::EnemyNameFactory::dazeRes, ret, ctx, transparent, prefix);
+		addItem(sheet.daze, Modifiers::EnemyNameFactory::daze, ret, ctx, transparent, prefix);
+		addItem(sheet.dazeTaken, Modifiers::EnemyNameFactory::dazeTaken, ret, ctx, transparent, prefix);
 		for (const auto &attribute: Misc::attributes) {
 			addItem(sheet.resistance.fromAttribute(attribute), Stats::fromEnemyResAttribute<Modifiers::EnemyNameFactory{}.resistance, Modifiers::SheetMemberIdentifier>(attribute), ret, ctx, transparent, prefix);
 		}

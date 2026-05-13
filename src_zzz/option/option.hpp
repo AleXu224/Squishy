@@ -166,8 +166,7 @@ namespace Option {
 			}
 			std::unreachable();
 		}
-
-		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::AgentList::*, Formula::BoolNode>, 20> getMembersAndConditions();
+		[[nodiscard]] static Formula::BoolNode conditionFromAgentSlot(Node::AgentSlot slot);
 	};
 
 	using EngineList = std::vector<Types>;

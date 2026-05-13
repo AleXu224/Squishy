@@ -20,6 +20,7 @@ namespace Modifiers {
 		};
 
 		static constexpr auto level = &TT::level;
+		static constexpr auto stunMod = &TT::stunMod;
 		static constexpr auto baseDef = &TT::baseDef;
 		static constexpr auto DEFReduction = &TT::DEFReduction;
 		static constexpr auto DEFIgnored = &TT::DEFIgnored;
@@ -40,6 +41,7 @@ namespace Modifiers {
 		};
 
 		static constexpr auto level = SheetMemberIdentifier(Misc::EnemyStat::level);
+		static constexpr auto stunMod = SheetMemberIdentifier(Misc::EnemyStat::stunMod);
 		static constexpr auto baseDef = SheetMemberIdentifier(Misc::EnemyStat::baseDef);
 		static constexpr auto DEFReduction = SheetMemberIdentifier(Misc::EnemyStat::DEFReduction);
 		static constexpr auto DEFIgnored = SheetMemberIdentifier(Misc::EnemyStat::DEFIgnored);
@@ -61,6 +63,7 @@ namespace Modifiers {
 		};
 
 		static constexpr Formula<Params.level...> level{};
+		static constexpr Formula<Params.stunMod...> stunMod{};
 		static constexpr Formula<Params.baseDef...> baseDef{};
 		static constexpr Formula<Params.DEFReduction...> DEFReduction{};
 		static constexpr Formula<Params.DEFIgnored...> DEFIgnored{};
@@ -74,6 +77,7 @@ namespace Modifiers {
 	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(auto... params) {
 		return {
 			.level = Formula({}, params.level...),
+			.stunMod = Formula({}, params.stunMod...),
 			.baseDef = Formula({}, params.baseDef...),
 			.DEFReduction = Formula({}, params.DEFReduction...),
 			.DEFIgnored = Formula({}, params.DEFIgnored...),

@@ -3,9 +3,10 @@
 #include "agent/instance.hpp"
 #include "formula/option.hpp"
 #include "formula/requires.hpp"
+#include "modifiers/total/total.hpp"
 
 
-Stats::Team::Team() {
+Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 	using namespace Formula::Operators;
 
 	auto IsActive = [](const Utils::HashedString &str) {
@@ -23,6 +24,24 @@ Stats::Team::Team() {
 			.key = "frostbiteCond",
 			.name = "Enemy is affected by Frostbite",
 			.mods{.combat{.cd = frostbiteBuff}},
+		},
+	});
+
+	options.insert({
+		Utils::HashedString("enemyStunned"),
+		Option::Boolean{
+			.key = "enemyStunned",
+			.name = "Enemy is stunned",
+			.mods{
+				.enemy{
+					.stunMod = Formula::Requires{
+						.requirement = Formula::impl_IsActivePassive{
+							.name = "enemyStunned",
+						},
+						.ret = 1.f + Modifiers::enemy().stunMod,
+					},
+				},
+			},
 		},
 	});
 }

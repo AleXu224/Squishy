@@ -38,6 +38,7 @@ const Engine::Data Engine::Datas::practicedPerfection{
 				Option::ValueList{
 					.key = "practicedPerfectionCond",
 					.prefix = "After inflicting Assault",
+					.teamBuff = true,
 					.values{1, 2},
 					.mods{
 						.combat{

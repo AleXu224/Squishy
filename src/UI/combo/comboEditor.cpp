@@ -66,6 +66,10 @@ namespace {
 		);
 	}
 	[[nodiscard]] std::string getOptionSourceName(Character::InstanceKey key, uint32_t hash) {
+		if (!key) {
+			return "Resonances";
+		}
+
 		const auto &character = Store::characters.at(key);
 		const auto &charOpts = character.state.stats.data.data->opts;
 		for (const auto &slot: Node::characterSlots) {
@@ -88,7 +92,7 @@ namespace {
 				},
 				opt
 			);
-			if (key.hash == hash) return Utils::Stringify(character.state.loadout().weapon->data->name);
+			if (key.hash == hash) return std::string{character.state.loadout().weapon->data->name};
 		}
 		const auto &artifactOpts1 = character.state.loadout().artifact.bonus1;
 		const auto &artifactOpts2 = character.state.loadout().artifact.bonus2;
@@ -101,7 +105,7 @@ namespace {
 					},
 					opt
 				);
-				if (key.hash == hash) return Utils::Stringify(character.state.loadout().weapon->data->name);
+				if (key.hash == hash) return std::string{character.state.loadout().weapon->data->name};
 			}
 		}
 
@@ -132,7 +136,7 @@ namespace {
 							.spacing = 4.f,
 							.children{
 								Text{
-									.text = std::string(::Store::characters.at(option.key).state.stats.data.name),
+									.text = option.key ? std::string(::Store::characters.at(option.key).state.stats.data.name) : "Team",
 									.lineWrap = true,
 								},
 								UI::Tag{.sourceStr = getOptionSourceName(option.key, option.hash)},
@@ -176,20 +180,38 @@ namespace {
 		struct State : WidgetState<ComboOptionEntry> {
 			Option::TypesMap localOptions;
 			VoidObserver optionUpdateEvent;
+			Combo::Overrides overrides;
 
-			void initState() override {
+			void init() {
 				optionUpdateEvent = std::visit(
 					[&](auto &&entry) {
 						return entry.optionUpdateEvent.observe([this]() {
 							setState([&]() {});
+							if (std::holds_alternative<Combo::StateChangeEntry>(widget->entry)) {
+								widget->comboUpdateEvent.notify();
+							}
 						});
 					},
 					widget->entry
 				);
 			}
 
+			void initState() override {
+				init();
+			}
+
+			void widgetUpdated() override {
+				init();
+			}
+
 			Child build(const Element &element) override {
-				auto ctx = widget->ctx.withOverrides(&widget->overrides);
+				auto ctx = widget->ctx.withOverrides(&overrides);
+				std::visit(
+					[&](auto &&val) {
+						overrides.push(val.options);
+					},
+					widget->entry
+				);
 
 				Children ret;
 				auto [options, optionUpdateEvent] = std::visit(
@@ -200,14 +222,24 @@ namespace {
 				);
 
 				for (auto &opt: options) {
-					auto &character = Store::characters.at(opt.key);
-					if (!character.state.options.contains(opt.hash)) continue;
-					if (!ctx.team.hasCharacter(opt.key.key)) continue;
+					const Option::TypesMap &optsMap = [&]() -> const Option::TypesMap & {
+						if (opt.key) {
+							return Store::characters.at(opt.key).state.options;
+						}
+						return ctx.team.options;
+					}();
+					std::variant<Character::InstanceKey, Team::InstanceKey> sourceKey = opt.key ? std::variant<Character::InstanceKey, Team::InstanceKey>{opt.key}
+																								: ctx.team.instanceKey;
+					// auto &character = Store::characters.at(opt.key);
+					if (!optsMap.contains(opt.hash)) continue;
+					if (opt.key && !ctx.team.hasCharacter(opt.key.key)) continue;
+
+					auto usedCtx = opt.key ? ctx.withSource(Store::characters.at(opt.key).state) : ctx;
 
 					std::visit(
 						Utils::overloaded{
 							[&](bool &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(character.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::Boolean>(localOptions.at(opt.hash));
 								optRef.active = value;
 
@@ -216,7 +248,7 @@ namespace {
 									.option = opt,
 									.child = UI::ToggleOption{
 										.option = optRef,
-										.instanceKey = character.instanceKey,
+										.instanceKey = sourceKey,
 										.onToggle = [&](bool newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -227,12 +259,12 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(character.state),
+										.ctx = usedCtx,
 									},
 								});
 							},
 							[&](std::optional<uint8_t> &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(character.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::ValueList>(localOptions.at(opt.hash));
 								optRef.currentIndex = value;
 								ret.emplace_back(ComboEditorOptionContainer{
@@ -240,7 +272,7 @@ namespace {
 									.option = opt,
 									.child = UI::ValueListOption{
 										.option = optRef,
-										.instanceKey = character.instanceKey,
+										.instanceKey = sourceKey,
 										.onChange = [&](std::optional<uint8_t> newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -251,12 +283,12 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(character.state),
+										.ctx = usedCtx,
 									},
 								});
 							},
 							[&](::Combo::ComboFloatOption &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(character.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::ValueSlider>(localOptions.at(opt.hash));
 								optRef.value = value.value;
 								ret.emplace_back(ComboEditorOptionContainer{
@@ -264,7 +296,7 @@ namespace {
 									.option = opt,
 									.child = UI::ValueSliderOption{
 										.option = optRef,
-										.instanceKey = character.instanceKey,
+										.instanceKey = sourceKey,
 										.onChange = [&](float newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -275,7 +307,7 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(character.state),
+										.ctx = usedCtx,
 									},
 								});
 							},

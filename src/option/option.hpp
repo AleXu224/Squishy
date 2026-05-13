@@ -143,7 +143,7 @@ namespace Option {
 			std::unreachable();
 		}
 
-		[[nodiscard]] static std::array<std::pair<const std::vector<Types> Option::CharacterList::*, Formula::BoolNode>, 14> getMembersAndConditions();
+		[[nodiscard]] static Formula::BoolNode conditionFromCharacterSlot(Node::CharacterSlot slot);
 	};
 
 	using WeaponList = std::vector<Types>;

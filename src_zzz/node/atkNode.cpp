@@ -3,6 +3,8 @@
 #include "formula/clamp.hpp"
 #include "formula/enemy.hpp"
 #include "formula/operators.hpp"
+#include "formula/requirement.hpp"
+#include "formula/requires.hpp"
 #include "misc/attribute.hpp"
 #include "misc/skillStat.hpp"
 #include "modifiers/total/total.hpp"
@@ -91,12 +93,14 @@ namespace Node {
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier({}, source, attribute);
 
-		// FIXME: stun multiplier, dmg taken multiplier (piper)
+		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
+		// FIXME: dmg taken multiplier (piper)
 
 		return multiplier
 			 * dmgBonus
 			 * crit
-			 * enemy;
+			 * enemy
+			 * (1.f + stunMod);
 	}
 
 }// namespace Node

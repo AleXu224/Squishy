@@ -1,6 +1,7 @@
 #pragma once
 
 #include "formula/base.hpp"
+#include "formula/option.hpp"
 #include "stats/loadout.hpp"
 
 namespace Requirement {
@@ -67,4 +68,6 @@ namespace Requirement {
 			return context.source.stats.sheet.mindscape >= 6;
 		}
 	} mindscape6{};
+
+	static constexpr auto enemyStunned = Formula::impl_IsActivePassive{.name = "enemyStunned"};
 }// namespace Requirement

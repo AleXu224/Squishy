@@ -29,6 +29,7 @@ const Engine::Data Engine::Datas::weepingGemini{
 				Option::ValueList{
 					.key = "weepingGeminiCond",
 					.prefix = "A squad member inflicted an Attribute Anomaly on an enemy",
+					.teamBuff = true,
 					.values{1, 2, 3, 4},
 					.mods{
 						.combat{

@@ -31,6 +31,7 @@ const Engine::Data Engine::Datas::kaboomTheCannon{
 				Option::ValueSlider{
 					.key = "kaboomTheCannonStacks",
 					.name = "Any friendly unit in the squad attacks and hits an enemy",
+					.teamBuff = true,
 					.values = std::views::iota(0, 5) | std::ranges::to<std::vector<float>>(),
 					.mods{
 						.teamCombat{

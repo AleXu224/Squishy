@@ -51,6 +51,10 @@ namespace {
 		);
 	}
 	[[nodiscard]] std::string getOptionSourceName(Agent::InstanceKey key, uint32_t hash) {
+		if (!key) {
+			return "Resonances";
+		}
+
 		const auto &agent = Store::agents.at(key);
 		const auto &charOpts = agent.state.stats.data.data->opts;
 		for (const auto &slot: Node::agentSlots) {
@@ -73,7 +77,7 @@ namespace {
 				},
 				opt
 			);
-			if (key.hash == hash) return Utils::Stringify(agent.state.loadout().engine->data->name);
+			if (key.hash == hash) return agent.state.loadout().engine->data->name;
 		}
 		const auto &discOpts1 = agent.state.loadout().disc.bonus1;
 		const auto &discOpts2 = agent.state.loadout().disc.bonus2;
@@ -87,7 +91,7 @@ namespace {
 					},
 					opt
 				);
-				if (key.hash == hash) return Utils::Stringify(agent.state.loadout().engine->data->name);
+				if (key.hash == hash) return std::string{bonus->setPtr->name};
 			}
 		}
 
@@ -118,7 +122,7 @@ namespace {
 							.spacing = 4.f,
 							.children{
 								Text{
-									.text = std::string(::Store::agents.at(option.key).state.stats.data.name),
+									.text = option.key ? std::string(::Store::agents.at(option.key).state.stats.data.name) : "Team",
 									.lineWrap = true,
 								},
 								UI::Tag{.sourceStr = getOptionSourceName(option.key, option.hash)},
@@ -162,20 +166,39 @@ namespace {
 		struct State : WidgetState<ComboOptionEntry> {
 			Option::TypesMap localOptions;
 			VoidObserver optionUpdateEvent;
+			Combo::Overrides overrides;
 
-			void initState() override {
+			void init() {
 				optionUpdateEvent = std::visit(
 					[&](auto &&entry) {
 						return entry.optionUpdateEvent.observe([this]() {
 							setState([&]() {});
+							if (std::holds_alternative<Combo::StateChangeEntry>(widget->entry)) {
+								widget->comboUpdateEvent.notify();
+							}
 						});
 					},
 					widget->entry
 				);
+				overrides = widget->overrides;
+			}
+
+			void initState() override {
+				init();
+			}
+
+			void widgetUpdated() override {
+				init();
 			}
 
 			Child build(const Element &element) override {
-				auto ctx = widget->ctx.withOverrides(&widget->overrides);
+				auto ctx = widget->ctx.withOverrides(&overrides);
+				std::visit(
+					[&](auto &&val) {
+						overrides.push(val.options);
+					},
+					widget->entry
+				);
 
 				Children ret;
 				auto [options, optionUpdateEvent] = std::visit(
@@ -186,14 +209,24 @@ namespace {
 				);
 
 				for (auto &opt: options) {
-					auto &agent = Store::agents.at(opt.key);
-					if (!agent.state.options.contains(opt.hash)) continue;
-					if (!ctx.team.hasAgent(opt.key.key)) continue;
+					const Option::TypesMap &optsMap = [&]() -> const Option::TypesMap & {
+						if (opt.key) {
+							return Store::agents.at(opt.key).state.options;
+						}
+						return ctx.team.options;
+					}();
+					std::variant<Agent::InstanceKey, Team::InstanceKey> sourceKey = opt.key ? std::variant<Agent::InstanceKey, Team::InstanceKey>{opt.key}
+																							: ctx.team.instanceKey;
+					// auto &agent = Store::agents.at(opt.key);
+					if (!optsMap.contains(opt.hash)) continue;
+					if (opt.key && !ctx.team.hasAgent(opt.key.key)) continue;
+
+					auto usedCtx = opt.key ? ctx.withSource(Store::agents.at(opt.key).state) : ctx;
 
 					std::visit(
 						Utils::overloaded{
 							[&](bool &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(agent.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::Boolean>(localOptions.at(opt.hash));
 								optRef.active = value;
 
@@ -202,7 +235,7 @@ namespace {
 									.option = opt,
 									.child = UI::ToggleOption{
 										.option = optRef,
-										.instanceKey = agent.instanceKey,
+										.instanceKey = sourceKey,
 										.onToggle = [&](bool newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -213,12 +246,12 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(agent.state),
+										.ctx = usedCtx,
 									},
 								});
 							},
 							[&](std::optional<uint8_t> &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(agent.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::ValueList>(localOptions.at(opt.hash));
 								optRef.currentIndex = value;
 								ret.emplace_back(ComboEditorOptionContainer{
@@ -226,7 +259,7 @@ namespace {
 									.option = opt,
 									.child = UI::ValueListOption{
 										.option = optRef,
-										.instanceKey = agent.instanceKey,
+										.instanceKey = sourceKey,
 										.onChange = [&](std::optional<uint8_t> newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -237,12 +270,12 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(agent.state),
+										.ctx = usedCtx,
 									},
 								});
 							},
 							[&](::Combo::ComboFloatOption &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(agent.state.options.at(opt.hash)));
+								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(optsMap.at(opt.hash)));
 								auto &optRef = std::get<Option::ValueSlider>(localOptions.at(opt.hash));
 								optRef.value = value.value;
 								ret.emplace_back(ComboEditorOptionContainer{
@@ -250,7 +283,7 @@ namespace {
 									.option = opt,
 									.child = UI::ValueSliderOption{
 										.option = optRef,
-										.instanceKey = agent.instanceKey,
+										.instanceKey = sourceKey,
 										.onChange = [&](float newVal) {
 											std::visit(
 												[&](auto &&entry) {
@@ -261,7 +294,7 @@ namespace {
 												widget->entry
 											);
 										},
-										.ctx = ctx.withSource(agent.state),
+										.ctx = usedCtx,
 									},
 								});
 							},
