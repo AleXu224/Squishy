@@ -16,31 +16,39 @@
 
 namespace Node {
 	struct AtkData {
+		std::string name;
 		Utils::JankyOptional<Misc::Element> element{};
 		Utils::JankyOptional<Misc::AttackSource> source{};
 	};
 
 	struct CustomAtkData {
+		std::string name;
 		Misc::Element element;
 	};
 
 	struct InfoData {
+		std::string name;
 		Utils::EntryType type;
 		squi::Color color;
 		bool optimizable;
 	};
 
-	struct HealData {};
+	struct HealData {
+		std::string name;
+	};
 
 	struct ShieldData {
+		std::string name;
 		Utils::JankyOptional<Misc::Element> element{};
 	};
 
 	struct ModsData {
+		std::string name;
 		squi::utils::Container<Stats::ModsSheet> mods;
 	};
 
 	struct DirectLunarData {
+		std::string name;
 		Misc::LunarDamageType damageType;
 	};
 
@@ -77,4 +85,5 @@ namespace Node {
 
 	[[nodiscard]] squi::Color getColor(const Data &data, const Formula::Context &ctx);
 	[[nodiscard]] bool getOptimizable(const Data &data);
+	[[nodiscard]] std::string getName(const Data &data, const Formula::Context &ctx);
 }// namespace Node

@@ -11,7 +11,7 @@
 
 namespace Node {
 	using namespace Formula::Operators;
-	struct _NodeAttributeCustom : Formula::FormulaBase<float> {
+	struct _NodeAttributeAbloom : Formula::FormulaBase<float> {
 		Misc::Attribute attribute;
 		Misc::SkillStat skillStat;
 
@@ -41,7 +41,7 @@ namespace Node {
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::combat().all, skillStat);
-		auto attributeStats = _NodeAttributeCustom({}, attackAttribute, skillStat);
+		auto attributeStats = _NodeAttributeAbloom({}, attackAttribute, skillStat);
 
 		return allStats + attributeStats + formula;
 	}

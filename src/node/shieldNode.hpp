@@ -4,7 +4,6 @@
 #include "formula/shieldModified.hpp"
 #include "modifiers/total/total.hpp"
 #include "nodeData.hpp"
-#include "string_view"
 
 
 namespace Node {
@@ -12,7 +11,7 @@ namespace Node {
 
 	template<class Frm, class T = decltype(Formula::ShieldModifier{})>
 	struct Shield {
-		std::string_view name;
+		std::string name;
 		Utils::JankyOptional<Misc::Element> element{};
 		Frm formula;
 		T modifier{};
@@ -35,6 +34,9 @@ namespace Node {
 
 		_FormulaRetType _formula = _getFormula(formula, modifier);
 
-		Data _data = ShieldData{element};
+		Data _data = ShieldData{
+			.name = name,
+			.element = element,
+		};
 	};
 }// namespace Node

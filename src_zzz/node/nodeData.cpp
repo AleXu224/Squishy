@@ -15,6 +15,9 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			[&](const CustomAtkData &node) {
 				return Utils::attributeToColor(node.attribute);
 			},
+			[&](const AbloomData &node) {
+				return Utils::attributeToColor(node.attribute);
+			},
 			[&](const InfoData &info) {
 				return info.color;
 			},
@@ -40,6 +43,9 @@ bool Node::getOptimizable(const Data &data) {
 			[&](const CustomAtkData &) {
 				return true;
 			},
+			[&](const AbloomData &) {
+				return true;
+			},
 			[&](const InfoData &info) {
 				return info.optimizable;
 			},
@@ -48,6 +54,19 @@ bool Node::getOptimizable(const Data &data) {
 			},
 			[&](const ModsData &) {
 				return false;
+			},
+		},
+		data
+	);
+}
+std::string Node::getName(const Data &data, const Formula::Context &ctx) {
+	return std::visit(//
+		Utils::overloaded{
+			[&](const AbloomData &data) {
+				return data.name.eval(ctx);
+			},
+			[](auto &&val) {
+				return val.name;
 			},
 		},
 		data

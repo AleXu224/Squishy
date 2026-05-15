@@ -200,6 +200,7 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 
 					for (const auto &[optList, cond, name]: std::views::zip(allOpts, allConditions, allNames)) {
 						Children categoryRet;
+						if (!optList) continue;
 						for (const auto &opt: *optList) {
 							auto [teamBuff, condition] = std::visit(
 								[](auto &&val) {

@@ -175,7 +175,7 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 									   | std::views::transform([&](Node::AgentSlot slot) {
 											 return &agent->state.stats.data.data->opts.fromAgentSlot(slot);
 										 });
-					auto engineOpts = &agent->state.loadout().engine->data->data.opts;
+					auto engineOpts = agent->state.loadout().engine ? &agent->state.loadout().engine->data->data.opts : nullptr;
 					auto discOpts1 = agent->state.loadout().disc.bonus1 ? &agent->state.loadout().disc.bonus1->bonusPtr->opts : nullptr;
 					auto discOpts2 = agent->state.loadout().disc.bonus2 ? &agent->state.loadout().disc.bonus2->bonusPtr->opts : nullptr;
 					auto discOpts3 = agent->state.loadout().disc.bonus3 ? &agent->state.loadout().disc.bonus3->bonusPtr->opts : nullptr;
@@ -202,6 +202,7 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 
 					for (const auto &[optList, cond, name]: std::views::zip(allOpts, allConditions, allNames)) {
 						Children categoryRet;
+						if (!optList) continue;
 						for (const auto &opt: *optList) {
 							auto [teamBuff, condition] = std::visit(
 								[](auto &&val) {

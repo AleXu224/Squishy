@@ -11,4 +11,8 @@ extern void Agent::initAgents() {
 		{Agent::Datas::nangongYu.key, Agent::Datas::nangongYu},
 		{Agent::Datas::yuzuha.key, Agent::Datas::yuzuha},
 	};
+
+	for (auto &[key, data]: list) {
+		const_cast<Agent::Data &>(data).data = std::make_unique<Agent::Data::Setup>(data.setup());
+	}
 }

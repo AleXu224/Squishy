@@ -60,6 +60,7 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 	return Node::Instance(NodeInfo{
 		.name = combo.name,
 		._data{
+			.name = combo.name,
 			.type = Utils::EntryType::points,
 			.color = squi::Color::white,
 			.optimizable = true,
@@ -145,6 +146,7 @@ Node::Instance Combo::Source::Anomaly::resolve(const Overrides &overrides) const
 	auto ret = Node::Instance(NodeInfo{
 		.name = anomaly.name,
 		._data{
+			.name = std::string(anomaly.name),
 			.type = Utils::EntryType::points,
 			.color = Utils::attributeToColor(anomaly.attribute),
 			.optimizable = true,

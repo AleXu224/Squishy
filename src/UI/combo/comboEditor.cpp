@@ -411,7 +411,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 											entry.source
 										);
 
-										entryName = node.name;
+										entryName = Node::getName(node.data, ctx);
 										sourceName = getSourceName(entry.source);
 										entryColor = Node::getColor(node.data, ctx);
 

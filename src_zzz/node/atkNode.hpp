@@ -4,12 +4,11 @@
 #include "misc/attackSource.hpp"
 #include "misc/attribute.hpp"
 #include "nodeData.hpp"
-#include "string_view"
 
 
 namespace Node {
 	struct Atk {
-		std::string_view name;
+		std::string name;
 		Utils::JankyOptional<Misc::Attribute> attribute{};
 		Utils::JankyOptional<Misc::AttackSource> source{};
 		Formula::FloatNode formula;
@@ -25,6 +24,7 @@ namespace Node {
 		Formula::FloatNode _formula = _getFormula(attribute, source, formula, modifier);
 
 		Data _data = AtkData{
+			.name = name,
 			.attribute = attribute,
 			.source = source,
 		};

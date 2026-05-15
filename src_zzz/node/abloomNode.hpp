@@ -6,21 +6,23 @@
 
 
 namespace Node {
-	struct CustomAtk {
-		std::string name;
+	struct AbloomNode {
+		Formula::NodeType<std::string> name;
 		Misc::Attribute attribute;
-		Formula::FloatNode formula;
+		float multiplier;
+		size_t index;
 		Formula::Modifier modifier{};
 
 		[[nodiscard]] static Formula::FloatNode _getFormula(
 			const Misc::Attribute &attribute,
-			const Formula::FloatNode &formula,
+			float multiplier,
+			size_t index,
 			const Formula::Modifier &modifier
 		);
 
-		Formula::FloatNode _formula = _getFormula(attribute, formula, modifier);
+		Formula::FloatNode _formula = _getFormula(attribute, multiplier, index, modifier);
 
-		Data _data = CustomAtkData{
+		Data _data = AbloomData{
 			.name = name,
 			.attribute = attribute,
 		};

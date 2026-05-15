@@ -41,7 +41,7 @@ namespace {
 					.widget{
 						.alignment = Alignment::CenterLeft,
 					},
-					.text = std::string(node.name),
+					.text = Node::getName(node.data, ctx),
 					.lineWrap = true,
 					.color = Node::getColor(node.data, ctx),
 				},

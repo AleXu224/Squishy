@@ -67,3 +67,13 @@ bool Node::getOptimizable(const Data &data) {
 		data
 	);
 }
+std::string Node::getName(const Data &data, const Formula::Context &ctx) {
+	return std::visit(//
+		Utils::overloaded{
+			[](auto &&val) {
+				return val.name;
+			},
+		},
+		data
+	);
+}

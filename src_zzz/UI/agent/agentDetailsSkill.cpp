@@ -38,7 +38,7 @@ using namespace squi;
 					.text = node.formula.print(ctx),
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
-						.name = std::string(node.name),
+						.name = Node::getName(node.data, ctx),
 						.value = node.formula.eval(ctx),
 						.color = Node::getColor(node.data, ctx),
 						.isPercentage = Node::isPercentage(node.data),

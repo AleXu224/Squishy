@@ -111,6 +111,9 @@ namespace Formula {
 				return fn.eval(context);
 			}
 			[[nodiscard]] constexpr NodeType fold(const Formula::Context &context, const FoldArgs &args) const override {
+				if constexpr (HasConstantValue<Fn, RetType>) {
+					return static_cast<const interface *>(this);
+				}
 				return fn.fold(context, args);
 			}
 			[[nodiscard]] constexpr Formula::Type getType() const override {

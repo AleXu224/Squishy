@@ -4,18 +4,16 @@
 #include "entry.hpp"
 #include "formula/node.hpp"
 #include "nodeData.hpp"
-#include "string_view"
 #include "vector"
 
 
 namespace Node {
 	struct Instance {
-		std::string_view name;
 		Data data;
 		Formula::FloatNode formula;
 
 		template<class T>
-		Instance(const T &t) : name(t.name), data(t._data), formula(t._formula) {}
+		Instance(const T &t) : data(t._data), formula(t._formula) {}
 	};
 
 	using Types = Instance;

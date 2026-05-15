@@ -164,6 +164,7 @@ namespace {
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
 			// benchmark::DoNotOptimize(compiledNode.eval(ctx));
+			// benchmark::DoNotOptimize(preCompiledNode.eval(ctx));
 			// (void) compiledNode.eval(ctx);
 
 			// Compile formula using the custom allocator, while also keeping the memory between runs

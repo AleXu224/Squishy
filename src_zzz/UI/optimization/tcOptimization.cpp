@@ -65,9 +65,9 @@ squi::core::Child UI::TCOptimization::State::build(const Element &element) {
 										});
 									},
 									.child = agent.optimizationOptions->nodeSource.has_value()//
-											   ? std::visit(                                      //
-													 [](auto &&node) -> std::string {
-														 return std::string(node.resolve({}).name);
+											   ? std::visit(                                  //
+													 [&](auto &&node) -> std::string {
+														 return Node::getName(node.resolve({}).data, ctx);
 													 },
 													 agent.optimizationOptions->nodeSource.value()
 												 )

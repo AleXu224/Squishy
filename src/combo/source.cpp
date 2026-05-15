@@ -60,6 +60,7 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 	return Node::Instance(NodeInfo{
 		.name = combo.name,
 		._data{
+			.name = combo.name,
 			.type = Utils::EntryType::points,
 			.color = Utils::elementToColor(Misc::Element::physical),
 			.optimizable = true,
@@ -151,6 +152,7 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const Overrides &o
 	auto ret = Node::Instance(NodeInfo{
 		.name = name,
 		._data{
+			.name = std::string(name),
 			.type = Utils::EntryType::points,
 			.color = Utils::elementToColor(element),
 			.optimizable = true,

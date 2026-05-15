@@ -22,7 +22,7 @@ namespace Formula {
 						 * enemy.baseDef;
 			const auto def = baseDef * (1.f - enemy.DEFReduction - enemy.DEFIgnored);
 			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio) - Modifiers::combat().pen;
-			auto levelCoeff = Curves::levelMultiplier.at(context.active.stats.sheet.level - 1) * 50.f;
+			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
 
 			return defMod.fold(context, args);
@@ -37,7 +37,7 @@ namespace Formula {
 			auto baseDef = Curves::levelMultiplier.at(std::clamp(static_cast<int32_t>(enemy.level.eval(context)), 0, 60) - 1) * enemy.baseDef.eval(context);
 			const auto def = baseDef * (1.f - enemy.DEFReduction.eval(context) - enemy.DEFIgnored.eval(context));
 			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio.eval(context)) - Modifiers::combat().pen.eval(context);
-			auto levelCoeff = Curves::levelMultiplier.at(context.active.stats.sheet.level - 1) * 50.f;
+			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
 
 			return defMod;

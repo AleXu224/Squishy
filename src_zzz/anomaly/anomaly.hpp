@@ -11,10 +11,13 @@
 
 namespace Anomaly {
 	using namespace Formula::Operators;
-	[[nodiscard]] static Formula::FloatNode makeAnomalyFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Attribute attribute) {
+	[[nodiscard]] static Formula::FloatNode makeAnomalyFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Attribute attribute, bool useAnomalyMod = true) {
 		auto baseDmg = Modifiers::combat().atk * multiplier + modifier.additiveDMG + Modifiers::combat().allAnomaly.additiveDMG;
 		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
-		auto anomalyMod = modifier.DMG + Modifiers::combat().allAnomaly.DMG;
+		auto anomalyMod = Formula::Requires{
+			.requirement = Formula::ConstantBool{.value = useAnomalyMod},
+			.ret = modifier.DMG + Modifiers::combat().allAnomaly.DMG,
+		};
 		auto resMod = Formula::EnemyResMultiplier{.attackSource{}, .element = attribute};
 		auto defMod = Formula::EnemyDefMultiplier{};
 		// FIXME: dmg taken
@@ -58,6 +61,7 @@ namespace Anomaly {
 		Misc::Attribute attribute{};
 		const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier;
 		Formula::FloatNode formula = makeAnomalyFormula(modifier, multiplier, attribute);
+		Formula::FloatNode formulaAbloom = makeAnomalyFormula(modifier, multiplier, attribute, false);
 	};
 
 	namespace List {

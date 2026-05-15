@@ -2,12 +2,11 @@
 
 #include "formula/healModifier.hpp"
 #include "nodeData.hpp"
-#include "string_view"
 
 
 namespace Node {
 	struct Heal {
-		std::string_view name;
+		std::string name;
 		Formula::FloatNode formula;
 		Formula::HealModifier modifier{};
 
@@ -18,6 +17,8 @@ namespace Node {
 
 		Formula::FloatNode _formula = _getFormula(formula, modifier);
 
-		Data _data = HealData{};
+		Data _data = HealData{
+			.name = name,
+		};
 	};
 }// namespace Node

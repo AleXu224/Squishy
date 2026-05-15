@@ -2,6 +2,7 @@
 
 #include "data.hpp"                   // IWYU pragma: export
 #include "formula/agent.hpp"          // IWYU pragma: export
+#include "formula/anomaly.hpp"        // IWYU pragma: export
 #include "formula/base.hpp"           // IWYU pragma: export
 #include "formula/multiplier.hpp"     // IWYU pragma: export
 #include "formula/option.hpp"         // IWYU pragma: export
@@ -16,6 +17,7 @@
 #include "node/dazeNode.hpp"          // IWYU pragma: export
 #include "node/infoNode.hpp"          // IWYU pragma: export
 #include "node/modsNode.hpp"          // IWYU pragma: export
+
 
 namespace Agent {
 	static inline auto IsActive(const Utils::HashedString &name) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "anomaly.hpp"
+#include "misc/attribute.hpp"
 
 namespace Anomaly::List {
 	static inline std::vector<const ::Anomaly::Anomaly *> anomalyList{
@@ -10,6 +11,21 @@ namespace Anomaly::List {
 		&::Anomaly::List::assault,
 		&::Anomaly::List::corruption,
 	};
+
+	inline const ::Anomaly::Anomaly &fromAttribute(Misc::Attribute attribute) {
+		switch (attribute) {
+			case Misc::Attribute::physical:
+				return ::Anomaly::List::assault;
+			case Misc::Attribute::fire:
+				return ::Anomaly::List::burn;
+			case Misc::Attribute::ice:
+				return ::Anomaly::List::shatter;
+			case Misc::Attribute::electric:
+				return ::Anomaly::List::shock;
+			case Misc::Attribute::ether:
+				return ::Anomaly::List::corruption;
+		}
+	}
 
 	static inline std::vector<const ::Anomaly::Anomaly *> disorderList{
 		&::Anomaly::List::burnDisorder,
