@@ -23,7 +23,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 	auto &enemy = ::Store::enemies.at(widget->enemyKey);
 	Formula::Context ctx{
 		.source = agent.state,
-		.active = agent.state,
+		.origin = agent.state,
 		.team = team.stats,
 		.enemy = enemy.stats,
 	};

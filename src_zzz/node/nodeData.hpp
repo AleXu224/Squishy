@@ -33,7 +33,7 @@ namespace Node {
 
 	struct AbloomData {
 		Formula::NodeType<std::string> name;
-		Misc::Attribute attribute;
+		Formula::NodeType<Misc::Attribute> attribute;
 	};
 
 	struct InfoData {

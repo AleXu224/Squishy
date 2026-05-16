@@ -121,15 +121,15 @@ namespace Formula {
 		}
 	};
 
-	struct IsActiveAgentId : FormulaBase<bool, Type::constant> {
+	struct IsOriginAgentId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is active agent id {} ({})", id, eval(context));
+			return fmt::format("Is origin agent id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.stats.data.key.key == id;
+			return context.origin.stats.data.key.key == id;
 		}
 	};
 
@@ -187,6 +187,16 @@ namespace Formula {
 				ret = std::max(ret, formula.eval(context.withSource(agent->state)));
 			}
 			return ret;
+		}
+	};
+
+	struct AgentAttribute : FormulaBase<Misc::Attribute, Type::constant> {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Agent attribute {}", Utils::Stringify(eval(context)));
+		}
+
+		[[nodiscard]] Misc::Attribute eval(const Context &context) const {
+			return context.source.stats.base.attribute;
 		}
 	};
 }// namespace Formula

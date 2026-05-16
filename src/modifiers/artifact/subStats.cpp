@@ -10,7 +10,7 @@ namespace Modifiers::Artifact {
 		SheetMemberIdentifier member;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			if (&context.active != &context.source || !member.isArtifactStat()) {
+			if (&context.origin != &context.source || !member.isArtifactStat()) {
 				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
 			return *this;

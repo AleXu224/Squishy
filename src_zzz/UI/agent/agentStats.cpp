@@ -25,8 +25,8 @@ using namespace squi;
 squi::core::Child UI::AgentStats::State::build(const Element &element) {
 	return UI::DisplayCard{
 		.widget = widget->widget,
-		.borderColor = Utils::attributeToColor(widget->ctx.active.stats.base.attribute),
-		.title = std::string(widget->ctx.active.stats.data.name),
+		.borderColor = Utils::attributeToColor(widget->ctx.origin.stats.base.attribute),
+		.title = std::string(widget->ctx.origin.stats.data.name),
 		.children = [&]() {
 			const auto &loadout = widget->ctx.source;
 			Children ret{};
@@ -43,7 +43,7 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 					.children{
 						Image{
 							.fit = Image::Fit::contain,
-							.image = ImageProvider::fromFile(fmt::format("assets/Agents/{}/card.png", widget->ctx.active.stats.data.name)),
+							.image = ImageProvider::fromFile(fmt::format("assets/Agents/{}/card.png", widget->ctx.origin.stats.data.name)),
 						},
 						Row{
 							.widget{

@@ -18,7 +18,7 @@ using namespace squi;
 		.title = "Anomalies",
 		.children = [&]() -> Children {
 			Children ret;
-			const auto &state = ctx.active;
+			const auto &state = ctx.origin;
 			// auto reactions = Reaction::List::Transformative::getMembers();
 
 			bool transparent = true;

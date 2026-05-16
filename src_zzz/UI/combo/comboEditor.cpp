@@ -424,7 +424,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 													attribute = data.attribute;
 												},
 												[&](const Node::AbloomData &data) {
-													attribute = data.attribute;
+													attribute = data.attribute.eval(ctxWithOverrides);
 												},
 												[](const Node::InfoData &data) {},
 												[](const Node::HealData &data) {},

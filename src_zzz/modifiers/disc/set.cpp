@@ -17,7 +17,7 @@ namespace Modifiers::Disc::Set {
 			auto ret = sheet1
 					 + sheet2
 					 + sheet3;
-			if (&context.active == &context.source && args.enableGates) {
+			if (&context.origin == &context.source && args.enableGates) {
 				return SetFormula{
 					.sheet1 = sheet1,
 					.sheet2 = sheet2,

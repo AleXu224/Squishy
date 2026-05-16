@@ -78,7 +78,7 @@ namespace {
 		auto &enemy = ::Store::enemies.at(enemyKey);
 		Formula::Context ctx{
 			.source = character.state,
-			.active = character.state,
+			.origin = character.state,
 			.team = team.stats,
 			.enemy = enemy.stats,
 		};

@@ -69,11 +69,10 @@ namespace Modifiers {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			auto newContext = context.withSource(context.active);
-			return teamInitial.eval(newContext)
-				 + teamCombat.eval(newContext)
-				 + activeInitial.eval(newContext)
-				 + activeCombat.eval(newContext);
+			return teamInitial.eval(context)
+				 + teamCombat.eval(context)
+				 + activeInitial.eval(context)
+				 + activeCombat.eval(context);
 		}
 	};
 	struct DisplayTotalFrm : Formula::FormulaBase<float> {
@@ -97,12 +96,11 @@ namespace Modifiers {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			auto newContext = context.withSource(context.active);
-			return agentKitStat.eval(newContext)
-				 + enginePassiveStat.eval(newContext)
-				 + discSetStat.eval(newContext)
-				 + teamPostStat.eval(newContext)
-				 + preModStat.eval(newContext);
+			return agentKitStat.eval(context)
+				 + enginePassiveStat.eval(context)
+				 + discSetStat.eval(context)
+				 + teamPostStat.eval(context)
+				 + preModStat.eval(context);
 		}
 	};
 	struct TotalSkillsFrm : Formula::FormulaBase<int> {

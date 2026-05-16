@@ -103,25 +103,25 @@ namespace Formula {
 	};
 
 	template<FormulaLike T>
-	struct SourceAgent : FormulaBase<FormulaType<T>> {
+	struct OriginAgent : FormulaBase<FormulaType<T>> {
 		T formula;
 
 		using RetType = FormulaType<T>;
 
 		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
-			return formula.fold(context.withSource(context.active), args);
+			return formula.fold(context.withSource(context.origin), args);
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			return fmt::format(
 				"{} {}",
-				context.active.stats.data.name,
-				formula.print(context.withSource(context.active), prevStep)
+				context.origin.stats.data.name,
+				formula.print(context.withSource(context.origin), prevStep)
 			);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
-			return formula.eval(context.withSource(context.active));
+			return formula.eval(context.withSource(context.origin));
 		}
 	};
 

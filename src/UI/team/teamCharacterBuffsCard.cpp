@@ -30,7 +30,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 			Formula::Context ctx{
 				.source = character.state,
 				.prevSource = activeCharacter ? activeCharacter->state : character.state,
-				.active = character.state,
+				.origin = character.state,
 				.team = team.stats,
 				.enemy = Store::enemies.at(0).stats,
 			};

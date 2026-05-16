@@ -276,7 +276,7 @@ Optimization::OptimizationThreadData::OptimizationThreadData(Character::Instance
 	  },
 	  ctx{
 		  .source = this->character.state,
-		  .active = this->character.state,
+		  .origin = this->character.state,
 		  .team = this->team.stats,
 		  .enemy = ctx.enemy,
 		  .reaction = ctx.reaction,

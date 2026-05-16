@@ -70,7 +70,7 @@ const Agent::Data Agent::Datas::yuzuha{
 		auto m6Stacks = GetFloat("yuzuhaMindscape6Stacks");
 		auto m6Buff = Requires{
 			.requirement = Requirement::mindscape6,
-			.ret = SourceAgent{.formula = combat.atk} * 1.05f * m6Stacks,
+			.ret = OriginAgent{.formula = combat.atk} * 1.05f * m6Stacks,
 		};
 
 		auto totalAdditionalBuff = additionalBuff + m1AdditionalBuff;

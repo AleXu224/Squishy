@@ -16,7 +16,7 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 				return Utils::attributeToColor(node.attribute);
 			},
 			[&](const AbloomData &node) {
-				return Utils::attributeToColor(node.attribute);
+				return Utils::attributeToColor(node.attribute.eval(ctx));
 			},
 			[&](const InfoData &info) {
 				return info.color;

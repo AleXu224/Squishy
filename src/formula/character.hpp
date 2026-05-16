@@ -85,15 +85,15 @@ namespace Formula {
 		}
 	};
 
-	struct IsActiveCharacterId : FormulaBase<bool, Type::constant> {
+	struct IsOriginCharacterId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character id {} ({})", id, eval(context));
+			return fmt::format("Is origin character id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			return context.active.stats.data.key.key == id;
+			return context.origin.stats.data.key.key == id;
 		}
 	};
 

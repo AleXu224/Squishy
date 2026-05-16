@@ -21,7 +21,7 @@ namespace Formula {
 	struct Context {
 		const Stats::State &source;
 		const Stats::State &prevSource = source;
-		const Stats::State &active;
+		const Stats::State &origin;
 		const Stats::Team &team;
 		const Stats::Enemy &enemy;
 		const std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction{};
@@ -31,7 +31,7 @@ namespace Formula {
 			return {
 				.source = newSource,
 				.prevSource = source,
-				.active = active,
+				.origin = origin,
 				.team = team,
 				.enemy = enemy,
 				.reaction = reaction,
@@ -43,7 +43,7 @@ namespace Formula {
 			return {
 				.source = source,
 				.prevSource = prevSource,
-				.active = active,
+				.origin = origin,
 				.team = team,
 				.enemy = enemy,
 				.reaction = newReaction,
@@ -55,7 +55,7 @@ namespace Formula {
 			return {
 				.source = source,
 				.prevSource = prevSource,
-				.active = active,
+				.origin = origin,
 				.team = team,
 				.enemy = enemy,
 				.reaction = reaction,

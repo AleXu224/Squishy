@@ -29,7 +29,7 @@ struct AgentCardsContents : StatelessWidget {
 		placeholderTeam.stats.agents.at(0) = &agent;
 		Formula::Context ctx{
 			.source = agent.state,
-			.active = agent.state,
+			.origin = agent.state,
 			.team = placeholderTeam.stats,
 			.enemy = ::Store::enemies.at(0).stats,
 		};

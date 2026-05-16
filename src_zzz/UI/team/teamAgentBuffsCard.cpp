@@ -30,7 +30,7 @@ squi::core::Child UI::TeamAgentBuffsCard::State::build(const Element &element) {
 			Formula::Context ctx{
 				.source = agent.state,
 				.prevSource = activeAgent ? activeAgent->state : agent.state,
-				.active = agent.state,
+				.origin = agent.state,
 				.team = team.stats,
 				.enemy = Store::enemies.at(0).stats,
 			};

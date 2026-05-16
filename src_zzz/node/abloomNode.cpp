@@ -1,5 +1,5 @@
 #include "abloomNode.hpp"
-#include "anomaly/list.hpp"
+#include "formula/anomaly.hpp"
 #include "formula/clamp.hpp"
 #include "formula/operators.hpp"
 #include "formula/teamAgent.hpp"
@@ -35,7 +35,6 @@ namespace Node {
 	};
 
 	[[nodiscard]] static constexpr auto _getTotalAbloom(
-		Misc::Attribute attackAttribute,
 		Misc::SkillStat skillStat,
 		const auto &formula
 	) {
@@ -45,29 +44,29 @@ namespace Node {
 		return allAnomaly + abloom + formula;
 	}
 
-	Formula::FloatNode AbloomNode::_getFormula(
-		const Misc::Attribute &attribute,
-		float multiplier,
+	Formula::FloatNode AbloomNode::_getFormulaAbloom(
+		const Formula::NodeType<Misc::Attribute> &attribute,
+		const Formula::FloatNode &multiplier,
 		size_t index,
 		const Formula::Modifier &modifier
 	) {
-		auto totalDMG = _getTotalAbloom(attribute, Misc::SkillStat::DMG, modifier.DMG);
-		auto totalAdditiveDMG = _getTotalAbloom(attribute, Misc::SkillStat::additiveDMG, modifier.additiveDMG);
-		// auto totalMultiplicativeDMG = _getTotalCustom(attribute, Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
-		auto totalCritRate = Formula::Clamp({}, _getTotalAbloom(attribute, Misc::SkillStat::critRate, modifier.critRate), 0.f, 1.f);
-		auto totalCritDMG = _getTotalAbloom(attribute, Misc::SkillStat::critDMG, modifier.critDMG);
+		auto totalDMG = _getTotalAbloom(Misc::SkillStat::DMG, modifier.DMG);
+		auto totalAdditiveDMG = _getTotalAbloom(Misc::SkillStat::additiveDMG, modifier.additiveDMG);
+		// auto totalMultiplicativeDMG = _getTotalCustom(Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
+		auto totalCritRate = Formula::Clamp({}, _getTotalAbloom(Misc::SkillStat::critRate, modifier.critRate), 0.f, 1.f);
+		auto totalCritDMG = _getTotalAbloom(Misc::SkillStat::critDMG, modifier.critDMG);
 
 		auto formula = Formula::TeamAgent{
 						   .index = index,
-						   .formula = Formula::Requires{
-							   .requirement = Formula::IsAgentAttribute{.attribute = attribute},
-							   .ret = Anomaly::List::fromAttribute(attribute).formulaAbloom,
+						   .formula = Formula::AnomalyAbloomFromAttribute{
+							   .attribute = attribute,
 						   },
 					   } * (1.f + totalDMG)
 					 + totalAdditiveDMG;
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 
-		return formula
+		return multiplier
+			 * formula
 			 * crit;
 	}
 

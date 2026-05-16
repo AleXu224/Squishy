@@ -266,7 +266,7 @@ Optimization::OptimizationThreadData::OptimizationThreadData(Agent::Instance &ag
 	  },
 	  ctx{
 		  .source = this->agent.state,
-		  .active = this->agent.state,
+		  .origin = this->agent.state,
 		  .team = this->team.stats,
 		  .enemy = ctx.enemy,
 		  .reaction = ctx.reaction,

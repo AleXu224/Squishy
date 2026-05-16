@@ -43,6 +43,47 @@ namespace Formula {
 		}
 	};
 
+	template<std::ranges::random_access_range T, FormulaLike V>
+	struct IndexOf : FormulaBase<int32_t> {
+		T range;
+		V formula;
+
+		using FormulaRet = FormulaType<V>;
+		static_assert(std::is_same_v<FormulaRet, std::ranges::range_value_t<T>>, "Formula return type must match range value type");
+
+		NodeType<int32_t> fold(const Context &ctx, const FoldArgs &args) const {
+			auto foldFormula = formula.fold(ctx, args);
+			auto typeFormula = foldFormula.getType();
+
+			if (typeFormula == Type::constant) {
+				auto formulaVal = foldFormula.getConstantValue();
+				auto it = std::ranges::find(range, formulaVal);
+				if (it == range.end()) {
+					throw std::runtime_error("Value not found in range");
+				}
+				return ConstantBase<int32_t>{.value = static_cast<int32_t>(std::distance(range.begin(), it))};
+			}
+
+			return IndexOf<T, decltype(foldFormula)>{
+				.range = range,
+				.formula = foldFormula,
+			};
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return fmt::format("Index of {}", formula.print(context));
+		}
+
+		[[nodiscard]] int32_t eval(const Context &context) const {
+			auto formulaVal = formula.eval(context);
+			auto it = std::ranges::find(range, formulaVal);
+			if (it == range.end()) {
+				throw std::runtime_error("Value not found in range");
+			}
+			return std::distance(range.begin(), it);
+		}
+	};
+
 	template<class T>
 	struct Evaluator : FormulaBase<FormulaType<FormulaType<T>>> {
 		T evaluated;

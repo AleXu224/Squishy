@@ -14,7 +14,7 @@ namespace Modifiers::Artifact::Set {
 		[[nodiscard]] Formula::NodeType<RetType<Ret>> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto ret = sheet1
 					 + sheet2;
-			if (&context.active == &context.source && args.enableGates) {
+			if (&context.origin == &context.source && args.enableGates) {
 				return SetFormula{
 					.sheet1 = sheet1,
 					.sheet2 = sheet2,
