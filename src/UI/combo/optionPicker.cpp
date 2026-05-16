@@ -202,15 +202,14 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 						Children categoryRet;
 						if (!optList) continue;
 						for (const auto &opt: *optList) {
-							auto [teamBuff, condition] = std::visit(
+							auto teamBuff = std::visit(
 								[](auto &&val) {
-									return std::tuple{val.teamBuff, val.displayCondition};
+									return val.teamBuff;
 								},
 								opt
 							);
 							if (character->instanceKey != widget->characterKey && !teamBuff) continue;
 							auto newCtx = widget->ctx.withSource(character->state);
-							if (condition.hasValue() && !condition.eval(newCtx)) continue;
 							if (!cond.eval(newCtx)) continue;
 							if (existingOptions.contains(
 									std::visit(

@@ -374,7 +374,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 					.children = [&]() {
 						Children ret;
 
-						Combo::Overrides overrides;
+						overrides = Combo::Overrides{};
 						auto ctxWithOverrides = ctx.withOverrides(&overrides);
 
 						for (auto it = combo.entries.begin(); it != combo.entries.end(); it++) {
@@ -398,9 +398,9 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 											entry.source
 										);
 
-										entryName = Node::getName(node.data, ctx);
+										entryName = Node::getName(node.data, ctxWithOverrides);
 										sourceName = getSourceName(entry.source);
-										entryColor = Node::getColor(node.data, ctx);
+										entryColor = Node::getColor(node.data, ctxWithOverrides);
 
 										std::optional<Misc::Attribute> attribute = std::nullopt;
 
@@ -410,14 +410,14 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 													attribute = Formula::getAttribute(
 														data.source,
 														data.attribute,
-														ctx
+														ctxWithOverrides
 													);
 												},
 												[&](const Node::DazeData &data) {
 													attribute = Formula::getAttribute(
 														data.source,
 														data.attribute,
-														ctx
+														ctxWithOverrides
 													);
 												},
 												[&](const Node::CustomAtkData &data) {
@@ -444,7 +444,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 												});
 											},
 										};
-										captionText = [ctx = ctxWithOverrides, &entry, overrides]() mutable {
+										captionText = [ctx = ctxWithOverrides, &entry, &overrides = this->overrides]() mutable {
 											const auto &node = std::visit(
 												[&](auto &&val) {
 													overrides.push(entry.options);
@@ -465,7 +465,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 
 							Child addOptionOverride = Button{
 								.theme = Button::Theme::Standard(),
-								.onClick = [this, &entry, ctx]() {
+								.onClick = [this, &entry, ctxWithOverrides]() {
 									auto [options, optionUpdateEvent] = std::visit(
 										[](auto &&entry) -> auto {
 											return std::make_pair(std::ref(entry.options), std::ref(entry.optionUpdateEvent));
@@ -474,7 +474,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									);
 									Navigator::of(*this->element).pushOverlay(UI::OptionPicker{
 										.agentKey = widget->agentKey,
-										.ctx = ctx,
+										.ctx = ctxWithOverrides,
 										.options = options,
 										.onSelect = [this, &options](Combo::Option option) {
 											setState([&]() {
@@ -571,7 +571,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									.entry = entry,
 									.comboUpdateEvent = comboUpdateEvent,
 									.overrides = overrides,
-									.ctx = ctx,
+									.ctx = ctxWithOverrides,
 								},
 							});
 						}

@@ -23,6 +23,7 @@ namespace UI {
 			VoidObservable comboUpdateEvent;
 			VoidObserver comboUpdateEventObserver;
 			VoidObservable closeEvent;
+			Combo::Overrides overrides{};
 			TextInput::Controller nameController;
 			Observer<const std::string &> nameObserver;
 
