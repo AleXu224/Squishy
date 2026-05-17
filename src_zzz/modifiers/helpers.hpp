@@ -104,17 +104,17 @@ namespace Modifiers {
 				case Type::stat:
 					return Utils::Stringify(_uni.stat);
 				case Type::attack:
-					return fmt::format("{} {}", Utils::Stringify(_uni.attack.first), Utils::Stringify(_uni.attack.second));
+					return std::format("{} {}", Utils::Stringify(_uni.attack.first), Utils::Stringify(_uni.attack.second));
 				case Type::attribute:
-					return fmt::format("{} {}", Utils::Stringify(_uni.attribute.first), Utils::Stringify(_uni.attribute.second));
+					return std::format("{} {}", Utils::Stringify(_uni.attribute.first), Utils::Stringify(_uni.attribute.second));
 				case Type::anomaly:
-					return fmt::format("{} {}", Utils::Stringify(_uni.anomaly.first), Utils::Stringify(_uni.anomaly.second));
+					return std::format("{} {}", Utils::Stringify(_uni.anomaly.first), Utils::Stringify(_uni.anomaly.second));
 				case Type::skill:
-					return fmt::format("{}", Utils::Stringify(_uni.skill));
+					return std::format("{}", Utils::Stringify(_uni.skill));
 				case Type::enemyStat:
-					return fmt::format("{}", Utils::Stringify(_uni.enemyStat));
+					return std::format("{}", Utils::Stringify(_uni.enemyStat));
 				case Type::enemyRes:
-					return fmt::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
+					return std::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
 			}
 			std::unreachable();
 		}

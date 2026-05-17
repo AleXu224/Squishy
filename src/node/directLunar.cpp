@@ -31,7 +31,7 @@ namespace Node {
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(fmt::format("{} {}", Utils::Stringify(damageType), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
+			return Formula::Percentage(std::format("{} {}", Utils::Stringify(damageType), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

@@ -31,7 +31,7 @@ namespace Formula {
 		::Misc::Element element;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
+			return std::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -48,7 +48,7 @@ namespace Formula {
 		::Misc::Element element;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} count {}", Utils::Stringify(element), eval(context));
+			return std::format("{} count {}", Utils::Stringify(element), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -64,7 +64,7 @@ namespace Formula {
 
 	struct SameElementCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Team same element count {}", eval(context));
+			return std::format("Team same element count {}", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -80,7 +80,7 @@ namespace Formula {
 
 	struct OtherElementCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Team other element count {}", eval(context));
+			return std::format("Team other element count {}", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -96,7 +96,7 @@ namespace Formula {
 
 	struct PHECCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Team other element count {}", eval(context));
+			return std::format("Team other element count {}", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -122,7 +122,7 @@ namespace Formula {
 		Misc::Element element;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+			return std::format("Is character {} ({})", Utils::Stringify(element), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -136,7 +136,7 @@ namespace Formula {
 		Misc::Element element;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+			return std::format("Is character {} ({})", Utils::Stringify(element), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {

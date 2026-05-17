@@ -37,7 +37,7 @@ squi::core::Child UI::CharacterStats::State::build(const Element &element) {
 				.children{
 					Image{
 						.fit = Image::Fit::contain,
-						.image = ImageProvider::fromFile(fmt::format("assets/Characters/{}/card.png", widget->ctx.origin.stats.data.name)),
+						.image = ImageProvider::fromFile(std::format("assets/Characters/{}/card.png", widget->ctx.origin.stats.data.name)),
 					},
 					Row{
 						.widget{

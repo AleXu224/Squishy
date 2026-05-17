@@ -24,7 +24,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} == {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} == {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -52,7 +52,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} != {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} != {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -77,7 +77,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("!{}", val.print(context, Step::none));
+			return std::format("!{}", val.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -105,7 +105,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} < {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} < {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -132,7 +132,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} <= {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} <= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -159,7 +159,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} > {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} > {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -186,7 +186,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} >= {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} >= {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -218,7 +218,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} && {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} && {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -249,7 +249,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} || {}", val1.print(context, Step::none), val2.print(context, Step::none));
+			return std::format("{} || {}", val1.print(context, Step::none), val2.print(context, Step::none));
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {

@@ -43,7 +43,7 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 					.children{
 						Image{
 							.fit = Image::Fit::contain,
-							.image = ImageProvider::fromFile(fmt::format("assets/Agents/{}/card.png", widget->ctx.origin.stats.data.name)),
+							.image = ImageProvider::fromFile(std::format("assets/Agents/{}/card.png", widget->ctx.origin.stats.data.name)),
 						},
 						Row{
 							.widget{

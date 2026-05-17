@@ -19,7 +19,6 @@
       ]
     },
     "benchmark",
-    "fmt",
     "nativefiledialog-extended"
   ]
 }

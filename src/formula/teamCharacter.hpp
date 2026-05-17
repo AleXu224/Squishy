@@ -2,7 +2,7 @@
 
 #include "character/data.hpp"
 #include "character/instance.hpp"
-#include "fmt/core.h"
+#include "format"
 #include "formula/base.hpp"
 #include "formula/character.hpp"
 #include "formula/clamp.hpp"
@@ -40,7 +40,7 @@ namespace Formula {
 			const auto &character = context.team.characters.at(index);
 			if (!character) return "";
 			auto &stats = character->state;
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				stats.stats.data.name,
 				formula.print(context.withSource(stats), prevStep)
@@ -70,7 +70,7 @@ namespace Formula {
 			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
 			if (!character) return "";
 			auto &stats = character->state;
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				stats.stats.data.name,
 				formula.print(context.withSource(stats), prevStep)
@@ -95,7 +95,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				context.prevSource.stats.data.name,
 				formula.print(context.withSource(context.prevSource), prevStep)
@@ -122,7 +122,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) {
-			return fmt::format("{}", eval(context));
+			return std::format("{}", eval(context));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) {
@@ -145,7 +145,7 @@ namespace Formula {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
 			auto elem = eval(context);
 			if (elem.has_value()) {
-				return fmt::format("{}", Utils::Stringify(elem.value()));
+				return std::format("{}", Utils::Stringify(elem.value()));
 			}
 			return "None";
 		}
@@ -182,7 +182,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Team Moonsign Level {}", eval(context));
+			return std::format("Team Moonsign Level {}", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {
@@ -203,7 +203,7 @@ namespace Formula {
 
 	struct TeamCharacterCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Team character count {}", eval(context));
+			return std::format("Team character count {}", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {
@@ -222,7 +222,7 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
 			auto elem = eval(context);
 			if (elem.has_value()) {
-				return fmt::format("{}", Utils::Stringify(elem.value()));
+				return std::format("{}", Utils::Stringify(elem.value()));
 			}
 			return "None";
 		}
@@ -269,7 +269,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] static std::string print(const Formula::Context &context, Step) {
-			return fmt::format("Non-Moonsign Character Buff: {}", Percentage({}, eval(context), true));
+			return std::format("Non-Moonsign Character Buff: {}", Percentage({}, eval(context), true));
 		}
 
 		[[nodiscard]] static float eval(const Formula::Context &context) {

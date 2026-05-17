@@ -64,7 +64,7 @@ struct CharacterSelectorCharacterCard : StatelessWidget {
 					.lineWrap = true,
 				},
 				Text{
-					.text = fmt::format("Lvl {}/{}", character.state.stats.sheet.level, Misc::ascensions.at(character.state.stats.sheet.ascension).maxLevel),
+					.text = std::format("Lvl {}/{}", character.state.stats.sheet.level, Misc::ascensions.at(character.state.stats.sheet.ascension).maxLevel),
 				},
 				stars,
 			},

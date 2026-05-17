@@ -10,7 +10,7 @@ namespace Formula {
 		Utils::HashedString name;
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
-			return fmt::format("{}", name.str);
+			return std::format("{}", name.str);
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -41,7 +41,7 @@ namespace Formula {
 		Utils::HashedString name;
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
-			return fmt::format("{}", name.str);
+			return std::format("{}", name.str);
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -73,7 +73,7 @@ namespace Formula {
 		float defaultValue = 0.f;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", name.str, eval(context));
+			return std::format("{} {}", name.str, eval(context));
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -123,7 +123,7 @@ namespace Formula {
 		uint32_t defaultValue = 0.f;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", name.str, eval(context));
+			return std::format("{} {}", name.str, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -149,7 +149,7 @@ namespace Formula {
 		uint32_t defaultValue = 0;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} {}", name.str, eval(context));
+			return std::format("{} {}", name.str, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {

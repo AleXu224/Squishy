@@ -1,7 +1,7 @@
 #pragma once
 
 #include "array"
-#include "fmt/core.h"
+#include "format"
 #include "formula/percentage.hpp"
 #include "misc/element.hpp"
 #include "unordered_map"

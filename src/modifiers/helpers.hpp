@@ -118,17 +118,17 @@ namespace Modifiers {
 				case Type::stat:
 					return Utils::Stringify(_uni.stat);
 				case Type::attack:
-					return fmt::format("{} {}", Utils::Stringify(_uni.attack.first), Utils::Stringify(_uni.attack.second));
+					return std::format("{} {}", Utils::Stringify(_uni.attack.first), Utils::Stringify(_uni.attack.second));
 				case Type::element:
-					return fmt::format("{} {}", Utils::Stringify(_uni.element.first), Utils::Stringify(_uni.attack.second));
+					return std::format("{} {}", Utils::Stringify(_uni.element.first), Utils::Stringify(_uni.attack.second));
 				case Type::reaction:
-					return fmt::format("{} {}", Utils::Stringify(_uni.reaction.first), Utils::Stringify(_uni.attack.second));
+					return std::format("{} {}", Utils::Stringify(_uni.reaction.first), Utils::Stringify(_uni.attack.second));
 				case Type::talent:
-					return fmt::format("{}", Utils::Stringify(_uni.talent));
+					return std::format("{}", Utils::Stringify(_uni.talent));
 				case Type::enemyStat:
-					return fmt::format("{}", Utils::Stringify(_uni.enemyStat));
+					return std::format("{}", Utils::Stringify(_uni.enemyStat));
 				case Type::enemyRes:
-					return fmt::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
+					return std::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
 				case Type::infusion:
 					return "Infusion";
 				case Type::moonsignLevel:

@@ -77,7 +77,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		auto rarity = character->state.stats.data.baseStats.rarity;
 		for (const auto &ascension: Misc::ascensionsAtLvl(character->state.stats.sheet.level, rarity)) {
 			ret.push_back(ContextMenu::Button{
-				.text = fmt::format("{}", ascension.maxLevel),
+				.text = std::format("{}", ascension.maxLevel),
 				.callback = [this, ascension]() {
 					setState([&]() {
 						character->state.stats.sheet.ascension = ascension.ascension;
@@ -91,7 +91,7 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	Child ascensionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItems.size() <= 1,
-		.text = fmt::format("{}", Misc::ascensions.at(character->state.stats.sheet.ascension).maxLevel),
+		.text = std::format("{}", Misc::ascensions.at(character->state.stats.sheet.ascension).maxLevel),
 		.items = ascensionItems,
 	};
 
@@ -127,12 +127,12 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		.name = "Constellation",
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
-			.text = fmt::format("Constellation {}", character->state.stats.sheet.constellation),
+			.text = std::format("Constellation {}", character->state.stats.sheet.constellation),
 			.items = [this]() {
 				std::vector<ContextMenu::Item> ret{};
 				for (const auto &constellation: std::views::iota(0, 7)) {
 					ret.emplace_back(ContextMenu::Button{
-						.text = fmt::format("Constellation {}", constellation),
+						.text = std::format("Constellation {}", constellation),
 						.callback = [this, constellation]() {
 							setState([&]() {
 								character->state.stats.sheet.constellation = constellation;
@@ -151,13 +151,13 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 			.name = std::string(name),
 			.child = DropdownButton{
 				.theme = Button::Theme::Standard(),
-				.text = fmt::format("Lvl {}", std::invoke(talentPtr, character->state.stats.sheet.talents).constant + 1),
+				.text = std::format("Lvl {}", std::invoke(talentPtr, character->state.stats.sheet.talents).constant + 1),
 				.items = [this, talentPtr]() {
 					std::vector<ContextMenu::Item> ret{};
 					const auto &ascension = Misc::ascensions.at(character->state.stats.sheet.ascension);
 					for (const auto &talentLvl: std::views::iota(static_cast<uint8_t>(0), ascension.maxTalent)) {
 						ret.emplace_back(ContextMenu::Button{
-							.text = fmt::format("Lvl {}", talentLvl + 1),
+							.text = std::format("Lvl {}", talentLvl + 1),
 							.callback = [this, talentLvl, talentPtr]() {
 								setState([&]() {
 									std::invoke(talentPtr, character->state.stats.sheet.talents).constant = talentLvl;

@@ -19,7 +19,7 @@ namespace Formula {
 		::Misc::Attribute attribute;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} count {}", Utils::Stringify(attribute), eval(context));
+			return std::format("{} count {}", Utils::Stringify(attribute), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -36,7 +36,7 @@ namespace Formula {
 		::Misc::Attribute attribute;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} count {}", Utils::Stringify(attribute), eval(context));
+			return std::format("{} count {}", Utils::Stringify(attribute), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -52,7 +52,7 @@ namespace Formula {
 
 	struct SameAttributeCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Team same attribute count {}", eval(context));
+			return std::format("Team same attribute count {}", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -68,7 +68,7 @@ namespace Formula {
 
 	struct OtherAttributeCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Team other attribute count {}", eval(context));
+			return std::format("Team other attribute count {}", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -86,7 +86,7 @@ namespace Formula {
 		Misc::Attribute attribute;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is agent {} ({})", Utils::Stringify(attribute), eval(context));
+			return std::format("Is agent {} ({})", Utils::Stringify(attribute), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -100,7 +100,7 @@ namespace Formula {
 		Misc::Attribute attribute;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is agent {} ({})", Utils::Stringify(attribute), eval(context));
+			return std::format("Is agent {} ({})", Utils::Stringify(attribute), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {

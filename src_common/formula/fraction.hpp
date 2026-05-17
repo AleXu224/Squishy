@@ -50,9 +50,9 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto r2 = val2.eval(context);
 
-			if (r2 == 1.f) return fmt::format("{}", val1.print(context, prevStep));
+			if (r2 == 1.f) return std::format("{}", val1.print(context, prevStep));
 
-			return fmt::format("{} / {}", val1.print(context, Step::division), val2.print(context, Step::division));
+			return std::format("{} / {}", val1.print(context, Step::division), val2.print(context, Step::division));
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {

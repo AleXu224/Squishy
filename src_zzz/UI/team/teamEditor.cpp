@@ -68,7 +68,7 @@ squi::core::Child UI::TeamEditor::State::build(const Element &element) {
 
 		content.emplace_back(
 			EditorItem{
-				.name = fmt::format("Agent {}", i + 1),
+				.name = std::format("Agent {}", i + 1),
 				.child = Row{
 					.widget{.width = Size::Shrink, .height = Size::Shrink},
 					.spacing = 4.f,

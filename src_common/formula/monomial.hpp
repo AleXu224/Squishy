@@ -50,9 +50,9 @@ namespace Formula {
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			if (prevStep == Step::multiplication || prevStep == Step::division) {
-				return fmt::format("({} + {} * {})", sumParam, multParam, value.print(context, prevStep));
+				return std::format("({} + {} * {})", sumParam, multParam, value.print(context, prevStep));
 			}
-			return fmt::format("{} + {} * {}", sumParam, multParam, value.print(context, prevStep));
+			return std::format("{} + {} * {}", sumParam, multParam, value.print(context, prevStep));
 		}
 	};
 
@@ -103,9 +103,9 @@ namespace Formula {
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			if (prevStep == Step::multiplication || prevStep == Step::division) {
-				return fmt::format("({} + {})", sumParam, value.print(context, prevStep));
+				return std::format("({} + {})", sumParam, value.print(context, prevStep));
 			}
-			return fmt::format("{} + {}", sumParam, value.print(context, prevStep));
+			return std::format("{} + {}", sumParam, value.print(context, prevStep));
 		}
 	};
 
@@ -155,7 +155,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return fmt::format("{} * {}", multParam, value.print(context, prevStep));
+			return std::format("{} * {}", multParam, value.print(context, prevStep));
 		}
 	};
 }// namespace Formula

@@ -12,7 +12,7 @@
 namespace Formula {
 	struct AgentLevel : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Agent level {}", eval(context));
+			return std::format("Agent level {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -22,7 +22,7 @@ namespace Formula {
 
 	struct AgentMindscape : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Agent mindscape {}", eval(context));
+			return std::format("Agent mindscape {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -33,7 +33,7 @@ namespace Formula {
 	template<LevelableSkill skill>
 	struct AgentSkill : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("{} lvl {}", Utils::Stringify(skill), eval(context));
+			return std::format("{} lvl {}", Utils::Stringify(skill), eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -43,7 +43,7 @@ namespace Formula {
 
 	struct AgentPromotion : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Agent promotion {}", eval(context));
+			return std::format("Agent promotion {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -55,7 +55,7 @@ namespace Formula {
 		Misc::Specialty specialty;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is agent {} ({})", Utils::Stringify(specialty), eval(context));
+			return std::format("Is agent {} ({})", Utils::Stringify(specialty), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -67,7 +67,7 @@ namespace Formula {
 		::Misc::Specialty specialty;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} count {}", Utils::Stringify(specialty), eval(context));
+			return std::format("{} count {}", Utils::Stringify(specialty), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -84,7 +84,7 @@ namespace Formula {
 		uint32_t factionId;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{} faction count {}", factionId, eval(context));
+			return std::format("{} faction count {}", factionId, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -101,7 +101,7 @@ namespace Formula {
 		Misc::Specialty specialty;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is target agent {} ({})", Utils::Stringify(specialty), eval(context));
+			return std::format("Is target agent {} ({})", Utils::Stringify(specialty), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -113,7 +113,7 @@ namespace Formula {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is agent id {} ({})", id, eval(context));
+			return std::format("Is agent id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -125,7 +125,7 @@ namespace Formula {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is origin agent id {} ({})", id, eval(context));
+			return std::format("Is origin agent id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -137,7 +137,7 @@ namespace Formula {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is source agent id {} ({})", id, eval(context));
+			return std::format("Is source agent id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -177,7 +177,7 @@ namespace Formula {
 
 			if (!maxAgent) return "";
 
-			return fmt::format("Max Team {}", formula.print(context.withSource(maxAgent->state), prevStep));
+			return std::format("Max Team {}", formula.print(context.withSource(maxAgent->state), prevStep));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -192,7 +192,7 @@ namespace Formula {
 
 	struct AgentAttribute : FormulaBase<Misc::Attribute, Type::constant> {
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Agent attribute {}", Utils::Stringify(eval(context)));
+			return std::format("Agent attribute {}", Utils::Stringify(eval(context)));
 		}
 
 		[[nodiscard]] Misc::Attribute eval(const Context &context) const {

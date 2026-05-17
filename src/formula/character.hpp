@@ -11,7 +11,7 @@
 namespace Formula {
 	struct CharacterLevel : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Character level {}", eval(context));
+			return std::format("Character level {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -21,7 +21,7 @@ namespace Formula {
 
 	struct CharacterConstellation : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Character constellation {}", eval(context));
+			return std::format("Character constellation {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -31,7 +31,7 @@ namespace Formula {
 
 	struct CharacterAscension : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Character ascension {}", eval(context));
+			return std::format("Character ascension {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -41,7 +41,7 @@ namespace Formula {
 
 	struct CharacterMoonsignLevel : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Character Moonsign Level {}", eval(context));
+			return std::format("Character Moonsign Level {}", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -53,7 +53,7 @@ namespace Formula {
 		Misc::WeaponType weaponType;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character {} ({})", Utils::Stringify(weaponType), eval(context));
+			return std::format("Is character {} ({})", Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -65,7 +65,7 @@ namespace Formula {
 		Misc::WeaponType weaponType;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is target character {} ({})", Utils::Stringify(weaponType), eval(context));
+			return std::format("Is target character {} ({})", Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -77,7 +77,7 @@ namespace Formula {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is character id {} ({})", id, eval(context));
+			return std::format("Is character id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -89,7 +89,7 @@ namespace Formula {
 		uint32_t id;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Is origin character id {} ({})", id, eval(context));
+			return std::format("Is origin character id {} ({})", id, eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -129,7 +129,7 @@ namespace Formula {
 
 			if (!maxCharacter) return "";
 
-			return fmt::format("Max Team {}", formula.print(context.withSource(maxCharacter->state), prevStep));
+			return std::format("Max Team {}", formula.print(context.withSource(maxCharacter->state), prevStep));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

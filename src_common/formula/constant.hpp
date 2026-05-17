@@ -1,7 +1,7 @@
 #pragma once
 
 #include "context.hpp"// IWYU pragma: keep
-#include "fmt/core.h"
+#include "format"
 #include "formulaBase.hpp"
 #include "step.hpp"
 #include "utils/stringify.hpp"
@@ -15,14 +15,14 @@ namespace Formula {
 		[[nodiscard]] std::string print(const Context &, Step) const {
 			if constexpr (std::is_same_v<T, float>) {
 				if constexpr (percentage) {
-					return fmt::format("{}%", Utils::formatFloat(value * 100.f));
+					return std::format("{}%", Utils::formatFloat(value * 100.f));
 				} else {
-					return fmt::format("{}", Utils::formatFloat(value));
+					return std::format("{}", Utils::formatFloat(value));
 				}
 			} else if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, bool>) {
-				return fmt::format("{}", value);
+				return std::format("{}", value);
 			} else {
-				return fmt::format("Cannot format constant of type {}", typeid(T).name());
+				return std::format("Cannot format constant of type {}", typeid(T).name());
 			}
 		}
 

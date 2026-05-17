@@ -81,7 +81,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		auto rarity = weapon.stats.data->baseStats.rarity;
 		for (const auto &ascension: Misc::ascensionsAtLvl(weapon.stats.sheet.level, rarity)) {
 			ret.emplace_back(ContextMenu::Button{
-				.text = fmt::format("{}", ascension.maxLevel),
+				.text = std::format("{}", ascension.maxLevel),
 				.callback = [this, ascension]() {
 					setState([&]() {
 						weapon.stats.sheet.ascension = ascension.ascension;
@@ -96,7 +96,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		}
 		return ret;
 	};
-	auto ascensionSelectorText = fmt::format("{}", Misc::ascensions.at(weapon.stats.sheet.ascension).maxLevel);
+	auto ascensionSelectorText = std::format("{}", Misc::ascensions.at(weapon.stats.sheet.ascension).maxLevel);
 	Child ascensionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItemFactory().size() <= 1,
@@ -137,12 +137,12 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
 			.disabled = weapon.stats.data->baseStats.rarity <= 2,
-			.text = fmt::format("{}", weapon.stats.sheet.refinement),
+			.text = std::format("{}", weapon.stats.sheet.refinement),
 			.items = [this]() {
 				std::vector<ContextMenu::Item> ret{};
 				for (const auto &refinement: std::views::iota(1, 6)) {
 					ret.emplace_back(ContextMenu::Button{
-						.text = fmt::format("Refinement {}", refinement),
+						.text = std::format("Refinement {}", refinement),
 						.callback = [this, refinement]() {
 							setState([&]() {
 								weapon.stats.sheet.refinement = refinement;

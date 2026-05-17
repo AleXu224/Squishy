@@ -2,7 +2,7 @@
 
 #include "agent/data.hpp"
 #include "agent/instance.hpp"
-#include "fmt/core.h"
+#include "format"
 #include "formula/base.hpp"
 #include "formula/constant.hpp"
 #include "stats/loadout.hpp"
@@ -35,7 +35,7 @@ namespace Formula {
 			const auto &agent = context.team.agents.at(index);
 			if (!agent) return "";
 			auto &stats = agent->state;
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				stats.stats.data.name,
 				formula.print(context.withSource(stats), prevStep)
@@ -65,7 +65,7 @@ namespace Formula {
 			const auto &agent = context.team.agents.at(context.team.activeAgentIndex);
 			if (!agent) return "";
 			auto &stats = agent->state;
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				stats.stats.data.name,
 				formula.print(context.withSource(stats), prevStep)
@@ -90,7 +90,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				context.prevSource.stats.data.name,
 				formula.print(context.withSource(context.prevSource), prevStep)
@@ -113,7 +113,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return fmt::format(
+			return std::format(
 				"{} {}",
 				context.origin.stats.data.name,
 				formula.print(context.withSource(context.origin), prevStep)
@@ -139,7 +139,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) {
-			return fmt::format("{}", eval(context));
+			return std::format("{}", eval(context));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) {
@@ -158,7 +158,7 @@ namespace Formula {
 
 	struct TeamAgentCount : FormulaBase<int32_t, Type::constant> {
 		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return fmt::format("Team agent count {}", eval(context));
+			return std::format("Team agent count {}", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {

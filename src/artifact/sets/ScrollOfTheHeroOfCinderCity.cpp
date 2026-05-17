@@ -6,10 +6,10 @@ static inline auto scrollOfTheHeroStrings = []() {
 	std::unordered_map<Misc::Element, std::array<std::string, 4>> ret{};
 	for (const auto &element: Misc::characterElements) {
 		ret[element] = {
-			fmt::format("scroll_{}", Utils::Stringify(element)),
-			fmt::format("scroll_{}_nightsoul", Utils::Stringify(element)),
-			fmt::format("After triggering a {} reaction", Utils::Stringify(element)),
-			fmt::format("{} reaction triggered while in Nightsoul's Blessing state", Utils::Stringify(element)),
+			std::format("scroll_{}", Utils::Stringify(element)),
+			std::format("scroll_{}_nightsoul", Utils::Stringify(element)),
+			std::format("After triggering a {} reaction", Utils::Stringify(element)),
+			std::format("{} reaction triggered while in Nightsoul's Blessing state", Utils::Stringify(element)),
 		};
 	}
 	return ret;

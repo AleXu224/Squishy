@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fmt/core.h"
+#include "format"
 #include "formula/percentage.hpp"
 #include "misc/attribute.hpp"
 #include "utility"

@@ -27,7 +27,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Combo {}", eval(context));
+			return std::format("Combo {}", eval(context));
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {
@@ -67,7 +67,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return fmt::format("Combo {}", eval(context));
+			return std::format("Combo {}", eval(context));
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {

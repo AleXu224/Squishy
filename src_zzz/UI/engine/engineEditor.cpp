@@ -82,7 +82,7 @@ squi::core::Child UI::EngineEditor::State::build(const Element &element) {
 		auto rarity = engine.stats.data->baseStats.rarity;
 		for (const auto &promotion: Misc::promotionsAtLvl(engine.stats.sheet.level, rarity)) {
 			ret.emplace_back(ContextMenu::Button{
-				.text = fmt::format("{}", promotion.maxLevel),
+				.text = std::format("{}", promotion.maxLevel),
 				.callback = [this, promotion]() {
 					setState([&]() {
 						engine.stats.sheet.modification = promotion.promotion;
@@ -97,7 +97,7 @@ squi::core::Child UI::EngineEditor::State::build(const Element &element) {
 		}
 		return ret;
 	};
-	auto promotionSelectorText = fmt::format("{}", Misc::promotions.at(engine.stats.sheet.modification).maxLevel);
+	auto promotionSelectorText = std::format("{}", Misc::promotions.at(engine.stats.sheet.modification).maxLevel);
 	Child promotionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = promotionItemFactory().size() <= 1,
@@ -138,12 +138,12 @@ squi::core::Child UI::EngineEditor::State::build(const Element &element) {
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
 			.disabled = engine.stats.data->baseStats.rarity <= 2,
-			.text = fmt::format("{}", engine.stats.sheet.overclock),
+			.text = std::format("{}", engine.stats.sheet.overclock),
 			.items = [this]() {
 				std::vector<ContextMenu::Item> ret{};
 				for (const auto &overclock: std::views::iota(1, 6)) {
 					ret.emplace_back(ContextMenu::Button{
-						.text = fmt::format("Overclock {}", overclock),
+						.text = std::format("Overclock {}", overclock),
 						.callback = [this, overclock]() {
 							setState([&]() {
 								engine.stats.sheet.overclock = overclock;

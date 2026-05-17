@@ -21,7 +21,7 @@ namespace Node {
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(
-				fmt::format(
+				std::format(
 					"{} {}",
 					Utils::Stringify(attribute),
 					Utils::Stringify(skillStat)

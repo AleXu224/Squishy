@@ -33,8 +33,8 @@ namespace Formula {
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
-			return fmt::format("{}", cond ? ret.print(context, prevStep) : "");
-			// return fmt::format("{}", cond ? fmt::format("{} ({})", requirement.print(context, Step::none), ret.print(context, Step::none)) : "");
+			return std::format("{}", cond ? ret.print(context, prevStep) : "");
+			// return std::format("{}", cond ? std::format("{} ({})", requirement.print(context, Step::none), ret.print(context, Step::none)) : "");
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -79,8 +79,8 @@ namespace Formula {
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto cond = requirement.eval(context);
-			return fmt::format("{}", cond ? trueVal.print(context, prevStep) : elseVal.print(context, prevStep));
-			// return fmt::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
+			return std::format("{}", cond ? trueVal.print(context, prevStep) : elseVal.print(context, prevStep));
+			// return std::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

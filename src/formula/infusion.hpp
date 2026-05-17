@@ -10,7 +10,7 @@ namespace Formula {
 		::Misc::Element element;
 
 		[[nodiscard]] std::string print(const Context &, Step) const {
-			return fmt::format("{}", Utils::Stringify(element));
+			return std::format("{}", Utils::Stringify(element));
 		}
 
 		[[nodiscard]] Utils::JankyOptional<Misc::Element> eval(const Context &) const {

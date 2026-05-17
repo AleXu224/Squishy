@@ -64,7 +64,7 @@ struct AgentSelectorAgentCard : StatelessWidget {
 					.lineWrap = true,
 				},
 				Text{
-					.text = fmt::format("Lvl {}/{}", agent.state.stats.sheet.level, Misc::promotions.at(agent.state.stats.sheet.promotion).maxLevel),
+					.text = std::format("Lvl {}/{}", agent.state.stats.sheet.level, Misc::promotions.at(agent.state.stats.sheet.promotion).maxLevel),
 				},
 				stars,
 			},

@@ -73,10 +73,6 @@ find_package(nfd CONFIG REQUIRED)
 target_link_libraries(squishy_lib PRIVATE nfd::nfd)
 target_link_libraries(squishy_zzz_lib PRIVATE nfd::nfd)
 
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(squishy_lib PUBLIC fmt::fmt)
-target_link_libraries(squishy_zzz_lib PUBLIC fmt::fmt)
-
 find_package(range-v3 CONFIG REQUIRED)
 target_link_libraries(squishy_lib PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3)
 target_link_libraries(squishy_zzz_lib PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3)

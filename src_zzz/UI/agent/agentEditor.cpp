@@ -80,7 +80,7 @@ squi::core::Child UI::AgentEditor::State::build(const Element &element) {
 		auto rarity = agent->state.stats.data.baseStats.rarity;
 		for (const auto &promotion: Misc::promotionsAtLvl(agent->state.stats.sheet.level, rarity)) {
 			ret.push_back(ContextMenu::Button{
-				.text = fmt::format("{}", promotion.maxLevel),
+				.text = std::format("{}", promotion.maxLevel),
 				.callback = [this, promotion]() {
 					setState([&]() {
 						agent->state.stats.sheet.promotion = promotion.promotion;
@@ -94,7 +94,7 @@ squi::core::Child UI::AgentEditor::State::build(const Element &element) {
 	Child promotionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = promotionItems.size() <= 1,
-		.text = fmt::format("{}", Misc::promotions.at(agent->state.stats.sheet.promotion).maxLevel),
+		.text = std::format("{}", Misc::promotions.at(agent->state.stats.sheet.promotion).maxLevel),
 		.items = promotionItems,
 	};
 
@@ -130,12 +130,12 @@ squi::core::Child UI::AgentEditor::State::build(const Element &element) {
 		.name = "Mindscape",
 		.child = DropdownButton{
 			.theme = Button::Theme::Standard(),
-			.text = fmt::format("Mindscape {}", agent->state.stats.sheet.mindscape),
+			.text = std::format("Mindscape {}", agent->state.stats.sheet.mindscape),
 			.items = [this]() {
 				std::vector<ContextMenu::Item> ret{};
 				for (const auto &mindscape: std::views::iota(0, 7)) {
 					ret.emplace_back(ContextMenu::Button{
-						.text = fmt::format("Mindscape {}", mindscape),
+						.text = std::format("Mindscape {}", mindscape),
 						.callback = [this, mindscape]() {
 							setState([&]() {
 								agent->state.stats.sheet.mindscape = mindscape;
@@ -154,13 +154,13 @@ squi::core::Child UI::AgentEditor::State::build(const Element &element) {
 			.name = std::string(name),
 			.child = DropdownButton{
 				.theme = Button::Theme::Standard(),
-				.text = fmt::format("Lvl {}", std::invoke(skillPtr, agent->state.stats.sheet.skills).constant + (isCore ? 0 : 1)),
+				.text = std::format("Lvl {}", std::invoke(skillPtr, agent->state.stats.sheet.skills).constant + (isCore ? 0 : 1)),
 				.items = [this, skillPtr, isCore]() {
 					std::vector<ContextMenu::Item> ret{};
 					const auto &promotion = Misc::promotions.at(agent->state.stats.sheet.promotion);
 					for (const auto &skillLvl: std::views::iota(static_cast<uint8_t>(0), isCore ? promotion.maxCore + 1u : promotion.maxSkill)) {
 						ret.emplace_back(ContextMenu::Button{
-							.text = fmt::format("Lvl {}", isCore ? skillLvl : skillLvl + 1),
+							.text = std::format("Lvl {}", isCore ? skillLvl : skillLvl + 1),
 							.callback = [this, skillLvl, skillPtr]() {
 								setState([&]() {
 									std::invoke(skillPtr, agent->state.stats.sheet.skills).constant = skillLvl;

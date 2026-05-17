@@ -25,7 +25,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("{}{}", Utils::formatFloat(func(context) * (isPercentage ? 100.f : 1.f)), isPercentage ? "%" : "");
+			return std::format("{}{}", Utils::formatFloat(func(context) * (isPercentage ? 100.f : 1.f)), isPercentage ? "%" : "");
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

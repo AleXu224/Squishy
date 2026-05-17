@@ -31,7 +31,7 @@ namespace Formula {
 
 		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
 			auto ret = eval(context);
-			if constexpr (fmt::is_formattable<decltype(ret)>::value) {
+			if constexpr (std::formattable<decltype(ret), char>) {
 				return Percentage({}, eval(context), isPercentage);
 			} else {
 				return ret.print(context, prevStep);
@@ -71,7 +71,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return fmt::format("Index of {}", formula.print(context));
+			return std::format("Index of {}", formula.print(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
