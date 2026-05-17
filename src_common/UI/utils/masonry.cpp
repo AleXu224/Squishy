@@ -1,6 +1,5 @@
 #include "masonry.hpp"
 
-#include "core/app.hpp"
 #include "ranges"
 
 using namespace squi;
@@ -139,15 +138,14 @@ void UI::Masonry::MasonryRenderObject::init() {
 void UI::Masonry::updateRenderObject(RenderObject *renderObject) const {
 	// Update render object properties here
 	if (auto *gridRenderObject = dynamic_cast<MasonryRenderObject *>(renderObject)) {
-		auto *app = gridRenderObject->getApp();
 		if (gridRenderObject->columnCount != columnCount) {
 			gridRenderObject->columnCount = columnCount;
-			app->needsRelayout = true;
+			gridRenderObject->element->markNeedsRelayout();
 		}
 
 		if (gridRenderObject->spacing != spacing) {
 			gridRenderObject->spacing = spacing;
-			app->needsRelayout = true;
+			gridRenderObject->element->markNeedsRelayout();
 		}
 	}
 }
