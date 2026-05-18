@@ -1,8 +1,9 @@
 #pragma once
 
-#include "disc/instance.hpp"
 #include "core/core.hpp"
 #include "cstdint"
+#include "disc/instance.hpp"
+#include "store.hpp"
 
 
 namespace UI {
@@ -17,16 +18,26 @@ namespace UI {
 		// Args
 		Key key;
 		Args widget;
-		Disc::Instance &disc;
+		Disc::InstanceKey disc;
 		Actions actions = Actions::list;
 
 		struct State : WidgetState<DiscCard> {
 			VoidObserver discUpdateObserver;
 
+			void observeDisc() {
+				if (auto it = ::Store::discs.find(widget->disc); it != ::Store::discs.end()) {
+					discUpdateObserver = it->second.updateEvent.observe([this]() {
+						this->element->markNeedsRebuild();
+					});
+				}
+			}
+
 			void initState() override {
-				discUpdateObserver = widget->disc.updateEvent.observe([this]() {
-					this->element->markNeedsRebuild();
-				});
+				observeDisc();
+			}
+
+			void widgetUpdated() override {
+				observeDisc();
 			}
 
 			Child build(const Element &element) override;

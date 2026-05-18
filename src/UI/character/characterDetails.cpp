@@ -288,7 +288,7 @@ namespace {
 										}
 										auto &artifact = ::Store::artifacts.at(key);
 										ret.emplace_back(UI::ArtifactCard{
-											.artifact = artifact,
+											.artifact = artifact.key,
 											.actions = UI::ArtifactCard::Actions::character,
 										});
 									}

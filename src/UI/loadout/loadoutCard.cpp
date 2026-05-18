@@ -100,7 +100,7 @@ squi::core::Child UI::LoadoutCard::State::build(const Element &element) {
 
 								ret.emplace_back(ArtifactCard{
 									.widget{.width = Size::Expand, .height = Size::Expand},
-									.artifact = Store::artifacts.at(arti),
+									.artifact = arti,
 									.actions = ArtifactCard::Actions::showcase,
 								});
 							}

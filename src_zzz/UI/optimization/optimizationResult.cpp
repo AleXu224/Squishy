@@ -73,7 +73,7 @@ using namespace squi;
 							auto &key = solution.discs.fromPartition(partition);
 							if (!key) continue;
 							ret.emplace_back(DiscCard{
-								.disc = ::Store::discs.at(key),
+								.disc = key,
 								.actions = DiscCard::Actions::showcase,
 							});
 						}

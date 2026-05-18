@@ -1,13 +1,16 @@
 #include "optimization.hpp"
 #include "UI/combo/nodePicker.hpp"
 #include "optimization/optimize.hpp"
+#include "optimization/optimizeUpgrade.hpp"
 #include "optimizationMainStatChooser.hpp"
 #include "optimizationResult.hpp"
+#include "optimizationResultUpgrade.hpp"
 #include "optimizationSetChooser.hpp"
 #include "store.hpp"
 #include "widgets/column.hpp"
 #include "widgets/container.hpp"
 #include "widgets/expander.hpp"
+#include "widgets/grid.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
 #include "widgets/toggleSwitch.hpp"
@@ -123,7 +126,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 									.theme = [&]() {
 										auto ret = Button::Theme::Accent(element);
 										ret.forAll([](Button::Style &style) {
-											style.borderRadius = style.borderRadius.withLeft(0.f);
+											style.borderRadius = 0.f;
 										});
 										return ret;
 									}(),
@@ -151,26 +154,86 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 									},
 									.child = "Optimize",
 								},
+								Button{
+									.theme = [&]() {
+										auto ret = Button::Theme::Standard();
+										ret.forAll([](Button::Style &style) {
+											style.borderRadius = style.borderRadius.withLeft(0.f);
+										});
+										return ret;
+									}(),
+									.onClick = [ctx, &agent, storage = agent.optimizationOptions, this]() {
+										if (!storage->nodeSource.has_value()) return;
+										auto &&node = std::visit(
+											[&](auto &&node) {
+												return node
+													.resolve({})
+													.formula;
+											},
+											storage->nodeSource.value()
+										);
+										auto [twoPc, fourPc] = storage->makeEnabledSets();
+										::Optimization::UpgradeOptimization optimization{
+											.agent = agent,
+											.ctx = ctx,
+											.optimizedNode = node,
+											.options{
+												.nodeSource = storage->nodeSource,
+											},
+										};
+										auto solutions = optimization.optimize();
+										setState([&]() {
+											this->solutions = solutions;
+										});
+									},
+									.child = "Upgrade discs",
+								},
 							},
 						},
 					},
 				},
-				Column{
-					.spacing = 3.f,
-					.children = [this]() {
-						Children ret;
-						uint32_t counter = 1;
-						for (const auto &solution: solutions.solutions) {
-							if (solution.score <= 0.f) continue;
-							ret.emplace_back(OptimizationResult{
-								.agentKey = widget->agentKey,
-								.solution = solution,
-								.entryIndex = counter++,
-							});
-						}
-						return ret;
-					}(),
-				},
+				std::visit(//
+					Utils::overloaded{
+						[&](const ::Optimization::Solutions &solutions) -> Child {
+							return Column{
+								.spacing = 3.f,
+								.children = [&]() {
+									Children ret;
+									uint32_t counter = 1;
+									for (const auto &solution: solutions.solutions) {
+										if (solution.score <= 0.f) continue;
+										ret.emplace_back(OptimizationResult{
+											.agentKey = widget->agentKey,
+											.solution = solution,
+											.entryIndex = counter++,
+										});
+									}
+									return ret;
+								}(),
+							};
+						},
+						[&](const ::Optimization::SolutionsUpgrade &solutions) -> Child {
+							return Grid{
+								.columnCount = Grid::MinSize{300.f},
+								.spacing = 3.f,
+								.children = [&]() {
+									Children ret;
+									uint32_t counter = 1;
+									for (const auto &solution: solutions.solutions) {
+										if (!solution.disc) continue;
+										ret.emplace_back(OptimizationResultUpgrade{
+											.agentKey = widget->agentKey,
+											.solution = solution,
+											.entryIndex = counter++,
+										});
+									}
+									return ret;
+								}(),
+							};
+						},
+					},
+					solutions
+				),
 			},
 		},
 	};

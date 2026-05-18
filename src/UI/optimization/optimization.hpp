@@ -4,6 +4,7 @@
 #include "core/core.hpp"
 #include "enemy/key.hpp"
 #include "optimization/solution.hpp"
+#include "optimization/solutionUpgrade.hpp"
 #include "team/key.hpp"
 
 
@@ -18,7 +19,7 @@ namespace UI {
 		Enemy::Key enemyKey{};
 
 		struct State : WidgetState<Optimization> {
-			::Optimization::Solutions solutions;
+			std::variant<::Optimization::Solutions, ::Optimization::SolutionsUpgrade> solutions;
 
 			Child build(const Element &element) override;
 		};

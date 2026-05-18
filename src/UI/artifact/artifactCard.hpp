@@ -3,7 +3,7 @@
 #include "artifact/instance.hpp"
 #include "core/core.hpp"
 #include "cstdint"
-
+#include "store.hpp"
 
 namespace UI {
 	using namespace squi;
@@ -17,16 +17,26 @@ namespace UI {
 		// Args
 		Key key;
 		Args widget;
-		Artifact::Instance &artifact;
+		Artifact::InstanceKey artifact;
 		Actions actions = Actions::list;
 
 		struct State : WidgetState<ArtifactCard> {
 			VoidObserver artifactUpdateObserver;
 
+			void observeArtifact() {
+				if (auto it = ::Store::artifacts.find(widget->artifact); it != ::Store::artifacts.end()) {
+					artifactUpdateObserver = it->second.updateEvent.observe([this]() {
+						this->element->markNeedsRebuild();
+					});
+				}
+			}
+
 			void initState() override {
-				artifactUpdateObserver = widget->artifact.updateEvent.observe([this]() {
-					this->element->markNeedsRebuild();
-				});
+				observeArtifact();
+			}
+
+			void widgetUpdated() override {
+				observeArtifact();
 			}
 
 			Child build(const Element &element) override;

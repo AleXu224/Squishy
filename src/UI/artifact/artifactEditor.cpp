@@ -73,15 +73,17 @@ squi::core::Child UI::ArtifactEditor::State::createSubStat(size_t subStatIndex) 
 	Child ret = ArtifactEditorSubstat{
 		.name = std::format("Substat {}", subStatIndex + 1),
 		.children{
-			ToggleSwitch{
-				.active = subStat.activated,
-				.statePosition = ToggleSwitch::StatePosition::Left,
-				.onToggle = [this, &subStat](bool active) {
-					setState([&]() {
-						subStat.activated = active;
-					});
-				},
-			},
+			subStatIndex == 3//
+				? ToggleSwitch{
+					  .active = subStat.activated,
+					  .statePosition = ToggleSwitch::StatePosition::Left,
+					  .onToggle = [this, &subStat](bool active) {
+						  setState([&]() {
+							  subStat.activated = active;
+						  });
+					  },
+				  }
+				: Child{},
 			DropdownButton{
 				.theme = Button::Theme::Standard(),
 				.text = subStat.stat.transform([](auto &&val) {

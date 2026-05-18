@@ -38,7 +38,14 @@ const Character::Data Character::Datas::linnea{
 		auto a4ActiveBuff = Requires{.requirement = ActiveCharacter{.formula = CharacterMoonsignLevel{} >= 1}, .ret = a4Buff};
 		auto a4SelfBuff = Requires{.requirement = ActiveCharacter{.formula = CharacterMoonsignLevel{} <= 0}, .ret = a4Buff};
 
-		auto p3Buff = Requires{.requirement = Requirement::passive3, .ret = ConstantInt{.value = 1}};
+		auto p3Moonsign = Requires{.requirement = Requirement::passive3, .ret = ConstantInt{.value = 1}};
+		auto p3Buff = Requires{
+			.requirement = Requirement::passive3,
+			.ret = Min{
+				.val1 = (total.def / ConstantFlat{.value = 100.f}) * 0.007f,
+				.val2 = Constant{.value = 0.14f},
+			},
+		};
 
 		auto c1Cond = IsActive("linneaC1");
 		auto c6StackMultiplier = IfElse{.requirement = Requirement::constellation6, .trueVal = Constant{.value = 2.f}, .elseVal = Constant{.value = 2.f}};
@@ -73,6 +80,7 @@ const Character::Data Character::Datas::linnea{
 					.cd = c2Buff,
 					.lunarCrystallize{
 						.additiveDMG = c1Buff,
+						.multiplicativeDMG = p3Buff,
 						.elevation = c6Buff,
 					},
 				},
@@ -85,7 +93,7 @@ const Character::Data Character::Datas::linnea{
 						.geo = a1ResShred,
 					},
 				},
-				.moonsignLevel = p3Buff,
+				.moonsignLevel = p3Moonsign,
 			},
 			.opts{
 				.passive1{
@@ -268,7 +276,7 @@ const Character::Data Character::Datas::linnea{
 				.passive3{
 					Node::Mods{
 						.mods{
-							.moonsignLevel = p3Buff,
+							.moonsignLevel = p3Moonsign,
 						},
 					},
 				},

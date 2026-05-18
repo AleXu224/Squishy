@@ -203,13 +203,30 @@ struct DiscCardContent : StatelessWidget {
 };
 
 squi::core::Child UI::DiscCard::State::build(const Element &) {
+	auto newWidget = widget->widget;
+	newWidget.padding = newWidget.padding.value_or(1.f);
+
+	auto it = ::Store::discs.find(widget->disc);
+	if (it == ::Store::discs.end()) {
+		return Card{
+			.widget = newWidget,
+			.child = Text{
+				.widget{
+					.alignment = Alignment::Center,
+					.margin = 8.f,
+				},
+				.text = "Disc not found",
+			},
+		};
+	}
+
+	auto &disc = it->second;
+
 	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
-		.borderColor = Misc::rarityToColor.at(widget->disc.rarity),
+		.widget = newWidget,
+		.borderColor = Misc::rarityToColor.at(disc.rarity),
 		.child = DiscCardContent{
-			.disc = widget->disc,
+			.disc = disc,
 			.actions = widget->actions,
 		},
 	};

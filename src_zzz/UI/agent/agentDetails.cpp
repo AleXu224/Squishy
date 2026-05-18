@@ -326,9 +326,8 @@ namespace {
 											ret.emplace_back(UI::Card{});
 											continue;
 										}
-										auto &disc = ::Store::discs.at(key);
 										ret.emplace_back(UI::DiscCard{
-											.disc = disc,
+											.disc = key,
 											.actions = UI::DiscCard::Actions::agent,
 										});
 									}

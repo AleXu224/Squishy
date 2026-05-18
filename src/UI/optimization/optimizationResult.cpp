@@ -73,7 +73,7 @@ using namespace squi;
 							auto &key = solution.artifacts.fromSlot(slot);
 							if (!key) continue;
 							ret.emplace_back(ArtifactCard{
-								.artifact = ::Store::artifacts.at(key),
+								.artifact = key,
 								.actions = ArtifactCard::Actions::showcase,
 							});
 						}

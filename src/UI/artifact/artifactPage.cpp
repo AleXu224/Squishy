@@ -242,7 +242,7 @@ squi::Child UI::ArtifactPage::State::build(const squi::Element &element) {
 					for (auto it = begin; it != end; it++) {
 						ret.emplace_back(UI::ArtifactCard{
 							.key = IndexKey{(*it)->key.key},
-							.artifact = **it,
+							.artifact = (**it).key,
 						});
 					}
 					return Grid{

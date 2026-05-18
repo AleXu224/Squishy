@@ -201,13 +201,30 @@ struct ArtifactCardContent : StatelessWidget {
 };
 
 squi::core::Child UI::ArtifactCard::State::build(const Element &) {
+	auto newWidget = widget->widget;
+	newWidget.padding = newWidget.padding.value_or(1.f);
+
+	auto it = ::Store::artifacts.find(widget->artifact);
+	if (it == ::Store::artifacts.end()) {
+		return Card{
+			.widget = newWidget,
+			.child = Text{
+				.widget{
+					.alignment = Alignment::Center,
+					.margin = 8.f,
+				},
+				.text = "Artifact not found",
+			},
+		};
+	}
+
+	auto &artifact = it->second;
+
 	return Card{
-		.widget{
-			.padding = Padding{1.f},
-		},
-		.borderColor = Misc::rarityToColor.at(widget->artifact.rarity),
+		.widget = newWidget,
+		.borderColor = Misc::rarityToColor.at(artifact.rarity),
 		.child = ArtifactCardContent{
-			.artifact = widget->artifact,
+			.artifact = artifact,
 			.actions = widget->actions,
 		},
 	};

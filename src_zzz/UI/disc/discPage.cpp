@@ -241,7 +241,7 @@ squi::Child UI::DiscPage::State::build(const squi::Element &element) {
 					for (auto it = begin; it != end; it++) {
 						ret.emplace_back(UI::DiscCard{
 							.key = IndexKey{(*it)->key.key},
-							.disc = **it,
+							.disc = (**it).key,
 						});
 					}
 					return Grid{

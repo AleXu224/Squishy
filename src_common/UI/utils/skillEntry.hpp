@@ -13,7 +13,7 @@ namespace UI {
 		std::string name;
 		std::optional<std::string> nameSuffix{};
 		std::optional<float> value{};
-		squi::Color color;
+		squi::Color color = Color::white;
 		squi::Color nameSuffixColor = Color::white;
 		bool isPercentage = false;
 

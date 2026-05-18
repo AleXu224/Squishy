@@ -102,7 +102,7 @@ squi::core::Child UI::LoadoutCard::State::build(const Element &element) {
 
 								ret.emplace_back(DiscCard{
 									.widget{.width = Size::Expand, .height = Size::Expand},
-									.disc = Store::discs.at(arti),
+									.disc = arti,
 									.actions = DiscCard::Actions::showcase,
 								});
 							}
