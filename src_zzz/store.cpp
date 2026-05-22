@@ -3,6 +3,7 @@
 #include "glaze/glaze.hpp"// IWYU pragma: keep
 // #include "serialization/save/key.hpp"// IWYU pragma: keep
 #include "serialization/save/save.hpp"
+#include <unordered_set>
 
 Agent::Instance &Store::createAgent(Agent::DataKey dataKey) {
 	++lastAgentId;
@@ -209,17 +210,29 @@ extern void Store::loadFromZOD(const Serialization::Zod::IZOD &data) {
 		engineListUpdateEvent.notify();
 	}
 	if (data.discs.has_value()) {
-		for (auto &&[key, disc]: ::Store::discs) {
-			disc.unequip();
-		}
-		::Store::discs.clear();
+		// for (auto &&[key, disc]: ::Store::discs) {
+		// 	disc.unequip();
+		// }
+		// ::Store::discs.clear();
+		std::unordered_set<uint32_t> storedDiscKeys{};
+		bool hasEquippedDiscs = false;
 		for (const auto &disc: data.discs.value()) {
+			if (!disc.location.empty()) {
+				hasEquippedDiscs = true;
+				break;
+			}
+		}
+		for (const auto &disc: data.discs.value()) {
+			if (auto storedDisc = disc.isAlreadyStored()) {
+				disc.writeToInstance(storedDisc->get(), hasEquippedDiscs);
+				storedDiscKeys.insert(storedDisc->get().key);
+			}
 			auto storedDisc = disc.createInstance();
 			if (!storedDisc) {
 				std::println("{}", storedDisc.error());
 				continue;
 			}
-			disc.writeToInstance(storedDisc.value());
+			storedDiscKeys.insert(storedDisc.value().get().key);
 		}
 		discListUpdateEvent.notify();
 	}

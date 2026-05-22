@@ -153,8 +153,27 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto initialDiscs = DiscFilter{}.filter(discs);
 	std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(initialDiscs);
 	auto compiledNode = optimizedNode.fold(ctx, {});
+	auto preCompiledNode = optimizedNode.fold(ctx, {.enableGates = true});
 
 	auto &loadout = agent.state.loadout();
+	for (size_t index = 0; index < 6; index++) {
+		loadout.disc.sheet.equippedDiscs.at(index) = &statsForSlot.at(index);
+	}
+	// Sort the set combinations
+	std::sort(states.begin(), states.end(), [&](const BnbState &state1, const BnbState &state2) {
+		loadout.disc.bonus1 = state1.bonuses[0];
+		loadout.disc.bonus2 = state1.bonuses[1];
+		loadout.disc.bonus3 = state1.bonuses[2];
+		auto dmg1 = preCompiledNode.eval(ctx);
+
+		loadout.disc.bonus1 = state2.bonuses[0];
+		loadout.disc.bonus2 = state2.bonuses[1];
+		loadout.disc.bonus3 = state2.bonuses[2];
+		auto dmg2 = preCompiledNode.eval(ctx);
+
+		return dmg1 < dmg2;
+	});
+
 	// Roughly sort the disc based on potential. Helps a lot when splitting
 	for (size_t i = 0; i < 6; i++) {
 		auto &artis = initialDiscs.entries.at(i);
@@ -180,7 +199,6 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	static uint64_t runID = 0;
 	runID++;
 
-	auto preCompiledNode = optimizedNode.fold(ctx, {.enableGates = true});
 	// auto preCompiledNode = optimizedNode;
 
 	std::for_each(
@@ -222,7 +240,13 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				// auto evalVal2 = node2.eval(threadData.ctx);
 				// auto printVal2 = node2.print(threadData.ctx);
 
-				bnb(filtered, solutions, threadData.agent, threadData.ctx, node, state, {});
+				Bnb bnb{
+					.solutions = solutions,
+					.agent = threadData.agent,
+					.ctx = threadData.ctx,
+					.node = node,
+				};
+				bnb.bnb(filtered, state);
 			}
 			Formula::enableAllocator = false;
 			Formula::NodeAllocator::reset();

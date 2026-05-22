@@ -1,6 +1,7 @@
 #pragma once
 
 #include "attribute.hpp"
+#include "formula/attackModifier.hpp"
 #include "formula/base.hpp"
 #include "formula/cast.hpp"
 #include "formula/clamp.hpp"
@@ -11,16 +12,18 @@
 
 namespace Formula {
 	struct EnemyDefMultiplier : FormulaBase<float> {
+		EnemyModifier modifiers{};
+
 		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
 			using namespace Operators;
 			const auto &enemy = Modifiers::enemy();
 			auto baseDef = Index{
-							   .index = Cast<int32_t, FloatNode>{.formula = Clamp{.val1 = enemy.level, .min = 1.f, .max = 60.f}}
+							   .index = Cast<int32_t, FloatNode>{.formula = Clamp{.val1 = enemy.level + modifiers.level, .min = 1.f, .max = 60.f}}
 									  - ConstantInt{.value = 1},
 							   .indexable = Curves::levelMultiplier,
 						   }
-						 * enemy.baseDef;
-			const auto def = baseDef * (1.f - enemy.DEFReduction - enemy.DEFIgnored);
+						 * (enemy.baseDef + modifiers.baseDef);
+			const auto def = baseDef * (1.f - (enemy.DEFReduction + modifiers.DEFReduction) - (enemy.DEFIgnored + modifiers.DEFIgnored));
 			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio) - Modifiers::combat().pen;
 			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
@@ -28,14 +31,14 @@ namespace Formula {
 			return defMod.fold(context, args);
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
+		[[nodiscard]] std::string print(const Context &context, Step) const {
 			return Formula::Percentage("Enemy DEF Multiplier", eval(context), true);
 		}
 
-		[[nodiscard]] static float eval(const Context &context) {
+		[[nodiscard]] float eval(const Context &context) const {
 			const auto &enemy = Modifiers::enemy();
-			auto baseDef = Curves::levelMultiplier.at(std::clamp(static_cast<int32_t>(enemy.level.eval(context)), 0, 60) - 1) * enemy.baseDef.eval(context);
-			const auto def = baseDef * (1.f - enemy.DEFReduction.eval(context) - enemy.DEFIgnored.eval(context));
+			auto baseDef = Curves::levelMultiplier.at(std::clamp(static_cast<int32_t>(enemy.level.eval(context) + modifiers.level.eval(context)), 0, 60) - 1) * (enemy.baseDef.eval(context) + modifiers.baseDef.eval(context));
+			const auto def = baseDef * (1.f - (enemy.DEFReduction.eval(context) + modifiers.DEFReduction.eval(context)) - (enemy.DEFIgnored.eval(context) + modifiers.DEFIgnored.eval(context)));
 			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio.eval(context)) - Modifiers::combat().pen.eval(context);
 			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
@@ -46,7 +49,8 @@ namespace Formula {
 
 	struct EnemyResMultiplier : FormulaBase<float> {
 		Utils::JankyOptional<Misc::AttackSource> attackSource{};
-		Utils::JankyOptional<Misc::Attribute> element;
+		Utils::JankyOptional<Misc::Attribute> element{};
+		EnemyModifierResistance modifiers{};
 
 		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
 			using namespace Operators;
@@ -54,10 +58,11 @@ namespace Formula {
 			// an infusion or res shred that relies on disc stats then this will break
 			const auto attackElement = getAttribute(attackSource, element, context);
 			auto RES = Stats::fromEnemyResAttribute(Modifiers::enemy().resistance, attackElement);
+			auto RESModifier = Stats::fromEnemyResAttribute(modifiers, attackElement);
 
 			auto ret = Min{
 				.val1 = Constant{.value = 2.f},
-				.val2 = 1.f - RES,
+				.val2 = 1.f - (RES + RESModifier),
 			};
 			return ret.fold(context, args);
 		}
@@ -69,8 +74,9 @@ namespace Formula {
 		[[nodiscard]] float eval(const Context &context) const {
 			const auto attackElement = getAttribute(attackSource, element, context);
 			auto RES = Stats::fromEnemyResAttribute(Modifiers::enemy().resistance, attackElement).eval(context);
+			auto RESModifier = Stats::fromEnemyResAttribute(modifiers, attackElement).eval(context);
 
-			auto ret = std::min(2.f, 1.f - RES);
+			auto ret = std::min(2.f, 1.f - (RES + RESModifier));
 			return ret;
 		}
 	};

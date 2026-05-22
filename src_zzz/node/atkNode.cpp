@@ -91,7 +91,7 @@ namespace Node {
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier({}, source, attribute);
+		auto enemy = Formula::EnemyDefMultiplier{.modifiers = modifier.enemy} * Formula::EnemyResMultiplier({}, source, attribute, modifier.enemy.resistance);
 
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		// FIXME: dmg taken multiplier (piper)

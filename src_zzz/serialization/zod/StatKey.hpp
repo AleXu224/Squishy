@@ -34,7 +34,7 @@ namespace Serialization::Zod {
 		{Stat::atk_, "atk_"},
 		{Stat::def, "def"},
 		{Stat::def_, "def_"},
-		{Stat::er, "enerRegen_"},
+		{Stat::er_, "enerRegen_"},
 		{Stat::ap, "anomProf"},
 		{Stat::am_, "anomMas_"},
 		{Stat::cr, "crit_"},

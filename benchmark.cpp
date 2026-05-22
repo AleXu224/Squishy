@@ -153,7 +153,7 @@ namespace {
 
 		Formula::Context ctx{
 			.source = character.state,
-			.active = character.state,
+			.origin = character.state,
 			.team = team,
 			.enemy = enemy,
 		};

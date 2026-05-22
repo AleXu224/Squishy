@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ISubstat.hpp"
+#include "cstdint"
 #include "disc/instance.hpp"
 #include "disc/set.hpp"
-#include "cstdint"
 #include "expected"
 #include "string"
 #include "vector"
@@ -29,6 +29,6 @@ namespace Serialization::Zod {
 
 		std::expected<std::reference_wrapper<Disc::Instance>, std::string> isAlreadyStored() const;
 
-		void writeToInstance(Disc::Instance &) const;
+		void writeToInstance(Disc::Instance &disc, bool overrideLocation) const;
 	};
 }// namespace Serialization::Zod

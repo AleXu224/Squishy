@@ -7,6 +7,7 @@ export const statMap = new Map<string, string>([
     ["DEF", "def_"],
     ["Anomaly Mastery", "am_"],
     ["Anomaly Proficiency", "ap"],
+    ["PEN RATIO", "penRatio"],
     ["CRIT Rate", "cr"],
     ["CRIT DMG", "cd"],
     ["Energy Regen", "er_"],

@@ -47,7 +47,7 @@ std::expected<std::reference_wrapper<Disc::Instance>, std::string> Serialization
 	disc.rarity = rarityKey.at(rarity);
 	disc.mainStat = statKey.at(mainStatKey);
 
-	writeToInstance(disc);
+	writeToInstance(disc, true);
 
 	return disc;
 }
@@ -105,7 +105,7 @@ std::expected<std::reference_wrapper<Disc::Instance>, std::string> Serialization
 	return std::unexpected("Disc not found");
 }
 
-void Serialization::Zod::IDisc::writeToInstance(Disc::Instance &disc) const {
+void Serialization::Zod::IDisc::writeToInstance(Disc::Instance &disc, bool overrideLocation) const {
 	disc.level = level;
 
 	for (auto &subStat: disc.subStats) {
@@ -133,6 +133,7 @@ void Serialization::Zod::IDisc::writeToInstance(Disc::Instance &disc) const {
 
 	disc.updateStats();
 
+	if (!overrideLocation || location.empty()) return;
 	Agent::InstanceKey equippedAgent{};
 	for (auto &[_, agent]: ::Store::agents) {
 		if (agent.state.stats.data.goodKey == location) {

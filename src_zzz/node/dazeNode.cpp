@@ -78,7 +78,7 @@ namespace Node {
 		const Formula::FloatNode &formula,
 		const Formula::Modifier &modifier
 	) {
-		auto totalDaze = _getTotal<Misc::SkillStat::daze>(attribute, source, modifier.daze);
+		auto totalDaze = _getTotal<Misc::SkillStat::daze>(attribute, source, modifier.enemy.daze);
 
 		auto dazeRes = 1.f - Modifiers::enemy().dazeRes;
 		auto daze = 1.f + (Modifiers::enemy().daze + totalDaze);
