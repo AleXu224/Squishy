@@ -1,5 +1,6 @@
 #include "sets.hpp"
 
+#include "disc/sets/BranchBladeSong.hpp"
 #include "disc/sets/FangedMetal.hpp"
 #include "disc/sets/FreedomBlues.hpp"
 #include "disc/sets/MoonlightLullaby.hpp"
@@ -9,6 +10,7 @@
 
 void Disc::initDiscs() {
 	sets = {
+		{Sets::branchBladeSong.key, Sets::branchBladeSong},
 		{Sets::fangedMetal.key, Sets::fangedMetal},
 		{Sets::freedomBlues.key, Sets::freedomBlues},
 		{Sets::moonlightLullaby.key, Sets::moonlightLullaby},
