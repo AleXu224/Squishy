@@ -101,7 +101,7 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 						NumberBox{
 							.value = static_cast<float>(widget->agent.state.loadout().disc.getTheorycraft().mainStats.at(index).level),
 							.min = 0.f,
-							.max = 20.f,
+							.max = 15.f,
 							.precision = 0,
 							.onChange = [this, index](float newVal) {
 								if (!widget->agent.state.loadout().disc.isTheorycraft()) return;
@@ -211,7 +211,6 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 							.width = Size::Expand,
 						},
 						.theme = Button::Theme::Standard(),
-						.disabled = !(widget->agent.state.loadout().disc.getTheorycraft().set1.key && widget->agent.state.loadout().disc.getTheorycraft().set1.type == Stats::Disc::Theorycraft::Set::Type::twoPc),
 						.text = setKeyToName(widget->agent.state.loadout().disc.getTheorycraft().set2.key),
 						.items = [&]() {
 							std::vector<ContextMenu::Item> ret;
@@ -240,6 +239,54 @@ squi::core::Child UI::TCOptimizationSettings::State::build(const Element &elemen
 							if (!widget->agent.state.loadout().disc.isTheorycraft()) return;
 							setState([&]() {
 								widget->agent.state.loadout().disc.getTheorycraft().set2.clear();
+								widget->agent.state.loadout().disc.refreshStats();
+							});
+							widget->agent.updateEvent.notify();
+						},
+					},
+				},
+			});
+
+			ret.emplace_back(Row{
+				.widget{
+					.height = Size::Shrink,
+				},
+				.spacing = 4.f,
+				.children = {
+					DropdownButton{
+						.widget{
+							.width = Size::Expand,
+						},
+						.theme = Button::Theme::Standard(),
+						.disabled = !(widget->agent.state.loadout().disc.getTheorycraft().set1.key && widget->agent.state.loadout().disc.getTheorycraft().set1.type == Stats::Disc::Theorycraft::Set::Type::twoPc),
+						.text = setKeyToName(widget->agent.state.loadout().disc.getTheorycraft().set3.key),
+						.items = [&]() {
+							std::vector<ContextMenu::Item> ret;
+
+							for (const auto &[key, set]: Disc::sets) {
+								ret.emplace_back(ContextMenu::Button{
+									.text = setKeyToName(key),
+									.callback = [this, key]() {
+										if (!widget->agent.state.loadout().disc.isTheorycraft()) return;
+										setState([&]() {
+											widget->agent.state.loadout().disc.getTheorycraft().set3 = key;
+											widget->agent.state.loadout().disc.refreshStats();
+										});
+										widget->agent.updateEvent.notify();
+									},
+								});
+							}
+
+							return ret;
+						}(),
+					},
+					IconButton{
+						.icon = 0xe5cd,
+						.theme = Button::Theme::Standard(),
+						.onClick = [this]() {
+							if (!widget->agent.state.loadout().disc.isTheorycraft()) return;
+							setState([&]() {
+								widget->agent.state.loadout().disc.getTheorycraft().set3.clear();
 								widget->agent.state.loadout().disc.refreshStats();
 							});
 							widget->agent.updateEvent.notify();

@@ -50,12 +50,12 @@ namespace Optimization {
 	struct TheorycraftFilter {
 		struct Stat {
 			uint8_t minRolls = 2;
-			uint8_t maxRolls = 12;
+			uint8_t maxRolls = 14;
 
 			uint8_t getRange() const { return maxRolls - minRolls + 1; }
 		};
 
-		uint8_t maxRolls = 40;
+		uint8_t maxRolls = 48;
 
 		Stat hp{};
 		Stat hp_{};

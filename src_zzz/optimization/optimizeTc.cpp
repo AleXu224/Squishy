@@ -20,6 +20,14 @@ Optimization::SolutionTC Optimization::TCOptimization::optimize() const {
 	TheorycraftFilter filter{};
 
 	auto &equipped = agent.state.loadout().disc.getTheorycraft();
+	bool freeAPUsed = false;
+	for (const auto &mainStat: equipped.mainStats) {
+		if (mainStat.stat == Stat::ap && !freeAPUsed) {
+			freeAPUsed = true;
+			continue;
+		}
+		filter.fromSubStat(mainStat.stat).maxRolls -= 2;
+	}
 	for (const auto &stat: Stats::subStats) {
 		equipped.fromStat(stat) = 0;
 	}

@@ -20,6 +20,9 @@ Optimization::SolutionTC Optimization::TCOptimization::optimize() const {
 	TheorycraftFilter filter{};
 
 	auto &equipped = character.state.loadout().artifact.getTheorycraft();
+	for (const auto &mainStat: equipped.mainStats) {
+		rolls.fromSubStat(mainStat.stat) -= 2;
+	}
 	for (const auto &stat: Stats::subStats) {
 		equipped.fromStat(stat) = 0;
 	}

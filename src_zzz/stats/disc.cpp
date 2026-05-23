@@ -121,7 +121,8 @@ void Stats::Disc::refreshStats() {
 				}
 				if (theorycraft.set2) {
 					const auto &set = ::Disc::sets.at(theorycraft.set2);
-					bonus2 = DiscBonus{
+					auto &targetBonus = theorycraft.set1.key && theorycraft.set1.type == Theorycraft::Set::Type::fourPc ? bonus3 : bonus2;
+					targetBonus = DiscBonus{
 						.setPtr = &set,
 						.bonusPtr = &set.data.twoPc,
 					};
