@@ -13,6 +13,7 @@ namespace Serialization::Save {
 		std::map<Stat, bool> sandsMainStats{};
 		std::map<Stat, bool> gobletMainStats{};
 		std::map<Stat, bool> circletMainStats{};
+		uint8_t minLevel = 0;
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
 		bool useEquippedArtifacts = true;

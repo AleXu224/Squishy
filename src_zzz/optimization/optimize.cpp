@@ -26,6 +26,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	discs.erase(
 		std::remove_if(discs.begin(), discs.end(), [&](const Disc::Instance &disc) {
+			if (disc.level < options.minLevel) return true;
 			switch (disc.partition) {
 				case Disc::Partition::four:
 					return !options.partition4MainStats.at(disc.mainStat);
@@ -41,6 +42,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	);
 
 	std::unordered_map<uint32_t, std::array<size_t, 6>> counts{};
+	std::unordered_map<uint32_t, uint8_t> slotCounts{};
 
 	for (const auto &[key, set]: Disc::sets) {
 		DiscFilter pattern{};
@@ -52,6 +54,10 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 		pattern.filters.at(5).set = key;
 
 		auto res = pattern.filter(discs);
+
+		for (size_t index = 0; index < 6; index++) {
+			slotCounts[key.key] += res.entries.at(index).size();
+		}
 
 		counts[key.key] = {
 			res.entries.at(0).size(),
@@ -69,6 +75,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	// 4pc filters
 	for (const auto &key: enabledFourPiece) {
+		if (slotCounts[key.key] < 4) continue;
 		BnbState state{
 			.emptySlotAllowance = 0,
 		};
@@ -88,6 +95,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 		for (const auto &key2: enabledTwoPiece) {
 			if (key == key2) continue;
+			if (slotCounts[key2.key] < 2) continue;
 			const auto &set2 = Disc::sets.at(key2);
 			state.sets[1] = BnbState::Set{
 				.set = key2,
@@ -103,8 +111,11 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	}
 
 	for (auto it1 = enabledTwoPiece.begin(); it1 != enabledTwoPiece.end(); it1++) {
+		if (slotCounts[it1->key] < 2) continue;
 		for (auto it2 = std::next(it1); it2 != enabledTwoPiece.end(); it2++) {
+			if (slotCounts[it2->key] < 2) continue;
 			for (auto it3 = std::next(it2); it3 != enabledTwoPiece.end(); it3++) {
+				if (slotCounts[it3->key] < 2) continue;
 				const auto &key1 = *it1;
 				const auto &key2 = *it2;
 				const auto &key3 = *it3;

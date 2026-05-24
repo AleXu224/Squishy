@@ -26,6 +26,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 
 	artifacts.erase(
 		std::remove_if(artifacts.begin(), artifacts.end(), [&](const Artifact::Instance &artifact) {
+			if (artifact.level < options.minLevel) return true;
 			switch (artifact.slot) {
 				case Artifact::Slot::sands:
 					return !options.sandsMainStats.at(artifact.mainStat);

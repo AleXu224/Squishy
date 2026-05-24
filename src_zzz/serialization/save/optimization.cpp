@@ -46,6 +46,7 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		.partition4MainStats = options.partition4MainStats,
 		.partition5MainStats = options.partition5MainStats,
 		.partition6MainStats = options.partition6MainStats,
+		.minLevel = options.minLevel,
 		.useEquippedDiscs = options.useEquippedDiscs,
 	};
 }
@@ -70,6 +71,7 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 	}
 
 	ret.useEquippedDiscs = useEquippedDiscs;
+	ret.minLevel = minLevel;
 
 	if (nodeSource.has_value()) {
 		ret.nodeSource = std::visit(//

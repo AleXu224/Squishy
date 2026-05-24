@@ -17,6 +17,7 @@ namespace Optimization {
 		std::map<Stat, bool> partition4MainStats{};
 		std::map<Stat, bool> partition5MainStats{};
 		std::map<Stat, bool> partition6MainStats{};
+		uint8_t minLevel = 0;
 		bool useEquippedDiscs = true;
 
 		Options() {

@@ -13,6 +13,7 @@
 #include "widgets/grid.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/toggleSwitch.hpp"
 
 #include "optimization/solution.hpp"
@@ -68,6 +69,26 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 						.partition4MainStats = agent.optimizationOptions->partition4MainStats,
 						.partition5MainStats = agent.optimizationOptions->partition5MainStats,
 						.partition6MainStats = agent.optimizationOptions->partition6MainStats,
+					},
+				},
+				Expander{
+					.title = "Minimum disc level",
+					.subtitle = "Set the minimum level of discs to consider in the optimization",
+					.action{
+						Slider{
+							.widget{
+								.width = 250.f,
+							},
+							.minValue = 0.f,
+							.maxValue = 15.f,
+							.value = static_cast<float>(agent.optimizationOptions->minLevel),
+							.ticks = std::views::iota(0, 16) | std::ranges::to<std::vector<float>>(),
+							.onChange = [this, storage = agent.optimizationOptions](float value) {
+								setState([&]() {
+									storage->minLevel = static_cast<uint8_t>(value);
+								});
+							},
+						},
 					},
 				},
 				Expander{

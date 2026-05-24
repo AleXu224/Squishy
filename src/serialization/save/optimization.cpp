@@ -46,6 +46,7 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		.sandsMainStats = options.sandsMainStats,
 		.gobletMainStats = options.gobletMainStats,
 		.circletMainStats = options.circletMainStats,
+		.minLevel = options.minLevel,
 		.threeRainbow = options.threeRainbow,
 		.fiveRainbow = options.fiveRainbow,
 		.useEquippedArtifacts = options.useEquippedArtifacts,
@@ -55,6 +56,7 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 ::Optimization::Options Serialization::Save::Optimization::toInstance() const {
 	::Optimization::Options ret{};
 
+	ret.minLevel = minLevel;
 	ret.threeRainbow = threeRainbow;
 	ret.fiveRainbow = fiveRainbow;
 	ret.useEquippedArtifacts = useEquippedArtifacts;
