@@ -76,27 +76,18 @@ int main() {
 		.theme = Theme{
 			.accent = systemTheme.value_or(Theme{}.accent),
 		},
+		.maximizeCallback = [](bool maximized) {
+			::Store::maximized = maximized;
+		},
+		.resizeCallback = [](uint32_t width, uint32_t height) {
+			if (!::Store::maximized) {
+				::Store::windowWidth = width;
+				::Store::windowHeight = height;
+			}
+		},
 	};
 	app.initialize();
 	App::runAllWindows();
-	// Window window{WindowOptions{
-	// 	.name = "Squishy",
-	// 	.width = ::Store::windowWidth,
-	// 	.height = ::Store::windowHeight,
-	// 	.maximized = ::Store::maximized,
-	// }};
-	// window.setMaximizeCallback([](bool maximized) {
-	// 	::Store::maximized = maximized;
-	// });
-	// window.setResizeCallback([](uint32_t width, uint32_t height) {
-	// 	if (!::Store::maximized) {
-	// 		::Store::windowWidth = width;
-	// 		::Store::windowHeight = height;
-	// 	}
-	// });
-	// window.addChild(UI::homePage{});
-
-	// Window::run();
 
 	::Store::saveToFile(fileSavePath.string());
 }
