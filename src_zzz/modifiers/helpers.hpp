@@ -4,6 +4,7 @@
 #include "misc/anomaly.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/damageAttribute.hpp"
+#include "misc/damageType.hpp"
 #include "misc/enemyProps.hpp"
 #include "misc/skillStat.hpp"
 #include "stats/skill.hpp"
@@ -77,6 +78,7 @@ namespace Modifiers {
 			attack,
 			attribute,
 			anomaly,
+			damageType,
 			skill,
 			enemyStat,
 			enemyRes,
@@ -86,6 +88,7 @@ namespace Modifiers {
 			std::pair<Misc::AttackSource, Misc::SkillStat> attack;
 			std::pair<Misc::DamageAttribute, Misc::SkillStat> attribute;
 			std::pair<Misc::DamageAnomaly, Misc::SkillStat> anomaly;
+			std::pair<Misc::DamageType, Misc::SkillStat> damageType;
 			::LevelableSkill skill;
 			::Misc::EnemyStat enemyStat;
 			std::pair<Misc::EnemyResistances, Misc::Attribute> enemyRes;
@@ -95,6 +98,7 @@ namespace Modifiers {
 		constexpr SheetMemberIdentifier(Misc::AttackSource attack, Misc::SkillStat stat) : _type(Type::attack), _uni{.attack{attack, stat}} {}
 		constexpr SheetMemberIdentifier(Misc::DamageAttribute attribute, Misc::SkillStat stat) : _type(Type::attribute), _uni{.attribute{attribute, stat}} {}
 		constexpr SheetMemberIdentifier(Misc::DamageAnomaly anomaly, Misc::SkillStat stat) : _type(Type::anomaly), _uni{.anomaly{anomaly, stat}} {}
+		constexpr SheetMemberIdentifier(Misc::DamageType damageType, Misc::SkillStat stat) : _type(Type::damageType), _uni{.damageType{damageType, stat}} {}
 		constexpr SheetMemberIdentifier(::LevelableSkill skill) : _type(Type::skill), _uni{.skill = skill} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyStat enemyStat) : _type(Type::enemyStat), _uni{.enemyStat = enemyStat} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyResistances enemyRes, Misc::Attribute attribute) : _type(Type::enemyRes), _uni{.enemyRes{enemyRes, attribute}} {}
@@ -115,6 +119,8 @@ namespace Modifiers {
 					return std::format("{}", Utils::Stringify(_uni.enemyStat));
 				case Type::enemyRes:
 					return std::format("{} {}", Utils::Stringify(_uni.enemyRes.second), Utils::Stringify(_uni.enemyRes.first));
+				case Type::damageType:
+					return std::format("{} {}", Utils::Stringify(_uni.damageType.first), Utils::Stringify(_uni.damageType.second));
 			}
 			std::unreachable();
 		}
@@ -135,6 +141,8 @@ namespace Modifiers {
 					return Utils::isPercentage(_uni.enemyStat);
 				case Type::enemyRes:
 					return true;
+				case Type::damageType:
+					return Utils::isPercentage(_uni.damageType.second);
 			}
 			std::unreachable();
 		}

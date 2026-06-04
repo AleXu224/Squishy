@@ -72,6 +72,11 @@ namespace UI {
 					evalFunc(Stats::fromAnomaly(sheet, anomaly, skill), Stats::fromAnomaly<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(anomaly, skill));
 				}
 			}
+			for (const auto &damageType: Misc::damageTypes) {
+				for (const auto &skill: Misc::skillStats) {
+					evalFunc(Stats::fromDamageType(sheet, damageType, skill), Stats::fromDamageType<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(damageType, skill));
+				}
+			}
 
 			return ret;
 		}

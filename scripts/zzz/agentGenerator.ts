@@ -82,12 +82,20 @@ if (!responseNanoka.ok) {
 }
 const contentsNanoka: NanokaAgent = await responseNanoka.json();
 
+const extraLevel1Entries = Object.values(contentsNanoka.extra_level["1"].extra);
+const coreStat1Entry = extraLevel1Entries[0];
+const coreStat2Entry = extraLevel1Entries[1];
+const coreStat1IsPercentage = coreStat1Entry.format.includes("%");
+const coreStat2IsPercentage = coreStat2Entry.format.includes("%");
+const coreStat1Enum = statMap.get(coreStat1Entry.name);
+const coreStat2Enum = statMap.get(coreStat2Entry.name);
+
 const data = {
     key: Deno.args[0],
     name: contentsNanoka.name,
     caseableName: contentsNanoka.name.replaceAll("'", ""),
-    coreStat1: statMap.get(contentsNanoka.extra_level["1"].extra[Object.keys(contentsNanoka.extra_level["1"].extra)[0]].name),
-    coreStat2: statMap.get(contentsNanoka.extra_level["1"].extra[Object.keys(contentsNanoka.extra_level["1"].extra)[1]].name),
+    coreStat1: coreStat1Enum && !coreStat1IsPercentage ? coreStat1Enum.replace(/_$/, "") : coreStat1Enum,
+    coreStat2: coreStat2Enum && !coreStat2IsPercentage ? coreStat2Enum.replace(/_$/, "") : coreStat2Enum,
     coreMultipliers: extractVaryingPassiveNumbers(contentsNanoka.passive.level),
     icon: `https://static.nanoka.cc/assets/zzz/${contentsNanoka.partner_info.icon_path.split("/").pop()?.replace(".png", ".webp")}`,
     iconCard: `https://static.nanoka.cc/assets/zzz/${contentsNanoka.icon}.webp`,
@@ -111,8 +119,10 @@ for (const value of Object.values(contentsNanoka.level)) {
 }
 i = 0;
 for (const value of Object.values(contentsNanoka.extra_level)) {
-    coreStat1Upgrade[i] = Object.values(value.extra)[0].value as number;
-    coreStat2Upgrade[i] = Object.values(value.extra)[1].value as number;
+    const v1 = Object.values(value.extra)[0].value as number;
+    const v2 = Object.values(value.extra)[1].value as number;
+    coreStat1Upgrade[i] = coreStat1IsPercentage ? v1 / 10000 : v1;
+    coreStat2Upgrade[i] = coreStat2IsPercentage ? v2 / 10000 : v2;
     i++;
 }
 
@@ -141,13 +151,28 @@ function skillContentsGenerator(skill: SkillData, source: string): string {
             let type = "Atk";
             if (param.name.toLowerCase().includes("daze")) {
                 type = "Daze";
+            } else if (lowerCase(Object.values(contentsNanoka.weapon_type)[0]) === "rupture") {
+                type = "Sheer";
+            }
+
+            let param1 = "";
+            switch (type) {
+                case "Atk":
+                    param1 = "combat.atk";
+                    break;
+                case "Daze":
+                    param1 = "combat.impact";
+                    break;
+                case "Sheer":
+                    param1 = "Utils::EntryType::multiplier";
+                    break;
             }
             const value = Object.values(param.param)[0];
             const sourceStr = `\n						.source = Misc::AttackSource::${source},`;
             ret += `
                     Node::${type}{
                         .name = "${param.name.replace(" Multiplier", "")}",${sourceStr}
-                        .formula = Multiplier(${type == "Atk" ? "combat.atk" : "combat.impact"}, LevelableSkill::${source}, ${(value.main / 10000).toFixed(4)}f, ${(value.growth / 10000).toFixed(4)}f)
+                        .formula = Multiplier(${param1}, LevelableSkill::${source}, ${(value.main / 10000).toFixed(4)}f, ${(value.growth / 10000).toFixed(4)}f)
                     },`;
         }
     }

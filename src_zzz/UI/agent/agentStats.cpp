@@ -14,6 +14,7 @@
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
 #include "widgets/button.hpp"
+#include "widgets/gestureDetector.hpp"
 #include "widgets/image.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
@@ -69,13 +70,18 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 				auto formula = Stats::fromStat(Modifiers::combat(), stat);
 				auto message = formula.print(widget->ctx);
 				auto value = formula.eval(widget->ctx);
-				ret2.emplace_back(Tooltip{
-					.text = message,
-					.child = UI::StatDisplay{
-						.isTransparent = transparent,
-						.stat{
-							.stat = stat,
-							.value = value,
+				ret2.emplace_back(Gesture{
+					.onClick = [out = formula.fold(widget->ctx, {}).print(widget->ctx)](const Gesture::State &state) {
+						std::println("{}", out);
+					},
+					.child = Tooltip{
+						.text = message,
+						.child = UI::StatDisplay{
+							.isTransparent = transparent,
+							.stat{
+								.stat = stat,
+								.value = value,
+							},
 						},
 					},
 				});

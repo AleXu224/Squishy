@@ -90,6 +90,17 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 			}
 		}
 	};
+	this->combat.sheerForce.modifiers.at(0) = Formula::Prefix{
+		.prefix = "Agent Base",
+		.val = Formula::Custom{
+			.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
+				return Modifiers::combat().atk * 0.1f;
+			},
+			.func = [](const Formula::Context &context) {
+				return Modifiers::combat().atk.eval(context) * 0.1f;
+			}
+		}
+	};
 
 	// Core stats
 	this->base.fromStat(stats.stats.base.coreStat1).modifiers.at(1) = Formula::Prefix{
@@ -129,10 +140,11 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 
 	for (const auto &[baseStat, percentStat]: mulpliableStats) {
 		this->initial.fromStat(baseStat).modifiers.at(0) = Modifiers::base().fromStat(baseStat) * (1.f + Modifiers::initial().fromStat(percentStat));
-		this->combat.fromStat(baseStat).modifiers.at(0) = Modifiers::initial().fromStat(baseStat) * (1.f + Modifiers::combat().fromStat(percentStat));
+		this->combat.fromStat(baseStat).modifiers.at(1) = Modifiers::initial().fromStat(baseStat) * (1.f + Modifiers::combat().fromStat(percentStat));
 	}
 
 	std::vector<Stat> transferableStats = {
+		Stat::sheerForce,
 		Stat::cr,
 		Stat::cd,
 		Stat::pen,
@@ -140,24 +152,30 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 	};
 	for (const auto &stat: transferableStats) {
 		this->initial.fromStat(stat).modifiers.at(0) = Modifiers::base().fromStat(stat);
-		this->combat.fromStat(stat).modifiers.at(0) = Modifiers::initial().fromStat(stat);
+		this->combat.fromStat(stat).modifiers.at(1) = Modifiers::initial().fromStat(stat);
 	}
 	for (const auto &attribute: Misc::damageAttributes) {
 		for (const auto &skillStat: Misc::skillStats) {
 			this->initial.fromDamageAttribute(attribute).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::base().fromDamageAttribute(attribute).fromSkillStat(skillStat);
-			this->combat.fromDamageAttribute(attribute).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::initial().fromDamageAttribute(attribute).fromSkillStat(skillStat);
+			this->combat.fromDamageAttribute(attribute).fromSkillStat(skillStat).modifiers.at(1) = Modifiers::initial().fromDamageAttribute(attribute).fromSkillStat(skillStat);
 		}
 	}
 	for (const auto &attackSource: Misc::attackSources) {
 		for (const auto &skillStat: Misc::skillStats) {
 			this->initial.fromAttackSource(attackSource).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::base().fromAttackSource(attackSource).fromSkillStat(skillStat);
-			this->combat.fromAttackSource(attackSource).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::initial().fromAttackSource(attackSource).fromSkillStat(skillStat);
+			this->combat.fromAttackSource(attackSource).fromSkillStat(skillStat).modifiers.at(1) = Modifiers::initial().fromAttackSource(attackSource).fromSkillStat(skillStat);
 		}
 	}
 	for (const auto &anomaly: Misc::damageAnomalies) {
 		for (const auto &skillStat: Misc::skillStats) {
 			this->initial.fromDamageAnomaly(anomaly).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::base().fromDamageAnomaly(anomaly).fromSkillStat(skillStat);
-			this->combat.fromDamageAnomaly(anomaly).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::initial().fromDamageAnomaly(anomaly).fromSkillStat(skillStat);
+			this->combat.fromDamageAnomaly(anomaly).fromSkillStat(skillStat).modifiers.at(1) = Modifiers::initial().fromDamageAnomaly(anomaly).fromSkillStat(skillStat);
+		}
+	}
+	for (const auto &damageType: Misc::damageTypes) {
+		for (const auto &skillStat: Misc::skillStats) {
+			this->initial.fromDamageType(damageType).fromSkillStat(skillStat).modifiers.at(0) = Modifiers::base().fromDamageType(damageType).fromSkillStat(skillStat);
+			this->combat.fromDamageType(damageType).fromSkillStat(skillStat).modifiers.at(1) = Modifiers::initial().fromDamageType(damageType).fromSkillStat(skillStat);
 		}
 	}
 

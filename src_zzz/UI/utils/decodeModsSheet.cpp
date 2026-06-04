@@ -52,6 +52,11 @@ namespace {
 				addItem(Stats::fromAnomaly(sheet, anomaly, skill), Stats::fromAnomaly<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(anomaly, skill), ret, ctx, transparent, prefix);
 			}
 		}
+		for (const auto &damageType: Misc::damageTypes) {
+			for (const auto &skill: Misc::skillStats) {
+				addItem(Stats::fromDamageType(sheet, damageType, skill), Stats::fromDamageType<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(damageType, skill), ret, ctx, transparent, prefix);
+			}
+		}
 
 		return ret;
 	}

@@ -17,6 +17,7 @@
 #include "node/dazeNode.hpp"          // IWYU pragma: export
 #include "node/infoNode.hpp"          // IWYU pragma: export
 #include "node/modsNode.hpp"          // IWYU pragma: export
+#include "node/sheerNode.hpp"         // IWYU pragma: export
 
 
 namespace Agent {

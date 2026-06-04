@@ -25,6 +25,7 @@ namespace Modifiers {
 		static constexpr auto atk_ = &TT::atk_;
 		static constexpr auto def = &TT::def;
 		static constexpr auto def_ = &TT::def_;
+		static constexpr auto sheerForce = &TT::sheerForce;
 		static constexpr auto er = &TT::er;
 		static constexpr auto er_ = &TT::er_;
 		static constexpr auto ap = &TT::ap;
@@ -73,6 +74,8 @@ namespace Modifiers {
 		static constexpr auto corruptionDisorder = Skill<&TT::corruptionDisorder>();
 		static constexpr auto abloom = Skill<&TT::abloom>();
 		static constexpr auto allAnomaly = Skill<&TT::allAnomaly>();
+
+		static constexpr auto sheer = Skill<&TT::sheer>();
 	};
 
 	struct StatNameFactory {
@@ -92,6 +95,7 @@ namespace Modifiers {
 		static constexpr auto atk_ = Modifiers::SheetMemberIdentifier(::Stat::atk_);
 		static constexpr auto def = Modifiers::SheetMemberIdentifier(::Stat::def);
 		static constexpr auto def_ = Modifiers::SheetMemberIdentifier(::Stat::def_);
+		static constexpr auto sheerForce = Modifiers::SheetMemberIdentifier(::Stat::sheerForce);
 		static constexpr auto er = Modifiers::SheetMemberIdentifier(::Stat::er);
 		static constexpr auto er_ = Modifiers::SheetMemberIdentifier(::Stat::er_);
 		static constexpr auto ap = Modifiers::SheetMemberIdentifier(::Stat::ap);
@@ -140,6 +144,8 @@ namespace Modifiers {
 		static constexpr auto corruptionDisorder = Skill<Misc::DamageAnomaly::corruptionDisorder>();
 		static constexpr auto abloom = Skill<Misc::DamageAnomaly::abloom>();
 		static constexpr auto allAnomaly = Skill<Misc::DamageAnomaly::allAnomaly>();
+
+		static constexpr auto sheer = Skill<Misc::DamageType::sheer>();
 	};
 
 	template<template<auto...> class Formula, auto... Params>
@@ -160,6 +166,7 @@ namespace Modifiers {
 		static constexpr Formula<Params.atk_...> atk_{};
 		static constexpr Formula<Params.def...> def{};
 		static constexpr Formula<Params.def_...> def_{};
+		static constexpr Formula<Params.sheerForce...> sheerForce{};
 		static constexpr Formula<Params.er...> er{};
 		static constexpr Formula<Params.er_...> er_{};
 		static constexpr Formula<Params.ap...> ap{};
@@ -208,6 +215,8 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.corruptionDisorder...> corruptionDisorder{};
 		static constexpr _SkillValue<Params.abloom...> abloom{};
 		static constexpr _SkillValue<Params.allAnomaly...> allAnomaly{};
+
+		static constexpr _SkillValue<Params.sheer...> sheer{};
 	};
 
 
@@ -240,6 +249,7 @@ namespace Modifiers {
 			.atk_ = formulaFactory<T, Formula>(params.atk_...),
 			.def = formulaFactory<T, Formula>(params.def...),
 			.def_ = formulaFactory<T, Formula>(params.def_...),
+			.sheerForce = formulaFactory<T, Formula>(params.sheerForce...),
 			.er = formulaFactory<T, Formula>(params.er...),
 			.er_ = formulaFactory<T, Formula>(params.er_...),
 			.ap = formulaFactory<T, Formula>(params.ap...),
@@ -288,6 +298,8 @@ namespace Modifiers {
 			.corruptionDisorder = statSkillValueFactory<T, Formula>(params.corruptionDisorder...),
 			.abloom = statSkillValueFactory<T, Formula>(params.abloom...),
 			.allAnomaly = statSkillValueFactory<T, Formula>(params.allAnomaly...),
+
+			.sheer = statSkillValueFactory<T, Formula>(params.sheer...),
 		};
 	}
 

@@ -3,6 +3,7 @@
 #include "agent/agents/Alice.hpp"
 #include "agent/agents/Miyabi.hpp"
 #include "agent/agents/NangongYu.hpp"
+#include "agent/agents/Yixuan.hpp"
 #include "agent/agents/Yuzuha.hpp"
 
 
@@ -11,6 +12,7 @@ extern void Agent::initAgents() {
 		{Agent::Datas::alice.key, Agent::Datas::alice},
 		{Agent::Datas::miyabi.key, Agent::Datas::miyabi},
 		{Agent::Datas::nangongYu.key, Agent::Datas::nangongYu},
+		{Agent::Datas::yixuan.key, Agent::Datas::yixuan},
 		{Agent::Datas::yuzuha.key, Agent::Datas::yuzuha},
 	};
 

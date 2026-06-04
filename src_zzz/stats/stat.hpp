@@ -1,6 +1,5 @@
 #pragma once
 
-#include "format"
 #include "formula/percentage.hpp"
 #include "misc/attribute.hpp"
 #include "utility"
@@ -14,36 +13,37 @@
 // An underscore after the stat name means %
 // Ex: hp_ -> HP%
 enum class Stat : uint8_t {
-	hp,
-	hp_,
-	atk,
-	atk_,
-	def,
-	def_,
+	hp = 0,
+	hp_ = 1,
+	atk = 2,
+	atk_ = 3,
+	def = 4,
+	def_ = 5,
+	sheerForce = 24,
 	// Energy recharge
-	er,
+	er = 6,
+	er_ = 23,
 	// Anomaly Proficiency
-	ap,
-	ap_,
+	ap = 7,
+	ap_ = 8,
 	// Anomaly Mastery
-	am,
-	am_,
+	am = 9,
+	am_ = 10,
 	// Crit Rate
-	cr,
+	cr = 11,
 	// Crit Damage
-	cd,
-	pen,
-	penRatio,
-	impact,
-	impact_,
+	cd = 12,
+	pen = 13,
+	penRatio = 14,
+	impact = 15,
+	impact_ = 16,
 
-	physicalDmg,
-	fireDmg,
-	iceDmg,
-	electricDmg,
-	etherDmg,
-	allDmg,
-	er_,
+	physicalDmg = 17,
+	fireDmg = 18,
+	iceDmg = 19,
+	electricDmg = 20,
+	etherDmg = 21,
+	allDmg = 22,
 };
 
 namespace Stats {
@@ -51,6 +51,7 @@ namespace Stats {
 		Stat::hp,
 		Stat::atk,
 		Stat::def,
+		Stat::sheerForce,
 		Stat::impact,
 		Stat::ap,
 		Stat::am,
@@ -67,6 +68,7 @@ namespace Stats {
 			Stat::atk_,
 			Stat::def,
 			Stat::def_,
+			Stat::sheerForce,
 			Stat::er,
 			Stat::er_,
 			Stat::ap,
@@ -96,6 +98,8 @@ namespace Stats {
 			Stat::atk_,
 			Stat::def,
 			Stat::def_,
+			Stat::sheerForce,
+			Stat::er,
 			Stat::er_,
 			Stat::ap,
 			Stat::ap_,
@@ -323,6 +327,8 @@ namespace Utils {
 				return "DEF";
 			case Stat::def_:
 				return "DEF%";
+			case Stat::sheerForce:
+				return "Sheer Force";
 			case Stat::er:
 				return "Energy Regen";
 			case Stat::er_:

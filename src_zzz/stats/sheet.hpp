@@ -110,6 +110,7 @@ namespace Stats {
 		_Value atk_{};
 		_Value def{};
 		_Value def_{};
+		_Value sheerForce{};
 		_Value er{};
 		_Value er_{};
 		_Value ap{};
@@ -159,6 +160,8 @@ namespace Stats {
 		_SkillValue abloom{};
 		_SkillValue allAnomaly{};
 
+		_SkillValue sheer{};
+
 		[[nodiscard]] auto &fromAttribute(this auto &&self, const Misc::Attribute &attribute) {
 			return Stats::fromAttribute(self, attribute);
 		}
@@ -176,6 +179,9 @@ namespace Stats {
 		}
 		[[nodiscard]] auto &&fromDamageAnomaly(this auto &&self, const Misc::DamageAnomaly &damageAnomaly) {
 			return Stats::fromAnomaly(self, damageAnomaly);
+		}
+		[[nodiscard]] auto &&fromDamageType(this auto &&self, const Misc::DamageType &damageType) {
+			return Stats::fromDamageType(self, damageType);
 		}
 	};
 

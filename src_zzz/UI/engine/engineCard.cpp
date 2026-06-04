@@ -3,6 +3,7 @@
 #include "UI/engine/engineSelector.hpp"
 #include "UI/utils/card.hpp"
 #include "UI/utils/statDisplay.hpp"
+#include "agent/data.hpp"
 #include "engine/data.hpp"
 #include "misc/rarityToColor.hpp"
 #include "store.hpp"
@@ -170,6 +171,7 @@ squi::core::Child UI::EngineCard::State::build(const Element &element) {
 					GlobalKey selectorKey{};
 					Navigator::of(*this->element).pushOverlay(EngineSelector{
 						.key = selectorKey,
+						.specialty = Store::agents.at(this->widget->agentKey).state.stats.data.baseStats.specialty,
 						.onSelect = [this, selectorKey](Engine::DataKey key) {
 							Engine::Instance instance{key, {++Store::lastEngineId}};
 							auto &engine = Store::engines.insert({instance.instanceKey, instance}).first->second;

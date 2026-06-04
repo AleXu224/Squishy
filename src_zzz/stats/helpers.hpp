@@ -5,8 +5,10 @@
 #include "misc/attackSource.hpp"
 #include "misc/attribute.hpp"
 #include "misc/damageAttribute.hpp"
+#include "misc/damageType.hpp"
 #include "misc/skillStat.hpp"
 #include "stat.hpp"
+
 // #include "misc/attackSource.hpp"
 // #include "misc/damageElement.hpp"
 // #include "misc/reaction.hpp"
@@ -26,12 +28,17 @@ namespace Stats {
 		{ std::remove_cvref_t<T>::atk_ };
 		{ std::remove_cvref_t<T>::def };
 		{ std::remove_cvref_t<T>::def_ };
+		{ std::remove_cvref_t<T>::sheerForce };
 		{ std::remove_cvref_t<T>::er };
+		{ std::remove_cvref_t<T>::er_ };
 		{ std::remove_cvref_t<T>::ap };
+		{ std::remove_cvref_t<T>::ap_ };
 		{ std::remove_cvref_t<T>::am };
+		{ std::remove_cvref_t<T>::am_ };
 		{ std::remove_cvref_t<T>::pen };
 		{ std::remove_cvref_t<T>::penRatio };
 		{ std::remove_cvref_t<T>::impact };
+		{ std::remove_cvref_t<T>::impact_ };
 		{ std::remove_cvref_t<T>::cr };
 		{ std::remove_cvref_t<T>::cd };
 
@@ -77,6 +84,8 @@ namespace Stats {
 				return sheet.def;
 			case Stat::def_:
 				return sheet.def_;
+			case Stat::sheerForce:
+				return sheet.sheerForce;
 			case Stat::er:
 				return sheet.er;
 			case Stat::er_:
@@ -204,6 +213,8 @@ namespace Stats {
 				return Sheet.def;
 			case Stat::def_:
 				return Sheet.def_;
+			case Stat::sheerForce:
+				return Sheet.sheerForce;
 			case Stat::er:
 				return Sheet.er;
 			case Stat::er_:
@@ -361,6 +372,30 @@ namespace Stats {
 				return sheet.abloom;
 			case Misc::DamageAnomaly::allAnomaly:
 				return sheet.allAnomaly;
+		}
+		std::unreachable();
+	}
+
+	template<auto Sheet, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr RetType fromDamageType(Misc::DamageType damageType, Misc::SkillStat skillStat) {
+		switch (damageType) {
+			case Misc::DamageType::sheer:
+				return fromSkillStat<Sheet.sheer, RetType>(skillStat);
+		}
+		std::unreachable();
+	}
+	template<SheetLike T, class RetType = Formula::FloatNode>
+	[[nodiscard]] constexpr const RetType &fromDamageType(T &sheet, Misc::DamageType damageType, Misc::SkillStat skillStat) {
+		switch (damageType) {
+			case Misc::DamageType::sheer:
+				return fromSkillStat(sheet.sheer, skillStat);
+		}
+		std::unreachable();
+	}
+	[[nodiscard]] constexpr auto &&fromDamageType(auto &&sheet, Misc::DamageType damageType) {
+		switch (damageType) {
+			case Misc::DamageType::sheer:
+				return sheet.sheer;
 		}
 		std::unreachable();
 	}

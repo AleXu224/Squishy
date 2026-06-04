@@ -19,7 +19,7 @@ namespace Stats {
 			.cd{.constant = 0.5f},
 		};
 		Stats::Sheet<Stats::Value<float, 1>> initial{};
-		Stats::Sheet<Stats::Value<float, 1>> combat{};
+		Stats::Sheet<Stats::Value<float, 2>> combat{};
 		Skills<Stats::Value<int32_t, 2>> skills{};
 
 		void init(Stats::State &stats);
