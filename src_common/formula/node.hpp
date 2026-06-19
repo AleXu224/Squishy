@@ -190,7 +190,7 @@ namespace Formula {
 			if (this->fn) this->fn->retain();
 		}
 
-		template<class T>
+		template<HasRetType T>
 		constexpr NodeType(const T &t)
 			: fn(NodeAllocator::allocate<implementation<T>>(t)) {}
 
@@ -279,8 +279,7 @@ namespace Formula {
 		interface *fn{};
 	};
 
-	template<class V>
-		requires requires { typename std::remove_cvref_t<V>::RetType; }
+	template<HasRetType V>
 	NodeType(V &&) -> NodeType<typename std::remove_cvref_t<V>::RetType>;
 
 	using FloatNode = NodeType<float>;

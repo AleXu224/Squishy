@@ -7,6 +7,9 @@ namespace Formula {
 	struct Context;
 	struct FoldArgs;
 
+	template<class T>
+	concept HasRetType = requires { typename std::remove_cvref_t<T>::RetType; };
+
 	template<class T, class Ret>
 	concept HasConstantValue = std::is_same_v<std::remove_cvref_t<decltype(std::declval<T>().value)>, Ret>;
 
