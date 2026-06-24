@@ -230,6 +230,22 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 			// Help harder optimizations find the best solution faster, however it may give worse solutions for slots 2-5
 			// This however could help in figuring out the single best solution when a single build is requested
 			// filtered.removeInferior();
+
+			// Greedy initial solution: pick best individual disc per slot to seed minScore early
+			{
+				auto &slotted = std::get<Stats::Disc::Slotted>(threadData.agent.state.loadout().disc.equipped);
+				for (auto [slotPtr, entry]: std::views::zip(Stats::Disc::Slotted::getMembers(), filtered.entries)) {
+					auto &slot = std::invoke(slotPtr, slotted);
+					if (!entry.empty()) slot = entry.back()->key;
+				}
+				threadData.agent.state.loadout().disc.refreshStats();
+				SlotHash hash(threadData.agent.state.loadout().disc.bonus1, threadData.agent.state.loadout().disc.bonus2, threadData.agent.state.loadout().disc.bonus3);
+				if (hash == state.targetHash) {
+					auto initScore = optimizedNode.eval(threadData.ctx);
+					solutions.addSolution(slotted, initScore);
+				}
+			}
+
 			for (auto [slotPtr, filtered]: std::views::zip(Stats::Disc::Slotted::getMembers(), filtered.entries)) {
 				auto &slot = std::invoke(slotPtr, threadData.agent.state.loadout().disc.getSlotted());
 				if (!filtered.empty()) slot = filtered.front()->key;
