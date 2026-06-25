@@ -1,6 +1,6 @@
 #include "combo.hpp"
 
-std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(const std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> &combos) {
+std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(const std::map<::Combo::InstanceKey, ::Combo::Combo> &combos) {
 	std::vector<Serialization::Save::Combo> ret;
 
 	for (const auto &[key, combo]: combos) {
@@ -127,8 +127,8 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 	return ret;
 }
 
-std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::comboToInstance(const std::vector<Serialization::Save::Combo> &combos) {
-	std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> ret;
+std::map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::comboToInstance(const std::vector<Serialization::Save::Combo> &combos) {
+	std::map<::Combo::InstanceKey, ::Combo::Combo> ret;
 
 	for (const auto &combo: combos) {
 		std::list<::Combo::EntryTypes> entries;

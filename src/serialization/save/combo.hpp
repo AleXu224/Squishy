@@ -98,8 +98,8 @@ namespace Serialization::Save {
 		std::vector<ComboEntryTypes> entries;
 	};
 
-	std::vector<Serialization::Save::Combo> comboFromInstance(const std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> &combos);
-	std::unordered_map<::Combo::InstanceKey, ::Combo::Combo> comboToInstance(const std::vector<Serialization::Save::Combo> &combos);
+	std::vector<Serialization::Save::Combo> comboFromInstance(const std::map<::Combo::InstanceKey, ::Combo::Combo> &combos);
+	std::map<::Combo::InstanceKey, ::Combo::Combo> comboToInstance(const std::vector<Serialization::Save::Combo> &combos);
 }// namespace Serialization::Save
 template<>
 struct glz::meta<Serialization::Save::CharacterCombo> {

@@ -24,6 +24,57 @@ namespace Optimization {
 
 		inline void bnb(FilteredArtifacts &artifacts, SplitState splitState = SplitState{}) {
 			auto &loadout = character.state.loadout();
+
+			auto &maxStatsForSlotsByMainstat = getMaxStatsForSlotsByMainstat(artifacts);
+
+			bool foundUpgrade = false;
+			const auto skipUpgradeFinding = maxStatsForSlotsByMainstat.getCombCount() < 32;
+			for (auto &&[slot1, slot2, slot3, slot4, slot5]:
+				 std::views::cartesian_product(maxStatsForSlotsByMainstat.slot1, maxStatsForSlotsByMainstat.slot2, maxStatsForSlotsByMainstat.slot3, maxStatsForSlotsByMainstat.slot4, maxStatsForSlotsByMainstat.slot5)) {
+				loadout.artifact.sheet.equippedArtifacts[0] = &slot1.stats;
+				loadout.artifact.sheet.equippedArtifacts[1] = &slot2.stats;
+				loadout.artifact.sheet.equippedArtifacts[2] = &slot3.stats;
+				loadout.artifact.sheet.equippedArtifacts[3] = &slot4.stats;
+				loadout.artifact.sheet.equippedArtifacts[4] = &slot5.stats;
+
+				if (node.eval(ctx) > solutions.minScore) {
+					foundUpgrade = true;
+					if (skipUpgradeFinding) {
+						break;
+					}
+					slot1.foundUpgrade = true;
+					slot2.foundUpgrade = true;
+					slot3.foundUpgrade = true;
+					slot4.foundUpgrade = true;
+					slot5.foundUpgrade = true;
+				}
+			}
+			if (!foundUpgrade) {
+				return;
+			}
+
+			auto paritionStats = maxStatsForSlotsByMainstat.getSlots();
+			if (!skipUpgradeFinding) {
+				for (const auto &[index, slot]: std::views::enumerate(paritionStats)) {
+					for (auto it = slot->begin(); it != slot->end();) {
+						if (it->foundUpgrade) {
+							++it;
+							continue;
+						}
+						auto &artis = artifacts.entries.at(index);
+						auto stat = it->mainStat;
+						artis.erase(
+							std::remove_if(artis.begin(), artis.end(), [&](Artifact::Instance *artifact) {
+								if (artifact->mainStat == stat) return true;
+								return false;
+							}),
+							artis.end()
+						);
+						it = slot->erase(it);
+					}
+				}
+			}
+
 			std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(artifacts);
 
 			// Check if this branch can possibly be good enough to be worth considering
@@ -34,7 +85,6 @@ namespace Optimization {
 			loadout.artifact.sheet.equippedArtifacts[2] = &statsForSlot[2];
 			loadout.artifact.sheet.equippedArtifacts[3] = &statsForSlot[3];
 			loadout.artifact.sheet.equippedArtifacts[4] = &statsForSlot[4];
-			if (node.eval(ctx) <= solutions.minScore) return;
 
 			float maxVariance = 0;
 			size_t maxVarianceSlot = 0;

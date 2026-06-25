@@ -3,19 +3,19 @@
 #include "artifact/instance.hpp"
 #include "character/instance.hpp"
 #include "enemy/instance.hpp"
+#include "map"
 #include "stats/team.hpp"
 #include "team/instance.hpp"
-#include "unordered_map"
 #include "weapon/instance.hpp"
 
 #include "serialization/good/IGOOD.hpp"
 
 namespace Store {
-	inline std::unordered_map<Character::InstanceKey, Character::Instance> characters{};
-	inline std::unordered_map<Team::InstanceKey, Team::Instance> teams{};
-	inline std::unordered_map<Enemy::Key, Enemy::Instance> enemies{};
-	inline std::unordered_map<Weapon::InstanceKey, Weapon::Instance> weapons{};
-	inline std::unordered_map<Artifact::InstanceKey, Artifact::Instance> artifacts{};
+	inline std::map<Character::InstanceKey, Character::Instance> characters{};
+	inline std::map<Team::InstanceKey, Team::Instance> teams{};
+	inline std::map<Enemy::Key, Enemy::Instance> enemies{};
+	inline std::map<Weapon::InstanceKey, Weapon::Instance> weapons{};
+	inline std::map<Artifact::InstanceKey, Artifact::Instance> artifacts{};
 
 	static inline Team::Instance defaultTeam{
 		.instanceKey{std::numeric_limits<uint32_t>::max()},

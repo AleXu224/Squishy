@@ -22,20 +22,73 @@ namespace Optimization {
 
 		inline void bnb(FilteredDiscs &discs, BnbState &state, SplitState splitState = SplitState{}) {
 			auto &loadout = agent.state.loadout();
-			std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(discs);
 
 			// Check if this branch can possibly be good enough to be worth considering
 			if (!state.isValid()) {
 				return;
 			}
+
+			auto &maxStatsForSlotsByMainstat = getMaxStatsForSlotsByMainstat(discs);
+
+			bool foundUpgrade = false;
 			state.applySets(loadout);
+			const auto skipUpgradeFinding = maxStatsForSlotsByMainstat.getCombCount() < 32;
+			for (auto &&[partition1, partition2, partition3, partition4, partition5, partition6]:
+				 std::views::cartesian_product(maxStatsForSlotsByMainstat.partition1, maxStatsForSlotsByMainstat.partition2, maxStatsForSlotsByMainstat.partition3, maxStatsForSlotsByMainstat.partition4, maxStatsForSlotsByMainstat.partition5, maxStatsForSlotsByMainstat.partition6)) {
+				loadout.disc.sheet.equippedDiscs[0] = &partition1.stats;
+				loadout.disc.sheet.equippedDiscs[1] = &partition2.stats;
+				loadout.disc.sheet.equippedDiscs[2] = &partition3.stats;
+				loadout.disc.sheet.equippedDiscs[3] = &partition4.stats;
+				loadout.disc.sheet.equippedDiscs[4] = &partition5.stats;
+				loadout.disc.sheet.equippedDiscs[5] = &partition6.stats;
+
+				if (node.eval(ctx) > solutions.minScore) {
+					foundUpgrade = true;
+					if (skipUpgradeFinding) {
+						break;
+					}
+					partition1.foundUpgrade = true;
+					partition2.foundUpgrade = true;
+					partition3.foundUpgrade = true;
+					partition4.foundUpgrade = true;
+					partition5.foundUpgrade = true;
+					partition6.foundUpgrade = true;
+				}
+			}
+			if (!foundUpgrade) {
+				return;
+			}
+
+			auto paritionStats = maxStatsForSlotsByMainstat.getPartitions();
+			if (!skipUpgradeFinding) {
+				for (const auto &[index, partition]: std::views::enumerate(paritionStats)) {
+					for (auto it = partition->begin(); it != partition->end();) {
+						if (it->foundUpgrade) {
+							++it;
+							continue;
+						}
+						auto &artis = discs.entries.at(index);
+						auto stat = it->mainStat;
+						artis.erase(
+							std::remove_if(artis.begin(), artis.end(), [&](Disc::Instance *disc) {
+								if (disc->mainStat == stat) return true;
+								return false;
+							}),
+							artis.end()
+						);
+						it = partition->erase(it);
+					}
+				}
+			}
+
+			std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(discs);
+
 			loadout.disc.sheet.equippedDiscs[0] = &statsForSlot[0];
 			loadout.disc.sheet.equippedDiscs[1] = &statsForSlot[1];
 			loadout.disc.sheet.equippedDiscs[2] = &statsForSlot[2];
 			loadout.disc.sheet.equippedDiscs[3] = &statsForSlot[3];
 			loadout.disc.sheet.equippedDiscs[4] = &statsForSlot[4];
 			loadout.disc.sheet.equippedDiscs[5] = &statsForSlot[5];
-			if (node.eval(ctx) <= solutions.minScore) return;
 
 			// Check the potential of each disc
 			for (size_t i = 0; i < 6; i++) {

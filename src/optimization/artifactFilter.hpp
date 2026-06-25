@@ -178,4 +178,70 @@ namespace Optimization {
 		}
 		return statsForSlot;
 	}
+
+	struct MaxStatsByMainstat {
+		struct SlotStatsWrapper {
+			Stats::Sheet<float> stats{};
+			Stat mainStat{};
+			bool foundUpgrade = false;
+		};
+		using SlotStats = std::vector<SlotStatsWrapper>;
+
+		SlotStats slot1{};
+		SlotStats slot2{};
+		SlotStats slot3{};
+		SlotStats slot4{};
+		SlotStats slot5{};
+
+		void clear() {
+			slot1.clear();
+			slot2.clear();
+			slot3.clear();
+			slot4.clear();
+			slot5.clear();
+		}
+
+		size_t getCombCount() const {
+			return slot1.size()
+				 * slot2.size()
+				 * slot3.size()
+				 * slot4.size()
+				 * slot5.size();
+		}
+
+		SlotStatsWrapper &getSlotStatsForMainStat(Artifact::Slot slot, Stat mainStat) {
+			auto &slotStats = *getSlots().at(static_cast<size_t>(slot));
+			for (auto &slotStat: slotStats) {
+				if (slotStat.mainStat == mainStat) return slotStat;
+			}
+			slotStats.emplace_back(SlotStatsWrapper{.mainStat = mainStat});
+			return slotStats.back();
+		}
+
+		std::array<SlotStats *, 5> getSlots() {
+			return {&slot1, &slot2, &slot3, &slot4, &slot5};
+		}
+	};
+
+	static inline MaxStatsByMainstat &getMaxStatsForSlotsByMainstat(const FilteredArtifacts &artifacts) {
+		thread_local MaxStatsByMainstat statsForSlot{};
+
+		statsForSlot.clear();
+		for (auto &&[slotMap, artifacts]: std::views::zip(statsForSlot.getSlots(), artifacts.entries)) {
+			for (const auto &artifact: artifacts) {
+				auto &slot = statsForSlot.getSlotStatsForMainStat(artifact->slot, artifact->mainStat);
+				auto &mainStatSlot = slot.stats.fromStat(artifact->mainStat);
+				auto &mainStatArtifact = artifact->stats.fromStat(artifact->mainStat);
+				mainStatSlot = std::max(mainStatSlot, mainStatArtifact);
+
+				for (const auto &subStat: artifact->subStats) {
+					if (!subStat.stat.has_value()) continue;
+					auto &statSlot = slot.stats.fromStat(subStat.stat.value());
+					auto &statArtifact = artifact->stats.fromStat(subStat.stat.value());
+					statSlot = std::max(statSlot, statArtifact);
+				}
+			}
+		}
+		return statsForSlot;
+	}
 }// namespace Optimization

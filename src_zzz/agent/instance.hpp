@@ -13,7 +13,7 @@ namespace Agent {
 		const InstanceKey instanceKey;
 		const DataKey dataKey;
 		Stats::State state;
-		std::unordered_map<Combo::InstanceKey, Combo::Combo> combos;
+		std::map<Combo::InstanceKey, Combo::Combo> combos;
 		squi::VoidObservable updateEvent{};
 		squi::VoidObservable loadoutChangedEvent{};
 		std::shared_ptr<Optimization::Options> optimizationOptions = std::make_shared<Optimization::Options>();

@@ -330,4 +330,73 @@ namespace Optimization {
 		}
 		return statsForPartition;
 	}
+
+	struct MaxStatsByMainstat {
+		struct PartitionStatsWrapper {
+			Stats::Sheet<float> stats{};
+			Stat mainStat{};
+			bool foundUpgrade = false;
+		};
+		using PartitionStats = std::vector<PartitionStatsWrapper>;
+
+		PartitionStats partition1{};
+		PartitionStats partition2{};
+		PartitionStats partition3{};
+		PartitionStats partition4{};
+		PartitionStats partition5{};
+		PartitionStats partition6{};
+
+		void clear() {
+			partition1.clear();
+			partition2.clear();
+			partition3.clear();
+			partition4.clear();
+			partition5.clear();
+			partition6.clear();
+		}
+
+		size_t getCombCount() const {
+			return partition1.size()
+				 * partition2.size()
+				 * partition3.size()
+				 * partition4.size()
+				 * partition5.size()
+				 * partition6.size();
+		}
+
+		PartitionStatsWrapper &getPartitionStatsForMainStat(Disc::Partition partition, Stat mainStat) {
+			auto &partitionStats = *getPartitions().at(static_cast<size_t>(partition));
+			for (auto &partitionStat: partitionStats) {
+				if (partitionStat.mainStat == mainStat) return partitionStat;
+			}
+			partitionStats.emplace_back(PartitionStatsWrapper{.mainStat = mainStat});
+			return partitionStats.back();
+		}
+
+		std::array<PartitionStats *, 6> getPartitions() {
+			return {&partition1, &partition2, &partition3, &partition4, &partition5, &partition6};
+		}
+	};
+
+	static inline MaxStatsByMainstat &getMaxStatsForSlotsByMainstat(const FilteredDiscs &discs) {
+		thread_local MaxStatsByMainstat statsForPartition{};
+
+		statsForPartition.clear();
+		for (auto &&[partitionMap, discs]: std::views::zip(statsForPartition.getPartitions(), discs.entries)) {
+			for (const auto &disc: discs) {
+				auto &partition = statsForPartition.getPartitionStatsForMainStat(disc->partition, disc->mainStat);
+				auto &mainStatSlot = partition.stats.fromStat(disc->mainStat);
+				auto &mainStatDisc = disc->stats.fromStat(disc->mainStat);
+				mainStatSlot = std::max(mainStatSlot, mainStatDisc);
+
+				for (const auto &subStat: disc->subStats) {
+					if (!subStat.stat.has_value()) continue;
+					auto &statSlot = partition.stats.fromStat(subStat.stat.value());
+					auto &statDisc = disc->stats.fromStat(subStat.stat.value());
+					statSlot = std::max(statSlot, statDisc);
+				}
+			}
+		}
+		return statsForPartition;
+	}
 }// namespace Optimization

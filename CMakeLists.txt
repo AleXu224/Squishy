@@ -89,6 +89,10 @@ target_link_libraries(squishyBench PRIVATE glt)
 find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(squishyBench PRIVATE benchmark::benchmark benchmark::benchmark_main)
 
+add_executable(optTest EXCLUDE_FROM_ALL opt_test.cpp)
+target_link_libraries(optTest PRIVATE squishy_zzz_lib)
+target_compile_features(optTest PRIVATE cxx_std_23)
+
 file(GLOB_RECURSE all_test_files CONFIGURE_DEPENDS "tests/*.cc")
 add_executable(squishyTest EXCLUDE_FROM_ALL ${all_test_files})
 find_package(Catch2 CONFIG REQUIRED)

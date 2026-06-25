@@ -14,6 +14,8 @@ namespace Utils {
 			return key == other.key;
 		}
 
+		auto operator<=>(const GenericKey &) const = default;
+
 		void clear() {
 			key = 0;
 		}

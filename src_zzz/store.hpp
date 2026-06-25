@@ -6,17 +6,16 @@
 #include "engine/instance.hpp"
 #include "stats/team.hpp"
 #include "team/instance.hpp"
-#include "unordered_map"
-
+#include <map>
 
 #include "serialization/zod/IZOD.hpp"
 
 namespace Store {
-	inline std::unordered_map<Agent::InstanceKey, Agent::Instance> agents{};
-	inline std::unordered_map<Team::InstanceKey, Team::Instance> teams{};
-	inline std::unordered_map<Enemy::Key, Enemy::Instance> enemies{};
-	inline std::unordered_map<Engine::InstanceKey, Engine::Instance> engines{};
-	inline std::unordered_map<Disc::InstanceKey, Disc::Instance> discs{};
+	inline std::map<Agent::InstanceKey, Agent::Instance> agents{};
+	inline std::map<Team::InstanceKey, Team::Instance> teams{};
+	inline std::map<Enemy::Key, Enemy::Instance> enemies{};
+	inline std::map<Engine::InstanceKey, Engine::Instance> engines{};
+	inline std::map<Disc::InstanceKey, Disc::Instance> discs{};
 
 	static inline Team::Instance defaultTeam{
 		.instanceKey{std::numeric_limits<uint32_t>::max()},
