@@ -11,17 +11,16 @@ namespace Node {
 	template<Misc::SkillStat skillStat>
 	struct _NodeAttribute : Formula::FormulaBase<float> {
 		Utils::JankyOptional<Misc::Attribute> attribute{};
-		Utils::JankyOptional<Misc::AttackSource> source{};
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(source, attribute, context)), skillStat).fold(context, args);
+			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(
 				std::format(
 					"{} {}",
-					Utils::Stringify(Formula::getAttribute(source, attribute, context)),
+					Utils::Stringify(Formula::getAttribute(attribute, context)),
 					Utils::Stringify(skillStat)
 				),
 				eval(context), Utils::isPercentage(skillStat)
@@ -29,7 +28,7 @@ namespace Node {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(source, attribute, context)), skillStat).eval(context);
+			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat).eval(context);
 		}
 	};
 
@@ -66,7 +65,7 @@ namespace Node {
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::combat().all, skillStat);
-		auto attributeStats = _NodeAttribute<skillStat>({}, attackAttribute, atkSource);
+		auto attributeStats = _NodeAttribute<skillStat>({}, attackAttribute);
 		auto skillStats = _NodeSkill<skillStat>({}, atkSource);
 
 		return allStats + attributeStats + skillStats + formula;

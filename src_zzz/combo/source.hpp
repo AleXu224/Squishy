@@ -18,21 +18,21 @@ namespace Combo::Source {
 		Node::AgentSlot slot;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const Overrides &overrides) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &overrides, const Formula::Context &ctx) const;
 	};
 
 	struct Combo {
 		::Agent::InstanceKey agentKey;
 		::Combo::InstanceKey comboKey;
 
-		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options, const Formula::Context &ctx) const;
 	};
 
 	struct Engine {
 		::Engine::DataKey key;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options, const Formula::Context &ctx) const;
 	};
 
 	struct Disc {
@@ -40,14 +40,20 @@ namespace Combo::Source {
 		::Disc::SetSlot slot;
 		size_t index;
 
-		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options, const Formula::Context &ctx) const;
 	};
 
 	struct Anomaly {
 		Misc::Anomaly reaction;
 
-		[[nodiscard]] Node::Instance resolve(const Overrides &options) const;
+		[[nodiscard]] Node::Instance resolve(const Overrides &options, const Formula::Context &ctx) const;
 	};
 
-	using Types = std::variant<Agent, Combo, Engine, Disc, Anomaly>;
+	struct Vortex {
+		size_t index;
+
+		[[nodiscard]] Node::Instance resolve(const Overrides &options, const Formula::Context &ctx) const;
+	};
+
+	using Types = std::variant<Agent, Combo, Engine, Disc, Anomaly, Vortex>;
 }// namespace Combo::Source

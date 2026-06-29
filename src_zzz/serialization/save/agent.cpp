@@ -61,7 +61,8 @@ Serialization::Save::Agent Serialization::Save::Agent::fromInstance(const ::Agen
 	std::vector<::Stats::Loadout> loadouts{};
 	for (const auto &loadout: this->loadouts) {
 		auto &entry = loadouts.emplace_back(loadout.toInstance(instance.state.stats.base.specialty));
-		entry.engine->data->getOpts(instance.state.options);
+		if (entry.engineInstanceKey)
+			entry.engine->data->getOpts(instance.state.options);
 
 		// Check if the disc exists
 		if (!std::holds_alternative<::Stats::Disc::Slotted>(entry.disc.equipped)) continue;

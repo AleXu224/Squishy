@@ -14,18 +14,17 @@ namespace Node {
 	using namespace Formula::Operators;
 	struct _NodeAttribute : Formula::FormulaBase<float> {
 		Utils::JankyOptional<Misc::Attribute> attribute{};
-		Utils::JankyOptional<Misc::AttackSource> source{};
 		Misc::SkillStat skillStat;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(source, attribute, context)), skillStat).fold(context, args);
+			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat).fold(context, args);
 		}
 
 		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
 			return Formula::Percentage(
 				std::format(
 					"{} {}",
-					Utils::Stringify(Formula::getAttribute(source, attribute, context)),
+					Utils::Stringify(Formula::getAttribute(attribute, context)),
 					Utils::Stringify(skillStat)
 				),
 				eval(context), Utils::isPercentage(skillStat)
@@ -33,7 +32,7 @@ namespace Node {
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(source, attribute, context)), skillStat).eval(context);
+			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat).eval(context);
 		}
 	};
 
@@ -71,7 +70,7 @@ namespace Node {
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::combat().all, skillStat);
 		auto sheerStats = Stats::fromSkillStat(Modifiers::combat().sheer, skillStat);
-		auto attributeStats = _NodeAttribute({}, attackAttribute, atkSource, skillStat);
+		auto attributeStats = _NodeAttribute({}, attackAttribute, skillStat);
 		auto skillStats = _NodeSkill({}, atkSource, skillStat);
 
 		return allStats + sheerStats + attributeStats + skillStats + formula;
@@ -92,7 +91,7 @@ namespace Node {
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * (formula * Modifiers::combat().sheerForce) + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyResMultiplier({}, source, attribute, modifier.enemy.resistance);
+		auto enemy = Formula::EnemyResMultiplier({}, attribute, modifier.enemy.resistance);
 
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		// FIXME: dmg taken multiplier (piper)

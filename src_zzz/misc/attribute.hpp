@@ -13,6 +13,7 @@ namespace Misc {
 		ice,
 		electric,
 		ether,
+		wind,
 	};
 
 	static constexpr auto agentAttributes = std::array{
@@ -21,6 +22,7 @@ namespace Misc {
 		Misc::Attribute::ice,
 		Misc::Attribute::electric,
 		Misc::Attribute::ether,
+		Misc::Attribute::wind,
 	};
 
 	static constexpr auto attributes = std::array{
@@ -29,6 +31,7 @@ namespace Misc {
 		Misc::Attribute::ice,
 		Misc::Attribute::electric,
 		Misc::Attribute::ether,
+		Misc::Attribute::wind,
 	};
 }// namespace Misc
 
@@ -46,6 +49,8 @@ namespace Utils {
 				return "Electric";
 			case Misc::Attribute::ether:
 				return "Ether";
+			case Misc::Attribute::wind:
+				return "Wind";
 		}
 		std::unreachable();
 	}

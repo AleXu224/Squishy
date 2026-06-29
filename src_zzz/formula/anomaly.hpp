@@ -30,12 +30,12 @@ namespace Formula {
 	 * Adds Abloom nodes to the given vector of nodes.
 	 * Multipliers must be in the order of Misc::attributes
 	 */
-	inline void addAblooms(std::array<FloatNode, 5> multipliers, std::vector<Node::Types> &nodes) {
+	inline void addAblooms(std::array<FloatNode, 6> multipliers, std::vector<Node::Types> &nodes, const std::string &suffix = "Abloom", const Formula::Modifier &modifier = {}) {
 		for (size_t i = 0; i < 3; i++) {
 			nodes.emplace_back(Node::AbloomNode{
 				.name = CharacterName{
 					.index = i,
-					.suffix = "Abloom",
+					.suffix = suffix,
 				},
 				.attribute = TeamAgent{
 					.index = i,
@@ -54,6 +54,7 @@ namespace Formula {
 					},
 				},
 				.index = i,
+				.modifier = modifier,
 			});
 		}
 	}
@@ -101,6 +102,7 @@ namespace Formula {
 			return Anomaly::List::fromAttribute(attribute).formula.eval(context);
 		}
 	};
+
 	template<AttributeFormula T>
 	struct AnomalyAbloomFromAttribute : FormulaBase<float> {
 		T attribute;
@@ -125,6 +127,33 @@ namespace Formula {
 		[[nodiscard]] float eval(const Context &context) const {
 			auto attribute = this->attribute.eval(context);
 			return Anomaly::List::fromAttribute(attribute).formulaAbloom.eval(context);
+		}
+	};
+
+	template<AttributeFormula T>
+	struct AnomalyVortexFromAttribute : FormulaBase<float> {
+		T attribute;
+
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+			auto foldedAttribute = attribute.fold(context, args);
+
+			if (foldedAttribute.getType() == Type::constant) {
+				return Anomaly::List::fromAttribute(foldedAttribute.eval(context)).formulaVortex.fold(context, args);
+			}
+
+			return AnomalyAbloomFromAttribute<decltype(foldedAttribute)>{
+				.attribute = foldedAttribute,
+			};
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+			auto attribute = this->attribute.eval(context);
+			return Anomaly::List::fromAttribute(attribute).formulaVortex.print(context, prevStep);
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			auto attribute = this->attribute.eval(context);
+			return Anomaly::List::fromAttribute(attribute).formulaVortex.eval(context);
 		}
 	};
 

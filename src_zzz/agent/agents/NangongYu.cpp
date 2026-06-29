@@ -242,33 +242,33 @@ const Agent::Data Agent::Datas::nangongYu{
 					Node::Daze{.name = "Adorable Explosive Impact 3rd-Hit Daze (Coordinated)", .source = Misc::AttackSource::basic, .formula = Multiplier(combat.impact, LevelableSkill::basic, 4.1080f, 0.1870f) + Multiplier(combat.impact, LevelableSkill::basic, 0.2060f, 0.01f)},
 				},
 				.dashAttack{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::dodge, .formula = Multiplier(combat.atk, LevelableSkill::dodge, 1.9070f, 0.1740f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::dodge, .formula = Multiplier(combat.impact, LevelableSkill::dodge, 0.2570f, 0.0120f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::dashAttack, .formula = Multiplier(combat.atk, LevelableSkill::dodge, 1.9070f, 0.1740f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::dashAttack, .formula = Multiplier(combat.impact, LevelableSkill::dodge, 0.2570f, 0.0120f)},
 				},
 				.dodgeCounter{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::dodge, .formula = Multiplier(combat.atk, LevelableSkill::dodge, 3.5530f, 0.3230f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::dodge, .formula = Multiplier(combat.impact, LevelableSkill::dodge, 2.5670f, 0.1170f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::dodgeCounter, .formula = Multiplier(combat.atk, LevelableSkill::dodge, 3.5530f, 0.3230f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::dodgeCounter, .formula = Multiplier(combat.impact, LevelableSkill::dodge, 2.5670f, 0.1170f)},
 				},
 				.quickAssist{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.atk, LevelableSkill::assist, 0.7480f, 0.0680f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 0.6330f, 0.0290f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::quickAssist, .formula = Multiplier(combat.atk, LevelableSkill::assist, 0.7480f, 0.0680f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::quickAssist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 0.6330f, 0.0290f)},
 				},
 				.defensiveAssist{
-					Node::Daze{.name = "Light Defensive Daze", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 2.7130f, 0.1240f)},
-					Node::Daze{.name = "Heavy Defensive Daze", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 3.4280f, 0.1560f)},
-					Node::Daze{.name = "Chain Defensive Daze", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 1.6680f, 0.0760f)},
+					Node::Daze{.name = "Light Defensive Daze", .source = Misc::AttackSource::defensiveAssist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 2.7130f, 0.1240f)},
+					Node::Daze{.name = "Heavy Defensive Daze", .source = Misc::AttackSource::defensiveAssist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 3.4280f, 0.1560f)},
+					Node::Daze{.name = "Chain Defensive Daze", .source = Misc::AttackSource::defensiveAssist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 1.6680f, 0.0760f)},
 				},
 				.assistFollowup{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.atk, LevelableSkill::assist, 5.3580f, 0.4880f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::assist, .formula = Multiplier(combat.impact, LevelableSkill::assist, 3.9920f, 0.1820f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::assistFollowup, .formula = Multiplier(combat.atk, LevelableSkill::assist, 5.3580f, 0.4880f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::assistFollowup, .formula = Multiplier(combat.impact, LevelableSkill::assist, 3.9920f, 0.1820f)},
 				},
 				.special{
 					Node::Atk{.name = "DMG", .source = Misc::AttackSource::special, .formula = Multiplier(combat.atk, LevelableSkill::special, 0.8350f, 0.0760f)},
 					Node::Daze{.name = "Daze", .source = Misc::AttackSource::special, .formula = Multiplier(combat.impact, LevelableSkill::special, 0.7070f, 0.0330f)},
 				},
 				.exspecial{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::special, .formula = Multiplier(combat.atk, LevelableSkill::special, 5.3300f, 0.4850f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::special, .formula = Multiplier(combat.impact, LevelableSkill::special, 4.1430f, 0.1890f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::exspecial, .formula = Multiplier(combat.atk, LevelableSkill::special, 5.3300f, 0.4850f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::exspecial, .formula = Multiplier(combat.impact, LevelableSkill::special, 4.1430f, 0.1890f)},
 					Node::Info{.name = "Energy Cost", .type = Utils::EntryType::energy, .formula = Multiplier(Utils::EntryType::energy, LevelableSkill::special, 40.f, 0.f)},
 				},
 				.chain{
@@ -276,8 +276,8 @@ const Agent::Data Agent::Datas::nangongYu{
 					Node::Daze{.name = "Daze", .source = Misc::AttackSource::chain, .formula = Multiplier(combat.impact, LevelableSkill::chain, 2.3650f, 0.1080f)},
 				},
 				.ultimate{
-					Node::Atk{.name = "DMG", .source = Misc::AttackSource::chain, .formula = Multiplier(combat.atk, LevelableSkill::chain, 21.0170f, 1.9110f)},
-					Node::Daze{.name = "Daze", .source = Misc::AttackSource::chain, .formula = Multiplier(combat.impact, LevelableSkill::chain, 11.9610f, 0.5440f)},
+					Node::Atk{.name = "DMG", .source = Misc::AttackSource::ultimate, .formula = Multiplier(combat.atk, LevelableSkill::chain, 21.0170f, 1.9110f)},
+					Node::Daze{.name = "Daze", .source = Misc::AttackSource::ultimate, .formula = Multiplier(combat.impact, LevelableSkill::chain, 11.9610f, 0.5440f)},
 				},
 				.core = [&]() {
 					std::vector<Node::Types> ret{
@@ -291,12 +291,13 @@ const Agent::Data Agent::Datas::nangongYu{
 						},
 					};
 					Formula::addAblooms(//
-						std::array<Formula::FloatNode, 5>{
+						std::array<Formula::FloatNode, 6>{
 							(1.f + abloomAdditionalMult) * 0.63f,
 							(1.f + abloomAdditionalMult) * 9.f,
 							(1.f + abloomAdditionalMult) * 0.9f,
 							(1.f + abloomAdditionalMult) * 3.6f,
 							(1.f + abloomAdditionalMult) * 7.2f,
+							(1.f + abloomAdditionalMult) * 0.36f,
 						},
 						ret
 					);
@@ -325,12 +326,13 @@ const Agent::Data Agent::Datas::nangongYu{
 						},
 					};
 					Formula::addAblooms(//
-						std::array<Formula::FloatNode, 5>{
+						std::array<Formula::FloatNode, 6>{
 							(1.f + m6VibratoBuff) * 0.7f,
 							(1.f + m6VibratoBuff) * 10.f,
 							(1.f + m6VibratoBuff) * 1.f,
 							(1.f + m6VibratoBuff) * 4.0f,
 							(1.f + m6VibratoBuff) * 8.f,
+							(1.f + m6VibratoBuff) * 0.4f,
 						},
 						ret
 					);

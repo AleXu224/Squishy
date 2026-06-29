@@ -16,6 +16,7 @@ export const statMap = new Map<string, string>([
     ["Electric DMG Bonus", "electricDmg"],
     ["Ice DMG Bonus", "iceDmg"],
     ["Ether DMG Bonus", "etherDmg"],
+    ["Wind DMG Bonus", "windDmg"],
 
 ]);
 

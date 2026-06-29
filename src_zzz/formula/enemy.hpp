@@ -48,7 +48,6 @@ namespace Formula {
 	};
 
 	struct EnemyResMultiplier : FormulaBase<float> {
-		Utils::JankyOptional<Misc::AttackSource> attackSource{};
 		Utils::JankyOptional<Misc::Attribute> element{};
 		EnemyModifierResistance modifiers{};
 
@@ -56,7 +55,7 @@ namespace Formula {
 			using namespace Operators;
 			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any agent that has either
 			// an infusion or res shred that relies on disc stats then this will break
-			const auto attackElement = getAttribute(attackSource, element, context);
+			const auto attackElement = getAttribute(element, context);
 			auto RES = Stats::fromEnemyResAttribute(Modifiers::enemy().resistance, attackElement);
 			auto RESModifier = Stats::fromEnemyResAttribute(modifiers, attackElement);
 
@@ -72,12 +71,36 @@ namespace Formula {
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			const auto attackElement = getAttribute(attackSource, element, context);
+			const auto attackElement = getAttribute(element, context);
 			auto RES = Stats::fromEnemyResAttribute(Modifiers::enemy().resistance, attackElement).eval(context);
 			auto RESModifier = Stats::fromEnemyResAttribute(modifiers, attackElement).eval(context);
 
 			auto ret = std::min(2.f, 1.f - (RES + RESModifier));
 			return ret;
+		}
+	};
+
+	// Used when the element is not known at compile time
+	struct EnemyResMultiplierDynamic : FormulaBase<float> {
+		NodeType<Misc::Attribute> element{};
+		EnemyModifierResistance modifiers{};
+
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+			using namespace Operators;
+			auto attackElement = element.fold(context, args);
+			if (attackElement.getType() == Type::constant) {
+				return EnemyResMultiplier{.element = attackElement.getConstantValue(), .modifiers = modifiers}.fold(context, args);
+			}
+			return *this;
+		}
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return Formula::Percentage("Enemy RES Multiplier", eval(context), true);
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			auto attackElement = element.eval(context);
+			return EnemyResMultiplier{.element = attackElement, .modifiers = modifiers}.eval(context);
 		}
 	};
 }// namespace Formula

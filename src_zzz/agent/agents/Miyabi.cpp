@@ -256,65 +256,65 @@ const Agent::Data Agent::Datas::miyabi{
 				.dashAttack{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dashAttack,
 						.formula = Multiplier(combat.atk, LevelableSkill::dodge, 0.2580f, 0.0240f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dashAttack,
 						.formula = Multiplier(combat.impact, LevelableSkill::dodge, 0.1290f, 0.0060f)
 					},
 				},
 				.dodgeCounter{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dodgeCounter,
 						.formula = Multiplier(combat.atk, LevelableSkill::dodge, 2.4590f, 0.2240f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dodgeCounter,
 						.formula = Multiplier(combat.impact, LevelableSkill::dodge, 2.1450f, 0.0980f)
 					},
 				},
 				.quickAssist{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::quickAssist,
 						.formula = Multiplier(combat.atk, LevelableSkill::assist, 1.0450f, 0.0950f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::quickAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 1.0450f, 0.0480f)
 					},
 				},
 				.defensiveAssist{
 					Node::Daze{
 						.name = "Light Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 2.7130f, 0.1240f)
 					},
 					Node::Daze{
 						.name = "Heavy Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 3.4280f, 0.1560f)
 					},
 					Node::Daze{
 						.name = "Chain Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 1.2830f, 0.0590f)
 					},
 				},
 				.assistFollowup{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.atk, LevelableSkill::assist, 3.3780f, 0.3080f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 2.9190f, 0.1330f)
 					},
 				},
@@ -333,22 +333,22 @@ const Agent::Data Agent::Datas::miyabi{
 				.exspecial{
 					Node::Atk{
 						.name = "Slash DMG",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.atk, LevelableSkill::special, 1.5740f, 0.1440f)
 					},
 					Node::Atk{
 						.name = "Follow-Up DMG",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.atk, LevelableSkill::special, 1.9330f, 0.1760f)
 					},
 					Node::Daze{
 						.name = "Slash Daze",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.impact, LevelableSkill::special, 1.2870f, 0.0590f)
 					},
 					Node::Daze{
 						.name = "Follow-Up Daze",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.impact, LevelableSkill::special, 1.6200f, 0.0740f)
 					},
 					Node::Info{
@@ -377,12 +377,12 @@ const Agent::Data Agent::Datas::miyabi{
 				.ultimate{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::chain,
+						.source = Misc::AttackSource::ultimate,
 						.formula = Multiplier(combat.atk, LevelableSkill::chain, 23.8800f, 2.1710f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::chain,
+						.source = Misc::AttackSource::ultimate,
 						.formula = Multiplier(combat.impact, LevelableSkill::chain, 3.7040f, 0.1690f)
 					},
 				},

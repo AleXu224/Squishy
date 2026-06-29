@@ -17,6 +17,7 @@ namespace Modifiers {
 			static constexpr auto ice = SkillType{V, &TT::_SkillValue::ice};
 			static constexpr auto electric = SkillType{V, &TT::_SkillValue::electric};
 			static constexpr auto ether = SkillType{V, &TT::_SkillValue::ether};
+			static constexpr auto wind = SkillType{V, &TT::_SkillValue::wind};
 		};
 
 		static constexpr auto level = &TT::level;
@@ -38,6 +39,7 @@ namespace Modifiers {
 			static constexpr auto ice = SheetMemberIdentifier(member, Misc::Attribute::ice);
 			static constexpr auto electric = SheetMemberIdentifier(member, Misc::Attribute::electric);
 			static constexpr auto ether = SheetMemberIdentifier(member, Misc::Attribute::ether);
+			static constexpr auto wind = SheetMemberIdentifier(member, Misc::Attribute::wind);
 		};
 
 		static constexpr auto level = SheetMemberIdentifier(Misc::EnemyStat::level);
@@ -60,6 +62,7 @@ namespace Modifiers {
 			static constexpr Formula<V.ice...> ice{};
 			static constexpr Formula<V.electric...> electric{};
 			static constexpr Formula<V.ether...> ether{};
+			static constexpr Formula<V.wind...> wind{};
 		};
 
 		static constexpr Formula<Params.level...> level{};
@@ -90,6 +93,7 @@ namespace Modifiers {
 				.ice = Formula({}, params.resistance.ice...),
 				.electric = Formula({}, params.resistance.electric...),
 				.ether = Formula({}, params.resistance.ether...),
+				.wind = Formula({}, params.resistance.wind...),
 			},
 		};
 	}

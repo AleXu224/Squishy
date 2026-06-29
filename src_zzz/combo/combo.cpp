@@ -18,7 +18,7 @@ float Combo::Combo::eval(const Formula::Context &context) const {
 					newOverrides.push(entry.options);
 					const auto &node = std::visit(
 						[&](auto &&source) {
-							return source.resolve(newOverrides);
+							return source.resolve(newOverrides, ctx);
 						},
 						entry.source
 					);

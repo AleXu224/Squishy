@@ -137,7 +137,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 									.child = agent.optimizationOptions->nodeSource.has_value()//
 											   ? std::visit(                                  //
 													 [&](auto &&node) -> std::string {
-														 return Node::getName(node.resolve({}).data, ctx);
+														 return Node::getName(node.resolve({}, ctx).data, ctx);
 													 },
 													 agent.optimizationOptions->nodeSource.value()
 												 )
@@ -156,7 +156,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 										auto &&node = std::visit(
 											[&](auto &&node) {
 												return node
-													.resolve({})
+													.resolve({}, ctx)
 													.formula;
 											},
 											storage->nodeSource.value()
@@ -188,7 +188,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 										auto &&node = std::visit(
 											[&](auto &&node) {
 												return node
-													.resolve({})
+													.resolve({}, ctx)
 													.formula;
 											},
 											storage->nodeSource.value()

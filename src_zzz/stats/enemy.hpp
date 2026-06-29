@@ -14,6 +14,7 @@ namespace Stats {
 				.ice{},
 				.electric{},
 				.ether{},
+				.wind{},
 			},
 		};
 	};

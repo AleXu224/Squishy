@@ -12,6 +12,7 @@ namespace Misc {
 		ice,
 		electric,
 		ether,
+		wind,
 		all,
 	};
 
@@ -21,6 +22,7 @@ namespace Misc {
 		DamageAttribute::ice,
 		DamageAttribute::electric,
 		DamageAttribute::ether,
+		DamageAttribute::wind,
 		DamageAttribute::all,
 	};
 }// namespace Misc
@@ -39,6 +41,8 @@ namespace Utils {
 				return "Electric";
 			case Misc::DamageAttribute::ether:
 				return "Ether";
+			case Misc::DamageAttribute::wind:
+				return "Wind";
 			case Misc::DamageAttribute::all:
 				return "All";
 		}

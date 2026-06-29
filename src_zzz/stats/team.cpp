@@ -27,6 +27,20 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 		},
 	});
 
+	// Windswept
+	auto windsweptCond = IsActive("windsweptCond");
+	auto windsweptBuff = Formula::Requires{.requirement = windsweptCond, .ret = Formula::Constant{.value = 0.1f}};
+	resonances.wind.directDMG.modifiers.at(0) = windsweptBuff;
+
+	options.insert({
+		Utils::HashedString("windsweptCond"),
+		Option::Boolean{
+			.key = "windsweptCond",
+			.name = "Enemy is affected by Windswept",
+			.mods{.combat{.wind{.directDMG = windsweptBuff}}},
+		},
+	});
+
 	options.insert({
 		Utils::HashedString("enemyStunned"),
 		Option::Boolean{

@@ -18,6 +18,8 @@ namespace Utils {
 				return squi::Color::rgb(46, 182, 255);
 			case Misc::Attribute::ether:
 				return squi::Color::rgb(254, 66, 126);
+			case Misc::Attribute::wind:
+				return squi::Color::rgb(166, 197, 253);
 		}
 		std::unreachable();
 	}

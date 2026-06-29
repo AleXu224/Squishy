@@ -66,7 +66,7 @@ squi::core::Child UI::NodePicker::State::build(const Element &element) {
 				Children anomalyRet;
 				for (const auto &anomaly: Misc::anomalies) {
 					auto source = Combo::Source::Anomaly{anomaly};
-					auto node = source.resolve({});
+					auto node = source.resolve({}, widget->ctx);
 					anomalyRet.emplace_back(NodePickerEntry{
 						.node = node,
 						.source = source,
@@ -74,6 +74,19 @@ squi::core::Child UI::NodePicker::State::build(const Element &element) {
 						.onSelect = widget->onSelect,
 						.closeEvent = closeEvent,
 					});
+				}
+				if (widget->ctx.origin.stats.base.attribute == Misc::Attribute::wind) {
+					for (size_t i = 0; i < 3; i++) {
+						auto source = Combo::Source::Vortex{.index = i};
+						auto node = source.resolve({}, widget->ctx);
+						anomalyRet.emplace_back(NodePickerEntry{
+							.node = node,
+							.source = source,
+							.ctx = widget->ctx,
+							.onSelect = widget->onSelect,
+							.closeEvent = closeEvent,
+						});
+					}
 				}
 				if (!anomalyRet.empty()) {
 					ret.emplace_back(DisplayCard{
@@ -89,7 +102,7 @@ squi::core::Child UI::NodePicker::State::build(const Element &element) {
 							.agentKey = agent.instanceKey,
 							.comboKey = key,
 						};
-						auto node = source.resolve({});
+						auto node = source.resolve({}, widget->ctx);
 						comboRet.emplace_back(NodePickerEntry{
 							.node = node,
 							.source = source,

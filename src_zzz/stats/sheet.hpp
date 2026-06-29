@@ -24,6 +24,7 @@ namespace Stats {
 			_Value ice{};
 			_Value electric{};
 			_Value ether{};
+			_Value wind{};
 
 			[[nodiscard]] static consteval auto getMembers() {
 				return std::array{
@@ -32,6 +33,7 @@ namespace Stats {
 					&_SkillValue::ice,
 					&_SkillValue::electric,
 					&_SkillValue::ether,
+					&_SkillValue::wind,
 				};
 			}
 
@@ -60,7 +62,9 @@ namespace Stats {
 		using _Value = T;
 		struct _SkillValue {
 			_Value DMG{};
+			_Value directDMG{};
 			_Value additiveDMG{};
+			_Value additiveMultiplier{};
 			_Value multiplicativeDMG{};
 			_Value critRate{};
 			_Value critDMG{};
@@ -69,7 +73,9 @@ namespace Stats {
 			[[nodiscard]] static consteval auto getMembers() {
 				return std::array{
 					&_SkillValue::DMG,
+					&_SkillValue::directDMG,
 					&_SkillValue::additiveDMG,
+					&_SkillValue::additiveMultiplier,
 					&_SkillValue::multiplicativeDMG,
 					&_SkillValue::critRate,
 					&_SkillValue::critDMG,
@@ -79,7 +85,9 @@ namespace Stats {
 
 			[[nodiscard]] static constexpr bool isPercetange(_Value _SkillValue::*member) {
 				if (member == &_SkillValue::DMG) return true;
+				if (member == &_SkillValue::directDMG) return true;
 				if (member == &_SkillValue::additiveDMG) return false;
+				if (member == &_SkillValue::additiveMultiplier) return false;
 				if (member == &_SkillValue::multiplicativeDMG) return true;
 				if (member == &_SkillValue::critRate) return true;
 				if (member == &_SkillValue::critDMG) return true;
@@ -90,8 +98,12 @@ namespace Stats {
 				switch (stat) {
 					case Misc::SkillStat::DMG:
 						return self.DMG;
+					case Misc::SkillStat::directDMG:
+						return self.directDMG;
 					case Misc::SkillStat::additiveDMG:
 						return self.additiveDMG;
+					case Misc::SkillStat::additiveMultiplier:
+						return self.additiveMultiplier;
 					case Misc::SkillStat::multiplicativeDMG:
 						return self.multiplicativeDMG;
 					case Misc::SkillStat::critRate:
@@ -129,6 +141,7 @@ namespace Stats {
 		_SkillValue ice{};
 		_SkillValue electric{};
 		_SkillValue ether{};
+		_SkillValue wind{};
 		_SkillValue all{};
 
 		_SkillValue basic{};
@@ -150,6 +163,7 @@ namespace Stats {
 		_SkillValue shatter{};
 		_SkillValue assault{};
 		_SkillValue corruption{};
+		_SkillValue windswept{};
 		_SkillValue disorder{};
 		_SkillValue burnDisorder{};
 		_SkillValue shockDisorder{};
@@ -157,7 +171,9 @@ namespace Stats {
 		_SkillValue frozenFrostDisorder{};
 		_SkillValue assaultDisorder{};
 		_SkillValue corruptionDisorder{};
+		_SkillValue windsweptDisorder{};
 		_SkillValue abloom{};
+		_SkillValue vortex{};
 		_SkillValue allAnomaly{};
 
 		_SkillValue sheer{};

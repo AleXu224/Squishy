@@ -52,6 +52,7 @@ namespace Node {
 		const Formula::Modifier &modifier
 	) {
 		auto totalDMG = _getTotalCustom(attribute, Misc::SkillStat::DMG, modifier.DMG);
+		auto totalDirectDMG = _getTotalCustom(attribute, Misc::SkillStat::directDMG, modifier.directDMG);
 		auto totalAdditiveDMG = _getTotalCustom(attribute, Misc::SkillStat::additiveDMG, modifier.additiveDMG);
 		auto totalMultiplicativeDMG = _getTotalCustom(attribute, Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
 		auto totalCritRate = Formula::Clamp({}, _getTotalCustom(attribute, Misc::SkillStat::critRate, modifier.critRate) + Modifiers::combat().cr, 0.f, 1.f);
@@ -59,14 +60,16 @@ namespace Node {
 
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto dmgBonus = (1.0f + totalDMG);
+		auto directDmgBonus = (1.0f + totalDirectDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyDefMultiplier{.modifiers = modifier.enemy} * Formula::EnemyResMultiplier({}, Misc::AttackSource::basic, attribute, modifier.enemy.resistance);
+		auto enemy = Formula::EnemyDefMultiplier{.modifiers = modifier.enemy} * Formula::EnemyResMultiplier({}, attribute, modifier.enemy.resistance);
 
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		// FIXME: dmg taken multiplier (piper)
 
 		return multiplier
 			 * dmgBonus
+			 * directDmgBonus
 			 * crit
 			 * enemy
 			 * (1.f + stunMod);

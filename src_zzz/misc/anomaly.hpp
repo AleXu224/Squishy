@@ -8,17 +8,19 @@
 
 namespace Misc {
 	enum class Anomaly : uint8_t {
-		burn,
-		shock,
-		shatter,
-		assault,
-		corruption,
-		burnDisorder,
-		shockDisorder,
-		frozenDisorder,
-		frozenFrostDisorder,
-		assaultDisorder,
-		corruptionDisorder,
+		burn = 0,
+		shock = 1,
+		shatter = 2,
+		assault = 3,
+		corruption = 4,
+		windswept = 11,
+		burnDisorder = 5,
+		shockDisorder = 6,
+		frozenDisorder = 7,
+		frozenFrostDisorder = 8,
+		assaultDisorder = 9,
+		corruptionDisorder = 10,
+		windsweptDisorder = 12,
 	};
 
 	enum class DamageAnomaly {
@@ -27,6 +29,7 @@ namespace Misc {
 		shatter,
 		assault,
 		corruption,
+		windswept,
 		disorder,
 		burnDisorder,
 		shockDisorder,
@@ -34,7 +37,9 @@ namespace Misc {
 		frozenFrostDisorder,
 		assaultDisorder,
 		corruptionDisorder,
+		windsweptDisorder,
 		abloom,
+		vortex,
 		allAnomaly,
 	};
 
@@ -44,12 +49,14 @@ namespace Misc {
 		Anomaly::shatter,
 		Anomaly::assault,
 		Anomaly::corruption,
+		Anomaly::windswept,
 		Anomaly::burnDisorder,
 		Anomaly::shockDisorder,
 		Anomaly::frozenDisorder,
 		Anomaly::frozenFrostDisorder,
 		Anomaly::assaultDisorder,
 		Anomaly::corruptionDisorder,
+		Anomaly::windsweptDisorder,
 	};
 
 	const inline std::vector<DamageAnomaly> damageAnomalies{
@@ -58,6 +65,7 @@ namespace Misc {
 		DamageAnomaly::shatter,
 		DamageAnomaly::assault,
 		DamageAnomaly::corruption,
+		DamageAnomaly::windswept,
 		DamageAnomaly::disorder,
 		DamageAnomaly::burnDisorder,
 		DamageAnomaly::shockDisorder,
@@ -65,7 +73,9 @@ namespace Misc {
 		DamageAnomaly::frozenFrostDisorder,
 		DamageAnomaly::assaultDisorder,
 		DamageAnomaly::corruptionDisorder,
+		DamageAnomaly::windsweptDisorder,
 		DamageAnomaly::abloom,
+		DamageAnomaly::vortex,
 		DamageAnomaly::allAnomaly,
 	};
 }// namespace Misc
@@ -84,6 +94,8 @@ namespace Utils {
 				return "Assault";
 			case Misc::Anomaly::corruption:
 				return "Corruption";
+			case Misc::Anomaly::windswept:
+				return "Windswept";
 			case Misc::Anomaly::burnDisorder:
 				return "Burn Disorder";
 			case Misc::Anomaly::shockDisorder:
@@ -96,6 +108,8 @@ namespace Utils {
 				return "Assault Disorder";
 			case Misc::Anomaly::corruptionDisorder:
 				return "Corruption Disorder";
+			case Misc::Anomaly::windsweptDisorder:
+				return "Windswept Disorder";
 		}
 		std::unreachable();
 	}
@@ -113,6 +127,8 @@ namespace Utils {
 				return "Assault";
 			case Misc::DamageAnomaly::corruption:
 				return "Corruption";
+			case Misc::DamageAnomaly::windswept:
+				return "Windswept";
 			case Misc::DamageAnomaly::disorder:
 				return "Disorder";
 			case Misc::DamageAnomaly::burnDisorder:
@@ -127,8 +143,12 @@ namespace Utils {
 				return "Assault Disorder";
 			case Misc::DamageAnomaly::corruptionDisorder:
 				return "Corruption Disorder";
+			case Misc::DamageAnomaly::windsweptDisorder:
+				return "Windswept Disorder";
 			case Misc::DamageAnomaly::abloom:
 				return "Abloom";
+			case Misc::DamageAnomaly::vortex:
+				return "Vortex";
 			case Misc::DamageAnomaly::allAnomaly:
 				return "All Anomaly";
 		}

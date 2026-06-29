@@ -12,7 +12,9 @@ namespace Modifiers {
 		template<auto V>
 		struct Skill {
 			static constexpr auto DMG = SkillType{V, &TT::_SkillValue::DMG};
+			static constexpr auto directDMG = SkillType{V, &TT::_SkillValue::directDMG};
 			static constexpr auto additiveDMG = SkillType{V, &TT::_SkillValue::additiveDMG};
+			static constexpr auto additiveMultiplier = SkillType{V, &TT::_SkillValue::additiveMultiplier};
 			static constexpr auto multiplicativeDMG = SkillType{V, &TT::_SkillValue::multiplicativeDMG};
 			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
 			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
@@ -44,6 +46,7 @@ namespace Modifiers {
 		static constexpr auto ice = Skill<&TT::ice>();
 		static constexpr auto electric = Skill<&TT::electric>();
 		static constexpr auto ether = Skill<&TT::ether>();
+		static constexpr auto wind = Skill<&TT::wind>();
 		static constexpr auto all = Skill<&TT::all>();
 
 		static constexpr auto basic = Skill<&TT::basic>();
@@ -65,6 +68,7 @@ namespace Modifiers {
 		static constexpr auto shatter = Skill<&TT::shatter>();
 		static constexpr auto assault = Skill<&TT::assault>();
 		static constexpr auto corruption = Skill<&TT::corruption>();
+		static constexpr auto windswept = Skill<&TT::windswept>();
 		static constexpr auto disorder = Skill<&TT::disorder>();
 		static constexpr auto burnDisorder = Skill<&TT::burnDisorder>();
 		static constexpr auto shockDisorder = Skill<&TT::shockDisorder>();
@@ -72,7 +76,9 @@ namespace Modifiers {
 		static constexpr auto frozenFrostDisorder = Skill<&TT::frozenFrostDisorder>();
 		static constexpr auto assaultDisorder = Skill<&TT::assaultDisorder>();
 		static constexpr auto corruptionDisorder = Skill<&TT::corruptionDisorder>();
+		static constexpr auto windsweptDisorder = Skill<&TT::windsweptDisorder>();
 		static constexpr auto abloom = Skill<&TT::abloom>();
+		static constexpr auto vortex = Skill<&TT::vortex>();
 		static constexpr auto allAnomaly = Skill<&TT::allAnomaly>();
 
 		static constexpr auto sheer = Skill<&TT::sheer>();
@@ -82,7 +88,9 @@ namespace Modifiers {
 		template<auto member>
 		struct Skill {
 			static constexpr auto DMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::DMG);
+			static constexpr auto directDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::directDMG);
 			static constexpr auto additiveDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::additiveDMG);
+			static constexpr auto additiveMultiplier = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::additiveMultiplier);
 			static constexpr auto multiplicativeDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::multiplicativeDMG);
 			static constexpr auto critRate = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critRate);
 			static constexpr auto critDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critDMG);
@@ -114,6 +122,7 @@ namespace Modifiers {
 		static constexpr auto ice = Skill<Misc::DamageAttribute::ice>();
 		static constexpr auto electric = Skill<Misc::DamageAttribute::electric>();
 		static constexpr auto ether = Skill<Misc::DamageAttribute::ether>();
+		static constexpr auto wind = Skill<Misc::DamageAttribute::wind>();
 		static constexpr auto all = Skill<Misc::DamageAttribute::all>();
 
 		static constexpr auto basic = Skill<Misc::AttackSource::basic>();
@@ -135,6 +144,7 @@ namespace Modifiers {
 		static constexpr auto shatter = Skill<Misc::DamageAnomaly::shatter>();
 		static constexpr auto assault = Skill<Misc::DamageAnomaly::assault>();
 		static constexpr auto corruption = Skill<Misc::DamageAnomaly::corruption>();
+		static constexpr auto windswept = Skill<Misc::DamageAnomaly::windswept>();
 		static constexpr auto disorder = Skill<Misc::DamageAnomaly::disorder>();
 		static constexpr auto burnDisorder = Skill<Misc::DamageAnomaly::burnDisorder>();
 		static constexpr auto shockDisorder = Skill<Misc::DamageAnomaly::shockDisorder>();
@@ -142,7 +152,9 @@ namespace Modifiers {
 		static constexpr auto frozenFrostDisorder = Skill<Misc::DamageAnomaly::frozenFrostDisorder>();
 		static constexpr auto assaultDisorder = Skill<Misc::DamageAnomaly::assaultDisorder>();
 		static constexpr auto corruptionDisorder = Skill<Misc::DamageAnomaly::corruptionDisorder>();
+		static constexpr auto windsweptDisorder = Skill<Misc::DamageAnomaly::windsweptDisorder>();
 		static constexpr auto abloom = Skill<Misc::DamageAnomaly::abloom>();
+		static constexpr auto vortex = Skill<Misc::DamageAnomaly::vortex>();
 		static constexpr auto allAnomaly = Skill<Misc::DamageAnomaly::allAnomaly>();
 
 		static constexpr auto sheer = Skill<Misc::DamageType::sheer>();
@@ -153,7 +165,9 @@ namespace Modifiers {
 		template<auto... V>
 		struct _SkillValue {
 			static constexpr Formula<V.DMG...> DMG{};
+			static constexpr Formula<V.directDMG...> directDMG{};
 			static constexpr Formula<V.additiveDMG...> additiveDMG{};
+			static constexpr Formula<V.additiveMultiplier...> additiveMultiplier{};
 			static constexpr Formula<V.multiplicativeDMG...> multiplicativeDMG{};
 			static constexpr Formula<V.critRate...> critRate{};
 			static constexpr Formula<V.critDMG...> critDMG{};
@@ -185,6 +199,7 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.ice...> ice{};
 		static constexpr _SkillValue<Params.electric...> electric{};
 		static constexpr _SkillValue<Params.ether...> ether{};
+		static constexpr _SkillValue<Params.wind...> wind{};
 		static constexpr _SkillValue<Params.all...> all{};
 
 		static constexpr _SkillValue<Params.basic...> basic{};
@@ -206,6 +221,7 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.shatter...> shatter{};
 		static constexpr _SkillValue<Params.assault...> assault{};
 		static constexpr _SkillValue<Params.corruption...> corruption{};
+		static constexpr _SkillValue<Params.windswept...> windswept{};
 		static constexpr _SkillValue<Params.disorder...> disorder{};
 		static constexpr _SkillValue<Params.burnDisorder...> burnDisorder{};
 		static constexpr _SkillValue<Params.shockDisorder...> shockDisorder{};
@@ -213,7 +229,9 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.frozenFrostDisorder...> frozenFrostDisorder{};
 		static constexpr _SkillValue<Params.assaultDisorder...> assaultDisorder{};
 		static constexpr _SkillValue<Params.corruptionDisorder...> corruptionDisorder{};
+		static constexpr _SkillValue<Params.windsweptDisorder...> windsweptDisorder{};
 		static constexpr _SkillValue<Params.abloom...> abloom{};
+		static constexpr _SkillValue<Params.vortex...> vortex{};
 		static constexpr _SkillValue<Params.allAnomaly...> allAnomaly{};
 
 		static constexpr _SkillValue<Params.sheer...> sheer{};
@@ -232,7 +250,9 @@ namespace Modifiers {
 	[[nodiscard]] inline Stats::Sheet<T>::_SkillValue statSkillValueFactory(auto... params) {
 		return {
 			.DMG = formulaFactory<T, Formula>(params.DMG...),
+			.directDMG = formulaFactory<T, Formula>(params.directDMG...),
 			.additiveDMG = formulaFactory<T, Formula>(params.additiveDMG...),
+			.additiveMultiplier = formulaFactory<T, Formula>(params.additiveMultiplier...),
 			.multiplicativeDMG = formulaFactory<T, Formula>(params.multiplicativeDMG...),
 			.critRate = formulaFactory<T, Formula>(params.critRate...),
 			.critDMG = formulaFactory<T, Formula>(params.critDMG...),
@@ -268,6 +288,7 @@ namespace Modifiers {
 			.ice = statSkillValueFactory<T, Formula>(params.ice...),
 			.electric = statSkillValueFactory<T, Formula>(params.electric...),
 			.ether = statSkillValueFactory<T, Formula>(params.ether...),
+			.wind = statSkillValueFactory<T, Formula>(params.wind...),
 			.all = statSkillValueFactory<T, Formula>(params.all...),
 
 			.basic = statSkillValueFactory<T, Formula>(params.basic...),
@@ -289,6 +310,7 @@ namespace Modifiers {
 			.shatter = statSkillValueFactory<T, Formula>(params.shatter...),
 			.assault = statSkillValueFactory<T, Formula>(params.assault...),
 			.corruption = statSkillValueFactory<T, Formula>(params.corruption...),
+			.windswept = statSkillValueFactory<T, Formula>(params.windswept...),
 			.disorder = statSkillValueFactory<T, Formula>(params.disorder...),
 			.burnDisorder = statSkillValueFactory<T, Formula>(params.burnDisorder...),
 			.shockDisorder = statSkillValueFactory<T, Formula>(params.shockDisorder...),
@@ -296,7 +318,9 @@ namespace Modifiers {
 			.frozenFrostDisorder = statSkillValueFactory<T, Formula>(params.frozenFrostDisorder...),
 			.assaultDisorder = statSkillValueFactory<T, Formula>(params.assaultDisorder...),
 			.corruptionDisorder = statSkillValueFactory<T, Formula>(params.corruptionDisorder...),
+			.windsweptDisorder = statSkillValueFactory<T, Formula>(params.windsweptDisorder...),
 			.abloom = statSkillValueFactory<T, Formula>(params.abloom...),
+			.vortex = statSkillValueFactory<T, Formula>(params.vortex...),
 			.allAnomaly = statSkillValueFactory<T, Formula>(params.allAnomaly...),
 
 			.sheer = statSkillValueFactory<T, Formula>(params.sheer...),

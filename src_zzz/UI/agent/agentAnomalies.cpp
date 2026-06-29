@@ -23,7 +23,7 @@ using namespace squi;
 
 			bool transparent = true;
 			for (const auto &anomaly: Anomaly::List::anomalyList) {
-				if (anomaly->attribute != state.stats.data.baseStats.attribute) continue;
+				if (anomaly->attribute.eval(ctx) != state.stats.data.baseStats.attribute) continue;
 				ret.emplace_back(Gesture{
 					.onClick = [out = anomaly->formula.fold(ctx, {}).print(ctx)](const Gesture::State &state) {
 						std::println("{}", out);
@@ -32,24 +32,41 @@ using namespace squi;
 						.text = anomaly->formula.print(ctx, Formula::Step::none),
 						.child = UI::SkillEntry{
 							.isTransparent = (transparent = !transparent),
-							.name = std::string(anomaly->name),
+							.name = anomaly->name.eval(ctx),
 							.value = anomaly->formula.eval(ctx),
-							.color = Utils::attributeToColor(anomaly->attribute),
+							.color = Utils::attributeToColor(anomaly->attribute.eval(ctx)),
 						},
 					},
 				});
 			}
 			for (const auto &anomaly: Anomaly::List::disorderList) {
-				if (anomaly->attribute != state.stats.data.baseStats.attribute) continue;
+				if (anomaly->attribute.eval(ctx) != state.stats.data.baseStats.attribute) continue;
 				ret.emplace_back(Tooltip{
 					.text = anomaly->formula.print(ctx, Formula::Step::none),
 					.child = UI::SkillEntry{
 						.isTransparent = (transparent = !transparent),
-						.name = std::string(anomaly->name),
+						.name = anomaly->name.eval(ctx),
 						.value = anomaly->formula.eval(ctx),
-						.color = Utils::attributeToColor(anomaly->attribute),
+						.color = Utils::attributeToColor(anomaly->attribute.eval(ctx)),
 					},
 				});
+			}
+
+			if (ctx.origin.stats.base.attribute == Misc::Attribute::wind) {
+				for (const auto &anomaly: Anomaly::List::vortexList()) {
+					auto val = anomaly.formula.eval(ctx);
+					if (val <= 0.f) continue;
+
+					ret.emplace_back(Tooltip{
+						.text = anomaly.formula.print(ctx, Formula::Step::none),
+						.child = UI::SkillEntry{
+							.isTransparent = (transparent = !transparent),
+							.name = anomaly.name.eval(ctx),
+							.value = val,
+							.color = Utils::attributeToColor(anomaly.attribute.eval(ctx)),
+						},
+					});
+				}
 			}
 
 			return Children{

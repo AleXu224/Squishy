@@ -249,60 +249,60 @@ const Agent::Data Agent::Datas::yuzuha{
 				.dashAttack{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dashAttack,
 						.formula = Multiplier(combat.atk, LevelableSkill::dodge, 0.6980f, 0.0640f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dashAttack,
 						.formula = Multiplier(combat.impact, LevelableSkill::dodge, 0.3490f, 0.0160f)
 					},
 				},
 				.dodgeCounter{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dodgeCounter,
 						.formula = Multiplier(combat.atk, LevelableSkill::dodge, 2.7690f, 0.2520f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::dodge,
+						.source = Misc::AttackSource::dodgeCounter,
 						.formula = Multiplier(combat.impact, LevelableSkill::dodge, 2.3840f, 0.1090f)
 					},
 				},
 				.quickAssist{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::quickAssist,
 						.formula = Multiplier(combat.atk, LevelableSkill::assist, 1.2290f, 0.1120f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::quickAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 0.6150f, 0.0280f)
 					},
 				},
 				.defensiveAssist{
 					Node::Daze{
 						.name = "Light Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 2.9520f, 0.1350f)
 					},
 					Node::Daze{
 						.name = "Heavy Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 3.4280f, 0.1560f)
 					},
 					Node::Daze{
 						.name = "Chain Defensive Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::defensiveAssist,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 1.6680f, 0.0760f)
 					},
 				},
 				.assistFollowup{
 					Node::Atk{
 						.name = "We Have Cookies DMG",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.atk, LevelableSkill::assist, 2.9430f, 0.2680f),
 						.modifier{
 							.DMG = m4Buff,
@@ -310,12 +310,12 @@ const Agent::Data Agent::Datas::yuzuha{
 					},
 					Node::Daze{
 						.name = "We Have Cookies Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 2.5140f, 0.1150f)
 					},
 					Node::Atk{
 						.name = "Stuffed Hard Candy Shot DMG",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.atk, LevelableSkill::assist, 4.6360f, 0.4220f),
 						.modifier{
 							.DMG = m4Buff,
@@ -323,7 +323,7 @@ const Agent::Data Agent::Datas::yuzuha{
 					},
 					Node::Daze{
 						.name = "Stuffed Hard Candy Shot Daze",
-						.source = Misc::AttackSource::assist,
+						.source = Misc::AttackSource::assistFollowup,
 						.formula = Multiplier(combat.impact, LevelableSkill::assist, 4.0870f, 0.1860f)
 					},
 				},
@@ -342,12 +342,12 @@ const Agent::Data Agent::Datas::yuzuha{
 				.exspecial{
 					Node::Atk{
 						.name = "Cavity Alert DMG",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.atk, LevelableSkill::special, 4.2100f, 0.3830f)
 					},
 					Node::Daze{
 						.name = "Cavity Alert Daze",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.impact, LevelableSkill::special, 4.2100f, 0.1920f)
 					},
 					Node::Info{
@@ -357,12 +357,12 @@ const Agent::Data Agent::Datas::yuzuha{
 					},
 					Node::Atk{
 						.name = "Cavity Alert, Right Now! DMG",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.atk, LevelableSkill::special, 2.4140f, 0.2200f)
 					},
 					Node::Daze{
 						.name = "Cavity Alert, Right Now! Daze",
-						.source = Misc::AttackSource::special,
+						.source = Misc::AttackSource::exspecial,
 						.formula = Multiplier(combat.impact, LevelableSkill::special, 2.6700f, 0.1220f)
 					},
 					Node::Info{
@@ -391,12 +391,12 @@ const Agent::Data Agent::Datas::yuzuha{
 				.ultimate{
 					Node::Atk{
 						.name = "DMG",
-						.source = Misc::AttackSource::chain,
+						.source = Misc::AttackSource::ultimate,
 						.formula = Multiplier(combat.atk, LevelableSkill::chain, 14.4320f, 1.3120f)
 					},
 					Node::Daze{
 						.name = "Daze",
-						.source = Misc::AttackSource::chain,
+						.source = Misc::AttackSource::ultimate,
 						.formula = Multiplier(combat.impact, LevelableSkill::chain, 2.8600f, 0.1300f)
 					},
 					Node::Info{

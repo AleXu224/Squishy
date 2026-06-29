@@ -17,7 +17,7 @@ namespace {
 	};
 }// namespace
 
-Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
+Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
 	auto &combo = ::Store::agents.at(agentKey).combos.at(comboKey);
 
 	std::vector<Formula::Combo::Entry> nodes;
@@ -32,7 +32,7 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 						.multiplier = entry.multiplier,
 						.node = std::visit(//
 									[&](auto &&val) {
-										return val.resolve(std::move(retOverrides));
+										return val.resolve(std::move(retOverrides), ctx);
 									},
 									entry.source
 						)
@@ -69,7 +69,7 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides) const {
 	});
 }
 
-Node::Instance Combo::Source::Agent::resolve(const Overrides &overrides) const {
+Node::Instance Combo::Source::Agent::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
 	const auto &ret = ::Agent::list.at(key).data->nodes.fromEntry(slot).at(index);
 
 	if (!overrides.empty()) {
@@ -84,7 +84,7 @@ Node::Instance Combo::Source::Agent::resolve(const Overrides &overrides) const {
 	return ret;
 }
 
-Node::Instance Combo::Source::Engine::resolve(const Overrides &overrides) const {
+Node::Instance Combo::Source::Engine::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
 	const auto &ret = ::Engine::list.at(key).data.nodes.at(index);
 
 	if (!overrides.empty()) {
@@ -99,7 +99,7 @@ Node::Instance Combo::Source::Engine::resolve(const Overrides &overrides) const 
 	return ret;
 }
 
-Node::Instance Combo::Source::Disc::resolve(const Overrides &overrides) const {
+Node::Instance Combo::Source::Disc::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
 	const auto &ret = ::Disc::sets.at(key).data.fromSetSlot(slot).nodes.at(index);
 
 	if (!overrides.empty()) {
@@ -114,7 +114,7 @@ Node::Instance Combo::Source::Disc::resolve(const Overrides &overrides) const {
 	return ret;
 }
 
-Node::Instance Combo::Source::Anomaly::resolve(const Overrides &overrides) const {
+Node::Instance Combo::Source::Anomaly::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
 	auto anomaly = [&]() -> const ::Anomaly::Anomaly & {
 		switch (reaction) {
 			case Misc::Anomaly::burn:
@@ -127,6 +127,8 @@ Node::Instance Combo::Source::Anomaly::resolve(const Overrides &overrides) const
 				return ::Anomaly::List::assault;
 			case Misc::Anomaly::corruption:
 				return ::Anomaly::List::corruption;
+			case Misc::Anomaly::windswept:
+				return ::Anomaly::List::windswept;
 			case Misc::Anomaly::burnDisorder:
 				return ::Anomaly::List::burnDisorder;
 			case Misc::Anomaly::shockDisorder:
@@ -139,16 +141,44 @@ Node::Instance Combo::Source::Anomaly::resolve(const Overrides &overrides) const
 				return ::Anomaly::List::assaultDisorder;
 			case Misc::Anomaly::corruptionDisorder:
 				return ::Anomaly::List::corruptionDisorder;
+			case Misc::Anomaly::windsweptDisorder:
+				return ::Anomaly::List::windsweptDisorder;
 		}
 		std::unreachable();
 	}();
 
 	auto ret = Node::Instance(NodeInfo{
-		.name = anomaly.name,
+		.name = anomaly.name.eval(ctx),
 		._data{
-			.name = std::string(anomaly.name),
+			.name = anomaly.name.eval(ctx),
 			.type = Utils::EntryType::points,
-			.color = Utils::attributeToColor(anomaly.attribute),
+			.color = Utils::attributeToColor(anomaly.attribute.eval(ctx)),
+			.optimizable = true,
+		},
+		._formula = anomaly.formula,
+	});
+
+	if (!overrides.empty()) {
+		auto nodeCopy = ret;
+		nodeCopy.formula = Formula::ComboOptionOverride{
+			.overrides = overrides,
+			.node = ret.formula,
+		};
+		return nodeCopy;
+	}
+
+	return ret;
+}
+
+[[nodiscard]] Node::Instance Combo::Source::Vortex::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
+	const auto &anomaly = ::Anomaly::List::vortexList().at(index);
+
+	auto ret = Node::Instance(NodeInfo{
+		.name = anomaly.name.eval(ctx),
+		._data{
+			.name = anomaly.name.eval(ctx),
+			.type = Utils::EntryType::points,
+			.color = Utils::attributeToColor(anomaly.attribute.eval(ctx)),
 			.optimizable = true,
 		},
 		._formula = anomaly.formula,

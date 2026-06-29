@@ -42,7 +42,11 @@ namespace Serialization::Save {
 		Misc::Anomaly reaction;
 	};
 
-	using ComboSourceTypes = std::variant<AgentCombo, ComboCombo, EngineCombo, DiscCombo, AnomalyCombo>;
+	struct VortexCombo {
+		size_t index;
+	};
+
+	using ComboSourceTypes = std::variant<AgentCombo, ComboCombo, EngineCombo, DiscCombo, AnomalyCombo, VortexCombo>;
 
 	struct ComboOptionBool {
 		bool value;
@@ -125,6 +129,11 @@ template<>
 struct glz::meta<Serialization::Save::AnomalyCombo> {
 	using T = Serialization::Save::AnomalyCombo;
 	static constexpr auto value = object(&T::reaction);
+};
+template<>
+struct glz::meta<Serialization::Save::VortexCombo> {
+	using T = Serialization::Save::VortexCombo;
+	static constexpr auto value = object(&T::index);
 };
 template<>
 struct glz::meta<Serialization::Save::ComboSourceTypes> {

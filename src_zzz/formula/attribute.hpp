@@ -2,16 +2,14 @@
 
 #include "agent/instance.hpp"
 #include "formula/base.hpp"
-#include "misc/attackSource.hpp"
 #include "misc/attribute.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 
 
 namespace Formula {
-	[[nodiscard]] constexpr auto getAttribute(const Utils::JankyOptional<Misc::AttackSource> &attackSource, Utils::JankyOptional<Misc::Attribute> element, const Formula::Context &context) {
+	[[nodiscard]] constexpr auto getAttribute(Utils::JankyOptional<Misc::Attribute> element, const Formula::Context &context) {
 		if (element.has_value()) return element.value();
-		if (!attackSource.has_value()) return element.value_or(Misc::Attribute::physical);
 		return context.source.stats.base.attribute;
 	}
 
@@ -94,13 +92,37 @@ namespace Formula {
 		}
 	};
 
+	struct IsAgentVortexableAttribute : FormulaBase<bool, Type::constant> {
+		size_t agentIndex;
+
+		[[nodiscard]] std::string print(const Context &context, Step) const {
+			return std::format("Is agent vortexable {} ({})", agentIndex, eval(context));
+		}
+
+		[[nodiscard]] bool eval(const Context &context) const {
+			auto agent = context.team.agents.at(agentIndex);
+			if (!agent) return false;
+			auto attribute = agent->state.stats.base.attribute;
+			switch (attribute) {
+				case Misc::Attribute::fire:
+				case Misc::Attribute::electric:
+				case Misc::Attribute::ether:
+				case Misc::Attribute::ice:
+				case Misc::Attribute::physical:
+					return true;
+				default:
+					return false;
+			}
+		}
+	};
+
 	// Used when needing to check the attribute of the agent that is to receive a team buff.
 	// If this is not used in a team buff context then the result can be incorrect, use `IsAgentAttribute` instead.
 	struct IsTargetAgentAttribute : FormulaBase<bool, Type::constant> {
 		Misc::Attribute attribute;
 
 		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is agent {} ({})", Utils::Stringify(attribute), eval(context));
+			return std::format("Is target agent {} ({})", Utils::Stringify(attribute), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {

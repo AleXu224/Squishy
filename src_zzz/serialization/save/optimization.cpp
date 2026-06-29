@@ -37,6 +37,11 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 							.reaction = source.reaction,
 						};
 					},
+					[](const ::Combo::Source::Vortex &source) -> Serialization::Save::ComboSourceTypes {
+						return Serialization::Save::VortexCombo{
+							.index = source.index,
+						};
+					},
 				},
 				options.nodeSource.value()
 			);
@@ -105,6 +110,11 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 				[](const Serialization::Save::AnomalyCombo &source) -> ::Combo::Source::Types {
 					return ::Combo::Source::Anomaly{
 						.reaction = source.reaction,
+					};
+				},
+				[](const Serialization::Save::VortexCombo &source) -> ::Combo::Source::Types {
+					return ::Combo::Source::Vortex{
+						.index = source.index,
 					};
 				},
 			},

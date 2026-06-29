@@ -48,6 +48,11 @@ std::vector<Serialization::Save::Combo> Serialization::Save::comboFromInstance(c
 												.reaction = source.reaction,
 											};
 										},
+										[](const ::Combo::Source::Vortex &source) -> Serialization::Save::ComboSourceTypes {
+											return Serialization::Save::VortexCombo{
+												.index = source.index,
+											};
+										},
 									},
 									entry.source
 								);
@@ -170,6 +175,11 @@ std::map<::Combo::InstanceKey, ::Combo::Combo> Serialization::Save::comboToInsta
 									[](const Serialization::Save::AnomalyCombo &source) -> ::Combo::Source::Types {
 										return ::Combo::Source::Anomaly{
 											.reaction = source.reaction,
+										};
+									},
+									[](const Serialization::Save::VortexCombo &source) -> ::Combo::Source::Types {
+										return ::Combo::Source::Vortex{
+											.index = source.index,
 										};
 									},
 								},

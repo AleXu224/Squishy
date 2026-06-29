@@ -10,7 +10,9 @@
 namespace Misc {
 	enum class SkillStat : uint8_t {
 		DMG,
+		directDMG,
 		additiveDMG,
+		additiveMultiplier,
 		multiplicativeDMG,
 		critRate,
 		critDMG,
@@ -19,7 +21,9 @@ namespace Misc {
 
 	static inline std::vector<SkillStat> skillStats{
 		SkillStat::DMG,
+		SkillStat::directDMG,
 		SkillStat::additiveDMG,
+		SkillStat::additiveMultiplier,
 		SkillStat::multiplicativeDMG,
 		SkillStat::critRate,
 		SkillStat::critDMG,
@@ -43,8 +47,12 @@ namespace Utils {
 		switch (stat) {
 			case Misc::SkillStat::DMG:
 				return "DMG";
+			case Misc::SkillStat::directDMG:
+				return "Direct DMG";
 			case Misc::SkillStat::additiveDMG:
 				return "Additional DMG";
+			case Misc::SkillStat::additiveMultiplier:
+				return "Additional Multiplier";
 			case Misc::SkillStat::multiplicativeDMG:
 				return "Multiplicative DMG";
 			case Misc::SkillStat::critRate:

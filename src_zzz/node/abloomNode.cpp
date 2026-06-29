@@ -10,30 +10,6 @@
 
 namespace Node {
 	using namespace Formula::Operators;
-	struct _NodeAttributeAbloom : Formula::FormulaBase<float> {
-		Misc::Attribute attribute;
-		Misc::SkillStat skillStat;
-
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), attribute), skillStat).fold(context, args);
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(attribute),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), attribute), skillStat).eval(context);
-		}
-	};
-
 	[[nodiscard]] static constexpr auto _getTotalAbloom(
 		Misc::SkillStat skillStat,
 		const auto &formula
@@ -55,6 +31,7 @@ namespace Node {
 		// auto totalMultiplicativeDMG = _getTotalCustom(Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
 		auto totalCritRate = Formula::Clamp({}, _getTotalAbloom(Misc::SkillStat::critRate, modifier.critRate), 0.f, 1.f);
 		auto totalCritDMG = _getTotalAbloom(Misc::SkillStat::critDMG, modifier.critDMG);
+		auto resMod = Formula::EnemyResMultiplierDynamic{.element = attribute};
 
 		auto formula = Formula::TeamAgent{
 						   .index = index,
@@ -67,6 +44,7 @@ namespace Node {
 
 		return multiplier
 			 * formula
+			 * resMod
 			 * crit;
 	}
 

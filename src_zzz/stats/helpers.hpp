@@ -120,6 +120,8 @@ namespace Stats {
 				return sheet.electric.DMG;
 			case Stat::etherDmg:
 				return sheet.ether.DMG;
+			case Stat::windDmg:
+				return sheet.wind.DMG;
 			case Stat::allDmg:
 				return sheet.all.DMG;
 		}
@@ -131,8 +133,12 @@ namespace Stats {
 		switch (skillStat) {
 			case Misc::SkillStat::DMG:
 				return sheet.DMG;
+			case Misc::SkillStat::directDMG:
+				return sheet.directDMG;
 			case Misc::SkillStat::additiveDMG:
 				return sheet.additiveDMG;
+			case Misc::SkillStat::additiveMultiplier:
+				return sheet.additiveMultiplier;
 			case Misc::SkillStat::multiplicativeDMG:
 				return sheet.multiplicativeDMG;
 			case Misc::SkillStat::critRate:
@@ -150,8 +156,12 @@ namespace Stats {
 		switch (skillStat) {
 			case Misc::SkillStat::DMG:
 				return Skill.DMG;
+			case Misc::SkillStat::directDMG:
+				return Skill.directDMG;
 			case Misc::SkillStat::additiveDMG:
 				return Skill.additiveDMG;
+			case Misc::SkillStat::additiveMultiplier:
+				return Skill.additiveMultiplier;
 			case Misc::SkillStat::multiplicativeDMG:
 				return Skill.multiplicativeDMG;
 			case Misc::SkillStat::critRate:
@@ -249,6 +259,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.electric, RetType>(skillStat);
 			case Stat::etherDmg:
 				return fromSkillStat<Sheet.ether, RetType>(skillStat);
+			case Stat::windDmg:
+				return fromSkillStat<Sheet.wind, RetType>(skillStat);
 			case Stat::allDmg:
 				return fromSkillStat<Sheet.all, RetType>(skillStat);
 		}
@@ -270,6 +282,7 @@ namespace Stats {
 		if constexpr (anomaly == Misc::DamageAnomaly::assaultDisorder) return Sheet.assaultDisorder;
 		if constexpr (anomaly == Misc::DamageAnomaly::corruptionDisorder) return Sheet.corruptionDisorder;
 		if constexpr (anomaly == Misc::DamageAnomaly::abloom) return Sheet.abloom;
+		if constexpr (anomaly == Misc::DamageAnomaly::vortex) return Sheet.vortex;
 		if constexpr (anomaly == Misc::DamageAnomaly::allAnomaly) return Sheet.allAnomaly;
 	}
 
@@ -286,6 +299,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.assault, RetType>(skillStat);
 			case Misc::DamageAnomaly::corruption:
 				return fromSkillStat<Sheet.corruption, RetType>(skillStat);
+			case Misc::DamageAnomaly::windswept:
+				return fromSkillStat<Sheet.windswept, RetType>(skillStat);
 			case Misc::DamageAnomaly::disorder:
 				return fromSkillStat<Sheet.disorder, RetType>(skillStat);
 			case Misc::DamageAnomaly::burnDisorder:
@@ -300,8 +315,12 @@ namespace Stats {
 				return fromSkillStat<Sheet.assaultDisorder, RetType>(skillStat);
 			case Misc::DamageAnomaly::corruptionDisorder:
 				return fromSkillStat<Sheet.corruptionDisorder, RetType>(skillStat);
+			case Misc::DamageAnomaly::windsweptDisorder:
+				return fromSkillStat<Sheet.windsweptDisorder, RetType>(skillStat);
 			case Misc::DamageAnomaly::abloom:
 				return fromSkillStat<Sheet.abloom, RetType>(skillStat);
+			case Misc::DamageAnomaly::vortex:
+				return fromSkillStat<Sheet.vortex, RetType>(skillStat);
 			case Misc::DamageAnomaly::allAnomaly:
 				return fromSkillStat<Sheet.allAnomaly, RetType>(skillStat);
 		}
@@ -321,6 +340,8 @@ namespace Stats {
 				return fromSkillStat(sheet.assault, skillStat);
 			case Misc::DamageAnomaly::corruption:
 				return fromSkillStat(sheet.corruption, skillStat);
+			case Misc::DamageAnomaly::windswept:
+				return fromSkillStat(sheet.windswept, skillStat);
 			case Misc::DamageAnomaly::disorder:
 				return fromSkillStat(sheet.disorder, skillStat);
 			case Misc::DamageAnomaly::burnDisorder:
@@ -335,8 +356,12 @@ namespace Stats {
 				return fromSkillStat(sheet.assaultDisorder, skillStat);
 			case Misc::DamageAnomaly::corruptionDisorder:
 				return fromSkillStat(sheet.corruptionDisorder, skillStat);
+			case Misc::DamageAnomaly::windsweptDisorder:
+				return fromSkillStat(sheet.windsweptDisorder, skillStat);
 			case Misc::DamageAnomaly::abloom:
 				return fromSkillStat(sheet.abloom, skillStat);
+			case Misc::DamageAnomaly::vortex:
+				return fromSkillStat(sheet.vortex, skillStat);
 			case Misc::DamageAnomaly::allAnomaly:
 				return fromSkillStat(sheet.allAnomaly, skillStat);
 		}
@@ -354,6 +379,8 @@ namespace Stats {
 				return sheet.assault;
 			case Misc::DamageAnomaly::corruption:
 				return sheet.corruption;
+			case Misc::DamageAnomaly::windswept:
+				return sheet.windswept;
 			case Misc::DamageAnomaly::disorder:
 				return sheet.disorder;
 			case Misc::DamageAnomaly::burnDisorder:
@@ -368,8 +395,12 @@ namespace Stats {
 				return sheet.assaultDisorder;
 			case Misc::DamageAnomaly::corruptionDisorder:
 				return sheet.corruptionDisorder;
+			case Misc::DamageAnomaly::windsweptDisorder:
+				return sheet.windsweptDisorder;
 			case Misc::DamageAnomaly::abloom:
 				return sheet.abloom;
+			case Misc::DamageAnomaly::vortex:
+				return sheet.vortex;
 			case Misc::DamageAnomaly::allAnomaly:
 				return sheet.allAnomaly;
 		}
@@ -531,6 +562,8 @@ namespace Stats {
 				return sheet.electric;
 			case Misc::Attribute::ether:
 				return sheet.ether;
+			case Misc::Attribute::wind:
+				return sheet.wind;
 		}
 		std::unreachable();
 	}
@@ -548,6 +581,8 @@ namespace Stats {
 				return fromSkillStat(sheet.electric, skillStat);
 			case Misc::DamageAttribute::ether:
 				return fromSkillStat(sheet.ether, skillStat);
+			case Misc::DamageAttribute::wind:
+				return fromSkillStat(sheet.wind, skillStat);
 			case Misc::DamageAttribute::all:
 				return fromSkillStat(sheet.all, skillStat);
 		}
@@ -566,6 +601,8 @@ namespace Stats {
 				return sheet.electric;
 			case Misc::DamageAttribute::ether:
 				return sheet.ether;
+			case Misc::DamageAttribute::wind:
+				return sheet.wind;
 			case Misc::DamageAttribute::all:
 				return sheet.all;
 		}
@@ -585,6 +622,8 @@ namespace Stats {
 				return fromSkillStat<Sheet.electric, RetType>(skillStat);
 			case Misc::DamageAttribute::ether:
 				return fromSkillStat<Sheet.ether, RetType>(skillStat);
+			case Misc::DamageAttribute::wind:
+				return fromSkillStat<Sheet.wind, RetType>(skillStat);
 			case Misc::DamageAttribute::all:
 				return fromSkillStat<Sheet.all, RetType>(skillStat);
 		}
@@ -614,6 +653,8 @@ namespace Stats {
 				return sheet.electric;
 			case Misc::Attribute::ether:
 				return sheet.ether;
+			case Misc::Attribute::wind:
+				return sheet.wind;
 		}
 		std::unreachable();
 	}
@@ -631,6 +672,8 @@ namespace Stats {
 				return Sheet.electric;
 			case Misc::Attribute::ether:
 				return Sheet.ether;
+			case Misc::Attribute::wind:
+				return Sheet.wind;
 		}
 		std::unreachable();
 	}

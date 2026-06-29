@@ -7,7 +7,7 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 	return std::visit(
 		Utils::overloaded{
 			[&](const AtkData &node) {
-				return Utils::attributeToColor(Formula::getAttribute(node.source, node.attribute, ctx));
+				return Utils::attributeToColor(Formula::getAttribute(node.attribute, ctx));
 			},
 			[&](const DazeData &node) {
 				return squi::Color::gray;

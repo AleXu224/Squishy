@@ -10,6 +10,7 @@ namespace Formula {
 		FloatNode ice = Formula::Constant{.value = 0.f};
 		FloatNode electric = Formula::Constant{.value = 0.f};
 		FloatNode ether = Formula::Constant{.value = 0.f};
+		FloatNode wind = Formula::Constant{.value = 0.f};
 	};
 
 	struct EnemyModifier {
@@ -26,7 +27,9 @@ namespace Formula {
 
 	struct Modifier {
 		Formula::FloatNode DMG{Formula::Constant({}, 0.f)};
+		Formula::FloatNode directDMG{Formula::Constant({}, 0.f)};
 		Formula::FloatNode additiveDMG{Formula::ConstantFlat({}, 0.f)};
+		Formula::FloatNode additiveMultiplier{Formula::ConstantFlat({}, 0.f)};
 		Formula::FloatNode multiplicativeDMG{Formula::Constant({}, 0.f)};
 		Formula::FloatNode critRate{Formula::Constant({}, 0.f)};
 		Formula::FloatNode critDMG{Formula::Constant({}, 0.f)};

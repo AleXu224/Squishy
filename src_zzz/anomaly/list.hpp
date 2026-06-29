@@ -4,12 +4,13 @@
 #include "misc/attribute.hpp"
 
 namespace Anomaly::List {
-	static inline std::vector<const ::Anomaly::Anomaly *> anomalyList{
+	const inline std::vector<const ::Anomaly::Anomaly *> anomalyList{
 		&::Anomaly::List::burn,
 		&::Anomaly::List::shock,
 		&::Anomaly::List::shatter,
 		&::Anomaly::List::assault,
 		&::Anomaly::List::corruption,
+		&::Anomaly::List::windswept,
 	};
 
 	inline const ::Anomaly::Anomaly &fromAttribute(Misc::Attribute attribute) {
@@ -24,16 +25,19 @@ namespace Anomaly::List {
 				return ::Anomaly::List::shock;
 			case Misc::Attribute::ether:
 				return ::Anomaly::List::corruption;
+			case Misc::Attribute::wind:
+				return ::Anomaly::List::windswept;
 		}
 	}
 
-	static inline std::vector<const ::Anomaly::Anomaly *> disorderList{
+	const inline std::vector<const ::Anomaly::Anomaly *> disorderList{
 		&::Anomaly::List::burnDisorder,
 		&::Anomaly::List::shockDisorder,
 		&::Anomaly::List::frozenDisorder,
 		&::Anomaly::List::frozenFrostDisorder,
 		&::Anomaly::List::assaultDisorder,
 		&::Anomaly::List::corruptionDisorder,
+		&::Anomaly::List::windsweptDisorder,
 	};
 
 	inline const ::Anomaly::Anomaly &fromAttributeDisorder(Misc::Attribute attribute) {
@@ -48,6 +52,10 @@ namespace Anomaly::List {
 				return ::Anomaly::List::shockDisorder;
 			case Misc::Attribute::ether:
 				return ::Anomaly::List::corruptionDisorder;
+			case Misc::Attribute::wind:
+				return ::Anomaly::List::windsweptDisorder;
 		}
 	}
+
+	extern const std::vector<::Anomaly::Anomaly> &vortexList();
 }// namespace Anomaly::List

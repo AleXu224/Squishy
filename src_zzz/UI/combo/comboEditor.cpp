@@ -46,6 +46,9 @@ namespace {
 				[](const Combo::Source::Anomaly &) -> std::string {
 					return "Anomaly";
 				},
+				[](const Combo::Source::Vortex &) -> std::string {
+					return "Anomaly";
+				},
 			},
 			source
 		);
@@ -393,7 +396,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 									[&](::Combo::Entry &entry) {
 										const auto &node = std::visit(
 											[&](auto &&val) {
-												return val.resolve(overrides);
+												return val.resolve(overrides, ctx);
 											},
 											entry.source
 										);
@@ -408,14 +411,12 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 											Utils::overloaded{
 												[&](const Node::AtkData &data) {
 													attribute = Formula::getAttribute(
-														data.source,
 														data.attribute,
 														ctxWithOverrides
 													);
 												},
 												[&](const Node::DazeData &data) {
 													attribute = Formula::getAttribute(
-														data.source,
 														data.attribute,
 														ctxWithOverrides
 													);
@@ -448,7 +449,7 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 											const auto &node = std::visit(
 												[&](auto &&val) {
 													overrides.push(entry.options);
-													return val.resolve(overrides);
+													return val.resolve(overrides, ctx);
 												},
 												entry.source
 											);
