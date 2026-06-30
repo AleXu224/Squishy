@@ -1,6 +1,7 @@
 #include "customAtkNode.hpp"
 #include "formula/clamp.hpp"
 #include "formula/enemy.hpp"
+#include "formula/nodes.hpp"
 #include "formula/operators.hpp"
 #include "formula/requirement.hpp"
 #include "formula/requires.hpp"
@@ -11,29 +12,6 @@
 
 namespace Node {
 	using namespace Formula::Operators;
-	struct _NodeAttributeAbloom : Formula::FormulaBase<float> {
-		Misc::Attribute attribute;
-		Misc::SkillStat skillStat;
-
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), attribute), skillStat).fold(context, args);
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(attribute),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), attribute), skillStat).eval(context);
-		}
-	};
 
 	[[nodiscard]] static constexpr auto _getTotalCustom(
 		Misc::Attribute attackAttribute,
@@ -41,9 +19,21 @@ namespace Node {
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::combat().all, skillStat);
-		auto attributeStats = _NodeAttributeAbloom({}, attackAttribute, skillStat);
+		auto attributeStats = Formula::NodeAttribute({}, attackAttribute, skillStat);
 
 		return allStats + attributeStats + formula;
+	}
+
+	[[nodiscard]] constexpr auto _getTotalEnemyCustom(
+		Utils::JankyOptional<Misc::Attribute> attackAttribute,
+		const auto &formula
+	) {
+		Formula::EnemyModifier modifiers{};
+		modifiers = modifiers + Modifiers::combat().all.enemy
+				  + Formula::getAttributeModifier(attackAttribute)
+				  + formula;
+
+		return modifiers;
 	}
 
 	Formula::FloatNode CustomAtk::_getFormula(
@@ -62,7 +52,8 @@ namespace Node {
 		auto dmgBonus = (1.0f + totalDMG);
 		auto directDmgBonus = (1.0f + totalDirectDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyDefMultiplier{.modifiers = modifier.enemy} * Formula::EnemyResMultiplier({}, attribute, modifier.enemy.resistance);
+		auto totalModifier = _getTotalEnemyCustom(attribute, modifier.enemy);
+		auto enemy = Formula::EnemyDefMultiplier{.modifiers = totalModifier} * Formula::EnemyResMultiplier({}, attribute, totalModifier.resistance);
 
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		// FIXME: dmg taken multiplier (piper)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formula/attackModifier.hpp"
 #include "formula/constant.hpp"
 #include "formula/node.hpp"
 
@@ -9,5 +10,6 @@ namespace Formula {
 		Formula::FloatNode additiveDMG{Formula::ConstantFlat({}, 0.f)};
 		Formula::FloatNode multiplicativeDMG{Formula::Constant({}, 0.f)};
 		Formula::FloatNode elevation{Formula::Constant({}, 0.f)};
+		Formula::EnemyModifier enemy{};
 	};
 }// namespace Formula

@@ -145,8 +145,6 @@ namespace Stats {
 				return sheet.critRate;
 			case Misc::SkillStat::critDMG:
 				return sheet.critDMG;
-			case Misc::SkillStat::daze:
-				return sheet.daze;
 		}
 		std::unreachable();
 	}
@@ -168,8 +166,6 @@ namespace Stats {
 				return Skill.critRate;
 			case Misc::SkillStat::critDMG:
 				return Skill.critDMG;
-			case Misc::SkillStat::daze:
-				return Skill.daze;
 		}
 		std::unreachable();
 	}
@@ -641,7 +637,7 @@ namespace Stats {
 	// }
 
 	template<class T, class RetType = Formula::FloatNode>
-	[[nodiscard]] constexpr const RetType &fromEnemyResAttribute(T &sheet, Misc::Attribute attribute) {
+	[[nodiscard]] constexpr const RetType &fromEnemyResAttribute(T &&sheet, Misc::Attribute attribute) {
 		switch (attribute) {
 			case Misc::Attribute::physical:
 				return sheet.physical;

@@ -69,7 +69,7 @@ int main() {
 	Formula::FloatNode formula;
 	if (!miyabi->combos.empty()) {
 		auto &c = miyabi->combos.begin()->second;
-		formula = Combo::Source::Combo{.agentKey = miyabi->instanceKey, .comboKey = c.instanceKey}.resolve({}).formula;
+		formula = Combo::Source::Combo{.agentKey = miyabi->instanceKey, .comboKey = c.instanceKey}.resolve({}, ctx).formula;
 	} else {
 		formula = miyabi->state.stats.data.data->nodes.exspecial.at(0).formula;
 	}

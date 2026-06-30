@@ -101,7 +101,7 @@ namespace Modifiers::Artifact::Set {
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &sheet1Enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Artifact::bonus1, SheetMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Artifact::bonus1, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
 		return ret;
 	}
 
@@ -138,7 +138,7 @@ namespace Modifiers::Artifact::Set {
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &sheet2Enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Artifact::bonus2, SheetMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Artifact::bonus2, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
 		return ret;
 	}
 

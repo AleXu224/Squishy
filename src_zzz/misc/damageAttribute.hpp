@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cstdint"
+#include "misc/attribute.hpp"
 #include "string"
 #include "utils/stringify.hpp"
 #include <vector>
@@ -25,6 +26,24 @@ namespace Misc {
 		DamageAttribute::wind,
 		DamageAttribute::all,
 	};
+
+	[[nodiscard]] constexpr DamageAttribute damageAttributeFromAttribute(const Attribute &attribute) {
+		switch (attribute) {
+			case Attribute::physical:
+				return DamageAttribute::physical;
+			case Attribute::fire:
+				return DamageAttribute::fire;
+			case Attribute::ice:
+				return DamageAttribute::ice;
+			case Attribute::electric:
+				return DamageAttribute::electric;
+			case Attribute::ether:
+				return DamageAttribute::ether;
+			case Attribute::wind:
+				return DamageAttribute::wind;
+		}
+		std::unreachable();
+	}
 }// namespace Misc
 
 namespace Utils {

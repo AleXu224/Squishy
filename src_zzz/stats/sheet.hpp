@@ -60,6 +60,7 @@ namespace Stats {
 	template<class T>
 	struct Sheet {
 		using _Value = T;
+		using _EnemySheet = EnemySheet<_Value>;
 		struct _SkillValue {
 			_Value DMG{};
 			_Value directDMG{};
@@ -68,7 +69,7 @@ namespace Stats {
 			_Value multiplicativeDMG{};
 			_Value critRate{};
 			_Value critDMG{};
-			_Value daze{};
+			_EnemySheet enemy{};
 
 			[[nodiscard]] static consteval auto getMembers() {
 				return std::array{
@@ -79,7 +80,6 @@ namespace Stats {
 					&_SkillValue::multiplicativeDMG,
 					&_SkillValue::critRate,
 					&_SkillValue::critDMG,
-					&_SkillValue::daze,
 				};
 			}
 
@@ -110,8 +110,6 @@ namespace Stats {
 						return self.critRate;
 					case Misc::SkillStat::critDMG:
 						return self.critDMG;
-					case Misc::SkillStat::daze:
-						return self.daze;
 				}
 				std::unreachable();
 			}

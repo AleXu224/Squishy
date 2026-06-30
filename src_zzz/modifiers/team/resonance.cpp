@@ -22,7 +22,7 @@ namespace Modifiers::Team {
 		}
 	};
 	struct EnemyResonanceFrm : Formula::FormulaBase<float> {
-		SheetMember<Stats::EnemySheet<Stats::Value<float, 1>>> stat;
+		EnemyMember<Stats::EnemySheet<Stats::Value<float, 1>>> stat;
 		SheetMemberIdentifier member;
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			return stat.resolve(context.team.resonancesEnemy).fold(context, args);

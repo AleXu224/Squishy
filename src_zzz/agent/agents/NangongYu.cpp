@@ -104,10 +104,14 @@ const Agent::Data Agent::Datas::nangongYu{
 					.ap = multiplier1 + m4Buff,
 					.impact = coreImpactBuff,
 					.all{
-						.daze = m6DazeBuff,
+						.enemy{
+							.daze = m6DazeBuff,
+						},
 					},
 					.basic{
-						.daze = basicPreciseChargingBuff,
+						.enemy{
+							.daze = basicPreciseChargingBuff,
+						},
 					},
 				},
 				.teamCombat{
@@ -136,7 +140,9 @@ const Agent::Data Agent::Datas::nangongYu{
 						.mods{
 							.combat{
 								.basic{
-									.daze = basicPreciseChargingBuff,
+									.enemy{
+										.daze = basicPreciseChargingBuff,
+									},
 								},
 							},
 						},
@@ -319,7 +325,9 @@ const Agent::Data Agent::Datas::nangongYu{
 							.mods{
 								.combat{
 									.all{
-										.daze = m6DazeBuff,
+										.enemy{
+											.daze = m6DazeBuff,
+										},
 									},
 								},
 							},

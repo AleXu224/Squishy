@@ -70,7 +70,7 @@ namespace Modifiers::Agent::Kit {
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::enemy, SheetMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::enemy, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
 		return ret;
 	}
 }// namespace Modifiers::Agent::Kit

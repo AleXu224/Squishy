@@ -1,8 +1,11 @@
 #pragma once
 
 #include "cstdint"
+#include "misc/attribute.hpp"
+#include "misc/skillStat.hpp"
 #include "utility"
 #include "utils/isPercentage.hpp"
+#include "utils/overloaded.hpp"
 #include "utils/stringify.hpp"
 
 
@@ -54,6 +57,27 @@ namespace Utils {
 		std::unreachable();
 	}
 	template<>
+	[[nodiscard]] inline std::string Stringify<std::pair<Misc::EnemyResistances, Misc::Attribute>>(const std::pair<Misc::EnemyResistances, Misc::Attribute> &resAttr) {
+		return std::format("{} {}", Utils::Stringify(resAttr.second), Utils::Stringify(resAttr.first));
+	}
+	template<>
+	[[nodiscard]] inline std::string Stringify<std::variant<Misc::SkillStat, Misc::EnemyStat, std::pair<Misc::EnemyResistances, Misc::Attribute>>>(const std::variant<Misc::SkillStat, Misc::EnemyStat, std::pair<Misc::EnemyResistances, Misc::Attribute>> &identifier) {
+		return std::visit(
+			Utils::overloaded{
+				[](Misc::SkillStat skillStat) {
+					return Utils::Stringify(skillStat);
+				},
+				[](Misc::EnemyStat enemyStat) {
+					return Utils::Stringify(enemyStat);
+				},
+				[](std::pair<Misc::EnemyResistances, Misc::Attribute> resAttr) {
+					return Utils::Stringify(resAttr);
+				},
+			},
+			identifier
+		);
+	}
+	template<>
 	[[nodiscard]] constexpr bool isPercentage<Misc::EnemyStat>(const Misc::EnemyStat &stat) {
 		switch (stat) {
 			case Misc::EnemyStat::level:
@@ -68,5 +92,26 @@ namespace Utils {
 				return true;
 		}
 		std::unreachable();
+	}
+	template<>
+	[[nodiscard]] constexpr bool isPercentage<std::pair<Misc::EnemyResistances, Misc::Attribute>>(const std::pair<Misc::EnemyResistances, Misc::Attribute> &resAttr) {
+		return true;
+	}
+	template<>
+	[[nodiscard]] constexpr bool isPercentage<std::variant<Misc::SkillStat, Misc::EnemyStat, std::pair<Misc::EnemyResistances, Misc::Attribute>>>(const std::variant<Misc::SkillStat, Misc::EnemyStat, std::pair<Misc::EnemyResistances, Misc::Attribute>> &identifier) {
+		return std::visit(
+			Utils::overloaded{
+				[](Misc::SkillStat skillStat) {
+					return Utils::isPercentage(skillStat);
+				},
+				[](Misc::EnemyStat enemyStat) {
+					return Utils::isPercentage(enemyStat);
+				},
+				[](std::pair<Misc::EnemyResistances, Misc::Attribute> resAttr) {
+					return Utils::isPercentage(resAttr);
+				},
+			},
+			identifier
+		);
 	}
 }// namespace Utils

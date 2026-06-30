@@ -33,6 +33,25 @@ namespace Misc {
 		Misc::Attribute::ether,
 		Misc::Attribute::wind,
 	};
+
+	template<class T>
+	[[nodiscard]] inline constexpr auto ptrFromAttribute(const Misc::Attribute &attribute) {
+		switch (attribute) {
+			case Misc::Attribute::physical:
+				return &T::physical;
+			case Misc::Attribute::fire:
+				return &T::fire;
+			case Misc::Attribute::ice:
+				return &T::ice;
+			case Misc::Attribute::electric:
+				return &T::electric;
+			case Misc::Attribute::ether:
+				return &T::ether;
+			case Misc::Attribute::wind:
+				return &T::wind;
+		}
+		std::unreachable();
+	}
 }// namespace Misc
 
 namespace Utils {

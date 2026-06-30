@@ -73,6 +73,15 @@ const Agent::Data Agent::Datas::velina{
 			.ret = Constant{.value = 0.2f},
 		};
 
+		auto m1ResIgnore = Requires{
+			.requirement = Requirement::mindscape1,
+			.ret = Constant{.value = -0.2f},
+		};
+		Stats::EnemySheet<FloatNode> m1Modifier{};
+		for (const auto &attribute: Misc::attributes) {
+			std::invoke(Misc::ptrFromAttribute<Stats::EnemySheet<FloatNode>::_SkillValue>(attribute), m1Modifier.resistance) = m1ResIgnore;
+		}
+
 		auto totalSweepingCycloneDazeBuff = additionalDazeBuff + m1DazeBuff;
 
 		return Data::Setup{
@@ -87,6 +96,7 @@ const Agent::Data Agent::Datas::velina{
 					},
 					.vortex{
 						.DMG = additionalVortexBuff,
+						.enemy = m1Modifier,
 					},
 				},
 				.teamCombat{
@@ -403,6 +413,17 @@ const Agent::Data Agent::Datas::velina{
 					);
 					return ret;
 				}(),
+				.mindscape1{
+					Node::Mods{
+						.mods{
+							.combat{
+								.vortex{
+									.enemy = m1Modifier,
+								},
+							},
+						},
+					},
+				},
 			},
 		};
 	},

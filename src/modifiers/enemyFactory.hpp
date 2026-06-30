@@ -28,6 +28,27 @@ namespace Modifiers {
 		static constexpr auto resistance = Skill<&TT::resistance>();
 	};
 
+	template<class T, auto member>
+	struct EnemyPointerFactoryModifier {
+		using TT = std::remove_cvref_t<T>;
+
+		struct Skill {
+			static constexpr auto pyro = EnemyResSkillType{member, &TT::_SkillValue::pyro};
+			static constexpr auto hydro = EnemyResSkillType{member, &TT::_SkillValue::hydro};
+			static constexpr auto cryo = EnemyResSkillType{member, &TT::_SkillValue::cryo};
+			static constexpr auto electro = EnemyResSkillType{member, &TT::_SkillValue::electro};
+			static constexpr auto dendro = EnemyResSkillType{member, &TT::_SkillValue::dendro};
+			static constexpr auto anemo = EnemyResSkillType{member, &TT::_SkillValue::anemo};
+			static constexpr auto geo = EnemyResSkillType{member, &TT::_SkillValue::geo};
+			static constexpr auto physical = EnemyResSkillType{member, &TT::_SkillValue::physical};
+		};
+
+		static constexpr auto level = EnemySkillType{member, &TT::level};
+		static constexpr auto DEFReduction = EnemySkillType{member, &TT::DEFReduction};
+		static constexpr auto DEFIgnored = EnemySkillType{member, &TT::DEFIgnored};
+		static constexpr auto resistance = Skill();
+	};
+
 	struct EnemyNameFactory {
 		template<auto member>
 		struct Skill {
@@ -44,6 +65,28 @@ namespace Modifiers {
 		static constexpr auto level = SheetMemberIdentifier(Misc::EnemyStat::level);
 		static constexpr auto DEFReduction = SheetMemberIdentifier(Misc::EnemyStat::DEFReduction);
 		static constexpr auto DEFIgnored = SheetMemberIdentifier(Misc::EnemyStat::DEFIgnored);
+		static constexpr auto resistance = Skill<Misc::EnemyResistances::resistance>();
+	};
+
+	// For use in _SkillValue
+	// Needs a separate one because the SheetMemberIdentifier needs a different set of parameters while used in this context
+	template<auto member>
+	struct EnemyNameFactoryModifier {
+		template<auto member2>
+		struct Skill {
+			static constexpr auto pyro = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::pyro));
+			static constexpr auto hydro = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::hydro));
+			static constexpr auto cryo = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::cryo));
+			static constexpr auto electro = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::electro));
+			static constexpr auto dendro = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::dendro));
+			static constexpr auto anemo = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::anemo));
+			static constexpr auto geo = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::geo));
+			static constexpr auto physical = SheetMemberIdentifier(member, std::pair(member2, Misc::Element::physical));
+		};
+
+		static constexpr auto level = SheetMemberIdentifier(member, Misc::EnemyStat::level);
+		static constexpr auto DEFReduction = SheetMemberIdentifier(member, Misc::EnemyStat::DEFReduction);
+		static constexpr auto DEFIgnored = SheetMemberIdentifier(member, Misc::EnemyStat::DEFIgnored);
 		static constexpr auto resistance = Skill<Misc::EnemyResistances::resistance>();
 	};
 
@@ -68,20 +111,48 @@ namespace Modifiers {
 	};
 
 	template<class T, class Formula>
+	[[nodiscard]] inline auto formulaFactory(auto... params) {
+		if constexpr (::Formula::template FormulaConcept<Formula, typename T::RetType>) {
+			return Formula({}, params...);
+		} else {
+			return Formula(params...);
+		}
+	}
+
+	template<class T, class Formula>
 	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(auto... params) {
 		return {
-			.level = Formula({}, params.level...),
-			.DEFReduction = Formula({}, params.DEFReduction...),
-			.DEFIgnored = Formula({}, params.DEFIgnored...),
+			.level = formulaFactory<T, Formula>(params.level...),
+			.DEFReduction = formulaFactory<T, Formula>(params.DEFReduction...),
+			.DEFIgnored = formulaFactory<T, Formula>(params.DEFIgnored...),
 			.resistance{
-				.pyro = Formula({}, params.resistance.pyro...),
-				.hydro = Formula({}, params.resistance.hydro...),
-				.cryo = Formula({}, params.resistance.cryo...),
-				.electro = Formula({}, params.resistance.electro...),
-				.dendro = Formula({}, params.resistance.dendro...),
-				.anemo = Formula({}, params.resistance.anemo...),
-				.geo = Formula({}, params.resistance.geo...),
-				.physical = Formula({}, params.resistance.physical...),
+				.pyro = formulaFactory<T, Formula>(params.resistance.pyro...),
+				.hydro = formulaFactory<T, Formula>(params.resistance.hydro...),
+				.cryo = formulaFactory<T, Formula>(params.resistance.cryo...),
+				.electro = formulaFactory<T, Formula>(params.resistance.electro...),
+				.dendro = formulaFactory<T, Formula>(params.resistance.dendro...),
+				.anemo = formulaFactory<T, Formula>(params.resistance.anemo...),
+				.geo = formulaFactory<T, Formula>(params.resistance.geo...),
+				.physical = formulaFactory<T, Formula>(params.resistance.physical...),
+			},
+		};
+	}
+
+	template<class T>
+	[[nodiscard]] inline Stats::EnemySheet<T> constantEnemyFactory(auto param) {
+		return {
+			.level = param,
+			.DEFReduction = param,
+			.DEFIgnored = param,
+			.resistance{
+				.pyro = param,
+				.hydro = param,
+				.cryo = param,
+				.electro = param,
+				.dendro = param,
+				.anemo = param,
+				.geo = param,
+				.physical = param,
 			},
 		};
 	}

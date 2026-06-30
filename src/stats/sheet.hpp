@@ -57,6 +57,7 @@ namespace Stats {
 	template<class T>
 	struct Sheet {
 		using _Value = T;
+		using _EnemySheet = EnemySheet<_Value>;
 		struct _SkillValue {
 			_Value DMG{};
 			_Value additiveDMG{};
@@ -64,6 +65,7 @@ namespace Stats {
 			_Value elevation{};
 			_Value critRate{};
 			_Value critDMG{};
+			_EnemySheet enemy{};
 
 			[[nodiscard]] static consteval auto getMembers() {
 				return std::array{

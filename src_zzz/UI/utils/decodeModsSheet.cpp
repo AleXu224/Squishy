@@ -31,6 +31,25 @@ namespace {
 		});
 	}
 
+	[[nodiscard]] Children decodeEnemySheetModifier(std::string_view prefix, bool &transparent, const Stats::ModsSheet::_EnemySheet &sheet, const Formula::Context &ctx, auto &&location) {
+		Children ret;
+
+		// Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::level);
+		addItem(sheet.level, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::level), ret, ctx, transparent, prefix);
+		addItem(sheet.stunMod, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::stunMod), ret, ctx, transparent, prefix);
+		addItem(sheet.baseDef, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::baseDef), ret, ctx, transparent, prefix);
+		addItem(sheet.DEFReduction, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::DEFReduction), ret, ctx, transparent, prefix);
+		addItem(sheet.DEFIgnored, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::DEFIgnored), ret, ctx, transparent, prefix);
+		addItem(sheet.dazeRes, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::dazeRes), ret, ctx, transparent, prefix);
+		addItem(sheet.daze, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::daze), ret, ctx, transparent, prefix);
+		addItem(sheet.dazeTaken, Modifiers::SheetMemberIdentifier(location, Misc::EnemyStat::dazeTaken), ret, ctx, transparent, prefix);
+		for (const auto &attribute: Misc::attributes) {
+			addItem(sheet.resistance.fromAttribute(attribute), Modifiers::SheetMemberIdentifier(location, std::pair(Misc::EnemyResistances::resistance, attribute)), ret, ctx, transparent, prefix);
+		}
+
+		return ret;
+	}
+
 	[[nodiscard]] Children decodeSheet(std::string_view prefix, bool &transparent, const Stats::ModsSheet::_Sheet &sheet, const Formula::Context &ctx) {
 		Children ret;
 
@@ -41,21 +60,29 @@ namespace {
 			for (const auto &skill: Misc::skillStats) {
 				addItem(Stats::fromDamageAttribute(sheet, attribute, skill), Stats::fromDamageAttribute<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(attribute, skill), ret, ctx, transparent, prefix);
 			}
+			auto enemy = decodeEnemySheetModifier(prefix, transparent, Stats::fromDamageAttribute(sheet, attribute).enemy, ctx, attribute);
+			ret.insert(ret.end(), enemy.begin(), enemy.end());
 		}
 		for (const auto &attackSource: Misc::attackSources) {
 			for (const auto &skill: Misc::skillStats) {
 				addItem(Stats::fromAttackSource(sheet, attackSource, skill), Stats::fromAttackSource<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(attackSource, skill), ret, ctx, transparent, prefix);
 			}
+			auto enemy = decodeEnemySheetModifier(prefix, transparent, Stats::fromAttackSource(sheet, attackSource).enemy, ctx, attackSource);
+			ret.insert(ret.end(), enemy.begin(), enemy.end());
 		}
 		for (const auto &anomaly: Misc::damageAnomalies) {
 			for (const auto &skill: Misc::skillStats) {
 				addItem(Stats::fromAnomaly(sheet, anomaly, skill), Stats::fromAnomaly<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(anomaly, skill), ret, ctx, transparent, prefix);
 			}
+			auto enemy = decodeEnemySheetModifier(prefix, transparent, Stats::fromAnomaly(sheet, anomaly).enemy, ctx, anomaly);
+			ret.insert(ret.end(), enemy.begin(), enemy.end());
 		}
 		for (const auto &damageType: Misc::damageTypes) {
 			for (const auto &skill: Misc::skillStats) {
 				addItem(Stats::fromDamageType(sheet, damageType, skill), Stats::fromDamageType<Modifiers::StatNameFactory{}, Modifiers::SheetMemberIdentifier>(damageType, skill), ret, ctx, transparent, prefix);
 			}
+			auto enemy = decodeEnemySheetModifier(prefix, transparent, Stats::fromDamageType(sheet, damageType).enemy, ctx, damageType);
+			ret.insert(ret.end(), enemy.begin(), enemy.end());
 		}
 
 		return ret;

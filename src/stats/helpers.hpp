@@ -3,6 +3,7 @@
 #include "formula/node.hpp"
 #include "misc/attackSource.hpp"
 #include "misc/damageElement.hpp"
+#include "misc/lunarDamageType.hpp"
 #include "misc/reaction.hpp"
 #include "misc/skillStat.hpp"
 #include "stats/stat.hpp"
@@ -357,6 +358,46 @@ namespace Stats {
 		std::unreachable();
 	}
 
+	[[nodiscard]] constexpr auto &&fromReaction(auto &&sheet, Misc::Reaction reaction) {
+		switch (reaction) {
+			case Misc::Reaction::vape:
+				return sheet.vape;
+			case Misc::Reaction::melt:
+				return sheet.melt;
+			case Misc::Reaction::aggravate:
+				return sheet.aggravate;
+			case Misc::Reaction::spread:
+				return sheet.spread;
+			case Misc::Reaction::burning:
+				return sheet.burning;
+			case Misc::Reaction::superconduct:
+				return sheet.superconduct;
+			case Misc::Reaction::swirl:
+				return sheet.swirl;
+			case Misc::Reaction::electroCharged:
+				return sheet.electroCharged;
+			case Misc::Reaction::shattered:
+				return sheet.shattered;
+			case Misc::Reaction::overloaded:
+				return sheet.overloaded;
+			case Misc::Reaction::bloom:
+				return sheet.bloom;
+			case Misc::Reaction::burgeon:
+				return sheet.burgeon;
+			case Misc::Reaction::hyperbloom:
+				return sheet.hyperbloom;
+			case Misc::Reaction::lunarCharged:
+				return sheet.lunarCharged;
+			case Misc::Reaction::lunarBloom:
+				return sheet.lunarBloom;
+			case Misc::Reaction::lunarCrystallize:
+				return sheet.lunarCrystallize;
+			case Misc::Reaction::allLunar:
+				return sheet.allLunar;
+		}
+		std::unreachable();
+	}
+
 	template<auto Sheet, Misc::AttackSource attackSource>
 	[[nodiscard]] constexpr auto fromAttackSource() {
 		if constexpr (attackSource == Misc::AttackSource::normal) return Sheet.normal;
@@ -364,6 +405,21 @@ namespace Stats {
 		if constexpr (attackSource == Misc::AttackSource::plunge) return Sheet.plunge;
 		if constexpr (attackSource == Misc::AttackSource::skill) return Sheet.skill;
 		if constexpr (attackSource == Misc::AttackSource::burst) return Sheet.burst;
+	}
+
+	[[nodiscard]] constexpr auto &&fromAttackSource(auto &&sheet, Misc::AttackSource attackSource) {
+		switch (attackSource) {
+			case Misc::AttackSource::normal:
+				return sheet.normal;
+			case Misc::AttackSource::charged:
+				return sheet.charged;
+			case Misc::AttackSource::plunge:
+				return sheet.plunge;
+			case Misc::AttackSource::skill:
+				return sheet.skill;
+			case Misc::AttackSource::burst:
+				return sheet.burst;
+		}
 	}
 
 	template<auto Sheet, class RetType = Formula::FloatNode>
@@ -396,6 +452,18 @@ namespace Stats {
 				return fromSkillStat(sheet.skill, skillStat);
 			case Misc::AttackSource::burst:
 				return fromSkillStat(sheet.burst, skillStat);
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] auto &&fromLunarDamageType(auto &&sheet, Misc::LunarDamageType damageType) {
+		switch (damageType) {
+			case Misc::LunarDamageType::lunarBloom:
+				return sheet.lunarBloom;
+			case Misc::LunarDamageType::lunarCharged:
+				return sheet.lunarCharged;
+			case Misc::LunarDamageType::lunarCrystallize:
+				return sheet.lunarCrystallize;
 		}
 		std::unreachable();
 	}
@@ -458,6 +526,32 @@ namespace Stats {
 				return fromSkillStat(sheet.all, skillStat);
 			case Misc::DamageElement::allElemental:
 				return fromSkillStat(sheet.allElemental, skillStat);
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] constexpr auto &&fromDamageElement(auto &&sheet, Misc::DamageElement element) {
+		switch (element) {
+			case Misc::DamageElement::pyro:
+				return sheet.pyro;
+			case Misc::DamageElement::hydro:
+				return sheet.hydro;
+			case Misc::DamageElement::cryo:
+				return sheet.cryo;
+			case Misc::DamageElement::electro:
+				return sheet.electro;
+			case Misc::DamageElement::dendro:
+				return sheet.dendro;
+			case Misc::DamageElement::anemo:
+				return sheet.anemo;
+			case Misc::DamageElement::geo:
+				return sheet.geo;
+			case Misc::DamageElement::physical:
+				return sheet.physical;
+			case Misc::DamageElement::all:
+				return sheet.all;
+			case Misc::DamageElement::allElemental:
+				return sheet.allElemental;
 		}
 		std::unreachable();
 	}

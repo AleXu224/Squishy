@@ -66,7 +66,7 @@ namespace Modifiers::Weapon::Passive {
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::enemy, SheetMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{}, EnemyNameFactory{});
+		static auto ret = enemyFactory<Formula::FloatNode, FormulaMaker<&Stats::ModsSheet::enemy, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{}, EnemyNameFactory{});
 		return ret;
 	}
 }// namespace Modifiers::Weapon::Passive

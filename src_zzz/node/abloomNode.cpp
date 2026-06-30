@@ -1,6 +1,7 @@
 #include "abloomNode.hpp"
 #include "formula/anomaly.hpp"
 #include "formula/clamp.hpp"
+#include "formula/nodes.hpp"
 #include "formula/operators.hpp"
 #include "formula/teamAgent.hpp"
 #include "misc/attribute.hpp"
@@ -20,6 +21,19 @@ namespace Node {
 		return allAnomaly + abloom + formula;
 	}
 
+	[[nodiscard]] constexpr auto _getTotalEnemyCustom(
+		Formula::NodeType<Misc::Attribute> attackAttribute,
+		const auto &formula
+	) {
+		Formula::EnemyModifier modifiers{};
+		modifiers = modifiers + Modifiers::combat().allAnomaly.enemy
+				  + Modifiers::combat().abloom.enemy
+				  + Formula::getAttributeModifierDynamic(attackAttribute)
+				  + formula;
+
+		return modifiers;
+	}
+
 	Formula::FloatNode AbloomNode::_getFormulaAbloom(
 		const Formula::NodeType<Misc::Attribute> &attribute,
 		const Formula::FloatNode &multiplier,
@@ -31,7 +45,8 @@ namespace Node {
 		// auto totalMultiplicativeDMG = _getTotalCustom(Misc::SkillStat::multiplicativeDMG, modifier.multiplicativeDMG);
 		auto totalCritRate = Formula::Clamp({}, _getTotalAbloom(Misc::SkillStat::critRate, modifier.critRate), 0.f, 1.f);
 		auto totalCritDMG = _getTotalAbloom(Misc::SkillStat::critDMG, modifier.critDMG);
-		auto resMod = Formula::EnemyResMultiplierDynamic{.element = attribute};
+		auto totalModifier = _getTotalEnemyCustom(attribute, modifier.enemy);
+		auto resMod = Formula::EnemyResMultiplierDynamic{.element = attribute, .modifiers = totalModifier.resistance};
 
 		auto formula = Formula::TeamAgent{
 						   .index = index,

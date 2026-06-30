@@ -24,6 +24,23 @@ namespace Misc {
 		AttackSource::skill,
 		AttackSource::burst
 	};
+
+	template<class T>
+	[[nodiscard]] inline auto ptrFromAttackSource(const Misc::AttackSource &attackSource) {
+		switch (attackSource) {
+			case Misc::AttackSource::normal:
+				return &T::normal;
+			case Misc::AttackSource::charged:
+				return &T::charged;
+			case Misc::AttackSource::plunge:
+				return &T::plunge;
+			case Misc::AttackSource::skill:
+				return &T::skill;
+			case Misc::AttackSource::burst:
+				return &T::burst;
+		}
+		std::unreachable();
+	}
 }// namespace Misc
 
 namespace Utils {

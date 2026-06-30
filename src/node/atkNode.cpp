@@ -1,5 +1,5 @@
 #include "atkNode.hpp"
-#include "formula/elemental.hpp"
+#include "formula/nodes.hpp"
 #include "formula/operators.hpp"
 #include "formula/reaction.hpp"
 #include "misc/element.hpp"
@@ -7,59 +7,9 @@
 #include "modifiers/total/total.hpp"
 
 
+
 namespace Node {
 	using namespace Formula::Operators;
-	template<Misc::SkillStat skillStat>
-	struct _NodeElement : Formula::FormulaBase<float> {
-		Utils::JankyOptional<Misc::Element> element{};
-		Utils::JankyOptional<Misc::AttackSource> source{};
-
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).fold(context, args);
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getElement(source, element, context)),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).eval(context);
-		}
-	};
-
-	template<Misc::SkillStat skillStat>
-	struct _NodeSkill : Formula::FormulaBase<float> {
-		Utils::JankyOptional<Misc::AttackSource> source{};
-
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			if (!source.has_value()) return Formula::Constant{.value = 0.f};
-			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).fold(context, args);
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(source),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			if (!source.has_value()) return 0.f;
-			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).eval(context);
-		}
-	};
-
 	template<Misc::SkillStat skillStat>
 	[[nodiscard]] static constexpr auto _getTotal(
 		Utils::JankyOptional<Misc::Element> attackElement,
@@ -67,10 +17,24 @@ namespace Node {
 		const auto &formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
-		auto elementStats = _NodeElement<skillStat>({}, attackElement, atkSource);
-		auto skillStats = _NodeSkill<skillStat>({}, atkSource);
+		auto elementStats = Formula::NodeElement({}, attackElement, atkSource, skillStat);
+		auto skillStats = Formula::NodeSkill({}, atkSource, skillStat);
 
 		return allStats + elementStats + skillStats + formula;
+	}
+
+	[[nodiscard]] constexpr auto _getTotalEnemy(
+		Utils::JankyOptional<Misc::Element> attackElement,
+		const Utils::JankyOptional<Misc::AttackSource> &atkSource,
+		const auto &formula
+	) {
+		Formula::EnemyModifier modifiers{};
+		modifiers = modifiers + Modifiers::total().all.enemy
+				  + Formula::getElementModifier(atkSource, attackElement)
+				  + Formula::getSourceModifier(atkSource)
+				  + formula;
+
+		return modifiers;
 	}
 
 	Formula::FloatNode Atk::_getFormula(
@@ -90,7 +54,8 @@ namespace Node {
 		auto elevation = 1.0f + totalElevation;
 		auto dmgBonus = (1.0f + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
-		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier({}, source, element);
+		auto totalModifier = _getTotalEnemy(element, source, modifier.enemy);
+		auto enemy = Formula::EnemyDefMultiplier{.modifiers = totalModifier} * Formula::EnemyResMultiplier{.attackSource = source, .element = element, .modifiers = totalModifier.resistance};
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return multiplier

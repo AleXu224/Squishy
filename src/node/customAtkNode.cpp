@@ -1,4 +1,5 @@
 #include "customAtkNode.hpp"
+#include "formula/nodes.hpp"
 #include "formula/operators.hpp"
 #include "formula/reaction.hpp"
 #include "misc/element.hpp"
@@ -8,62 +9,6 @@
 
 namespace Node {
 	using namespace Formula::Operators;
-	template<Misc::SkillStat skillStat>
-	struct _CustomAtkNodeElement : Formula::FormulaBase<float> {
-		Misc::Element element;
-
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			switch (element) {
-				case Misc::Element::pyro:
-					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).fold(context, args);
-				case Misc::Element::hydro:
-					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).fold(context, args);
-				case Misc::Element::cryo:
-					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).fold(context, args);
-				case Misc::Element::electro:
-					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).fold(context, args);
-				case Misc::Element::dendro:
-					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).fold(context, args);
-				case Misc::Element::anemo:
-					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).fold(context, args);
-				case Misc::Element::geo:
-					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).fold(context, args);
-				case Misc::Element::physical:
-					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).fold(context, args);
-			}
-			std::unreachable();
-		}
-
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(std::format("{}", Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
-		}
-
-		[[nodiscard]] static constexpr float switchElement(Misc::Element element, const Formula::Context &context) {
-			switch (element) {
-				case Misc::Element::pyro:
-					return Stats::fromSkillStat(Modifiers::total().pyro, skillStat).eval(context);
-				case Misc::Element::hydro:
-					return Stats::fromSkillStat(Modifiers::total().hydro, skillStat).eval(context);
-				case Misc::Element::cryo:
-					return Stats::fromSkillStat(Modifiers::total().cryo, skillStat).eval(context);
-				case Misc::Element::electro:
-					return Stats::fromSkillStat(Modifiers::total().electro, skillStat).eval(context);
-				case Misc::Element::dendro:
-					return Stats::fromSkillStat(Modifiers::total().dendro, skillStat).eval(context);
-				case Misc::Element::anemo:
-					return Stats::fromSkillStat(Modifiers::total().anemo, skillStat).eval(context);
-				case Misc::Element::geo:
-					return Stats::fromSkillStat(Modifiers::total().geo, skillStat).eval(context);
-				case Misc::Element::physical:
-					return Stats::fromSkillStat(Modifiers::total().physical, skillStat).eval(context);
-			}
-			std::unreachable();
-		}
-
-		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return switchElement(element, context);
-		}
-	};
 
 	template<Misc::SkillStat skillStat>
 	[[nodiscard]] constexpr auto _getCustomAtkTotal(
@@ -71,9 +16,21 @@ namespace Node {
 		auto formula
 	) {
 		auto allStats = Stats::fromSkillStat(Modifiers::total().all, skillStat);
-		auto elementStats = _CustomAtkNodeElement<skillStat>({}, attackElement);
+		auto elementStats = Formula::NodeElementSimple({}, attackElement, skillStat);
 
 		return allStats + elementStats + formula;
+	}
+
+	[[nodiscard]] constexpr auto _getTotalEnemy(
+		Misc::Element attackElement,
+		const auto &formula
+	) {
+		Formula::EnemyModifier modifiers{};
+		modifiers = modifiers + Modifiers::total().all.enemy
+				  + Formula::getElementModifierSimple(attackElement)
+				  + formula;
+
+		return modifiers;
 	}
 
 	Formula::FloatNode CustomAtk::_getFormula(
@@ -89,7 +46,9 @@ namespace Node {
 		auto multiplier = (1.0f + totalMultiplicativeDMG) * formula + totalAdditiveDMG;
 		auto elevation = 1.0f + totalElevation;
 		auto dmgBonus = (1.0f + totalDMG);
-		auto enemy = Formula::EnemyDefMultiplier{} * Formula::EnemyResMultiplier{.attackSource = {}, .element = element};
+		auto totalModifier = _getTotalEnemy(element, modifier.enemy);
+		auto enemy = Formula::EnemyDefMultiplier{.modifiers = totalModifier}
+				   * Formula::EnemyResMultiplier{.attackSource = {}, .element = element, .modifiers = totalModifier.resistance};
 		auto amplifyingMultiplier = Formula::AmplifyingMultiplier{};
 
 		return multiplier

@@ -31,6 +31,30 @@ namespace Modifiers {
 		static constexpr auto resistance = Skill<&TT::resistance>();
 	};
 
+	template<class T, auto member>
+	struct EnemyPointerFactoryModifier {
+		using TT = std::remove_cvref_t<T>;
+
+		struct Skill {
+			static constexpr auto physical = EnemyResSkillType{member, &TT::_SkillValue::physical};
+			static constexpr auto fire = EnemyResSkillType{member, &TT::_SkillValue::fire};
+			static constexpr auto ice = EnemyResSkillType{member, &TT::_SkillValue::ice};
+			static constexpr auto electric = EnemyResSkillType{member, &TT::_SkillValue::electric};
+			static constexpr auto ether = EnemyResSkillType{member, &TT::_SkillValue::ether};
+			static constexpr auto wind = EnemyResSkillType{member, &TT::_SkillValue::wind};
+		};
+
+		static constexpr auto level = EnemySkillType{member, &TT::level};
+		static constexpr auto stunMod = EnemySkillType{member, &TT::stunMod};
+		static constexpr auto baseDef = EnemySkillType{member, &TT::baseDef};
+		static constexpr auto DEFReduction = EnemySkillType{member, &TT::DEFReduction};
+		static constexpr auto DEFIgnored = EnemySkillType{member, &TT::DEFIgnored};
+		static constexpr auto dazeRes = EnemySkillType{member, &TT::dazeRes};
+		static constexpr auto daze = EnemySkillType{member, &TT::daze};
+		static constexpr auto dazeTaken = EnemySkillType{member, &TT::dazeTaken};
+		static constexpr auto resistance = Skill();
+	};
+
 	struct EnemyNameFactory {
 		template<auto member>
 		struct Skill {
@@ -50,6 +74,31 @@ namespace Modifiers {
 		static constexpr auto dazeRes = SheetMemberIdentifier(Misc::EnemyStat::dazeRes);
 		static constexpr auto daze = SheetMemberIdentifier(Misc::EnemyStat::daze);
 		static constexpr auto dazeTaken = SheetMemberIdentifier(Misc::EnemyStat::dazeTaken);
+		static constexpr auto resistance = Skill<Misc::EnemyResistances::resistance>();
+	};
+
+	// For use in _SkillValue
+	// Needs a separate one because the SheetMemberIdentifier needs a different set of parameters while used in this context
+	template<auto member>
+	struct EnemyNameFactoryModifier {
+		template<auto member2>
+		struct Skill {
+			static constexpr auto physical = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::physical));
+			static constexpr auto fire = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::fire));
+			static constexpr auto ice = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::ice));
+			static constexpr auto electric = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::electric));
+			static constexpr auto ether = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::ether));
+			static constexpr auto wind = SheetMemberIdentifier(member, std::pair(member2, Misc::Attribute::wind));
+		};
+
+		static constexpr auto level = SheetMemberIdentifier(member, Misc::EnemyStat::level);
+		static constexpr auto stunMod = SheetMemberIdentifier(member, Misc::EnemyStat::stunMod);
+		static constexpr auto baseDef = SheetMemberIdentifier(member, Misc::EnemyStat::baseDef);
+		static constexpr auto DEFReduction = SheetMemberIdentifier(member, Misc::EnemyStat::DEFReduction);
+		static constexpr auto DEFIgnored = SheetMemberIdentifier(member, Misc::EnemyStat::DEFIgnored);
+		static constexpr auto dazeRes = SheetMemberIdentifier(member, Misc::EnemyStat::dazeRes);
+		static constexpr auto daze = SheetMemberIdentifier(member, Misc::EnemyStat::daze);
+		static constexpr auto dazeTaken = SheetMemberIdentifier(member, Misc::EnemyStat::dazeTaken);
 		static constexpr auto resistance = Skill<Misc::EnemyResistances::resistance>();
 	};
 
@@ -77,23 +126,53 @@ namespace Modifiers {
 	};
 
 	template<class T, class Formula>
+	[[nodiscard]] inline auto formulaFactory(auto... params) {
+		if constexpr (::Formula::template FormulaConcept<Formula, typename T::RetType>) {
+			return Formula({}, params...);
+		} else {
+			return Formula(params...);
+		}
+	}
+	template<class T, class Formula>
 	[[nodiscard]] inline Stats::EnemySheet<T> enemyFactory(auto... params) {
 		return {
-			.level = Formula({}, params.level...),
-			.stunMod = Formula({}, params.stunMod...),
-			.baseDef = Formula({}, params.baseDef...),
-			.DEFReduction = Formula({}, params.DEFReduction...),
-			.DEFIgnored = Formula({}, params.DEFIgnored...),
-			.dazeRes = Formula({}, params.dazeRes...),
-			.daze = Formula({}, params.daze...),
-			.dazeTaken = Formula({}, params.dazeTaken...),
+			.level = formulaFactory<T, Formula>(params.level...),
+			.stunMod = formulaFactory<T, Formula>(params.stunMod...),
+			.baseDef = formulaFactory<T, Formula>(params.baseDef...),
+			.DEFReduction = formulaFactory<T, Formula>(params.DEFReduction...),
+			.DEFIgnored = formulaFactory<T, Formula>(params.DEFIgnored...),
+			.dazeRes = formulaFactory<T, Formula>(params.dazeRes...),
+			.daze = formulaFactory<T, Formula>(params.daze...),
+			.dazeTaken = formulaFactory<T, Formula>(params.dazeTaken...),
 			.resistance{
-				.physical = Formula({}, params.resistance.physical...),
-				.fire = Formula({}, params.resistance.fire...),
-				.ice = Formula({}, params.resistance.ice...),
-				.electric = Formula({}, params.resistance.electric...),
-				.ether = Formula({}, params.resistance.ether...),
-				.wind = Formula({}, params.resistance.wind...),
+				.physical = formulaFactory<T, Formula>(params.resistance.physical...),
+				.fire = formulaFactory<T, Formula>(params.resistance.fire...),
+				.ice = formulaFactory<T, Formula>(params.resistance.ice...),
+				.electric = formulaFactory<T, Formula>(params.resistance.electric...),
+				.ether = formulaFactory<T, Formula>(params.resistance.ether...),
+				.wind = formulaFactory<T, Formula>(params.resistance.wind...),
+			},
+		};
+	}
+
+	template<class T>
+	[[nodiscard]] inline Stats::EnemySheet<T> constantEnemyFactory(auto param) {
+		return {
+			.level = param,
+			.stunMod = param,
+			.baseDef = param,
+			.DEFReduction = param,
+			.DEFIgnored = param,
+			.dazeRes = param,
+			.daze = param,
+			.dazeTaken = param,
+			.resistance{
+				.physical = param,
+				.fire = param,
+				.ice = param,
+				.electric = param,
+				.ether = param,
+				.wind = param,
 			},
 		};
 	}

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "helpers.hpp"
+#include "modifiers/enemyFactory.hpp"
 #include "stats/sheet.hpp"
 #include "type_traits"
+
 
 namespace Modifiers {
 	template<class T>
@@ -17,6 +19,7 @@ namespace Modifiers {
 			static constexpr auto elevation = SkillType{V, &TT::_SkillValue::elevation};
 			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
 			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
+			static constexpr auto enemy = EnemyPointerFactoryModifier<decltype(TT::_SkillValue::enemy), V>();
 		};
 
 		static constexpr auto hp = &TT::hp;
@@ -85,6 +88,7 @@ namespace Modifiers {
 			static constexpr auto elevation = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::elevation);
 			static constexpr auto critRate = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critRate);
 			static constexpr auto critDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critDMG);
+			static constexpr auto enemy = EnemyNameFactoryModifier<member>();
 		};
 
 		static constexpr auto hp = Modifiers::SheetMemberIdentifier(::Stat::hp);
@@ -155,6 +159,7 @@ namespace Modifiers {
 			static constexpr Formula<V.elevation...> elevation{};
 			static constexpr Formula<V.critRate...> critRate{};
 			static constexpr Formula<V.critDMG...> critDMG{};
+			static constexpr EnemyFactory<Formula, V.enemy...> enemy{};
 		};
 
 		static constexpr Formula<Params.hp...> hp{};
@@ -214,15 +219,6 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.allLunar...> allLunar{};
 	};
 
-
-	template<class T, class Formula>
-	[[nodiscard]] inline auto formulaFactory(auto... params) {
-		if constexpr (::Formula::template FormulaConcept<Formula, typename T::RetType>) {
-			return Formula({}, params...);
-		} else {
-			return Formula(params...);
-		}
-	}
 	template<class T, class Formula>
 	[[nodiscard]] inline Stats::Sheet<T>::_SkillValue statSkillValueFactory(auto... params) {
 		return {
@@ -232,6 +228,7 @@ namespace Modifiers {
 			.elevation = formulaFactory<T, Formula>(params.elevation...),
 			.critRate = formulaFactory<T, Formula>(params.critRate...),
 			.critDMG = formulaFactory<T, Formula>(params.critDMG...),
+			.enemy = enemyFactory<T, Formula>(params.enemy...),
 		};
 	}
 

@@ -10,6 +10,7 @@
 #include "stats/skill.hpp"
 #include "stats/stat.hpp"
 #include "utility"
+#include "utils/overloaded.hpp"
 #include <functional>
 
 
@@ -23,10 +24,58 @@ namespace Modifiers {
 	};
 
 	template<class T>
+	struct EnemySkillType {
+		T::_SkillValue T::*first;
+		T::_Value T::_EnemySheet::*second;
+	};
+
+	template<class T>
+	struct EnemyResSkillType {
+		T::_SkillValue T::*first;
+		T::_Value T::_EnemySheet::_SkillValue::*second;
+	};
+
+	template<class T>
 	using SkillMemberType = T::Type T::*;
 
 	template<class T>
 	struct SheetMember {
+		using RetType = T::_Value;
+		enum class Type : uint8_t {
+			stat,
+			skill,
+			skillEnemy,
+			skillEnemyRes,
+		} _type;
+		union _Uni {
+			StatType<T> stat;
+			SkillType<T> skill;
+			EnemySkillType<T> skillEnemy;
+			EnemyResSkillType<T> skillEnemyRes;
+		} _uni;
+
+		constexpr SheetMember(const StatType<T> &stat) : _type(Type::stat), _uni{.stat = stat} {};
+		constexpr SheetMember(const SkillType<T> &skill) : _type(Type::skill), _uni{.skill = skill} {};
+		constexpr SheetMember(const EnemySkillType<T> &skillEnemy) : _type(Type::skillEnemy), _uni{.skillEnemy = skillEnemy} {};
+		constexpr SheetMember(const EnemyResSkillType<T> &skillEnemyRes) : _type(Type::skillEnemyRes), _uni{.skillEnemyRes = skillEnemyRes} {};
+
+		constexpr const T::_Value &resolve(const T &sheet) const {
+			switch (_type) {
+				case Type::stat:
+					return std::invoke(_uni.stat, sheet);
+				case Type::skill:
+					return std::invoke(_uni.skill.second, std::invoke(_uni.skill.first, sheet));
+				case Type::skillEnemy:
+					return std::invoke(_uni.skillEnemy.second, std::invoke(_uni.skillEnemy.first, sheet).enemy);
+				case Type::skillEnemyRes:
+					return std::invoke(_uni.skillEnemyRes.second, std::invoke(_uni.skillEnemyRes.first, sheet).enemy.resistance);
+			}
+			std::unreachable();
+		}
+	};
+
+	template<class T>
+	struct EnemyMember {
 		using RetType = T::_Value;
 		enum class Type : uint8_t {
 			stat,
@@ -37,8 +86,8 @@ namespace Modifiers {
 			SkillType<T> skill;
 		} _uni;
 
-		constexpr SheetMember(const StatType<T> &stat) : _type(Type::stat), _uni{.stat = stat} {};
-		constexpr SheetMember(const SkillType<T> &skill) : _type(Type::skill), _uni{.skill = skill} {};
+		constexpr EnemyMember(const StatType<T> &stat) : _type(Type::stat), _uni{.stat = stat} {};
+		constexpr EnemyMember(const SkillType<T> &skill) : _type(Type::skill), _uni{.skill = skill} {};
 
 		constexpr const T::_Value &resolve(const T &sheet) const {
 			switch (_type) {
@@ -72,6 +121,8 @@ namespace Modifiers {
 	template<auto val>
 	using RetTypeMember = decltype(std::declval<typename decltype(val)::RetType>().eval(std::declval<const Formula::Context &>()));
 
+	using SkillStatVariant = std::variant<Misc::SkillStat, Misc::EnemyStat, std::pair<Misc::EnemyResistances, Misc::Attribute>>;
+
 	struct SheetMemberIdentifier {
 		enum class Type : uint8_t {
 			stat,
@@ -85,20 +136,20 @@ namespace Modifiers {
 		} _type;
 		union _Uni {
 			::Stat stat;
-			std::pair<Misc::AttackSource, Misc::SkillStat> attack;
-			std::pair<Misc::DamageAttribute, Misc::SkillStat> attribute;
-			std::pair<Misc::DamageAnomaly, Misc::SkillStat> anomaly;
-			std::pair<Misc::DamageType, Misc::SkillStat> damageType;
+			std::pair<Misc::AttackSource, SkillStatVariant> attack;
+			std::pair<Misc::DamageAttribute, SkillStatVariant> attribute;
+			std::pair<Misc::DamageAnomaly, SkillStatVariant> anomaly;
+			std::pair<Misc::DamageType, SkillStatVariant> damageType;
 			::LevelableSkill skill;
 			::Misc::EnemyStat enemyStat;
 			std::pair<Misc::EnemyResistances, Misc::Attribute> enemyRes;
 		} _uni;
 
 		constexpr SheetMemberIdentifier(::Stat stat) : _type(Type::stat), _uni{.stat = stat} {}
-		constexpr SheetMemberIdentifier(Misc::AttackSource attack, Misc::SkillStat stat) : _type(Type::attack), _uni{.attack{attack, stat}} {}
-		constexpr SheetMemberIdentifier(Misc::DamageAttribute attribute, Misc::SkillStat stat) : _type(Type::attribute), _uni{.attribute{attribute, stat}} {}
-		constexpr SheetMemberIdentifier(Misc::DamageAnomaly anomaly, Misc::SkillStat stat) : _type(Type::anomaly), _uni{.anomaly{anomaly, stat}} {}
-		constexpr SheetMemberIdentifier(Misc::DamageType damageType, Misc::SkillStat stat) : _type(Type::damageType), _uni{.damageType{damageType, stat}} {}
+		constexpr SheetMemberIdentifier(Misc::AttackSource attack, SkillStatVariant stat) : _type(Type::attack), _uni{.attack{attack, stat}} {}
+		constexpr SheetMemberIdentifier(Misc::DamageAttribute attribute, SkillStatVariant stat) : _type(Type::attribute), _uni{.attribute{attribute, stat}} {}
+		constexpr SheetMemberIdentifier(Misc::DamageAnomaly anomaly, SkillStatVariant stat) : _type(Type::anomaly), _uni{.anomaly{anomaly, stat}} {}
+		constexpr SheetMemberIdentifier(Misc::DamageType damageType, SkillStatVariant stat) : _type(Type::damageType), _uni{.damageType{damageType, stat}} {}
 		constexpr SheetMemberIdentifier(::LevelableSkill skill) : _type(Type::skill), _uni{.skill = skill} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyStat enemyStat) : _type(Type::enemyStat), _uni{.enemyStat = enemyStat} {}
 		constexpr SheetMemberIdentifier(Misc::EnemyResistances enemyRes, Misc::Attribute attribute) : _type(Type::enemyRes), _uni{.enemyRes{enemyRes, attribute}} {}
@@ -135,14 +186,14 @@ namespace Modifiers {
 					return Utils::isPercentage(_uni.attribute.second);
 				case Type::anomaly:
 					return Utils::isPercentage(_uni.anomaly.second);
+				case Type::damageType:
+					return Utils::isPercentage(_uni.damageType.second);
 				case Type::skill:
 					return false;
 				case Type::enemyStat:
 					return Utils::isPercentage(_uni.enemyStat);
 				case Type::enemyRes:
 					return true;
-				case Type::damageType:
-					return Utils::isPercentage(_uni.damageType.second);
 			}
 			std::unreachable();
 		}
@@ -177,8 +228,20 @@ namespace Modifiers {
 						default:
 							break;
 					}
-					if (_uni.attribute.second == Misc::SkillStat::DMG) return true;
-					return false;
+					return std::visit(
+						Utils::overloaded{
+							[](Misc::SkillStat skillStat) {
+								return skillStat == Misc::SkillStat::DMG;
+							},
+							[](Misc::EnemyStat enemyStat) {
+								return false;
+							},
+							[](std::pair<Misc::EnemyResistances, Misc::Attribute> enemyRes) {
+								return false;
+							},
+						},
+						_uni.attribute.second
+					);
 				}
 				default:
 					return false;

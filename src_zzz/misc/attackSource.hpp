@@ -40,6 +40,39 @@ namespace Misc {
 		AttackSource::chain,
 		AttackSource::ultimate,
 	};
+
+	template<class T>
+	[[nodiscard]] inline auto ptrFromAttackSource(const Misc::AttackSource &attackSource) {
+		switch (attackSource) {
+			case Misc::AttackSource::basic:
+				return &T::basic;
+			case Misc::AttackSource::dodge:
+				return &T::dodge;
+			case Misc::AttackSource::dashAttack:
+				return &T::dashAttack;
+			case Misc::AttackSource::dodgeCounter:
+				return &T::dodgeCounter;
+			case Misc::AttackSource::assist:
+				return &T::assist;
+			case Misc::AttackSource::quickAssist:
+				return &T::quickAssist;
+			case Misc::AttackSource::defensiveAssist:
+				return &T::defensiveAssist;
+			case Misc::AttackSource::evasiveAssist:
+				return &T::evasiveAssist;
+			case Misc::AttackSource::assistFollowup:
+				return &T::assistFollowup;
+			case Misc::AttackSource::special:
+				return &T::special;
+			case Misc::AttackSource::exspecial:
+				return &T::exspecial;
+			case Misc::AttackSource::chain:
+				return &T::chain;
+			case Misc::AttackSource::ultimate:
+				return &T::ultimate;
+		}
+		std::unreachable();
+	}
 }// namespace Misc
 
 namespace Utils {
