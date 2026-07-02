@@ -159,8 +159,8 @@ namespace Optimization {
 	};
 
 	// Combines all the artifacts of a slot into one unrealistically optimistic one to get the max potential
-	static inline std::array<Stats::Sheet<float>, 5> getMaxStatsForSlots(auto &&artifacts) {
-		std::array<Stats::Sheet<float>, 5> statsForSlot{};
+	static inline std::array<Stats::SheetSimplified<float>, 5> getMaxStatsForSlots(auto &&artifacts) {
+		std::array<Stats::SheetSimplified<float>, 5> statsForSlot{};
 
 		for (auto &&[slot, artifacts]: std::views::zip(statsForSlot, artifacts.entries)) {
 			for (const auto &artifact: artifacts) {
@@ -181,7 +181,7 @@ namespace Optimization {
 
 	struct MaxStatsByMainstat {
 		struct SlotStatsWrapper {
-			Stats::Sheet<float> stats{};
+			Stats::SheetSimplified<float> stats{};
 			Stat mainStat{};
 			bool foundUpgrade = false;
 		};

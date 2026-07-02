@@ -1,7 +1,6 @@
 #pragma once
 
 #include "array"
-#include "format"
 #include "formula/percentage.hpp"
 #include "misc/element.hpp"
 #include "unordered_map"
@@ -127,6 +126,58 @@ namespace Stats {
 			Stat::cd,
 		}
 	};
+
+	template<class T>
+	[[nodiscard]] constexpr T::_Value T::*ptrFromStatSimplified(Stat stat) {
+		switch (stat) {
+			case Stat::hp:
+				return &T::hp;
+			case Stat::hp_:
+				return &T::hp_;
+			case Stat::atk:
+				return &T::atk;
+			case Stat::atk_:
+				return &T::atk_;
+			case Stat::def:
+				return &T::def;
+			case Stat::def_:
+				return &T::def_;
+			case Stat::er:
+				return &T::er;
+			case Stat::em:
+				return &T::em;
+			case Stat::cr:
+				return &T::cr;
+			case Stat::cd:
+				return &T::cd;
+			case Stat::hb:
+				return &T::hb;
+			case Stat::pyroDmg:
+				return &T::pyro;
+			case Stat::hydroDmg:
+				return &T::hydro;
+			case Stat::cryoDmg:
+				return &T::cryo;
+			case Stat::electroDmg:
+				return &T::electro;
+			case Stat::dendroDmg:
+				return &T::dendro;
+			case Stat::anemoDmg:
+				return &T::anemo;
+			case Stat::geoDmg:
+				return &T::geo;
+			case Stat::physicalDmg:
+				return &T::physical;
+			case Stat::baseHp:
+			case Stat::baseAtk:
+			case Stat::additionalAtk:
+			case Stat::baseDef:
+			case Stat::incHb:
+			case Stat::allDmg:
+			case Stat::shield_:
+				return &T::hp;
+		}
+	}
 
 	[[maybe_unused]] constexpr Stat fromElement(const Misc::Element &element) {
 		switch (element) {

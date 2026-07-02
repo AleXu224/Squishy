@@ -175,7 +175,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto prevLoadout = character.state.loadout().artifact.getSlotted();
 
 	auto initialArtifacts = ArtifactFilter{}.filter(artifacts);
-	std::array<Stats::Sheet<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
+	std::array<Stats::SheetSimplified<float>, 5> statsForSlot = getMaxStatsForSlots(initialArtifacts);
 	auto compiledNode = optimizedNode.fold(ctx, {});
 
 	auto &loadout = character.state.loadout();
@@ -233,7 +233,16 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 				Formula::enableAllocator = true;
 				auto node = optimizedNode.fold(threadData.ctx, {});
 
-				bnb(filtered, solutions, threadData.character, threadData.ctx, node, filter.bonus1, filter.bonus2, {});
+				Bnb bnb{
+					.solutions = solutions,
+					.character = threadData.character,
+					.ctx = threadData.ctx,
+					.node = node,
+					.bonus1 = filter.bonus1,
+					.bonus2 = filter.bonus2,
+				};
+
+				bnb.bnb(filtered);
 			}
 			Formula::enableAllocator = false;
 			Formula::NodeAllocator::reset();

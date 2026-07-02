@@ -12,8 +12,16 @@ namespace Formula {
 
 		NodeType<RetType> fold(const Context &ctx, const FoldArgs &args) const {
 			auto folded = value.fold(ctx, args);
-			if (folded.getType() == Type::constant) {
-				return ConstantBase<RetType>{.value = sumParam + multParam * folded.getConstantValue()};
+			auto foldedType = folded.getType();
+			switch (foldedType) {
+				case Type::monomial:
+				case Type::summonomial:
+				case Type::prodmonomial:
+					return folded.mult(multParam).add(sumParam);
+				case Type::constant:
+					return ConstantBase<RetType>{.value = sumParam + multParam * folded.getConstantValue()};
+				default:
+					break;
 			}
 			return Monomial<decltype(folded)>{
 				.value = folded,
@@ -64,10 +72,18 @@ namespace Formula {
 
 		NodeType<RetType> fold(const Context &ctx, const FoldArgs &args) const {
 			auto folded = value.fold(ctx, args);
-			if (folded.getType() == Type::constant) {
-				return ConstantBase<RetType>{.value = sumParam + folded.getConstantValue()};
+			auto foldedType = folded.getType();
+			switch (foldedType) {
+				case Type::monomial:
+				case Type::summonomial:
+				case Type::prodmonomial:
+					return folded.add(sumParam);
+				case Type::constant:
+					return ConstantBase<RetType>{.value = sumParam + folded.getConstantValue()};
+				default:
+					break;
 			}
-			return Monomial<decltype(folded)>{
+			return SumMonomial<decltype(folded)>{
 				.value = folded,
 				.sumParam = sumParam,
 			};
@@ -117,10 +133,18 @@ namespace Formula {
 
 		NodeType<RetType> fold(const Context &ctx, const FoldArgs &args) const {
 			auto folded = value.fold(ctx, args);
-			if (folded.getType() == Type::constant) {
-				return ConstantBase<RetType>{.value = multParam * folded.getConstantValue()};
+			auto foldedType = folded.getType();
+			switch (foldedType) {
+				case Type::monomial:
+				case Type::summonomial:
+				case Type::prodmonomial:
+					return folded.mult(multParam);
+				case Type::constant:
+					return ConstantBase<RetType>{.value = multParam * folded.getConstantValue()};
+				default:
+					break;
 			}
-			return Monomial<decltype(folded)>{
+			return ProdMonomial<decltype(folded)>{
 				.value = folded,
 				.multParam = multParam,
 			};

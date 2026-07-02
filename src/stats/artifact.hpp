@@ -94,7 +94,7 @@ namespace Stats {
 			uint8_t cr = 0;
 			uint8_t cd = 0;
 
-			Stats::Sheet<float> sheet{};
+			Stats::SheetSimplified<float> sheet{};
 
 			[[nodiscard]] auto &fromStat(this auto &self, ::Stat stat) {
 				switch (stat) {
@@ -123,8 +123,8 @@ namespace Stats {
 				}
 			}
 
-			[[nodiscard]] Stats::Sheet<float> getSheet() const {
-				Stats::Sheet<float> ret{};
+			[[nodiscard]] Stats::SheetSimplified<float> getSheet() const {
+				Stats::SheetSimplified<float> ret{};
 				for (const auto &stat: subStats) {
 					ret.fromStat(stat) = static_cast<float>(fromStat(stat)) * Values::averageSubStat.at(stat).at(4);
 				}

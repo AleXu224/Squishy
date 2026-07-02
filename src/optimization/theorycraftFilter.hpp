@@ -127,8 +127,8 @@ namespace Optimization {
 			return count;
 		}
 
-		Stats::Sheet<float> getMaxStats(const RollsValues &rolls) const {
-			Stats::Sheet<float> maxStats;
+		Stats::SheetSimplified<float> getMaxStats(const RollsValues &rolls) const {
+			Stats::SheetSimplified<float> maxStats;
 			for (const auto &stat: Stats::subStats) {
 				maxStats.fromStat(stat) = static_cast<float>(fromSubStat(stat).maxRolls) * rolls.fromSubStat(stat);
 			}

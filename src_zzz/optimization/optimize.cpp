@@ -162,7 +162,7 @@ Optimization::Solutions Optimization::Optimization::optimize() const {
 	auto prevLoadout = agent.state.loadout().disc.getSlotted();
 
 	auto initialDiscs = DiscFilter{}.filter(discs);
-	std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(initialDiscs);
+	std::array<Stats::SheetSimplified<float>, 6> statsForSlot = getMaxStatsForSlots(initialDiscs);
 	auto compiledNode = optimizedNode.fold(ctx, {});
 	auto preCompiledNode = optimizedNode.fold(ctx, {.enableGates = true});
 

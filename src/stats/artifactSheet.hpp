@@ -7,6 +7,6 @@
 namespace Stats {
 	struct Loadout;
 	struct ArtifactSheet {
-		std::array<std::optional<Stats::Sheet<float> *>, 5> equippedArtifacts{};
+		std::array<std::optional<Stats::SheetSimplified<float> *>, 5> equippedArtifacts{};
 	};
 }// namespace Stats

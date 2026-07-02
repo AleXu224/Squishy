@@ -33,8 +33,8 @@ namespace Optimization {
 				return ret;
 			}
 
-			Stats::Sheet<float> getSheet(const Artifact::Instance &artifact) const {
-				Stats::Sheet<float> sheet = artifact.stats;
+			Stats::SheetSimplified<float> getSheet(const Artifact::Instance &artifact) const {
+				Stats::SheetSimplified<float> sheet = artifact.stats;
 				for (size_t i = 0; i < count.size(); i++) {
 					auto stat = artifact.subStats.at(i).stat;
 					if (!stat.has_value()) continue;
@@ -47,8 +47,8 @@ namespace Optimization {
 				return sheet;
 			}
 
-			Stats::Sheet<float> getMaxPotential(const Artifact::Instance &artifact, uint32_t rollsLeft) const {
-				Stats::Sheet<float> sheet = artifact.stats;
+			Stats::SheetSimplified<float> getMaxPotential(const Artifact::Instance &artifact, uint32_t rollsLeft) const {
+				Stats::SheetSimplified<float> sheet = artifact.stats;
 				for (size_t i = 0; i < count.size(); i++) {
 					auto stat = artifact.subStats.at(i).stat;
 					if (!stat.has_value()) continue;

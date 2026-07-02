@@ -65,8 +65,7 @@ namespace Stats {
 
 namespace Stats {
 	// Character
-	template<SheetLike T>
-	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const typename T::_Value &, typename T::_Value &> fromStat(T &sheet, const Stat &stat) {
+	[[nodiscard]] auto &&fromStat(auto &&sheet, const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
 				return sheet.hp;
@@ -120,6 +119,58 @@ namespace Stats {
 				return sheet.physical.DMG;
 			case Stat::allDmg:
 				return sheet.all.DMG;
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] auto &&fromStatSimplified(auto &&sheet, const Stat &stat) {
+		switch (stat) {
+			case Stat::hp:
+				return sheet.hp;
+			case Stat::hp_:
+				return sheet.hp_;
+			case Stat::atk:
+				return sheet.atk;
+			case Stat::atk_:
+				return sheet.atk_;
+			case Stat::def:
+				return sheet.def;
+			case Stat::def_:
+				return sheet.def_;
+			case Stat::er:
+				return sheet.er;
+			case Stat::em:
+				return sheet.em;
+			case Stat::cr:
+				return sheet.cr;
+			case Stat::cd:
+				return sheet.cd;
+			case Stat::hb:
+				return sheet.hb;
+			case Stat::pyroDmg:
+				return sheet.pyro;
+			case Stat::hydroDmg:
+				return sheet.hydro;
+			case Stat::cryoDmg:
+				return sheet.cryo;
+			case Stat::electroDmg:
+				return sheet.electro;
+			case Stat::dendroDmg:
+				return sheet.dendro;
+			case Stat::anemoDmg:
+				return sheet.anemo;
+			case Stat::geoDmg:
+				return sheet.geo;
+			case Stat::physicalDmg:
+				return sheet.physical;
+			case Stat::baseHp:
+			case Stat::baseAtk:
+			case Stat::additionalAtk:
+			case Stat::baseDef:
+			case Stat::incHb:
+			case Stat::shield_:
+			case Stat::allDmg:
+				return sheet.hp;
 		}
 		std::unreachable();
 	}

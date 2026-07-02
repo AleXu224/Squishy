@@ -320,5 +320,85 @@ namespace Modifiers {
 		};
 	}
 
+	template<class T>
+	[[nodiscard]] constexpr Stats::Sheet<T>::_SkillValue constantStatSkillValueFactory(auto param) {
+		return {
+			.DMG = param,
+			.directDMG = param,
+			.additiveDMG = param,
+			.additiveMultiplier = param,
+			.multiplicativeDMG = param,
+			.critRate = param,
+			.critDMG = param,
+			.enemy = constantEnemyFactory<T>(param),
+		};
+	}
+
+	template<class T>
+	[[nodiscard]] constexpr Stats::Sheet<T> constantStatFactory(auto param) {
+		return Stats::Sheet<T>{
+			.hp = param,
+			.hp_ = param,
+			.atk = param,
+			.atk_ = param,
+			.def = param,
+			.def_ = param,
+			.sheerForce = param,
+			.er = param,
+			.er_ = param,
+			.ap = param,
+			.ap_ = param,
+			.am = param,
+			.am_ = param,
+			.pen = param,
+			.penRatio = param,
+			.impact = param,
+			.impact_ = param,
+			.cr = param,
+			.cd = param,
+
+			.physical = constantStatSkillValueFactory<T>(param),
+			.fire = constantStatSkillValueFactory<T>(param),
+			.ice = constantStatSkillValueFactory<T>(param),
+			.electric = constantStatSkillValueFactory<T>(param),
+			.ether = constantStatSkillValueFactory<T>(param),
+			.wind = constantStatSkillValueFactory<T>(param),
+			.all = constantStatSkillValueFactory<T>(param),
+
+			.basic = constantStatSkillValueFactory<T>(param),
+			.dodge = constantStatSkillValueFactory<T>(param),
+			.dashAttack = constantStatSkillValueFactory<T>(param),
+			.dodgeCounter = constantStatSkillValueFactory<T>(param),
+			.assist = constantStatSkillValueFactory<T>(param),
+			.quickAssist = constantStatSkillValueFactory<T>(param),
+			.defensiveAssist = constantStatSkillValueFactory<T>(param),
+			.evasiveAssist = constantStatSkillValueFactory<T>(param),
+			.assistFollowup = constantStatSkillValueFactory<T>(param),
+			.special = constantStatSkillValueFactory<T>(param),
+			.exspecial = constantStatSkillValueFactory<T>(param),
+			.chain = constantStatSkillValueFactory<T>(param),
+			.ultimate = constantStatSkillValueFactory<T>(param),
+
+			.burn = constantStatSkillValueFactory<T>(param),
+			.shock = constantStatSkillValueFactory<T>(param),
+			.shatter = constantStatSkillValueFactory<T>(param),
+			.assault = constantStatSkillValueFactory<T>(param),
+			.corruption = constantStatSkillValueFactory<T>(param),
+			.windswept = constantStatSkillValueFactory<T>(param),
+			.disorder = constantStatSkillValueFactory<T>(param),
+			.burnDisorder = constantStatSkillValueFactory<T>(param),
+			.shockDisorder = constantStatSkillValueFactory<T>(param),
+			.frozenDisorder = constantStatSkillValueFactory<T>(param),
+			.frozenFrostDisorder = constantStatSkillValueFactory<T>(param),
+			.assaultDisorder = constantStatSkillValueFactory<T>(param),
+			.corruptionDisorder = constantStatSkillValueFactory<T>(param),
+			.windsweptDisorder = constantStatSkillValueFactory<T>(param),
+			.abloom = constantStatSkillValueFactory<T>(param),
+			.vortex = constantStatSkillValueFactory<T>(param),
+			.allAnomaly = constantStatSkillValueFactory<T>(param),
+
+			.sheer = constantStatSkillValueFactory<T>(param),
+		};
+	}
 
 }// namespace Modifiers

@@ -81,7 +81,7 @@ namespace Optimization {
 				}
 			}
 
-			std::array<Stats::Sheet<float>, 6> statsForSlot = getMaxStatsForSlots(discs);
+			std::array<Stats::SheetSimplified<float>, 6> statsForSlot = getMaxStatsForSlots(discs);
 
 			loadout.disc.sheet.equippedDiscs[0] = &statsForSlot[0];
 			loadout.disc.sheet.equippedDiscs[1] = &statsForSlot[1];

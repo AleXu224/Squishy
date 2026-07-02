@@ -293,5 +293,79 @@ namespace Modifiers {
 		};
 	}
 
+	template<class T>
+	[[nodiscard]] inline Stats::Sheet<T>::_SkillValue constantStatSkillValueFactory(auto param) {
+		return {
+			.DMG = param,
+			.additiveDMG = param,
+			.multiplicativeDMG = param,
+			.elevation = param,
+			.critRate = param,
+			.critDMG = param,
+			.enemy = constantEnemyFactory<T>(param),
+		};
+	}
+
+	template<class T>
+	[[nodiscard]] inline Stats::Sheet<T> constantStatFactory(auto param) {
+		return Stats::Sheet<T>{
+			.hp = param,
+			.hp_ = param,
+			.baseHp = param,
+			.atk = param,
+			.atk_ = param,
+			.baseAtk = param,
+			.additionalAtk = param,
+			.def = param,
+			.def_ = param,
+			.baseDef = param,
+			.er = param,
+			.em = param,
+			.cr = param,
+			.cd = param,
+			.hb = param,
+			.incHb = param,
+			.shield_ = param,
+
+			.pyro = constantStatSkillValueFactory<T>(param),
+			.hydro = constantStatSkillValueFactory<T>(param),
+			.cryo = constantStatSkillValueFactory<T>(param),
+			.electro = constantStatSkillValueFactory<T>(param),
+			.dendro = constantStatSkillValueFactory<T>(param),
+			.anemo = constantStatSkillValueFactory<T>(param),
+			.geo = constantStatSkillValueFactory<T>(param),
+			.physical = constantStatSkillValueFactory<T>(param),
+			.all = constantStatSkillValueFactory<T>(param),
+			.allElemental = constantStatSkillValueFactory<T>(param),
+
+			.normal = constantStatSkillValueFactory<T>(param),
+			.charged = constantStatSkillValueFactory<T>(param),
+			.plunge = constantStatSkillValueFactory<T>(param),
+			.skill = constantStatSkillValueFactory<T>(param),
+			.burst = constantStatSkillValueFactory<T>(param),
+
+			.vape = constantStatSkillValueFactory<T>(param),
+			.melt = constantStatSkillValueFactory<T>(param),
+
+			.aggravate = constantStatSkillValueFactory<T>(param),
+			.spread = constantStatSkillValueFactory<T>(param),
+
+			.burning = constantStatSkillValueFactory<T>(param),
+			.superconduct = constantStatSkillValueFactory<T>(param),
+			.swirl = constantStatSkillValueFactory<T>(param),
+			.electroCharged = constantStatSkillValueFactory<T>(param),
+			.shattered = constantStatSkillValueFactory<T>(param),
+			.overloaded = constantStatSkillValueFactory<T>(param),
+			.bloom = constantStatSkillValueFactory<T>(param),
+			.burgeon = constantStatSkillValueFactory<T>(param),
+			.hyperbloom = constantStatSkillValueFactory<T>(param),
+
+			.lunarCharged = constantStatSkillValueFactory<T>(param),
+			.lunarBloom = constantStatSkillValueFactory<T>(param),
+			.lunarCrystallize = constantStatSkillValueFactory<T>(param),
+			.allLunar = constantStatSkillValueFactory<T>(param),
+		};
+	}
+
 
 }// namespace Modifiers

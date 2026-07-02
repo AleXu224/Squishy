@@ -69,8 +69,7 @@ namespace Stats {
 
 namespace Stats {
 	// Agent
-	template<SheetLike T>
-	[[nodiscard]] std::conditional_t<std::is_const_v<T>, const typename T::_Value &, typename T::_Value &> fromStat(T &sheet, const Stat &stat) {
+	[[nodiscard]] auto &&fromStat(auto &&sheet, const Stat &stat) {
 		switch (stat) {
 			case Stat::hp:
 				return sheet.hp;
@@ -124,6 +123,60 @@ namespace Stats {
 				return sheet.wind.DMG;
 			case Stat::allDmg:
 				return sheet.all.DMG;
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] auto &&fromStatSimplified(auto &&sheet, const Stat &stat) {
+		switch (stat) {
+			case Stat::hp:
+				return sheet.hp;
+			case Stat::hp_:
+				return sheet.hp_;
+			case Stat::atk:
+				return sheet.atk;
+			case Stat::atk_:
+				return sheet.atk_;
+			case Stat::def:
+				return sheet.def;
+			case Stat::def_:
+				return sheet.def_;
+			case Stat::er_:
+				return sheet.er_;
+			case Stat::ap:
+				return sheet.ap;
+			case Stat::ap_:
+				return sheet.ap_;
+			case Stat::am_:
+				return sheet.am_;
+			case Stat::cr:
+				return sheet.cr;
+			case Stat::cd:
+				return sheet.cd;
+			case Stat::pen:
+				return sheet.pen;
+			case Stat::penRatio:
+				return sheet.penRatio;
+			case Stat::impact_:
+				return sheet.impact_;
+			case Stat::physicalDmg:
+				return sheet.physical;
+			case Stat::fireDmg:
+				return sheet.fire;
+			case Stat::iceDmg:
+				return sheet.ice;
+			case Stat::electricDmg:
+				return sheet.electric;
+			case Stat::etherDmg:
+				return sheet.ether;
+			case Stat::windDmg:
+				return sheet.wind;
+			case Stat::sheerForce:
+			case Stat::er:
+			case Stat::am:
+			case Stat::impact:
+			case Stat::allDmg:
+				return sheet.hp;
 		}
 		std::unreachable();
 	}

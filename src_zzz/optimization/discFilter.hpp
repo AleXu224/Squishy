@@ -311,8 +311,8 @@ namespace Optimization {
 	};
 
 	// Combines all the discs of a slot into one unrealistically optimistic one to get the max potential
-	static inline std::array<Stats::Sheet<float>, 6> getMaxStatsForSlots(const FilteredDiscs &discs) {
-		std::array<Stats::Sheet<float>, 6> statsForPartition{};
+	static inline std::array<Stats::SheetSimplified<float>, 6> getMaxStatsForSlots(const FilteredDiscs &discs) {
+		std::array<Stats::SheetSimplified<float>, 6> statsForPartition{};
 
 		for (auto &&[partition, discs]: std::views::zip(statsForPartition, discs.entries)) {
 			for (const auto &disc: discs) {
@@ -333,7 +333,7 @@ namespace Optimization {
 
 	struct MaxStatsByMainstat {
 		struct PartitionStatsWrapper {
-			Stats::Sheet<float> stats{};
+			Stats::SheetSimplified<float> stats{};
 			Stat mainStat{};
 			bool foundUpgrade = false;
 		};

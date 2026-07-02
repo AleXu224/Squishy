@@ -199,6 +199,41 @@ namespace Stats {
 		}
 	};
 
+	template<class T>
+	struct SheetSimplified {
+		using _Value = T;
+		_Value hp{};
+		_Value hp_{};
+		_Value atk{};
+		_Value atk_{};
+		_Value def{};
+		_Value def_{};
+		_Value er_{};
+		_Value ap{};
+		_Value ap_{};
+		_Value am_{};
+		_Value pen{};
+		_Value penRatio{};
+		_Value impact_{};
+		_Value cr{};
+		_Value cd{};
+
+		_Value physical{};
+		_Value fire{};
+		_Value ice{};
+		_Value electric{};
+		_Value ether{};
+		_Value wind{};
+
+		[[nodiscard]] auto &fromAttribute(this auto &&self, const Misc::Attribute &attribute) {
+			return Stats::fromAttribute(self, attribute);
+		}
+
+		[[nodiscard]] auto &fromStat(this auto &&self, const Stat &stat) {
+			return Stats::fromStatSimplified(self, stat);
+		}
+	};
+
 	struct ModsSheet {
 		using _Sheet = Stats::Sheet<Formula::FloatNode>;
 		using _EnemySheet = Stats::EnemySheet<Formula::FloatNode>;

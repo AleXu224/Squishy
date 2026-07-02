@@ -130,6 +130,60 @@ namespace Stats {
 		}
 	};
 
+	template<class T>
+	[[nodiscard]] constexpr T::_Value T::*ptrFromStatSimplified(Stat stat) {
+		switch (stat) {
+			case Stat::hp:
+				return &T::hp;
+			case Stat::hp_:
+				return &T::hp_;
+			case Stat::atk:
+				return &T::atk;
+			case Stat::atk_:
+				return &T::atk_;
+			case Stat::def:
+				return &T::def;
+			case Stat::def_:
+				return &T::def_;
+			case Stat::er_:
+				return &T::er_;
+			case Stat::ap:
+				return &T::ap;
+			case Stat::ap_:
+				return &T::ap_;
+			case Stat::am_:
+				return &T::am_;
+			case Stat::cr:
+				return &T::cr;
+			case Stat::cd:
+				return &T::cd;
+			case Stat::pen:
+				return &T::pen;
+			case Stat::penRatio:
+				return &T::penRatio;
+			case Stat::impact_:
+				return &T::impact_;
+			case Stat::physicalDmg:
+				return &T::physical;
+			case Stat::fireDmg:
+				return &T::fire;
+			case Stat::iceDmg:
+				return &T::ice;
+			case Stat::electricDmg:
+				return &T::electric;
+			case Stat::etherDmg:
+				return &T::ether;
+			case Stat::windDmg:
+				return &T::wind;
+			case Stat::sheerForce:
+			case Stat::er:
+			case Stat::am:
+			case Stat::impact:
+			case Stat::allDmg:
+				return &T::hp;
+		}
+	}
+
 	[[maybe_unused]] constexpr Stat fromAttribute(const Misc::Attribute &attribute) {
 		switch (attribute) {
 			case Misc::Attribute::physical:

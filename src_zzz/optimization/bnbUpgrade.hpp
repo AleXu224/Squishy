@@ -32,8 +32,8 @@ namespace Optimization {
 				return ret;
 			}
 
-			Stats::Sheet<float> getSheet(const Disc::Instance &disc) const {
-				Stats::Sheet<float> sheet = disc.stats;
+			Stats::SheetSimplified<float> getSheet(const Disc::Instance &disc) const {
+				Stats::SheetSimplified<float> sheet = disc.stats;
 				for (size_t i = 0; i < count.size(); i++) {
 					auto stat = disc.subStats.at(i).stat;
 					if (!stat.has_value()) continue;
@@ -44,8 +44,8 @@ namespace Optimization {
 				return sheet;
 			}
 
-			Stats::Sheet<float> getMaxPotential(const Disc::Instance &disc, uint32_t rollsLeft) const {
-				Stats::Sheet<float> sheet = disc.stats;
+			Stats::SheetSimplified<float> getMaxPotential(const Disc::Instance &disc, uint32_t rollsLeft) const {
+				Stats::SheetSimplified<float> sheet = disc.stats;
 				for (size_t i = 0; i < count.size(); i++) {
 					auto stat = disc.subStats.at(i).stat;
 					if (!stat.has_value()) continue;

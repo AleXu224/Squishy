@@ -101,7 +101,7 @@ namespace Stats {
 			uint8_t cr = 0;
 			uint8_t cd = 0;
 
-			Stats::Sheet<float> sheet{};
+			Stats::SheetSimplified<float> sheet{};
 
 			[[nodiscard]] auto &fromStat(this auto &self, ::Stat stat) {
 				switch (stat) {
@@ -130,8 +130,8 @@ namespace Stats {
 				}
 			}
 
-			[[nodiscard]] Stats::Sheet<float> getSheet() const {
-				Stats::Sheet<float> ret{};
+			[[nodiscard]] Stats::SheetSimplified<float> getSheet() const {
+				Stats::SheetSimplified<float> ret{};
 				for (const auto &stat: subStats) {
 					ret.fromStat(stat) = static_cast<float>(fromStat(stat)) * Values::subStat.at(stat).fiveStar;
 				}
@@ -162,7 +162,7 @@ namespace Stats {
 
 		bool isTheorycraft() const;
 
-		static inline std::vector subStats{
+		static const inline std::vector subStats{
 			Stat::hp,
 			Stat::hp_,
 			Stat::atk,
@@ -175,16 +175,16 @@ namespace Stats {
 			Stat::cd,
 		};
 
-		static inline std::vector partition1{
+		static const inline std::vector partition1{
 			Stat::hp,
 		};
-		static inline std::vector partition2{
+		static const inline std::vector partition2{
 			Stat::atk,
 		};
-		static inline std::vector partition3{
+		static const inline std::vector partition3{
 			Stat::def,
 		};
-		static inline std::vector partition4{
+		static const inline std::vector partition4{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -192,7 +192,7 @@ namespace Stats {
 			Stat::cd,
 			Stat::ap,
 		};
-		static inline std::vector partition5{
+		static const inline std::vector partition5{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -203,7 +203,7 @@ namespace Stats {
 			Stat::electricDmg,
 			Stat::etherDmg,
 		};
-		static inline std::vector partition6{
+		static const inline std::vector partition6{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -212,7 +212,7 @@ namespace Stats {
 			Stat::er_,
 		};
 
-		static inline std::vector mainStats{
+		static const inline std::vector mainStats{
 			Stat::hp,
 			Stat::atk,
 			Stat::def,

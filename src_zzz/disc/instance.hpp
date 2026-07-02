@@ -24,14 +24,14 @@ namespace Disc {
 		Level level{};
 		uint8_t rarity = 5;
 
-		Stats::Sheet<float> stats{};
+		Stats::SheetSimplified<float> stats{};
 
 		squi::VoidObservable updateEvent{};
 
 		void updateStats() {
 			// Reset the stats
 			// It's easier to to just recreate the entire thing that to go through each stat
-			stats = Stats::Sheet<float>();
+			stats = Stats::SheetSimplified<float>();
 
 			// Main stat
 			stats.fromStat(mainStat) = Stats::Values::mainStat.at(mainStat).at(rarity, level);
