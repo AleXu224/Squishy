@@ -34,13 +34,13 @@ const Agent::Data Agent::Datas::velina{
 		auto multiplier3 = CoreMultiplier(true, {1.35f, 1.55f, 1.75f, 1.95f, 2.15f, 2.35f, 2.55f});
 
 		auto coreErDmgBuff = Clamp{
-			.val1 = (combat.er - 1.2f) * 100.f * 0.0021f,
+			.val1 = (combat.er - ConstantFlat{.value = 1.2f}) * 100.f * 0.0021f,
 			.min = 0.f,
 			.max = 0.35f,
 			.isPercentage = true,
 		};
 		auto coreErAmBuff = Clamp{
-			.val1 = (combat.er - 1.2f) * 100.f * 0.5f,
+			.val1 = (combat.er - ConstantFlat{.value = 1.2f}) * 100.f * 0.5f,
 			.min = 0.f,
 			.max = 84.f,
 			.isPercentage = true,
@@ -52,16 +52,20 @@ const Agent::Data Agent::Datas::velina{
 			.ret = Constant{.value = 1.5f},
 		};
 
+		auto m2Buff = Requires{
+			.requirement = Requirement::mindscape2,
+			.ret = Constant{.value = 0.15f},
+		};
 
 		auto additionalCond = SpecialtyCountOthers{.specialty = Misc::Specialty::anomaly} >= 1
 						   || AttributeCountOthers{.attribute = Misc::Attribute::wind} >= 1;
 		auto additionalWindsweptBuff = Requires{
 			.requirement = additionalCond,
-			.ret = Constant{.value = 0.1f},
+			.ret = Constant{.value = 0.1f} + m2Buff,
 		};
 		auto additionalVortexBuff = Requires{
 			.requirement = additionalCond,
-			.ret = Constant{.value = 0.1f},
+			.ret = Constant{.value = 0.1f} + m2Buff,
 		};
 		auto additionalDazeBuff = Requires{
 			.requirement = additionalCond,
@@ -82,17 +86,35 @@ const Agent::Data Agent::Datas::velina{
 			std::invoke(Misc::ptrFromAttribute<Stats::EnemySheet<FloatNode>::_SkillValue>(attribute), m1Modifier.resistance) = m1ResIgnore;
 		}
 
+		auto m4Cond = IsActive("velinaM4ExCond");
+		auto m4Buff = Requires{
+			.requirement = m4Cond && Requirement::mindscape4,
+			.ret = Constant{.value = 0.15f},
+		};
+
+		auto m6SecondsRemaining = GetFloat("velinaM6SecondsRemaining");
+		auto m6Buff = Requires{
+			.requirement = Requirement::mindscape6,
+			.ret = m6SecondsRemaining * 0.025f,
+		};
+
 		auto totalSweepingCycloneDazeBuff = additionalDazeBuff + m1DazeBuff;
 
 		return Data::Setup{
 			.mods{
 				.combat{
+					.atk_ = m4Buff,
 					.am = coreErAmBuff,
 					.all{
 						.DMG = coreErDmgBuff,
 					},
 					.windswept{
-						.DMG = additionalWindsweptBuff,
+						.DMG = additionalWindsweptBuff + m6Buff,
+						.enemy{
+							.resistance{
+								.wind = m1ResIgnore,
+							},
+						},
 					},
 					.vortex{
 						.DMG = additionalVortexBuff,
@@ -110,10 +132,36 @@ const Agent::Data Agent::Datas::velina{
 					Option::Boolean{
 						.key = "velinaCoreWindbiteConsumed",
 						.name = "After consuming 2 points of Windbite",
+						.teamBuff = true,
 						.mods{
 							.teamCombat{
 								.vortex{
 									.additiveMultiplier = coreWindbiteBuff,
+								},
+							},
+						},
+					},
+				},
+				.mindscape4{
+					Option::Boolean{
+						.key = "velinaM4ExCond",
+						.name = "After using an Ex Special Attack",
+						.mods{
+							.combat{
+								.atk_ = m4Buff,
+							},
+						},
+					},
+				},
+				.mindscape6{
+					Option::ValueSlider{
+						.key = "velinaM6SecondsRemaining",
+						.name = "Previous Windswept duration remaining",
+						.values = std::views::iota(0, 17) | std::ranges::to<std::vector<float>>(),
+						.mods{
+							.combat{
+								.windswept{
+									.DMG = m6Buff,
 								},
 							},
 						},
@@ -417,6 +465,14 @@ const Agent::Data Agent::Datas::velina{
 					Node::Mods{
 						.mods{
 							.combat{
+								.windswept{
+									.DMG = additionalWindsweptBuff,
+									.enemy{
+										.resistance{
+											.wind = m1ResIgnore,
+										},
+									},
+								},
 								.vortex{
 									.enemy = m1Modifier,
 								},

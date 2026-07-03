@@ -202,6 +202,7 @@ namespace Stats {
 			Stat::iceDmg,
 			Stat::electricDmg,
 			Stat::etherDmg,
+			Stat::windDmg,
 		};
 		static const inline std::vector partition6{
 			Stat::hp_,
@@ -232,6 +233,7 @@ namespace Stats {
 			Stat::iceDmg,
 			Stat::electricDmg,
 			Stat::etherDmg,
+			Stat::windDmg,
 		};
 
 		[[nodiscard]] static const std::vector<Stat> &byPartition(::Disc::Partition partition) {

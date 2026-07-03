@@ -33,7 +33,7 @@ namespace Modifiers::Disc {
 		Stat stat;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			if (&context.origin != &context.source) {
+			if (&context.origin != &context.source || !SheetMemberIdentifier(stat).isDiscStat()) {
 				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
 			return SubStatFormulaPtr{
@@ -49,7 +49,7 @@ namespace Modifiers::Disc {
 		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
 			for (const auto &disc: context.source.loadout().disc.sheet.equippedDiscs) {
-				if (!disc.has_value()) continue;
+				if (!disc.has_value() || !SheetMemberIdentifier(stat).isDiscStat()) continue;
 				total += Stats::fromStatSimplified(*disc.value(), stat);
 			}
 			return total;

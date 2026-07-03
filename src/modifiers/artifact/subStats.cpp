@@ -33,7 +33,7 @@ namespace Modifiers::Artifact {
 		Stat stat;
 
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			if (&context.origin != &context.source) {
+			if (&context.origin != &context.source || !SheetMemberIdentifier(stat).isArtifactStat()) {
 				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
 			return SubStatFormulaPtr{
@@ -49,7 +49,7 @@ namespace Modifiers::Artifact {
 		[[nodiscard]] float eval(const Formula::Context &context) const {
 			float total = 0.f;
 			for (const auto &artifact: context.source.loadout().artifact.sheet.equippedArtifacts) {
-				if (!artifact.has_value()) continue;
+				if (!artifact.has_value() || !SheetMemberIdentifier(stat).isArtifactStat()) continue;
 				total += Stats::fromStatSimplified(*artifact.value(), stat);
 			}
 			return total;
