@@ -55,7 +55,7 @@ squi::core::Child UI::CharacterList::State::build(const Element &element) {
 			Grid{
 				.widget{
 					.height = Size::Shrink,
-					.sizeConstraints = BoxConstraints{
+					.sizeConstraints{
 						.maxWidth = 1520.f,
 					},
 				},

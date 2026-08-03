@@ -101,26 +101,26 @@ const Character::Data Character::Datas::columbina{
 
 		auto c5Elevation = Requires{
 			.requirement = Requirement::constellation5,
-			.ret = Constant{.value = 0.03f},
+			.ret = Constant{.value = 0.015f},
 		};
 
 		auto c6CondLunarCharged = IsActive("columbinaC6LunarCharged");
 		auto c6CondLunarBloom = IsActive("columbinaC6LunarBloom");
 		auto c6CondLunarCrystallize = IsActive("columbinaC6LunarCrystallize");
 		auto c6BuffLunarCharged = Requires{
-			.requirement = Requirement::constellation6 && c6CondLunarCharged,
+			.requirement = Requirement::constellation6 && c6CondLunarCharged && burstCond,
 			.ret = Constant{.value = 0.8f},
 		};
 		auto c6BuffLunarBloom = Requires{
-			.requirement = Requirement::constellation6 && c6CondLunarBloom,
+			.requirement = Requirement::constellation6 && c6CondLunarBloom && burstCond,
 			.ret = Constant{.value = 0.8f},
 		};
 		auto c6BuffLunarCrystallize = Requires{
-			.requirement = Requirement::constellation6 && c6CondLunarCrystallize,
+			.requirement = Requirement::constellation6 && c6CondLunarCrystallize && burstCond,
 			.ret = Constant{.value = 0.8f},
 		};
 		auto c6HydroBuff = Requires{
-			.requirement = Requirement::constellation6 && (c6CondLunarCharged || c6CondLunarBloom || c6CondLunarCrystallize),
+			.requirement = Requirement::constellation6 && (c6CondLunarCharged || c6CondLunarBloom || c6CondLunarCrystallize) && burstCond,
 			.ret = Constant{.value = 0.8f},
 		};
 		auto c6Elevation = Requires{
@@ -140,6 +140,7 @@ const Character::Data Character::Datas::columbina{
 					.dendro{.critDMG = c6BuffLunarBloom},
 					.geo{.critDMG = c6BuffLunarCrystallize},
 					.allLunar{
+						.DMG = burstBuff,
 						.multiplicativeDMG = p3Buff,
 						.elevation = c1Elevation + c2Elevation + c3Elevation + c4Elevation + c5Elevation + c6Elevation,
 					},
@@ -148,9 +149,6 @@ const Character::Data Character::Datas::columbina{
 					.atk = c2BuffLunarCharged,
 					.def = c2BuffLunarCrystallize,
 					.em = c2BuffLunarBloom,
-					.allLunar{
-						.DMG = burstBuff,
-					},
 				},
 				.moonsignLevel = ConstantInt{.value = 1},
 			},
@@ -161,7 +159,7 @@ const Character::Data Character::Datas::columbina{
 						.name = "Character is within the Lunar Domain",
 						.teamBuff = true,
 						.mods{
-							.activePreMod{
+							.teamPreMod{
 								.allLunar{.DMG = burstBuff},
 							},
 						},
@@ -302,13 +300,13 @@ const Character::Data Character::Datas::columbina{
 					},
 					Node::Info{
 						.name = "Charged Attack Stamina Cost",
-						.type = Utils::EntryType::seconds,
-						.formula = Multiplier(Utils::EntryType::seconds, LevelableTalent::normal, {50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000}),
+						.type = Utils::EntryType::points,
+						.formula = Multiplier(Utils::EntryType::points, LevelableTalent::normal, {50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000, 50.0000}),
 					},
 					Node::DirectLunar{
 						.name = "Verdant Dew Charged Attack DMG (x3)",
 						.damageType = Misc::LunarDamageType::lunarBloom,
-						.formula = Multiplier(total.hp, LevelableTalent::normal, {0.0126, 0.0135, 0.0145, 0.0157, 0.0167, 0.0176, 0.0189, 0.0202, 0.0214, 0.0227, 0.0239, 0.0252, 0.0268, 0.0283, 0.0299}),
+						.formula = Multiplier(total.hp, LevelableTalent::normal, {0.015112, 0.016245, 0.017379, 0.01889, 0.020023, 0.021157, 0.022668, 0.024179, 0.02569, 0.027202, 0.028713, 0.030224, 0.032113, 0.034002, 0.035891}),
 					},
 				},
 				.plunge{

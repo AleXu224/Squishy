@@ -28,7 +28,7 @@ squi::core::Child UI::TCOptimization::State::build(const Element &element) {
 		.child = Column{
 			.widget{
 				.alignment = Alignment::TopCenter,
-				.sizeConstraints = BoxConstraints{
+				.sizeConstraints{
 					.maxWidth = 1520.f,
 				},
 			},

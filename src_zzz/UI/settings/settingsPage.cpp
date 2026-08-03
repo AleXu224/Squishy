@@ -25,7 +25,7 @@ squi::core::Child UI::SettingsPage::State::build(const Element &element) {
 		.children{
 			Expander{
 				.widget{
-					.sizeConstraints = BoxConstraints{
+					.sizeConstraints{
 						.maxWidth = 800.f,
 					},
 				},
@@ -57,7 +57,7 @@ squi::core::Child UI::SettingsPage::State::build(const Element &element) {
 			},
 			Expander{
 				.widget{
-					.sizeConstraints = BoxConstraints{
+					.sizeConstraints{
 						.maxWidth = 800.f,
 					},
 				},

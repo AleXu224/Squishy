@@ -37,7 +37,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 		.child = Column{
 			.widget{
 				.alignment = Alignment::TopCenter,
-				.sizeConstraints = BoxConstraints{
+				.sizeConstraints{
 					.maxWidth = 1520.f,
 				},
 			},
@@ -93,7 +93,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 				},
 				Expander{
 					.title = "Use equipped discs",
-					.subtitle = "Whether to allow to usage of discs currently equipped on other agents",
+					.subtitle = "Whether to allow the usage of discs currently equipped on other agents",
 					.action{
 						ToggleSwitch{
 							.active = agent.optimizationOptions->useEquippedDiscs,
@@ -199,6 +199,9 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 											.ctx = ctx,
 											.optimizedNode = node,
 											.options{
+												.partition4MainStats = storage->partition4MainStats,
+												.partition5MainStats = storage->partition5MainStats,
+												.partition6MainStats = storage->partition6MainStats,
 												.nodeSource = storage->nodeSource,
 											},
 										};

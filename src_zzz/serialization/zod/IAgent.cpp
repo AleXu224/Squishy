@@ -10,11 +10,11 @@ Serialization::Zod::IAgent Serialization::Zod::IAgent::fromInstance(const Agent:
 		.mindscape = agent.state.stats.sheet.mindscape,
 		.promotion = agent.state.stats.sheet.promotion,
 		.core = static_cast<uint8_t>(agent.state.stats.sheet.skills.core.constant),
-		.dodge = static_cast<uint8_t>(agent.state.stats.sheet.skills.dodge.constant),
-		.basic = static_cast<uint8_t>(agent.state.stats.sheet.skills.basic.constant),
-		.chain = static_cast<uint8_t>(agent.state.stats.sheet.skills.chain.constant),
-		.special = static_cast<uint8_t>(agent.state.stats.sheet.skills.special.constant),
-		.assist = static_cast<uint8_t>(agent.state.stats.sheet.skills.assist.constant),
+		.dodge = static_cast<uint8_t>(agent.state.stats.sheet.skills.dodge.constant + 1),
+		.basic = static_cast<uint8_t>(agent.state.stats.sheet.skills.basic.constant + 1),
+		.chain = static_cast<uint8_t>(agent.state.stats.sheet.skills.chain.constant + 1),
+		.special = static_cast<uint8_t>(agent.state.stats.sheet.skills.special.constant + 1),
+		.assist = static_cast<uint8_t>(agent.state.stats.sheet.skills.assist.constant + 1),
 		.potential = 0,
 	};
 }
@@ -52,10 +52,10 @@ void Serialization::Zod::IAgent::writeToInstance(Agent::Instance &agent) const {
 	agent.state.stats.sheet.mindscape = mindscape;
 	agent.state.stats.sheet.promotion = promotion;
 	agent.state.stats.sheet.skills.core.constant = core;
-	agent.state.stats.sheet.skills.dodge.constant = dodge;
-	agent.state.stats.sheet.skills.basic.constant = basic;
-	agent.state.stats.sheet.skills.chain.constant = chain;
-	agent.state.stats.sheet.skills.special.constant = special;
-	agent.state.stats.sheet.skills.assist.constant = assist;
+	agent.state.stats.sheet.skills.dodge.constant = dodge - 1;
+	agent.state.stats.sheet.skills.basic.constant = basic - 1;
+	agent.state.stats.sheet.skills.chain.constant = chain - 1;
+	agent.state.stats.sheet.skills.special.constant = special - 1;
+	agent.state.stats.sheet.skills.assist.constant = assist - 1;
 	// agent.state.stats.sheet.potential = potential;
 }

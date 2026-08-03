@@ -5,50 +5,15 @@
 #include "store.hpp"
 #include "widgets/button.hpp"
 #include "widgets/column.hpp"
-#include "widgets/container.hpp"
 #include "widgets/expander.hpp"
 #include "widgets/grid.hpp"
 #include "widgets/liteFilter.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/paginator.hpp"
-#include "widgets/row.hpp"
 #include "widgets/scrollview.hpp"
-#include "widgets/text.hpp"
 
 
 using namespace squi;
-
-namespace {
-	struct ExpanderItem : StatelessWidget {
-		// Args
-		Key key;
-		std::string heading;
-		Child action;
-
-		[[nodiscard]] Child build(const Element &) {
-			return Row{
-				.widget{
-					.sizeConstraints = BoxConstraints{.minHeight = 64.f},
-					.padding = Padding{16.f, 0.f},
-				},
-				.crossAxisAlignment = Flex::Alignment::center,
-				.spacing = 8.f,
-				.children{
-					Text{
-						.widget{.width = Size::Shrink},
-						.text = heading,
-					},
-					Container{
-						.widget{
-							.height = Size::Wrap,
-						},
-						.child = action,
-					},
-				},
-			};
-		}
-	};
-}// namespace
 
 [[nodiscard]] std::vector<Disc::Instance *> UI::DiscPage::State::getFilteredList() const {
 	std::vector<Disc::Instance *> ret;
@@ -184,7 +149,7 @@ squi::Child UI::DiscPage::State::build(const squi::Element &element) {
 		.children{
 			Expander{
 				.widget{
-					.sizeConstraints = BoxConstraints{
+					.sizeConstraints{
 						.maxWidth = 1520.f,
 					},
 				},
@@ -206,10 +171,11 @@ squi::Child UI::DiscPage::State::build(const squi::Element &element) {
 					},
 				},
 				.content = Column{
+					.spacer = ExpanderItemSpacer{},
 					.children{
-						ExpanderItem{.heading = "Slot", .action = slotFilter},
+						ExpanderItem{.title = "Slot", .action = slotFilter},
 						ExpanderItem{
-							.heading = "Main stat",
+							.title = "Main stat",
 							.action = ScrollView{
 								.widget{.width = Size::Wrap, .height = Size::Shrink},
 								.alignment = Flex::Alignment::center,
@@ -218,7 +184,7 @@ squi::Child UI::DiscPage::State::build(const squi::Element &element) {
 							},
 						},
 						ExpanderItem{
-							.heading = "Sub stat",
+							.title = "Sub stat",
 							.action = ScrollView{
 								.widget{.width = Size::Wrap, .height = Size::Shrink},
 								.alignment = Flex::Alignment::center,
@@ -247,7 +213,7 @@ squi::Child UI::DiscPage::State::build(const squi::Element &element) {
 					return Grid{
 						.widget{
 							.height = Size::Shrink,
-							.sizeConstraints = BoxConstraints{
+							.sizeConstraints{
 								.maxWidth = 1520.f,
 							},
 						},

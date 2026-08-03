@@ -26,6 +26,7 @@ namespace Serialization::Zod {
 		{"ice_dmg_", Stat::iceDmg},
 		{"electric_dmg_", Stat::electricDmg},
 		{"ether_dmg_", Stat::etherDmg},
+		{"wind_dmg_", Stat::windDmg},
 	};
 	static inline std::unordered_map<Stat, std::string> keyStat{
 		{Stat::hp, "hp"},
@@ -47,5 +48,6 @@ namespace Serialization::Zod {
 		{Stat::iceDmg, "ice_dmg_"},
 		{Stat::electricDmg, "electric_dmg_"},
 		{Stat::etherDmg, "ether_dmg_"},
+		{Stat::windDmg, "wind_dmg_"},
 	};
 }// namespace Serialization::Zod

@@ -10,7 +10,7 @@ using namespace squi;
 	return Box{
 		.widget{
 			.height = Size::Shrink,
-			.sizeConstraints = BoxConstraints{
+			.sizeConstraints{
 				.minHeight = 36.f,
 			},
 			.margin = Margin{0.f},

@@ -2,10 +2,14 @@
 
 #include "combo/source.hpp"
 #include "optional"
+#include <map>
 
 
 namespace Optimization {
 	struct OptionsUpgrade {
+		std::map<Stat, bool> partition4MainStats{};
+		std::map<Stat, bool> partition5MainStats{};
+		std::map<Stat, bool> partition6MainStats{};
 		std::optional<Combo::Source::Types> nodeSource;
 	};
 }// namespace Optimization

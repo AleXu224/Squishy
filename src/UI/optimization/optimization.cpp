@@ -37,7 +37,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 		.child = Column{
 			.widget{
 				.alignment = Alignment::TopCenter,
-				.sizeConstraints = BoxConstraints{
+				.sizeConstraints{
 					.maxWidth = 1520.f,
 				},
 			},
@@ -121,7 +121,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 				},
 				Expander{
 					.title = "Use equipped artifacts",
-					.subtitle = "Whether to allow to usage of artifacts currently equipped on other characters",
+					.subtitle = "Whether to allow the usage of artifacts currently equipped on other characters",
 					.action{
 						ToggleSwitch{
 							.active = character.optimizationOptions->useEquippedArtifacts,
@@ -227,6 +227,9 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 											.ctx = ctx,
 											.optimizedNode = node,
 											.options{
+												.sandsMainStats = storage->sandsMainStats,
+												.gobletMainStats = storage->gobletMainStats,
+												.circletMainStats = storage->circletMainStats,
 												.nodeSource = storage->nodeSource,
 											},
 										};

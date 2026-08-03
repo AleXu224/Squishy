@@ -17,6 +17,9 @@ Optimization::SolutionsUpgrade Optimization::UpgradeOptimization::optimize() con
 	artifacts.reserve(::Store::artifacts.size());
 	for (const auto &[_, artifact]: ::Store::artifacts) {
 		if (artifact.level >= 20) continue;
+		if (artifact.slot == Artifact::Slot::sands && !options.sandsMainStats.at(artifact.mainStat)) continue;
+		if (artifact.slot == Artifact::Slot::goblet && !options.gobletMainStats.at(artifact.mainStat)) continue;
+		if (artifact.slot == Artifact::Slot::circlet && !options.circletMainStats.at(artifact.mainStat)) continue;
 		artifacts.emplace_back(artifact);
 	}
 

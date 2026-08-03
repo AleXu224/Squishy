@@ -2,8 +2,8 @@
 
 #include "chrono"
 #include "execution"
-#include "optimization/bnbUpgrade.hpp"
 #include "optimization/optimize.hpp"
+#include "optimization/upgradeChanceCalculator.hpp"
 #include "solutionUpgrade.hpp"
 #include "store.hpp"
 #include "upgradeFilter.hpp"
@@ -17,6 +17,9 @@ Optimization::SolutionsUpgrade Optimization::UpgradeOptimization::optimize() con
 	discs.reserve(::Store::discs.size());
 	for (const auto &[_, disc]: ::Store::discs) {
 		if (disc.level >= 15) continue;
+		if (disc.partition == Disc::Partition::four && !options.partition4MainStats.at(disc.mainStat)) continue;
+		if (disc.partition == Disc::Partition::five && !options.partition5MainStats.at(disc.mainStat)) continue;
+		if (disc.partition == Disc::Partition::six && !options.partition6MainStats.at(disc.mainStat)) continue;
 		discs.emplace_back(disc);
 	}
 
@@ -76,27 +79,26 @@ Optimization::SolutionsUpgrade Optimization::UpgradeOptimization::optimize() con
 						rollsLeft--;
 					}
 				}
-				disc.level = 15;
-				disc.updateStats();
-				if (rollsLeft > 0) {
-					BnbUpgrade bnb{
-						.disc = disc,
-						.agent = threadData.agent,
-						.ctx = threadData.ctx,
-						.node = node,
-						.partition = std::to_underlying(disc.partition),
-						.currentScore = currentScore,
-					};
 
-					auto agg = bnb.solve({}, rollsLeft);
-					solution.upgradeChance = agg.successfulRolls / static_cast<float>(std::pow(4u, rollsLeft));
-					solution.upgradeAverage = (agg.upgradeScores / static_cast<double>(agg.successfulRolls)) / currentScore;
-
-					solutions.addSolution(solution);
+				UpgradeChanceCalculator calc{
+					.disc = disc,
+					.agent = threadData.agent,
+					.ctx = threadData.ctx,
+					.node = node,
+					.partition = std::to_underlying(disc.partition),
+					.currentScore = currentScore,
+				};
+				if (auto result = calc.compute(rollsLeft)) {
+					if (result->denominator > 0.0 && result->successfulRolls > 0.0) {
+						solution.upgradeChance = static_cast<float>(result->successfulRolls / result->denominator);
+						solution.upgradeAverage = static_cast<float>((result->upgradeScores / result->successfulRolls) / currentScore);
+						solution.score = solution.upgradeChance * solution.upgradeAverage;
+						solutions.addSolution(solution);
+					}
 				}
 
 				combed++;
-				std::println("Max chance: {} {}/{} ({}%)", solutions.maxUpgradeChance, combed.load(), discCount, (static_cast<float>(combed) / static_cast<float>(discCount)) * 100.f);
+				std::println("Max score: {} {}/{} ({}%)", solutions.maxScore, combed.load(), discCount, (static_cast<float>(combed) / static_cast<float>(discCount)) * 100.f);
 			}
 		);
 	}
@@ -106,7 +108,7 @@ Optimization::SolutionsUpgrade Optimization::UpgradeOptimization::optimize() con
 
 	auto end = std::chrono::high_resolution_clock::now();
 	std::println("------------------------------------------------");
-	std::println("Optimizing done: Best chance {}, time taken {}", solutions.maxUpgradeChance, std::chrono::duration_cast<std::chrono::milliseconds>(end - start));
+	std::println("Optimizing done: Best score {}, time taken {}", solutions.maxScore, std::chrono::duration_cast<std::chrono::milliseconds>(end - start));
 	for (const auto &[index, solution]: solutions.solutions | std::views::enumerate) {
 		if (!solution.disc) continue;
 		std::println("--------------- Disc {}: Chance {}%, Avg Upgrade {}5 -----------------", index, solution.upgradeChance * 100.f, solution.upgradeAverage * 100.f);

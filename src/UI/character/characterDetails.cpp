@@ -238,7 +238,7 @@ namespace {
 		return Column{
 			.widget{
 				.height = Size::Shrink,
-				.sizeConstraints = BoxConstraints{
+				.sizeConstraints{
 					.maxWidth = 1520.f,
 				},
 			},
@@ -322,7 +322,7 @@ squi::core::Child UI::CharacterDetails::State::build(const Element &element) {
 			.children{
 				EquipmentExpander{
 					.widget{
-						.sizeConstraints = BoxConstraints{
+						.sizeConstraints{
 							.maxWidth = 1520.f,
 						},
 					},

@@ -173,25 +173,25 @@ namespace Reaction {
 			// Lunar
 			const static inline Reaction::Transformative lunarCharged = Reaction::Transformative{
 				.name = "Lunar-Charged",
-				.multiplier = 1.8f,
+				.multiplier = 3.0f,
 				.damageElement = Misc::Element::electro,
 				.modifier = Modifiers::total().lunarCharged,
 				.triggers{
 					Misc::Element::electro,
 					Misc::Element::hydro,
 				},
-				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCharged, 1.8f, Misc::Element::electro),
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCharged, 3.0f, Misc::Element::electro),
 			};
 			const static inline Reaction::Transformative lunarCrystalize = Reaction::Transformative{
 				.name = "Lunar-Crystalize",
-				.multiplier = .96f,
+				.multiplier = 1.6f,
 				.damageElement = Misc::Element::geo,
 				.modifier = Modifiers::total().lunarCrystallize,
 				.triggers{
 					Misc::Element::geo,
 					Misc::Element::hydro,
 				},
-				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystallize, .96f, Misc::Element::geo),
+				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystallize, 1.6f, Misc::Element::geo),
 			};
 		};
 	}// namespace List

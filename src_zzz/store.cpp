@@ -210,10 +210,10 @@ extern void Store::loadFromZOD(const Serialization::Zod::IZOD &data) {
 		engineListUpdateEvent.notify();
 	}
 	if (data.discs.has_value()) {
-		// for (auto &&[key, disc]: ::Store::discs) {
-		// 	disc.unequip();
-		// }
-		// ::Store::discs.clear();
+		for (auto &&[key, disc]: ::Store::discs) {
+			disc.unequip();
+		}
+		::Store::discs.clear();
 		std::unordered_set<uint32_t> storedDiscKeys{};
 		bool hasEquippedDiscs = false;
 		for (const auto &disc: data.discs.value()) {

@@ -6,30 +6,31 @@ namespace Optimization {
 	struct SolutionUpgrade {
 		float upgradeChance;
 		float upgradeAverage;
+		float score;
 		Disc::InstanceKey disc;
 	};
 
 	struct SolutionsUpgrade {
 		static inline std::mutex mtx;
-		std::array<SolutionUpgrade, 5> solutions{};
-		float maxUpgradeChance = 0.f;
-		float minUpgradeChance = 0.f;
+		std::array<SolutionUpgrade, 20> solutions{};
+		float maxScore = 0.f;
+		float minScore = 0.f;
 
 		void addSolution(const SolutionUpgrade &solution) {
 			std::scoped_lock _{mtx};
-			if (solution.upgradeChance <= minUpgradeChance) return;
+			if (solution.score <= minScore) return;
 
 			for (auto &s: solutions) {
-				if (s.upgradeChance < solution.upgradeChance) std::swap(s, solutions.back());
+				if (s.score < solution.score) std::swap(s, solutions.back());
 			}
 			for (auto &s: solutions) {
-				if (s.upgradeChance < solution.upgradeChance) {
+				if (s.score < solution.score) {
 					s = solution;
 					break;
 				}
 			}
-			maxUpgradeChance = solutions.front().upgradeChance;
-			minUpgradeChance = solutions.back().upgradeChance;
+			maxScore = solutions.front().score;
+			minScore = solutions.back().score;
 		}
 	};
 }// namespace Optimization

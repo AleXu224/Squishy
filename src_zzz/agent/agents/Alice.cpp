@@ -31,7 +31,7 @@ const Agent::Data Agent::Datas::alice{
 	},
 	.setup = []() -> Data::Setup {
 		auto coreAnomalyTimer = GetFloat("aliceAnomalyTimer");
-		auto coreDisorderBuff = coreAnomalyTimer * 0.18f * combat.atk;
+		auto coreDisorderBuff = coreAnomalyTimer * 0.18f;
 
 		auto coreApBuff = Requires{
 			.requirement = SpecialtyCountOthers{.specialty = Misc::Specialty::anomaly} >= 1
@@ -64,7 +64,7 @@ const Agent::Data Agent::Datas::alice{
 				.combat{
 					.ap = coreApBuff,
 					.assaultDisorder{
-						.additiveDMG = coreDisorderBuff,
+						.additiveMultiplier = coreDisorderBuff,
 					},
 				},
 				.teamCombat{
@@ -91,7 +91,7 @@ const Agent::Data Agent::Datas::alice{
 						.mods{
 							.combat{
 								.assaultDisorder{
-									.additiveDMG = coreDisorderBuff,
+									.additiveMultiplier = coreDisorderBuff,
 								},
 							},
 						},

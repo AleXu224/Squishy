@@ -35,7 +35,7 @@ squi::core::Child UI::ValueListOption::State::build(const Element &element) {
 				.widget{
 					.width = Size::Expand,
 					.height = Size::Shrink,
-					.sizeConstraints = BoxConstraints{
+					.sizeConstraints{
 						.minHeight = 32.f,
 					},
 				},
