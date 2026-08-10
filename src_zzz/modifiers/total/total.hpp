@@ -9,6 +9,7 @@ namespace Modifiers {
 	// static constexpr SkillFactory<TotalSkillsFrm, Agent::Kit::skills, Agent::instanceSkills, Engine::Passive::skills, Disc::Set::skills, Team::skills> totalSkills;
 	// static constexpr EnemyFactory<TotalEnemyFrm, Team::enemy, Team::resonancesEnemy, Enemy::instanceStats, EnemyNameFactory{}> totalEnemy;
 	const Stats::Sheet<Formula::FloatNode> &combat();
+	const Stats::Sheet<Formula::FloatNode> &combatDisplay();
 	const Stats::Sheet<Formula::FloatNode> &team();
 	const Skills<Formula::IntNode> &skills();
 	const Stats::EnemySheet<Formula::FloatNode> &enemy();

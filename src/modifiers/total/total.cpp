@@ -34,8 +34,16 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto ret = characterKitStat
+					 + weaponPassiveStat
+					 + artifactSetStat
+					 + teamPostStat
+					 + activePostStat
+					 + preModStat;
+			Formula::Descriptor formulaDescriptor;
+			ret.print(formulaDescriptor, context, Formula::Step::none);
+			descriptor.add("Total " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -67,8 +75,11 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (teamPreStat + teamPostStat + activePreStat + activePostStat).print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			auto formula = teamPreStat + teamPostStat + activePreStat + activePostStat;
+			// Formula::Descriptor formulaDescriptor;
+			formula.print(descriptor, context, prevStep);
+			// descriptor.add("Team Total " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -94,8 +105,8 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			(characterKitStat + weaponPassiveStat + artifactSetStat + teamPostStat + preModStat).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -112,6 +123,7 @@ namespace Modifiers {
 		Formula::IntNode weaponPassiveTalent;
 		Formula::IntNode artifactSetTalent;
 		Formula::IntNode teamTalent;
+		SheetMemberIdentifier name;
 		[[nodiscard]] Formula::IntNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto ret = characterKitTalent
 					 + characterInstanceTalent
@@ -121,8 +133,11 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterKitTalent + characterInstanceTalent + weaponPassiveTalent + artifactSetTalent + teamTalent).print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			auto formula = characterKitTalent + characterInstanceTalent + weaponPassiveTalent + artifactSetTalent + teamTalent;
+			Formula::Descriptor formulaDescriptor;
+			formula.print(formulaDescriptor, context, prevStep);
+			descriptor.add("Total " + name.getName(), formula.eval(context), std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] auto eval(const Formula::Context &context) const {
@@ -145,8 +160,13 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(name.getName(), eval(context), name.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto ret = teamStat
+					 + teamResonanceStat
+					 + instanceStat;
+			Formula::Descriptor formulaDescriptor;
+			ret.print(formulaDescriptor, context, Formula::Step::none);
+			descriptor.add("Total Enemy " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -169,7 +189,7 @@ namespace Modifiers {
 		return ret;
 	}
 	const Talents<Formula::IntNode> &totalTalents() {
-		static auto ret = talentFactory<Formula::IntNode, TotalTalentsFrm>(Character::Kit::talents(), Character::instanceTalents(), Weapon::Passive::talents(), Artifact::Set::talents(), Team::talents());
+		static auto ret = talentFactory<Formula::IntNode, TotalTalentsFrm>(Character::Kit::talents(), Character::instanceTalents(), Weapon::Passive::talents(), Artifact::Set::talents(), Team::talents(), TalentNameFactory{});
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &totalEnemy() {

@@ -36,15 +36,12 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(index);
-			if (!character) return "";
+			if (!character) return;
 			auto &stats = character->state;
-			return std::format(
-				"{} {}",
-				stats.stats.data.name,
-				formula.print(context.withSource(stats), prevStep)
-			);
+			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
+			formula.print(descriptor, context.withSource(stats), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -66,15 +63,12 @@ namespace Formula {
 			return formula.fold(context.withSource(character->state), args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
-			if (!character) return "";
+			if (!character) return;
 			auto &stats = character->state;
-			return std::format(
-				"{} {}",
-				stats.stats.data.name,
-				formula.print(context.withSource(stats), prevStep)
-			);
+			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
+			formula.print(descriptor, context.withSource(stats), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -94,12 +88,9 @@ namespace Formula {
 			return formula.fold(context.withSource(context.prevSource), args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return std::format(
-				"{} {}",
-				context.prevSource.stats.data.name,
-				formula.print(context.withSource(context.prevSource), prevStep)
-			);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.pushPrefix(std::format("{} ", context.prevSource.stats.data.name));
+			formula.print(descriptor, context.withSource(context.prevSource), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -112,17 +103,23 @@ namespace Formula {
 		T formula;
 
 		using RetType = FormulaType<T>;
-		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+
+		auto getFormula(const Context &context) const {
 			using namespace Formula::Operators;
-			return (TeamCharacter{.index = 0, .formula = formula}
-					+ TeamCharacter{.index = 1, .formula = formula}
-					+ TeamCharacter{.index = 2, .formula = formula}
-					+ TeamCharacter{.index = 3, .formula = formula})
-				.fold(context, args);
+			return (
+				TeamCharacter{.index = 0, .formula = formula}
+				+ TeamCharacter{.index = 1, .formula = formula}
+				+ TeamCharacter{.index = 2, .formula = formula}
+				+ TeamCharacter{.index = 3, .formula = formula}
+			);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) {
-			return std::format("{}", eval(context));
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Context &context, Step) {
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) {
@@ -142,12 +139,16 @@ namespace Formula {
 	};
 
 	struct TeamInfusion : FormulaBase<Utils::JankyOptional<Misc::Element>, Type::constant> {
-		[[nodiscard]] static std::string print(const Context &context, Step) {
+		static void print(Descriptor &descriptor, const Context &context, Step) {
 			auto elem = eval(context);
 			if (elem.has_value()) {
-				return std::format("{}", Utils::Stringify(elem.value()));
+				descriptor.addName(Style{
+					.color = Utils::elementToColor(elem.value()),
+					.text = std::format("{}", Utils::Stringify(elem.value())),
+				});
+			} else {
+				descriptor.addName("None");
 			}
-			return "None";
 		}
 
 		[[nodiscard]] static Utils::JankyOptional<Misc::Element> eval(const Context &context) {
@@ -181,8 +182,8 @@ namespace Formula {
 				.fold(context, args);
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return std::format("Team Moonsign Level {}", eval(context));
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			descriptor.add("Team Moonsign Level", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {
@@ -202,8 +203,8 @@ namespace Formula {
 	};
 
 	struct TeamCharacterCount : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return std::format("Team character count {}", eval(context));
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			descriptor.add("Team character count", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {
@@ -219,12 +220,16 @@ namespace Formula {
 	struct CharacterTeamInfusion : FormulaBase<Utils::JankyOptional<Misc::Element>, Type::constant> {
 		Formula::ElementNode val;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		void print(Descriptor &descriptor, const Context &context, Step) const {
 			auto elem = eval(context);
 			if (elem.has_value()) {
-				return std::format("{}", Utils::Stringify(elem.value()));
+				descriptor.addName(Style{
+					.color = Utils::elementToColor(elem.value()),
+					.text = std::format("{}", Utils::Stringify(elem.value())),
+				});
+			} else {
+				descriptor.addName("None");
 			}
-			return "None";
 		}
 
 		[[nodiscard]] Utils::JankyOptional<Misc::Element> eval(const Context &context) const {
@@ -268,8 +273,8 @@ namespace Formula {
 			return totalBuff.fold(context, args);
 		}
 
-		[[nodiscard]] static std::string print(const Formula::Context &context, Step) {
-			return std::format("Non-Moonsign Character Buff: {}", Percentage({}, eval(context), true));
+		static void print(Descriptor &descriptor, const Formula::Context &context, Step) {
+			descriptor.add("Non-Moonsign Character Buff", {eval(context), true});
 		}
 
 		[[nodiscard]] static float eval(const Formula::Context &context) {
@@ -318,8 +323,8 @@ namespace Formula {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return Percentage("Non-Moonsign Character Team Buff: ", eval(context), true);
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			descriptor.add("Non-Moonsign Character Team Buff", {eval(context), true});
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
@@ -345,11 +350,11 @@ namespace Formula {
 			return formula.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step step) const {
+		void print(Descriptor &descriptor, const Context &context, Step step) const {
 			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
-			if (!activeCharacter) return "";
-			if (context.source.instanceKey != activeCharacter->instanceKey) return "";
-			return formula.print(context, step);
+			if (!activeCharacter) return;
+			if (context.source.instanceKey != activeCharacter->instanceKey) return;
+			formula.print(descriptor, context, step);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

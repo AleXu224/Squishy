@@ -19,10 +19,16 @@ namespace Modifiers::Weapon::Passive {
 				return node.fold(context, args);
 			}
 
-			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
 				const auto &mod = stat.resolve(std::invoke(location, context.source.loadout().weapon->data->data.mods));
-				if (!mod.hasValue()) return "";
-				return mod.print(context);
+				if (!mod.hasValue()) return;
+				Formula::Descriptor modDescriptor;
+				mod.print(modDescriptor, context, Formula::Step::none);
+				if constexpr (std::is_same_v<Ret, float>) {
+					descriptor.add(std::format("Weapon Passive {}", member.getName()), {eval(context), member.isPercentage()}, std::move(modDescriptor));
+				} else {
+					descriptor.add(std::format("Weapon Passive {}", member.getName()), eval(context), std::move(modDescriptor));
+				}
 			}
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {

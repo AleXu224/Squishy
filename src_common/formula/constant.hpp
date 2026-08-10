@@ -1,6 +1,7 @@
 #pragma once
 
 #include "context.hpp"// IWYU pragma: keep
+#include "descriptor.hpp"
 #include "format"
 #include "formulaBase.hpp"
 #include "step.hpp"
@@ -12,17 +13,17 @@ namespace Formula {
 	struct ConstantBase : FormulaBase<T, Type::constant> {
 		T value;
 
-		[[nodiscard]] std::string print(const Context &, Step) const {
+		void print(Descriptor &descriptor, const Context &, Step) const {
 			if constexpr (std::is_same_v<T, float>) {
 				if constexpr (percentage) {
-					return std::format("{}%", Utils::formatFloat(value * 100.f));
+					descriptor.addValue(std::format("{}%", Utils::formatFloat(value * 100.f)));
 				} else {
-					return std::format("{}", Utils::formatFloat(value));
+					descriptor.addValue(std::format("{}", Utils::formatFloat(value)));
 				}
 			} else if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, bool>) {
-				return std::format("{}", value);
+				descriptor.addValue(std::format("{}", value));
 			} else {
-				return std::format("Cannot format constant of type {}", typeid(T).name());
+				descriptor.addValue(std::format("Cannot format constant of type {}", typeid(T).name()));
 			}
 		}
 

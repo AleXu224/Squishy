@@ -13,9 +13,9 @@ namespace Formula {
 		bool isPercentage = false;
 		std::array<float, 5> values;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		void print(Descriptor &descriptor, const Context &context, Step) const {
 			const auto &multiplier = _getOverclockMultiplier(values, context.source);
-			return Percentage({}, multiplier, isPercentage);
+			descriptor.addValue({multiplier, isPercentage});
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

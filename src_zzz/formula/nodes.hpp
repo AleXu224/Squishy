@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UI/attributeToColor.hpp"
 #include "formula/base.hpp"
 
 #include "formula/attribute.hpp"
@@ -11,19 +12,19 @@ namespace Formula {
 		Utils::JankyOptional<Misc::Attribute> attribute{};
 		Misc::SkillStat skillStat;
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return Stats::fromSkillStat(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getAttribute(attribute, context)),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto attribute = Formula::getAttribute(this->attribute, context);
+			descriptor.pushColor(Utils::attributeToColor(attribute));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -35,20 +36,17 @@ namespace Formula {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 		Misc::SkillStat skillStat;
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+		Formula::FloatNode getFormula(const Formula::Context &context) const {
 			if (!source.has_value()) return Formula::Constant{.value = 0.f};
-			return Stats::fromAttackSource(Modifiers::combat(), source.value(), skillStat).fold(context, args);
+			return Stats::fromAttackSource(Modifiers::combat(), source.value(), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(source),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -62,19 +60,18 @@ namespace Formula {
 		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
 		Utils::JankyOptional<Misc::Attribute> attribute{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return stat.resolve(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)).enemy).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return stat.resolve(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute, context)).enemy);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getAttribute(attribute, context)),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto attribute = Formula::getAttribute(this->attribute, context);
+			descriptor.pushColor(Utils::attributeToColor(attribute));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -101,15 +98,9 @@ namespace Formula {
 			return *this;
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getAttribute(attribute.eval(context), context)),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto value = stat.resolve(Stats::fromAttribute(Modifiers::combat(), Formula::getAttribute(attribute.eval(context), context)).enemy);
+			value.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -127,15 +118,9 @@ namespace Formula {
 			return stat.resolve(Stats::fromAttackSource(Modifiers::combat(), source.value()).enemy).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(source),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			if (!source.has_value()) return;
+			stat.resolve(Stats::fromAttackSource(Modifiers::combat(), source.value()).enemy).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

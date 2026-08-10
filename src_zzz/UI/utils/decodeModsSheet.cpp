@@ -1,5 +1,6 @@
 #include "decodeModsSheet.hpp"
 
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/skillEntry.hpp"
 #include "misc/attribute.hpp"
 #include "modifiers/enemyFactory.hpp"
@@ -7,7 +8,6 @@
 #include "modifiers/skillFactory.hpp"
 #include "modifiers/statFactory.hpp"
 #include "stats/helpers.hpp"
-#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -15,12 +15,13 @@ using namespace squi;
 namespace {
 	void addItem(auto &&stat, Modifiers::SheetMemberIdentifier identifier, Children &ret, const Formula::Context &ctx, bool &transparent, std::string_view prefix) {
 		if (!stat.hasValue()) return;
-		auto message = stat.print(ctx);
 		auto value = stat.eval(ctx);
 
 		if (value == 0) return;
-		ret.emplace_back(Tooltip{
-			.text = std::move(message),
+		ret.emplace_back(UI::DescriptorDisplay{
+			.descriptorProvider = [stat, ctx]() {
+				return stat.print(ctx);
+			},
 			.child = UI::SkillEntry{
 				.isTransparent = transparent = !transparent,
 				.name = std::format("{}{}", prefix, identifier.getName()),
@@ -181,8 +182,10 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			for (const Node::Types &node: opt.nodes) {
 				auto value = node.formula.eval(ctx);
 				if (value == 0) continue;
-				ret.emplace_back(UI::Tooltip{
-					.text = node.formula.print(ctx),
+				ret.emplace_back(UI::DescriptorDisplay{
+					.descriptorProvider = [node, ctx]() {
+						return node.formula.print(ctx);
+					},
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
 						.name = Node::getName(node.data, ctx),

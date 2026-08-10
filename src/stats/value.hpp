@@ -27,6 +27,18 @@ namespace Stats {
 			return ret;
 		}
 
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			using namespace Formula::Operators;
+			Formula::NodeType<T> ret = Formula::ConstantBase<T>{.value = constant};
+
+			for (const auto &modifier: modifiers) {
+				if (!modifier.hasValue()) continue;
+				ret = ret + modifier;
+			}
+
+			ret.print(descriptor, context, prevStep);
+		}
+
 		[[nodiscard]] inline T get(const Formula::Context &context) const {
 			// #ifndef NDEBUG
 			// 			if (isRunning) {

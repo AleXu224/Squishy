@@ -23,8 +23,10 @@ namespace Formula {
 			return Equal<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} == {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" == ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -51,8 +53,10 @@ namespace Formula {
 			return NotEqual<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} != {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" != ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -76,8 +80,9 @@ namespace Formula {
 			return Not<decltype(fold)>{.val = fold};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("!{}", val.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addName("!");
+			val.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -104,8 +109,10 @@ namespace Formula {
 			return Less<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} < {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" < ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -131,8 +138,10 @@ namespace Formula {
 			return LessEqual<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} <= {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" <= ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -158,8 +167,10 @@ namespace Formula {
 			return Greater<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} > {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" > ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -185,8 +196,10 @@ namespace Formula {
 			return GreaterEqual<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} >= {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" >= ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -217,8 +230,10 @@ namespace Formula {
 			return And<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} && {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" && ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {
@@ -248,8 +263,10 @@ namespace Formula {
 			return Or<decltype(fold1), decltype(fold2)>{.val1 = fold1, .val2 = fold2};
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} || {}", val1.print(context, Step::none), val2.print(context, Step::none));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(" || ");
+			val2.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] inline bool eval(const Context &context) const {

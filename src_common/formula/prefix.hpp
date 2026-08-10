@@ -13,8 +13,9 @@ namespace Formula {
 			return val.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} {}", prefix, Utils::formatFloat(val.eval(context)));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.pushPrefix(std::format("{} ", prefix));
+			val.print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

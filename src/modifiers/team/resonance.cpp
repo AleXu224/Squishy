@@ -13,8 +13,10 @@ namespace Modifiers::Team {
 			return stat.resolve(context.team.resonances).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Artifact Substat", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			Formula::Descriptor formulaDescriptor;
+			stat.resolve(context.team.resonances).print(formulaDescriptor, context, prevStep);
+			descriptor.add(std::format("Team Resonance {}", member.getName()), {eval(context), member.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -28,8 +30,10 @@ namespace Modifiers::Team {
 			return stat.resolve(context.team.resonancesEnemy).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Artifact Substat", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			Formula::Descriptor formulaDescriptor;
+			stat.resolve(context.team.resonancesEnemy).print(formulaDescriptor, context, prevStep);
+			descriptor.add(std::format("Team Resonance {}", member.getName()), {eval(context), member.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

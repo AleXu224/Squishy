@@ -21,11 +21,17 @@ namespace Modifiers::Engine::Passive {
 				return node.fold(context, args);
 			}
 
-			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				if (!context.source.loadout().engine) return "";
+			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+				if (!context.source.loadout().engine) return;
 				const auto &mod = stat.resolve(std::invoke(location, context.source.loadout().engine->data->data.mods));
-				if (!mod.hasValue()) return "";
-				return mod.print(context);
+				if (!mod.hasValue()) return;
+				Formula::Descriptor modDescriptor;
+				mod.print(modDescriptor, context, Formula::Step::none);
+				if constexpr (std::is_same_v<Ret, float>) {
+					descriptor.add(std::format("Engine Passive {}", member.getName()), {eval(context), member.isPercentage()}, std::move(modDescriptor));
+				} else {
+					descriptor.add(std::format("Engine Passive {}", member.getName()), eval(context), std::move(modDescriptor));
+				}
 			}
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {

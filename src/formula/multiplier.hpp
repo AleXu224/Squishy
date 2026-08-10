@@ -40,9 +40,9 @@ namespace Formula {
 			std::unreachable();
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		void print(Descriptor &descriptor, const Context &context, Step) const {
 			const auto &multiplier = _getMultiplier(talent, values, context);
-			return Utils::printEntryType(multiplier, entryType);
+			descriptor.addValue(Utils::printEntryType(multiplier, entryType));
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -55,8 +55,8 @@ namespace Formula {
 	}
 
 	struct LevelMultiplier : FormulaBase<float, Type::constant> {
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return Formula::Percentage("Level Multiplier", eval(context), true);
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			descriptor.add("Level Multiplier", {eval(context), true});
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {

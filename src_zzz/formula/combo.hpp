@@ -3,12 +3,14 @@
 #include "combo/override.hpp"
 #include "formula/base.hpp"
 #include "formula/operators.hpp"
+#include "utils/overloaded.hpp"
 #include <vector>
 
 
 namespace Formula {
 	struct Combo : FormulaBase<float> {
 		struct Entry {
+			std::variant<std::string, Formula::NodeType<std::string>> name;
 			float multiplier;
 			std::variant<const Reaction::None *, const Reaction::Amplifying *, const Reaction::Additive *> reaction;
 			FloatNode node;
@@ -26,8 +28,30 @@ namespace Formula {
 			return ret.fold(ctx, args);
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Combo {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			using namespace Formula::Operators;
+			for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+				if (it != nodes.begin()) {
+					descriptor.addName(" + ");
+				}
+				Descriptor nodeDescriptor{};
+				auto newNode = Constant{.value = it->multiplier} * it->node;
+				newNode.print(nodeDescriptor, context, Step::none);
+				descriptor.add(
+					std::visit(
+						Utils::overloaded{
+							[](const std::string &name) -> std::string {
+								return name;
+							},
+							[&](const Formula::NodeType<std::string> &name) -> std::string {
+								return name.eval(context);
+							}
+						},
+						it->name
+					),
+					{newNode.eval(context), false}, std::move(nodeDescriptor)
+				);
+			}
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {
@@ -66,8 +90,11 @@ namespace Formula {
 			});
 		}
 
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Combo {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			runFor(context, [&](const Formula::Context &context) {
+				node.print(descriptor, context, Step::none);
+				return 0;
+			});
 		}
 
 		[[nodiscard]] inline float eval(const Context &context) const {

@@ -48,16 +48,15 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			if (val2.eval(context) == 0.f) return val1.print(context, prevStep);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			if (val2.eval(context) == 0.f) return val1.print(descriptor, context, prevStep);
 
-			auto p1 = val1.print(context, Step::addition);
-			auto p2 = val2.print(context, Step::addition);
-
-			if (prevStep == Step::multiplication || prevStep == Step::division) {
-				return std::format("({} - {})", p1, p2);
-			}
-			return std::format("{} - {}", p1, p2);
+			const bool parens = prevStep == Step::multiplication || prevStep == Step::division;
+			if (parens) descriptor.addName("(");
+			val1.print(descriptor, context, Step::addition);
+			descriptor.addName(" - ");
+			val2.print(descriptor, context, Step::addition);
+			if (parens) descriptor.addName(")");
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

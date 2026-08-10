@@ -1,6 +1,7 @@
 #pragma once
 
 #include "constant.hpp"// IWYU pragma: keep
+#include "descriptor.hpp"
 #include "fold.hpp"
 #include "formula/context.hpp"// IWYU pragma: keep
 #include "formula/type.hpp"
@@ -88,7 +89,7 @@ namespace Formula {
 			[[nodiscard]] constexpr virtual Formula::Type getType() const = 0;
 			[[nodiscard]] constexpr virtual interface *clone() const = 0;
 			[[nodiscard]] constexpr virtual RetType getConstantValue() const = 0;
-			[[nodiscard]] constexpr virtual std::string print(const Context &, Step) const = 0;
+			constexpr virtual void print(Descriptor &, const Context &, Step) const = 0;
 
 			[[nodiscard]] constexpr virtual NodeType add(RetType) const = 0;
 			[[nodiscard]] constexpr virtual NodeType subtract(RetType) const = 0;
@@ -126,8 +127,8 @@ namespace Formula {
 					return {};
 				}
 			}
-			[[nodiscard]] constexpr std::string print(const Context &context, Step prevStep) const override {
-				return fn.print(context, prevStep);
+			constexpr void print(Descriptor &descriptor, const Context &context, Step prevStep) const override {
+				fn.print(descriptor, context, prevStep);
 			}
 			[[nodiscard]] constexpr NodeType add(RetType val) const override {
 				if constexpr (isMonomial<Fn>) {
@@ -233,8 +234,13 @@ namespace Formula {
 		[[nodiscard]] constexpr RetType getConstantValue() const {
 			return fn->getConstantValue();
 		}
-		[[nodiscard]] constexpr std::string print(const Context &context, Step prevStep = Step::none) const {
-			return fn->print(context, prevStep);
+		constexpr void print(Descriptor &descriptor, const Context &context, Step prevStep = Step::none) const {
+			fn->print(descriptor, context, prevStep);
+		}
+		[[nodiscard]] constexpr Descriptor print(const Context &context, Step prevStep = Step::none) const {
+			Descriptor ret;
+			fn->print(ret, context, prevStep);
+			return ret;
 		}
 		[[nodiscard]] constexpr NodeType add(RetType value) const {
 			return fn->add(value);

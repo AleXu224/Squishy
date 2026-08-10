@@ -12,8 +12,8 @@ namespace Formula {
 			return Stats::fromStat(Modifiers::total(), stat).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return Stats::fromStat(Modifiers::total(), stat).print(context, prevStep);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			Stats::fromStat(Modifiers::total(), stat).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

@@ -27,8 +27,8 @@ namespace Modifiers::Disc::Set {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (sheet1 + sheet2 + sheet3).print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			(sheet1 + sheet2 + sheet3).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] constexpr RetType<Ret> eval(const Formula::Context &context) const {
@@ -42,6 +42,7 @@ namespace Modifiers::Disc::Set {
 	struct SheetFormulaMaker {
 		struct Frm : Formula::FormulaBase<RetType<typename StatMember::RetType>> {
 			StatMember stat;
+			SheetMemberIdentifier member;
 			using Ret = RetType<typename StatMember::RetType>;
 
 			[[nodiscard]] Formula::NodeType<Ret> fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
@@ -53,13 +54,19 @@ namespace Modifiers::Disc::Set {
 				return mod.fold(context, args);
 			}
 
-			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
+			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
 				const auto &bonus = std::invoke(location2, context.source.loadout().disc);
-				if (!bonus) return std::string();
+				if (!bonus) return;
 				const auto &val = bonus.value();
 				const auto &mod = stat.resolve(std::invoke(location, val.bonusPtr->mods));
-				if (!mod.hasValue()) return std::string();
-				return mod.print(context);
+				if (!mod.hasValue()) return;
+				Formula::Descriptor formulaDescriptor;
+				mod.print(formulaDescriptor, context, Formula::Step::none);
+				if constexpr (std::is_same_v<Ret, float>) {
+					descriptor.add(std::format("Disc Set {}", member.getName()), {eval(context), member.isPercentage()}, std::move(formulaDescriptor));
+				} else {
+					descriptor.add(std::format("Disc Set {}", member.getName()), eval(context), std::move(formulaDescriptor));
+				}
 			}
 
 			[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
@@ -74,125 +81,125 @@ namespace Modifiers::Disc::Set {
 	};
 
 	const Stats::Sheet<Formula::FloatNode> &sheet1Base() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1Initial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1Combat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1TeamInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1TeamCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1ActiveInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet1ActiveCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus1, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet1Skills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus1, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus1, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet1TeamSkills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus1, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus1, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &sheet1Enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus1, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus1, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{}, EnemyNameFactory{});
 		return ret;
 	}
 
 	const Stats::Sheet<Formula::FloatNode> &sheet2Base() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2Initial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2Combat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2TeamInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2TeamCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2ActiveInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet2ActiveCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus2, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet2Skills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus2, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus2, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet2TeamSkills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus2, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus2, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &sheet2Enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus2, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus2, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{}, EnemyNameFactory{});
 		return ret;
 	}
 
 	const Stats::Sheet<Formula::FloatNode> &sheet3Base() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::base, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3Initial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::initial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3Combat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::combat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3TeamInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamInitial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3TeamCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::teamCombat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3ActiveInitial() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeInitial, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &sheet3ActiveCombat() {
-		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{});
+		static auto ret = statFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::activeCombat, &Stats::Disc::bonus3, SheetMember<Stats::ModsSheet::_Sheet>>::Frm>(StatPointerFactory<Stats::ModsSheet::_Sheet>{}, StatNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet3Skills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus3, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::skills, &Stats::Disc::bonus3, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Skills<Formula::IntNode> &sheet3TeamSkills() {
-		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus3, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{});
+		static auto ret = skillFactory<Formula::IntNode, SheetFormulaMaker<&Stats::ModsSheet::teamSkills, &Stats::Disc::bonus3, SkillMember<Stats::ModsSheet::_Skills>>::Frm>(SkillPointerFactory<Stats::ModsSheet::_Skills>{}, SkillNameFactory{});
 		return ret;
 	}
 	const Stats::EnemySheet<Formula::FloatNode> &sheet3Enemy() {
-		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus3, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{});
+		static auto ret = enemyFactory<Formula::FloatNode, SheetFormulaMaker<&Stats::ModsSheet::enemy, &Stats::Disc::bonus3, EnemyMember<Stats::ModsSheet::_EnemySheet>>::Frm>(EnemyPointerFactory<Stats::ModsSheet::_EnemySheet>{}, EnemyNameFactory{});
 		return ret;
 	}
 

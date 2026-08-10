@@ -61,18 +61,15 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			if (val1.eval(context) == 1.f) return val2.print(context, prevStep);
-			if (val2.eval(context) == 1.f) return val1.print(context, prevStep);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			if (val1.eval(context) == 1.f) return val2.print(descriptor, context, prevStep);
+			if (val2.eval(context) == 1.f) return val1.print(descriptor, context, prevStep);
 
-			auto p1 = val1.print(context, Step::multiplication);
-			auto p2 = val2.print(context, Step::multiplication);
-
-			if (prevStep == Step::division) {
-				return std::format("({} * {})", p1, p2);
-			}
-
-			return std::format("{} * {}", p1, p2);
+			if (prevStep == Step::division) descriptor.addName("(");
+			val1.print(descriptor, context, Step::multiplication);
+			descriptor.addName(" * ");
+			val2.print(descriptor, context, Step::multiplication);
+			if (prevStep == Step::division) descriptor.addName(")");
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {

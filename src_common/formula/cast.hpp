@@ -22,8 +22,8 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return formula.print(context, prevStep);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			formula.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

@@ -1,6 +1,7 @@
 #include "decodeModsSheet.hpp"
 
 #include "UI/elementToColor.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/skillEntry.hpp"
 #include "misc/element.hpp"
 #include "modifiers/enemyFactory.hpp"
@@ -8,7 +9,6 @@
 #include "modifiers/statFactory.hpp"
 #include "modifiers/talentFactory.hpp"
 #include "stats/helpers.hpp"
-#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -16,12 +16,13 @@ using namespace squi;
 namespace {
 	void addItem(auto &&stat, Modifiers::SheetMemberIdentifier identifier, Children &ret, const Formula::Context &ctx, bool &transparent, std::string_view prefix) {
 		if (!stat.hasValue()) return;
-		auto message = stat.print(ctx);
 		auto value = stat.eval(ctx);
 
 		if (value == 0) return;
-		ret.emplace_back(Tooltip{
-			.text = std::move(message),
+		ret.emplace_back(UI::DescriptorDisplay{
+			.descriptorProvider = [stat, ctx]() {
+				return stat.print(ctx);
+			},
 			.child = UI::SkillEntry{
 				.isTransparent = transparent = !transparent,
 				.name = std::format("{}{}", prefix, identifier.getName()),
@@ -101,11 +102,13 @@ namespace {
 	[[nodiscard]] Children decodeInfusionSheet(std::string_view prefix, bool &transparent, const Formula::ElementNode &infusion, const Formula::Context &ctx) {
 		Children ret;
 
-		auto message = infusion.print(ctx);
+		auto message = infusion.print(ctx).toString();
 		auto value = infusion.eval(ctx);
 		if (!value.has_value()) return ret;
-		ret.emplace_back(UI::Tooltip{
-			.text = message,
+		ret.emplace_back(UI::DescriptorDisplay{
+			.descriptorProvider = [infusion, ctx]() {
+				return infusion.print(ctx);
+			},
 			.child = UI::SkillEntry{
 				.isTransparent = transparent = !transparent,
 				.name = std::format("{}{} Infusion", prefix, message),
@@ -194,8 +197,10 @@ squi::Children UI::decodeOption(const Option::Types &option, const Formula::Cont
 			for (const Node::Types &node: opt.nodes) {
 				auto value = node.formula.eval(ctx);
 				if (value == 0) continue;
-				ret.emplace_back(UI::Tooltip{
-					.text = node.formula.print(ctx),
+				ret.emplace_back(UI::DescriptorDisplay{
+					.descriptorProvider = [node, ctx]() {
+						return node.formula.print(ctx);
+					},
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
 						.name = Node::getName(node.data, ctx),

@@ -21,8 +21,8 @@ const Weapon::Data Weapon::Datas::lightbearingMoonshard{
 		.ascensionUpgrade{0.0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7}
 	},
 	.setup = []() {
-		auto multiplier1 = WeaponMultiplier(false, {0.6400, 0.8000, 0.9600, 1.1200, 1.2800});
-		auto multiplier3 = WeaponMultiplier(false, {0.2000, 0.2500, 0.3000, 0.3500, 0.4000});
+		auto multiplier1 = WeaponMultiplier(true, {0.6400, 0.8000, 0.9600, 1.1200, 1.2800});
+		auto multiplier3 = WeaponMultiplier(true, {0.2000, 0.2500, 0.3000, 0.3500, 0.4000});
 
 		auto cond = IsActive("lightbearingMoonshardCond");
 		auto buff = Requires{

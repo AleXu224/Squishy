@@ -1,6 +1,7 @@
 #include "characterStats.hpp"
 
 #include "UI/elementToColor.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/statDisplay.hpp"
 #include "UI/utils/tag.hpp"
@@ -18,7 +19,6 @@
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
 #include "widgets/stack.hpp"
-#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -60,10 +60,11 @@ squi::core::Child UI::CharacterStats::State::build(const Element &element) {
 
 			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
 				auto formula = Stats::fromStat(Modifiers::displayTotal(), stat);
-				auto message = formula.print(widget->ctx);
 				auto value = formula.eval(widget->ctx);
-				ret2.emplace_back(Tooltip{
-					.text = message,
+				ret2.emplace_back(DescriptorDisplay{
+					.descriptorProvider = [formula, this]() {
+						return formula.print(widget->ctx);
+					},
 					.child = UI::StatDisplay{
 						.isTransparent = transparent,
 						.stat{

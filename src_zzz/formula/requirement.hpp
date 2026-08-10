@@ -6,8 +6,8 @@
 
 namespace Requirement {
 	static constexpr struct impl_SelfBuff : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Self Buff";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Self Buff");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -15,8 +15,8 @@ namespace Requirement {
 		}
 	} selfBuff{};
 	static constexpr struct impl_Mindscape1 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 1";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 1");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -24,8 +24,8 @@ namespace Requirement {
 		}
 	} mindscape1{};
 	static constexpr struct impl_Mindscape2 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 2";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 2");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -33,8 +33,8 @@ namespace Requirement {
 		}
 	} mindscape2{};
 	static constexpr struct impl_Mindscape3 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 3";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 3");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -42,8 +42,8 @@ namespace Requirement {
 		}
 	} mindscape3{};
 	static constexpr struct impl_Mindscape4 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 4";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 4");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -51,8 +51,8 @@ namespace Requirement {
 		}
 	} mindscape4{};
 	static constexpr struct impl_Mindscape5 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 5";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 5");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -60,8 +60,8 @@ namespace Requirement {
 		}
 	} mindscape5{};
 	static constexpr struct impl_Mindscape6 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Mindscape 6";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &, Formula::Step) {
+			descriptor.addName("Mindscape 6");
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {

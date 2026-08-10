@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UI/utils/descriptorDisplay.hpp"
 #include "agent/key.hpp"
 #include "team/key.hpp"
 
@@ -14,7 +15,6 @@
 #include "modifiers/statFactory.hpp"
 
 #include "UI/utils/skillEntry.hpp"
-#include "widgets/tooltip.hpp"
 #include <map>
 
 
@@ -38,12 +38,13 @@ namespace UI {
 			auto &transparent = *transparentP;
 
 			auto evalFunc = [&](auto &&stat, Modifiers::SheetMemberIdentifier identifier) {
-				auto message = stat.print(ctx);
 				auto value = stat.eval(ctx);
 
 				if (value == 0.f) return;
-				ret.emplace_back(Tooltip{
-					.text = std::move(message),
+				ret.emplace_back(DescriptorDisplay{
+					.descriptorProvider = [&stat, ctx]() {
+						return stat.print(ctx);
+					},
 					.child = UI::SkillEntry{
 						.isTransparent = transparent = !transparent,
 						.name = identifier.getName(),

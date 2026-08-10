@@ -12,8 +12,8 @@ namespace Modifiers::Weapon {
 			return weaponInstance.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return weaponInstance.print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			weaponInstance.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

@@ -9,8 +9,8 @@ namespace Formula {
 	struct impl_IsActive : FormulaBase<bool, Type::constant> {
 		Utils::HashedString name;
 
-		[[nodiscard]] std::string print(const Context &, Step) const {
-			return std::format("{}", name.str);
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, std::string{eval(context) ? "active" : "inactive"});
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -40,8 +40,8 @@ namespace Formula {
 	struct impl_IsActivePassive : FormulaBase<bool, Type::constant> {
 		Utils::HashedString name;
 
-		[[nodiscard]] std::string print(const Context &, Step) const {
-			return std::format("{}", name.str);
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, std::string{eval(context) ? "active" : "inactive"});
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -72,8 +72,8 @@ namespace Formula {
 		Utils::HashedString name;
 		float defaultValue = 0.f;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} {}", name.str, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, {eval(context), false});
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -122,8 +122,8 @@ namespace Formula {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} {}", name.str, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -148,8 +148,8 @@ namespace Formula {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} {}", name.str, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {

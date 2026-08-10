@@ -57,9 +57,9 @@ namespace Formula {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
+		void print(Descriptor &descriptor, const Context &context, Step) const {
 			const auto &multiplier = _getMultiplier(skill, base, grow, context);
-			return Utils::printEntryType(multiplier, entryType);
+			descriptor.addValue(Utils::printEntryType(multiplier, entryType));
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

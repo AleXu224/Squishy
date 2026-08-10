@@ -31,15 +31,12 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			const auto &agent = context.team.agents.at(index);
-			if (!agent) return "";
+			if (!agent) return;
 			auto &stats = agent->state;
-			return std::format(
-				"{} {}",
-				stats.stats.data.name,
-				formula.print(context.withSource(stats), prevStep)
-			);
+			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
+			formula.print(descriptor, context.withSource(stats), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -61,15 +58,12 @@ namespace Formula {
 			return formula.fold(context.withSource(agent->state), args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			const auto &agent = context.team.agents.at(context.team.activeAgentIndex);
-			if (!agent) return "";
+			if (!agent) return;
 			auto &stats = agent->state;
-			return std::format(
-				"{} {}",
-				stats.stats.data.name,
-				formula.print(context.withSource(stats), prevStep)
-			);
+			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
+			formula.print(descriptor, context.withSource(stats), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -89,12 +83,9 @@ namespace Formula {
 			return formula.fold(context.withSource(context.prevSource), args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return std::format(
-				"{} {}",
-				context.prevSource.stats.data.name,
-				formula.print(context.withSource(context.prevSource), prevStep)
-			);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.pushPrefix(std::format("{} ", context.prevSource.stats.data.name));
+			formula.print(descriptor, context.withSource(context.prevSource), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -112,12 +103,9 @@ namespace Formula {
 			return formula.fold(context.withSource(context.origin), args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return std::format(
-				"{} {}",
-				context.origin.stats.data.name,
-				formula.print(context.withSource(context.origin), prevStep)
-			);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.pushPrefix(std::format("{} ", context.origin.stats.data.name));
+			formula.print(descriptor, context.withSource(context.origin), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -130,16 +118,21 @@ namespace Formula {
 		T formula;
 
 		using RetType = FormulaType<T>;
-		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+
+		auto getFormula(const Context &context) const {
 			using namespace Formula::Operators;
 			return (TeamAgent{.index = 0, .formula = formula}
 					+ TeamAgent{.index = 1, .formula = formula}
-					+ TeamAgent{.index = 2, .formula = formula})
-				.fold(context, args);
+					+ TeamAgent{.index = 2, .formula = formula});
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) {
-			return std::format("{}", eval(context));
+		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+		
+
+		void print(Descriptor &descriptor, const Context &context, Step step) const {
+			getFormula(context).print(descriptor, context, step);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) {
@@ -157,8 +150,8 @@ namespace Formula {
 	};
 
 	struct TeamAgentCount : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return std::format("Team agent count {}", eval(context));
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			descriptor.add("Team agent count", eval(context));
 		}
 
 		[[nodiscard]] static int32_t eval(const Context &context) {
@@ -181,11 +174,11 @@ namespace Formula {
 			return formula.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step step) const {
+		void print(Descriptor &descriptor, const Context &context, Step step) const {
 			const auto &activeAgent = context.team.agents.at(context.team.activeAgentIndex);
-			if (!activeAgent) return "";
-			if (context.source.instanceKey != activeAgent->instanceKey) return "";
-			return formula.print(context, step);
+			if (!activeAgent) return;
+			if (context.source.instanceKey != activeAgent->instanceKey) return;
+			formula.print(descriptor, context, step);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

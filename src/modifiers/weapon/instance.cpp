@@ -1,5 +1,4 @@
 #include "instance.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/helpers.hpp"
 #include "modifiers/statFactory.hpp"
 #include "stats/loadout.hpp"
@@ -13,8 +12,8 @@ namespace Modifiers::Weapon {
 			return stat.resolve(context.source.loadout().weapon->sheet.stats).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Weapon Base", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Weapon Base {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

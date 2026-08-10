@@ -15,8 +15,8 @@ namespace Formula {
 		size_t index;
 		std::string suffix;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return eval(context);
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addValue(eval(context));
 		}
 
 		[[nodiscard]] std::string eval(const Context &context) const {
@@ -92,9 +92,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto attribute = this->attribute.eval(context);
-			return Anomaly::List::fromAttribute(attribute).formula.print(context, prevStep);
+			Anomaly::List::fromAttribute(attribute).formula.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -119,9 +119,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto attribute = this->attribute.eval(context);
-			return Anomaly::List::fromAttribute(attribute).formulaAbloom.print(context, prevStep);
+			Anomaly::List::fromAttribute(attribute).formulaAbloom.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -146,9 +146,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto attribute = this->attribute.eval(context);
-			return Anomaly::List::fromAttribute(attribute).formulaVortex.print(context, prevStep);
+			Anomaly::List::fromAttribute(attribute).formulaVortex.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -173,9 +173,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto attribute = this->attribute.eval(context);
-			return Anomaly::List::fromAttributeDisorder(attribute).formulaAbloom.print(context, prevStep);
+			Anomaly::List::fromAttributeDisorder(attribute).formulaAbloom.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

@@ -6,8 +6,8 @@
 
 namespace Requirement {
 	static constexpr struct impl_SelfBuff : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Self Buff";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Self Buff", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -15,8 +15,8 @@ namespace Requirement {
 		}
 	} selfBuff{};
 	static constexpr struct impl_Passive1 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Passive 1";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Passive 1", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -24,8 +24,8 @@ namespace Requirement {
 		}
 	} passive1{};
 	static constexpr struct impl_Passive2 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Passive 2";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Passive 2", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -33,8 +33,8 @@ namespace Requirement {
 		}
 	} passive2{};
 	static constexpr struct impl_Passive3 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Passive 3";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Passive 3", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -42,8 +42,8 @@ namespace Requirement {
 		}
 	} passive3{};
 	static constexpr struct impl_Constellation1 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 1";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 1", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -51,8 +51,8 @@ namespace Requirement {
 		}
 	} constellation1{};
 	static constexpr struct impl_Constellation2 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 2";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 2", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -60,8 +60,8 @@ namespace Requirement {
 		}
 	} constellation2{};
 	static constexpr struct impl_Constellation3 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 3";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 3", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -69,8 +69,8 @@ namespace Requirement {
 		}
 	} constellation3{};
 	static constexpr struct impl_Constellation4 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 4";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 4", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -78,8 +78,8 @@ namespace Requirement {
 		}
 	} constellation4{};
 	static constexpr struct impl_Constellation5 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 5";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 5", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -87,8 +87,8 @@ namespace Requirement {
 		}
 	} constellation5{};
 	static constexpr struct impl_Constellation6 : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Constellation 6";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Constellation 6", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {
@@ -96,8 +96,8 @@ namespace Requirement {
 		}
 	} constellation6{};
 	static constexpr struct impl_AscendantGleam : Formula::FormulaBase<bool, Formula::Type::constant> {
-		[[nodiscard]] static std::string print(const Formula::Context &, Formula::Step) {
-			return "Ascendant Gleam";
+		static void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) {
+			descriptor.add("Ascendant Gleam", eval(context));
 		}
 
 		[[nodiscard]] static bool eval(const Formula::Context &context) {

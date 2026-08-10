@@ -1,5 +1,4 @@
 #include "subStats.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/statFactory.hpp"
 #include "stats/loadout.hpp"
 
@@ -15,8 +14,8 @@ namespace Modifiers::Artifact {
 			return *this;
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(std::format("Artifact {}", Utils::Stringify(stat)), eval(context), Utils::isPercentage(stat));
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Artifact {}", Utils::Stringify(stat)), {eval(context), Utils::isPercentage(stat)});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -42,8 +41,8 @@ namespace Modifiers::Artifact {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(std::format("Artifact {}", Utils::Stringify(stat)), eval(context), Utils::isPercentage(stat));
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Artifact {}", Utils::Stringify(stat)), {eval(context), Utils::isPercentage(stat)});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

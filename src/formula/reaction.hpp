@@ -5,20 +5,26 @@
 
 namespace Formula {
 	struct AmplifyingMultiplier : FormulaBase<float> {
-		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+		Formula::FloatNode getFormula(const Formula::Context &context) const {
 			switch (context.reaction.index()) {
 				case 0:
 					return ConstantFlat{.value = 1.f};
 				case 1:
-					return std::get<1>(context.reaction)->formula.fold(context, args);
+					return std::get<1>(context.reaction)->formula;
 				case 2:
 					return ConstantFlat{.value = 1.f};
 			}
 			std::unreachable();
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return Percentage("Reaction Multiplier", eval(context), true);
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			Descriptor formulaDescriptor;
+			getFormula(context).print(formulaDescriptor, context, Step::none);
+			descriptor.add("Reaction Multiplier", {eval(context), true}, formulaDescriptor);
 		}
 
 		[[nodiscard]] static constexpr float eval(const Context &context) {
@@ -34,20 +40,26 @@ namespace Formula {
 		}
 	};
 	struct AdditiveMultiplier : FormulaBase<float> {
-		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+		FloatNode getFormula(const Formula::Context &context) const {
 			switch (context.reaction.index()) {
 				case 0:
 					return ConstantFlat{.value = 0.f};
 				case 1:
 					return ConstantFlat{.value = 0.f};
 				case 2:
-					return std::get<2>(context.reaction)->formula.fold(context, args);
+					return std::get<2>(context.reaction)->formula;
 			}
 			std::unreachable();
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return Percentage("Reaction Bonus", eval(context), true);
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			Descriptor formulaDescriptor;
+			getFormula(context).print(formulaDescriptor, context, Step::none);
+			descriptor.add("Additive Multiplier", {eval(context), true}, formulaDescriptor);
 		}
 
 		[[nodiscard]] static constexpr float eval(const Context &context) {

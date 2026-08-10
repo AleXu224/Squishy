@@ -4,12 +4,10 @@
 #include "UI/option/valueListOption.hpp"
 #include "UI/option/valueSliderOption.hpp"
 #include "UI/utils/decodeModsSheet.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/skillEntry.hpp"
 #include "widgets/container.hpp"
-#include "widgets/gestureDetector.hpp"
-
-#include "print"
 
 using namespace squi;
 [[nodiscard]] squi::core::Child UI::DetailsSkill::build(const Element &) const {
@@ -30,19 +28,16 @@ using namespace squi;
 			}
 
 			if (node.formula.eval(ctx) == 0.f) continue;
-			skillEntries.emplace_back(Gesture{
-				.onClick = [out = node.formula.fold(ctx, {}).print(ctx)](const Gesture::State &state) {
-					std::println("{}", out);
+			skillEntries.emplace_back(DescriptorDisplay{
+				.descriptorProvider = [this, &node]() {
+					return node.formula.print(ctx);
 				},
-				.child = UI::Tooltip{
-					.text = node.formula.print(ctx),
-					.child = UI::SkillEntry{
-						.isTransparent = transparent = !transparent,
-						.name = Node::getName(node.data, ctx),
-						.value = node.formula.eval(ctx),
-						.color = Node::getColor(node.data, ctx),
-						.isPercentage = Node::isPercentage(node.data),
-					},
+				.child = UI::SkillEntry{
+					.isTransparent = transparent = !transparent,
+					.name = Node::getName(node.data, ctx),
+					.value = node.formula.eval(ctx),
+					.color = Node::getColor(node.data, ctx),
+					.isPercentage = Node::isPercentage(node.data),
 				},
 			});
 		}

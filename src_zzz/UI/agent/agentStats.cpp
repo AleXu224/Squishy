@@ -1,6 +1,7 @@
 #include "agentStats.hpp"
 
 #include "UI/attributeToColor.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/statDisplay.hpp"
 #include "UI/utils/tag.hpp"
@@ -14,12 +15,10 @@
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
 #include "widgets/button.hpp"
-#include "widgets/gestureDetector.hpp"
 #include "widgets/image.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
 #include "widgets/stack.hpp"
-#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -67,21 +66,17 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 			Children ret2{};
 
 			for (const auto &[stat, transparent]: std::views::zip(std::views::join(displayStats), Utils::trueFalse)) {
-				auto formula = Stats::fromStat(Modifiers::combat(), stat);
-				auto message = formula.print(widget->ctx);
+				auto formula = Stats::fromStat(Modifiers::combatDisplay(), stat);
 				auto value = formula.eval(widget->ctx);
-				ret2.emplace_back(Gesture{
-					.onClick = [out = formula.fold(widget->ctx, {}).print(widget->ctx)](const Gesture::State &state) {
-						std::println("{}", out);
+				ret2.emplace_back(DescriptorDisplay{
+					.descriptorProvider = [formula, this]() {
+						return formula.print(widget->ctx);
 					},
-					.child = Tooltip{
-						.text = message,
-						.child = UI::StatDisplay{
-							.isTransparent = transparent,
-							.stat{
-								.stat = stat,
-								.value = value,
-							},
+					.child = UI::StatDisplay{
+						.isTransparent = transparent,
+						.stat{
+							.stat = stat,
+							.value = value,
 						},
 					},
 				});

@@ -23,6 +23,7 @@ namespace Modifiers {
 		Formula::FloatNode teamPreStat;
 		Formula::FloatNode activePreStat;
 		Formula::FloatNode teamResonances;
+		SheetMemberIdentifier member;
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto ret = characterKitStat
 					 + characterInstanceStat
@@ -36,17 +37,18 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (characterKitStat
-					+ characterInstanceStat
-					+ weaponPassiveStat
-					+ weaponInstanceStat
-					+ artifactSetStat
-					+ artifactSubStats
-					+ teamPreStat
-					+ activePreStat
-					+ teamResonances)
-				.print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			auto formula = characterKitStat
+						 + characterInstanceStat
+						 + weaponPassiveStat
+						 + weaponInstanceStat
+						 + artifactSetStat
+						 + artifactSubStats
+						 + teamPreStat
+						 + activePreStat
+						 + teamResonances;
+
+			formula.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -72,7 +74,8 @@ namespace Modifiers {
 			Artifact::subStats(),
 			Team::preMods(),
 			Team::activePreMods(),
-			Team::resonances()
+			Team::resonances(),
+			StatNameFactory{}
 		);
 		return ret;
 	}

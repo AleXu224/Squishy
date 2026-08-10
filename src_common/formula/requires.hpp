@@ -31,10 +31,8 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			auto cond = requirement.eval(context);
-			return std::format("{}", cond ? ret.print(context, prevStep) : "");
-			// return std::format("{}", cond ? std::format("{} ({})", requirement.print(context, Step::none), ret.print(context, Step::none)) : "");
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			if (requirement.eval(context)) ret.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -77,10 +75,11 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			auto cond = requirement.eval(context);
-			return std::format("{}", cond ? trueVal.print(context, prevStep) : elseVal.print(context, prevStep));
-			// return std::format("{} ({})", requirement.print(context, Step::none), cond ? trueVal.print(context, Step::none) : elseVal.print(context, Step::none));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			if (requirement.eval(context))
+				trueVal.print(descriptor, context, prevStep);
+			else
+				elseVal.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

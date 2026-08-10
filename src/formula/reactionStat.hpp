@@ -56,8 +56,8 @@ namespace Formula {
 			return get().fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return Formula::Percentage("Reaction Bonus", eval(context), true);
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			get().print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] constexpr float eval(const Context &context) const {

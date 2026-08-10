@@ -11,8 +11,8 @@
 
 namespace Formula {
 	struct AgentLevel : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Agent level {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Agent level", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -21,8 +21,8 @@ namespace Formula {
 	};
 
 	struct AgentMindscape : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Agent mindscape {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Agent mindscape", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -32,8 +32,8 @@ namespace Formula {
 
 	template<LevelableSkill skill>
 	struct AgentSkill : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("{} lvl {}", Utils::Stringify(skill), eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("{} lvl {}", Utils::Stringify(skill), eval(context)));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -42,8 +42,8 @@ namespace Formula {
 	};
 
 	struct AgentPromotion : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Agent promotion {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Agent promotion", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -54,8 +54,8 @@ namespace Formula {
 	struct IsAgentSpecialty : FormulaBase<bool, Type::constant> {
 		Misc::Specialty specialty;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is agent {} ({})", Utils::Stringify(specialty), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Is agent {}", Utils::Stringify(specialty)), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -66,8 +66,8 @@ namespace Formula {
 	struct SpecialtyCountOthers : FormulaBase<int32_t, Type::constant> {
 		::Misc::Specialty specialty;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} count {}", Utils::Stringify(specialty), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("{} specialty count", Utils::Stringify(specialty)), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -83,8 +83,8 @@ namespace Formula {
 	struct FactionCountOthers : FormulaBase<int32_t, Type::constant> {
 		uint32_t factionId;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} faction count {}", factionId, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Faction {} count", factionId), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -100,8 +100,8 @@ namespace Formula {
 	struct IsTargetAgentSpecialty : FormulaBase<bool, Type::constant> {
 		Misc::Specialty specialty;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is target agent {} ({})", Utils::Stringify(specialty), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Is target agent {}", Utils::Stringify(specialty)), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -112,8 +112,8 @@ namespace Formula {
 	struct IsAgentId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is agent id {} ({})", id, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Is agent id {}", id), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -124,8 +124,8 @@ namespace Formula {
 	struct IsOriginAgentId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is origin agent id {} ({})", id, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Is origin agent id {}", id), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -136,8 +136,8 @@ namespace Formula {
 	struct IsSourceAgentId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is source agent id {} ({})", id, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::format("Is source agent id {}", id), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -163,7 +163,7 @@ namespace Formula {
 			return ret.fold(ctx, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			RetType ret{};
 			Agent::Instance *maxAgent = nullptr;
 			for (auto &agent: context.team.agents) {
@@ -175,9 +175,10 @@ namespace Formula {
 				}
 			}
 
-			if (!maxAgent) return "";
+			if (!maxAgent) return;
 
-			return std::format("Max Team {}", formula.print(context.withSource(maxAgent->state), prevStep));
+			descriptor.pushPrefix("Max Team ");
+			formula.print(descriptor, context.withSource(maxAgent->state), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -191,8 +192,9 @@ namespace Formula {
 	};
 
 	struct AgentAttribute : FormulaBase<Misc::Attribute, Type::constant> {
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Agent attribute {}", Utils::Stringify(eval(context)));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			// descriptor.add(std::format("Agent attribute {}", Utils::Stringify(eval(context))));
+			descriptor.add("Agent attribute", Utils::Stringify(eval(context)));
 		}
 
 		[[nodiscard]] Misc::Attribute eval(const Context &context) const {

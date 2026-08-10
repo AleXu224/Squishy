@@ -13,8 +13,8 @@ namespace Modifiers::Engine {
 			return (engineInstanceBase + engineInstanceInitial).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (engineInstanceBase + engineInstanceInitial).print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			(engineInstanceBase + engineInstanceInitial).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

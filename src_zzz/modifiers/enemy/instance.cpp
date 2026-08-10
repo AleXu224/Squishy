@@ -1,5 +1,4 @@
 #include "instance.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/enemyFactory.hpp"
 #include "modifiers/helpers.hpp"
 #include "stats/enemy.hpp"
@@ -13,8 +12,8 @@ namespace Modifiers::Enemy {
 			return stat.resolve(context.enemy.sheet).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Enemy", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Enemy Base {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

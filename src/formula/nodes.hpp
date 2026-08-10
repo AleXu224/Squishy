@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UI/elementToColor.hpp"
 #include "formula/base.hpp"
 
 #include "formula/elemental.hpp"
@@ -12,23 +13,22 @@ namespace Formula {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 		Misc::SkillStat skillStat;
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getElement(source, element, context)),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto element = Formula::getElement(source, this->element, context);
+			descriptor.pushColor(Utils::elementToColor(element));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)), skillStat).eval(context);
+			return getFormula(context).eval(context);
 		}
 	};
 
@@ -36,23 +36,21 @@ namespace Formula {
 		Misc::Element element{};
 		Misc::SkillStat skillStat;
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), element), skillStat).fold(context, args);
+		auto getFormula() const {
+			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), element), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(element),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula().fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(element));
+			getFormula().print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromElement(Modifiers::total(), element), skillStat).eval(context);
+			return getFormula().eval(context);
 		}
 	};
 
@@ -60,25 +58,21 @@ namespace Formula {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 		Misc::SkillStat skillStat;
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+		FloatNode getFormula() const {
 			if (!source.has_value()) return Formula::Constant{.value = 0.f};
-			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).fold(context, args);
+			return Stats::fromAttackSource(Modifiers::total(), source.value_or(Misc::AttackSource::normal), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(source),
-					Utils::Stringify(skillStat)
-				),
-				eval(context), Utils::isPercentage(skillStat)
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula().fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			getFormula().print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			if (!source.has_value()) return 0.f;
-			return Stats::fromAttackSource(Modifiers::total(), source.value(), skillStat).eval(context);
+			return getFormula().eval(context);
 		}
 	};
 
@@ -86,16 +80,21 @@ namespace Formula {
 		Misc::LunarDamageType damageType{};
 		Misc::SkillStat skillStat{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return Stats::fromSkillStat(Stats::fromLunarDamageType(Modifiers::total(), damageType), skillStat).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return Stats::fromSkillStat(Stats::fromLunarDamageType(Modifiers::total(), damageType), skillStat);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(std::format("{} {}", Utils::Stringify(damageType), Utils::Stringify(skillStat)), eval(context), Utils::isPercentage(skillStat));
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(Misc::lunarDamageTypeToElement(damageType)));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return Stats::fromSkillStat(Stats::fromLunarDamageType(Modifiers::total(), damageType), skillStat).eval(context);
+			return getFormula(context).eval(context);
 		}
 	};
 
@@ -105,23 +104,22 @@ namespace Formula {
 		Utils::JankyOptional<Misc::AttackSource> source{};
 		Utils::JankyOptional<Misc::Element> element{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return stat.resolve(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)).enemy).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return stat.resolve(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)).enemy);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getElement(source, element, context)),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			auto element = Formula::getElement(source, this->element, context);
+			descriptor.pushColor(Utils::elementToColor(element));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return stat.resolve(Stats::fromElement(Modifiers::total(), Formula::getElement(source, element, context)).enemy).eval(context);
+			return getFormula(context).eval(context);
 		}
 	};
 
@@ -130,23 +128,21 @@ namespace Formula {
 		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
 		Misc::Element element{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return stat.resolve(Stats::fromElement(Modifiers::total(), element).enemy).fold(context, args);
+		auto getFormula() const {
+			return stat.resolve(Stats::fromElement(Modifiers::total(), element).enemy);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(element),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula().fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(element));
+			getFormula().print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
-			return stat.resolve(Stats::fromElement(Modifiers::total(), element).enemy).eval(context);
+			return getFormula().eval(context);
 		}
 	};
 
@@ -172,15 +168,9 @@ namespace Formula {
 			return *this;
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(Formula::getElement(source.eval(context), element.eval(context), context)),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(Formula::getElement(source.eval(context), this->element.eval(context), context)));
+			stat.resolve(Stats::fromElement(Modifiers::total(), Formula::getElement(source.eval(context), element.eval(context), context)).enemy).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -193,20 +183,19 @@ namespace Formula {
 		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
 		Utils::JankyOptional<Misc::AttackSource> source{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+		FloatNode getFormula(const Formula::Context &context) const {
 			if (!source.has_value()) return Formula::Constant{.value = 0.f};
-			return stat.resolve(Stats::fromAttackSource(Modifiers::total(), source.value()).enemy).fold(context, args);
+			return stat.resolve(Stats::fromAttackSource(Modifiers::total(), source.value()).enemy);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(
-				std::format(
-					"{} {}",
-					Utils::Stringify(source),
-					identifier.getName()
-				),
-				eval(context), identifier.isPercentage()
-			);
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			// descriptor.add(squi::RichText::Style{.font = squi::FontStore::defaultFontBold, .text = std::format("{} {}", Utils::Stringify(source), identifier.getName())});
+			// descriptor.add(Formula::Percentage({}, eval(context), identifier.isPercentage()));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -220,12 +209,17 @@ namespace Formula {
 		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
 		Misc::LunarDamageType damageType{};
 
-		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			return stat.resolve(Stats::fromLunarDamageType(Modifiers::total(), damageType).enemy).fold(context, args);
+		auto getFormula(const Formula::Context &context) const {
+			return stat.resolve(Stats::fromLunarDamageType(Modifiers::total(), damageType).enemy);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage(std::format("{} {}", Utils::Stringify(damageType), identifier.getName()), eval(context), identifier.isPercentage());
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(Misc::lunarDamageTypeToElement(damageType)));
+			getFormula(context).print(descriptor, context, Step::none);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

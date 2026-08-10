@@ -26,13 +26,13 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (agentKit
-					+ agentInstance
-					+ enginePassive
-					+ engineInstance
-					+ discSet)
-				.print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			auto formula = agentKit
+						 + agentInstance
+						 + enginePassive
+						 + engineInstance
+						 + discSet;
+			formula.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

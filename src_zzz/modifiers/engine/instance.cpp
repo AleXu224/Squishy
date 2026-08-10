@@ -1,5 +1,4 @@
 #include "instance.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/helpers.hpp"
 #include "modifiers/statFactory.hpp"
 #include "stats/loadout.hpp"
@@ -15,8 +14,8 @@ namespace Modifiers::Engine {
 			return stat.resolve(std::invoke(location, context.source.loadout().engine->sheet)).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Engine Base", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Engine Base {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

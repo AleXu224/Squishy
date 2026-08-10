@@ -10,14 +10,19 @@
 
 namespace Formula {
 	struct EnemyDef : FormulaBase<float> {
-		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
-			using namespace Operators;
-			auto ret = ((1.f - Modifiers::totalEnemy().DEFReduction) * 5.f * Modifiers::totalEnemy().level) + ConstantFlat{.value = 500.f};
-			return ret.fold(context, args);
+		static auto getFormula() {
+			return ((1.f - Modifiers::totalEnemy().DEFReduction) * 5.f * Modifiers::totalEnemy().level) + ConstantFlat{.value = 500.f};
 		}
 
-		[[nodiscard]] static std::string print(const Context &context, Step) {
-			return Formula::Percentage("Enemy DEF", eval(context), true);
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			using namespace Operators;
+			return getFormula().fold(context, args);
+		}
+
+		static void print(Descriptor &descriptor, const Context &context, Step) {
+			Descriptor formulaDescriptor;
+			getFormula().print(formulaDescriptor, context, Step::none);
+			descriptor.add("Enemy DEF", {eval(context), false}, formulaDescriptor);
 		}
 
 		[[nodiscard]] static float eval(const Context &context) {
@@ -28,18 +33,23 @@ namespace Formula {
 	struct EnemyDefMultiplier : FormulaBase<float> {
 		EnemyModifier modifiers{};
 
-		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+		auto getFormula(const Formula::Context &context) const {
 			using namespace Operators;
 			const auto characterLevel = ConstantFlat{.value = static_cast<float>(context.source.stats.sheet.level)};
 			const auto enemyLevel = Modifiers::totalEnemy().level + modifiers.level;
 			const auto k = (1.f - (Modifiers::totalEnemy().DEFReduction + modifiers.DEFReduction)) * (1.f - (Modifiers::totalEnemy().DEFIgnored + modifiers.DEFIgnored));
 
-			auto ret = (characterLevel + ConstantFlat{.value = 100.f}) / (k * (enemyLevel + ConstantFlat{.value = 100.f}) + (characterLevel + ConstantFlat{.value = 100.f}));
-			return ret.fold(context, args);
+			return (characterLevel + ConstantFlat{.value = 100.f}) / (k * (enemyLevel + ConstantFlat{.value = 100.f}) + (characterLevel + ConstantFlat{.value = 100.f}));
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return Formula::Percentage("Enemy DEF Multiplier", eval(context), true);
+		[[nodiscard]] FloatNode fold(const Formula::Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			Descriptor formulaDescriptor;
+			getFormula(context).print(formulaDescriptor, context, Step::none);
+			descriptor.add("Enemy DEF Multiplier", {eval(context), true}, formulaDescriptor);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -56,7 +66,7 @@ namespace Formula {
 		Utils::JankyOptional<Misc::Element> element;
 		EnemyModifierResistance modifiers{};
 
-		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+		auto getFormula(const Formula::Context &context) const {
 			using namespace Operators;
 			// Note: as of version 5.5 this is guaranteed to be alright but in the future if there is any character that has either
 			// an infusion or res shred that relies on artifact stats then this will break
@@ -65,7 +75,7 @@ namespace Formula {
 			auto RESModifier = Stats::fromEnemyResElement(modifiers, attackElement);
 			auto totalRES = RES + RESModifier;
 
-			auto ret = IfElse{
+			return IfElse{
 				.requirement = totalRES < 0.f,
 				.trueVal = 1.f - (totalRES / 2.f),
 				.elseVal = IfElse{
@@ -74,11 +84,16 @@ namespace Formula {
 					.elseVal = 1.f - (4.f * totalRES + 1.f),
 				},
 			};
-			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return Formula::Percentage("Enemy RES Multiplier", eval(context), true);
+		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			Descriptor formulaDescriptor;
+			getFormula(context).print(formulaDescriptor, context, Step::none);
+			descriptor.add("Enemy RES Multiplier", {eval(context), true}, formulaDescriptor);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

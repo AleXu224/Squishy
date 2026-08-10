@@ -47,12 +47,14 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto r2 = val2.eval(context);
 
-			if (r2 == 1.f) return std::format("{}", val1.print(context, prevStep));
+			if (r2 == 1.f) return val1.print(descriptor, context, prevStep);
 
-			return std::format("{} / {}", val1.print(context, Step::division), val2.print(context, Step::division));
+			val1.print(descriptor, context, Step::division);
+			descriptor.addName(" / ");
+			val2.print(descriptor, context, Step::division);
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {

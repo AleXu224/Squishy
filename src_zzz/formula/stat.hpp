@@ -12,8 +12,8 @@ namespace Formula {
 			return Stats::fromStat(Modifiers::combat(), stat).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return Stats::fromStat(Modifiers::combat(), stat).print(context, prevStep);
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			Stats::fromStat(Modifiers::combat(), stat).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
@@ -39,9 +39,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto attribute = this->attribute.eval(context);
-			return Stats::fromAttribute(sheet, attribute).print(context, prevStep);
+			Stats::fromAttribute(sheet, attribute).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {

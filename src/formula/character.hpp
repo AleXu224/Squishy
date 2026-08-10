@@ -10,8 +10,8 @@
 
 namespace Formula {
 	struct CharacterLevel : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Character level {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Character level", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -20,8 +20,8 @@ namespace Formula {
 	};
 
 	struct CharacterConstellation : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Character constellation {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Character constellation", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -30,8 +30,8 @@ namespace Formula {
 	};
 
 	struct CharacterAscension : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Character ascension {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Character ascension", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -40,8 +40,8 @@ namespace Formula {
 	};
 
 	struct CharacterMoonsignLevel : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] inline std::string print(const Context &context, Step) const {
-			return std::format("Character Moonsign Level {}", eval(context));
+		inline void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Character Moonsign Level", eval(context));
 		}
 
 		[[nodiscard]] inline int32_t eval(const Context &context) const {
@@ -52,8 +52,8 @@ namespace Formula {
 	struct IsCharacterWeaponType : FormulaBase<bool, Type::constant> {
 		Misc::WeaponType weaponType;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is character {} ({})", Utils::Stringify(weaponType), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Is character " + Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -64,8 +64,8 @@ namespace Formula {
 	struct IsTargetCharacterWeaponType : FormulaBase<bool, Type::constant> {
 		Misc::WeaponType weaponType;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is target character {} ({})", Utils::Stringify(weaponType), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Is target character " + Utils::Stringify(weaponType), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -76,8 +76,8 @@ namespace Formula {
 	struct IsCharacterId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is character id {} ({})", id, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Is character id " + std::to_string(id), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -88,8 +88,8 @@ namespace Formula {
 	struct IsOriginCharacterId : FormulaBase<bool, Type::constant> {
 		uint32_t id;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is origin character id {} ({})", id, eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Is origin character id " + std::to_string(id), eval(context));
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -115,7 +115,7 @@ namespace Formula {
 			return ret.fold(ctx, args);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			RetType ret{};
 			Character::Instance *maxCharacter = nullptr;
 			for (auto &character: context.team.characters) {
@@ -127,9 +127,10 @@ namespace Formula {
 				}
 			}
 
-			if (!maxCharacter) return "";
+			if (!maxCharacter) return;
 
-			return std::format("Max Team {}", formula.print(context.withSource(maxCharacter->state), prevStep));
+			descriptor.pushPrefix("Max Team ");
+			formula.print(descriptor, context.withSource(maxCharacter->state), prevStep);
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

@@ -1,13 +1,12 @@
 #include "agentAnomalies.hpp"
 
 #include "UI/attributeToColor.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/skillEntry.hpp"
 #include "agent/data.hpp"
 #include "anomaly/anomaly.hpp"
 #include "anomaly/list.hpp"
-#include "widgets/gestureDetector.hpp"
-#include "widgets/tooltip.hpp"
 
 
 using namespace squi;
@@ -24,25 +23,24 @@ using namespace squi;
 			bool transparent = true;
 			for (const auto &anomaly: Anomaly::List::anomalyList) {
 				if (anomaly->attribute.eval(ctx) != state.stats.data.baseStats.attribute) continue;
-				ret.emplace_back(Gesture{
-					.onClick = [out = anomaly->formula.fold(ctx, {}).print(ctx)](const Gesture::State &state) {
-						std::println("{}", out);
+				ret.emplace_back(DescriptorDisplay{
+					.descriptorProvider = [this, anomaly]() {
+						return anomaly->formula.print(ctx, Formula::Step::none);
 					},
-					.child = Tooltip{
-						.text = anomaly->formula.print(ctx, Formula::Step::none),
-						.child = UI::SkillEntry{
-							.isTransparent = (transparent = !transparent),
-							.name = anomaly->name.eval(ctx),
-							.value = anomaly->formula.eval(ctx),
-							.color = Utils::attributeToColor(anomaly->attribute.eval(ctx)),
-						},
+					.child = UI::SkillEntry{
+						.isTransparent = (transparent = !transparent),
+						.name = anomaly->name.eval(ctx),
+						.value = anomaly->formula.eval(ctx),
+						.color = Utils::attributeToColor(anomaly->attribute.eval(ctx)),
 					},
 				});
 			}
 			for (const auto &anomaly: Anomaly::List::disorderList) {
 				if (anomaly->attribute.eval(ctx) != state.stats.data.baseStats.attribute) continue;
-				ret.emplace_back(Tooltip{
-					.text = anomaly->formula.print(ctx, Formula::Step::none),
+				ret.emplace_back(DescriptorDisplay{
+					.descriptorProvider = [this, anomaly]() {
+						return anomaly->formula.print(ctx, Formula::Step::none);
+					},
 					.child = UI::SkillEntry{
 						.isTransparent = (transparent = !transparent),
 						.name = anomaly->name.eval(ctx),
@@ -57,8 +55,10 @@ using namespace squi;
 					auto val = anomaly.formula.eval(ctx);
 					if (val <= 0.f) continue;
 
-					ret.emplace_back(Tooltip{
-						.text = anomaly.formula.print(ctx, Formula::Step::none),
+					ret.emplace_back(DescriptorDisplay{
+						.descriptorProvider = [this, &anomaly]() {
+							return anomaly.formula.print(ctx, Formula::Step::none);
+						},
 						.child = UI::SkillEntry{
 							.isTransparent = (transparent = !transparent),
 							.name = anomaly.name.eval(ctx),

@@ -34,16 +34,16 @@ namespace Modifiers {
 			return ret.fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step prevStep) const {
-			return (agentKit
-					+ agentInstance
-					+ enginePassive
-					+ engineInstance
-					+ discSet
-					+ discSubStats
-					+ teamInitial
-					+ activeInitial)
-				.print(context, prevStep);
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			auto formula = agentKit
+						 + agentInstance
+						 + enginePassive
+						 + engineInstance
+						 + discSet
+						 + discSubStats
+						 + teamInitial
+						 + activeInitial;
+			formula.print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

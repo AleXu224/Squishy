@@ -56,11 +56,15 @@ namespace Formula {
 			return sumParam + multParam * value.eval(context);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			if (prevStep == Step::multiplication || prevStep == Step::division) {
-				return std::format("({} + {} * {})", sumParam, multParam, value.print(context, prevStep));
-			}
-			return std::format("{} + {} * {}", sumParam, multParam, value.print(context, prevStep));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			const bool parens = prevStep == Step::multiplication || prevStep == Step::division;
+			if (parens) descriptor.addName("(");
+			descriptor.addValue(std::format("{}", sumParam));
+			descriptor.addName(" + ");
+			descriptor.addValue(std::format("{}", multParam));
+			descriptor.addName(" * ");
+			value.print(descriptor, context, prevStep);
+			if (parens) descriptor.addName(")");
 		}
 	};
 
@@ -117,11 +121,13 @@ namespace Formula {
 			return sumParam + value.eval(context);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			if (prevStep == Step::multiplication || prevStep == Step::division) {
-				return std::format("({} + {})", sumParam, value.print(context, prevStep));
-			}
-			return std::format("{} + {}", sumParam, value.print(context, prevStep));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			const bool parens = prevStep == Step::multiplication || prevStep == Step::division;
+			if (parens) descriptor.addName("(");
+			descriptor.addValue(std::format("{}", sumParam));
+			descriptor.addName(" + ");
+			value.print(descriptor, context, prevStep);
+			if (parens) descriptor.addName(")");
 		}
 	};
 
@@ -178,8 +184,10 @@ namespace Formula {
 			return multParam * value.eval(context);
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			return std::format("{} * {}", multParam, value.print(context, prevStep));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.addValue(std::format("{}", multParam));
+			descriptor.addName(" * ");
+			value.print(descriptor, context, prevStep);
 		}
 	};
 }// namespace Formula

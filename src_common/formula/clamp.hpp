@@ -34,15 +34,16 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto val = val1.eval(context);
-			if (val >= min && val <= max) return val1.print(context, prevStep);
-			return std::format(
-				"clamp({}, {}, {})",
-				val1.print(context, Step::none),
-				Utils::formatFloat(isPercentage ? min * RetType{100} : min),
+			if (val >= min && val <= max) return val1.print(descriptor, context, prevStep);
+			descriptor.addName("clamp(");
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(std::format(                                 //
+				", {}, {})",                                                //
+				Utils::formatFloat(isPercentage ? min * RetType{100} : min),//
 				Utils::formatFloat(isPercentage ? max * RetType{100} : max)
-			);
+			));
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -80,11 +81,12 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			auto eval1 = val1.eval(context);
-			auto eval2 = val2.eval(context);
-			if (eval1 < eval2) return val1.print(context, prevStep);
-			return std::format("min({}, {})", val1.print(context, Step::none), val2.print(context, Step::none));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.addName("min(");
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(", ");
+			val2.print(descriptor, context, Step::none);
+			descriptor.addName(")");
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
@@ -122,11 +124,12 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
-			auto eval1 = val1.eval(context);
-			auto eval2 = val2.eval(context);
-			if (eval1 > eval2) return val1.print(context, prevStep);
-			return std::format("max({}, {})", val1.print(context, Step::none), val2.print(context, Step::none));
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
+			descriptor.addName("max(");
+			val1.print(descriptor, context, Step::none);
+			descriptor.addName(", ");
+			val2.print(descriptor, context, Step::none);
+			descriptor.addName(")");
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {

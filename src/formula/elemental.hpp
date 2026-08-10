@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UI/elementToColor.hpp"
 #include "character/instance.hpp"
 #include "formula/base.hpp"
 #include "misc/attackSource.hpp"
@@ -30,8 +31,14 @@ namespace Formula {
 	struct ElementCount : FormulaBase<int32_t, Type::constant> {
 		::Misc::Element element;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} count {}", Utils::Stringify(element), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(
+				Style{
+					.color = Utils::elementToColor(element),
+					.text = std::format("Team {} count", Utils::Stringify(element)),
+				},
+				eval(context)
+			);
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -47,8 +54,14 @@ namespace Formula {
 	struct ElementCountOthers : FormulaBase<int32_t, Type::constant> {
 		::Misc::Element element;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("{} count {}", Utils::Stringify(element), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(
+				Style{
+					.color = Utils::elementToColor(element),
+					.text = std::format("Team {} count others", Utils::Stringify(element)),
+				},
+				eval(context)
+			);
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -63,8 +76,8 @@ namespace Formula {
 
 
 	struct SameElementCount : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Team same element count {}", eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Team same element count", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -79,8 +92,8 @@ namespace Formula {
 	};
 
 	struct OtherElementCount : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Team other element count {}", eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Team other element count", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -95,8 +108,8 @@ namespace Formula {
 	};
 
 	struct PHECCount : FormulaBase<int32_t, Type::constant> {
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Team other element count {}", eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Team other element count", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -121,8 +134,14 @@ namespace Formula {
 	struct IsCharacterElement : FormulaBase<bool, Type::constant> {
 		Misc::Element element;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(
+				Style{
+					.color = Utils::elementToColor(element),
+					.text = std::format("Is character {}", Utils::Stringify(element)),
+				},
+				eval(context)
+			);
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
@@ -135,8 +154,14 @@ namespace Formula {
 	struct IsTargetCharacterElement : FormulaBase<bool, Type::constant> {
 		Misc::Element element;
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Is character {} ({})", Utils::Stringify(element), eval(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(
+				Style{
+					.color = Utils::elementToColor(element),
+					.text = std::format("Is target character {}", Utils::Stringify(element)),
+				},
+				eval(context)
+			);
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {

@@ -1,5 +1,4 @@
 #include "instance.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/helpers.hpp"
 #include "modifiers/statFactory.hpp"
 #include "modifiers/talentFactory.hpp"
@@ -14,8 +13,8 @@ namespace Modifiers::Character {
 			return stat.resolve(context.source.stats.sheet.stats).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Character Base", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Character Base {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -31,8 +30,8 @@ namespace Modifiers::Character {
 			return stat.resolve(context.source.stats.sheet.talents).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return std::format("{} Lvl {}", member.getName(), stat.resolve(context.source.stats.sheet.talents).get(context));
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Character Base {}", member.getName()), eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Formula::Context &context) const {

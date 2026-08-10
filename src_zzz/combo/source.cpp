@@ -28,15 +28,21 @@ Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides, const F
 				[&](const ::Combo::Entry &entry) {
 					Overrides retOverrides = overridesStack;
 					retOverrides.push(entry.options);
+					const auto &node = std::visit(//
+						[&](auto &&val) {
+							return val.resolve(std::move(retOverrides), ctx);
+						},
+						entry.source
+					);
 					nodes.emplace_back(Formula::Combo::Entry{
+						.name = std::visit(//
+							[](auto &&data) -> std::variant<std::string, Formula::NodeType<std::string>> {
+								return data.name;
+							},
+							node.data
+						),
 						.multiplier = entry.multiplier,
-						.node = std::visit(//
-									[&](auto &&val) {
-										return val.resolve(std::move(retOverrides), ctx);
-									},
-									entry.source
-						)
-									.formula,
+						.node = node.formula,
 					});
 				},
 				[&](const ::Combo::StateChangeEntry &entry) {

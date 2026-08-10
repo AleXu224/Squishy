@@ -1,5 +1,4 @@
 #include "instance.hpp"
-#include "formula/percentage.hpp"
 #include "modifiers/helpers.hpp"
 #include "modifiers/skillFactory.hpp"
 #include "modifiers/statFactory.hpp"
@@ -18,8 +17,8 @@ namespace Modifiers::Agent {
 				return stat.resolve(std::invoke(location, context.source.stats.sheet)).fold(context, args);
 			}
 
-			[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-				return Formula::Percentage("Agent Base", eval(context), member.isPercentage());
+			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+				descriptor.add("Agent Base", {eval(context), member.isPercentage()});
 			}
 
 			[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -36,8 +35,8 @@ namespace Modifiers::Agent {
 			return stat.resolve(context.source.stats.sheet.skills).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return std::format("{} Lvl {}", member.getName(), stat.resolve(context.source.stats.sheet.skills).get(context));
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add("Agent Base", eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Formula::Context &context) const {

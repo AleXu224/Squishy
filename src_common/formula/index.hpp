@@ -29,12 +29,12 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step prevStep) const {
+		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
 			auto ret = eval(context);
 			if constexpr (std::formattable<decltype(ret), char>) {
-				return Percentage({}, eval(context), isPercentage);
+				descriptor.addValue(Percentage({}, eval(context), isPercentage));
 			} else {
-				return ret.print(context, prevStep);
+				ret.print(descriptor, context, prevStep);
 			}
 		}
 
@@ -70,8 +70,9 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return std::format("Index of {}", formula.print(context));
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addName("Index of ");
+			formula.print(descriptor, context);
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
@@ -105,8 +106,8 @@ namespace Formula {
 			};
 		}
 
-		[[nodiscard]] std::string print(const Context &context, Step) const {
-			return Percentage({}, eval(context), isPercentage);
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addValue(Percentage({}, eval(context), isPercentage));
 		}
 
 		[[nodiscard]] auto eval(const Context &context) const {

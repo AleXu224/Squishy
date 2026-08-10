@@ -13,8 +13,8 @@ namespace Modifiers::Team {
 			return stat.resolve(context.team.resonances).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Disc Substat", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Disc {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -28,8 +28,8 @@ namespace Modifiers::Team {
 			return stat.resolve(context.team.resonancesEnemy).fold(context, args);
 		}
 
-		[[nodiscard]] std::string print(const Formula::Context &context, Formula::Step) const {
-			return Formula::Percentage("Disc Substat", eval(context), member.isPercentage());
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.add(std::format("Disc {}", member.getName()), {eval(context), member.isPercentage()});
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
