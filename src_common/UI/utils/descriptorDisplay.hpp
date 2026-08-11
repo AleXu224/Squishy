@@ -2,10 +2,9 @@
 
 #include "core/core.hpp"
 
-#include "widgets/richText.hpp"
-#include "widgets/tooltip.hpp"
-
 #include "formula/descriptor.hpp"
+#include "widgets/navigator.hpp"
+
 
 namespace UI {
 	using namespace squi;
@@ -16,17 +15,13 @@ namespace UI {
 		Child child;
 
 		struct State : WidgetState<DescriptorDisplay> {
-			Child build(const Element &element) override {
-				return UI::Tooltip{
-					.text = [this]() {
-						return RichText{
-							.text = widget->descriptorProvider().spans | std::ranges::to<std::vector>(),
-							.lineWrap = true,
-						};
-					},
-					.child = widget->child,
-				};
+			Key descriptorDisplayKey = GlobalKey{};
+
+			void dispose() override {
+				Navigator::of(this).popOverlay(descriptorDisplayKey);
 			}
+
+			Child build(const Element &element) override;
 		};
 	};
 }// namespace UI

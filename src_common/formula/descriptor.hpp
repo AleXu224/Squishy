@@ -5,7 +5,6 @@
 #include "widgets/richText.hpp"
 #include <list>
 #include <string>
-#include <vector>
 
 
 namespace Formula {
@@ -46,7 +45,7 @@ namespace Formula {
 
 
 	struct Descriptor::Parameter {
-		std::string name;
+		Style name;
 		Descriptor formula;
 	};
 
@@ -104,18 +103,19 @@ namespace Formula {
 	inline void Descriptor::add(const Style &name, const Value &value, const std::optional<Descriptor> &parameter) {
 		auto newName = std::format("{}{} ", nameBuffer, name.text);
 		nameBuffer.clear();
-		spans.push_back(Style{
+		Style nameSpan{
 			.color = name.color.value_or(color.value_or(squi::Color::white)),
 			.font = name.font.value_or(squi::FontStore::getFont(squi::FontStore::defaultFontBold)),
-			.text = newName,
-		});
+			.text = std::move(newName),
+		};
+		spans.push_back(nameSpan);
 		color = std::nullopt;
 
 		if (!value.value.empty())
 			spans.push_back(value.value);
 
 		if (parameter) {
-			this->parameters.emplace_back(std::move(newName), std::move(*parameter));
+			this->parameters.emplace_back(nameSpan, std::move(*parameter));
 		}
 	}
 }// namespace Formula

@@ -1,4 +1,5 @@
 #include "comboDisplay.hpp"
+#include "UI/utils/descriptorDisplay.hpp"
 #include "UI/utils/displayCard.hpp"
 #include "UI/utils/skillEntry.hpp"
 #include "UI/utils/trueFalse.hpp"
@@ -20,11 +21,20 @@ namespace UI {
 		Color color;
 
 		[[nodiscard]] Child build(const Element &) const {
-			return SkillEntry{
-				.isTransparent = transparent,
-				.name = combo.name,
-				.value = combo.eval(ctx),
-				.color = Color::white,
+			return DescriptorDisplay{
+				.descriptorProvider = [this]() {
+					Formula::Descriptor descriptor;
+					Combo::Source::Combo comboSource{.agentKey = ctx.source.instanceKey, .comboKey = combo.instanceKey};
+					auto comboNode = comboSource.resolve({}, ctx);
+					comboNode.formula.print(descriptor, ctx, Formula::Step::none);
+					return descriptor;
+				},
+				.child = SkillEntry{
+					.isTransparent = transparent,
+					.name = combo.name,
+					.value = combo.eval(ctx),
+					.color = Color::white,
+				},
 			};
 		}
 	};
