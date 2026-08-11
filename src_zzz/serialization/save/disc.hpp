@@ -11,7 +11,7 @@ namespace Serialization::Save {
 	struct DiscSubStat {
 		::Stat stat;
 		bool activated = true;
-		float value;
+		uint8_t rolls = 0;
 	};
 
 	struct Disc {

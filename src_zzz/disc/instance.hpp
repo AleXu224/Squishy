@@ -20,7 +20,7 @@ namespace Disc {
 		SetKey set{};
 		Partition partition{};
 		Stat mainStat{};
-		std::array<StatValue, 4> subStats{};
+		std::array<DiscSubstat, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
 
@@ -39,7 +39,7 @@ namespace Disc {
 			// Sub stats
 			for (const auto &subStat: subStats) {
 				if (subStat.stat.has_value() && subStat.activated) {
-					stats.fromStat(subStat.stat.value()) = subStat.value;
+					stats.fromStat(subStat.stat.value()) = subStat.getValue(rarity);
 				}
 			}
 		}

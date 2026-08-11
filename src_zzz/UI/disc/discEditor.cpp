@@ -118,13 +118,11 @@ squi::core::Child UI::DiscEditor::State::createSubStat(size_t subStatIndex) {
 			},
 			NumberBox{
 				.disabled = !subStat.stat.has_value(),
-				.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f),
+				.value = static_cast<float>(subStat.rolls),
 				.min = 0.f,
-				.precision = Utils::isPercentage(subStat.stat) ? 1 : 0,
+				.precision = 0,
 				.onChange = [&](float val) {
-					if (subStat.stat.has_value()) {
-						subStat.value = val / (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
-					}
+					subStat.rolls = static_cast<uint8_t>(val);
 				},
 			},
 		},

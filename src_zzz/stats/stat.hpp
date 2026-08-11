@@ -279,8 +279,18 @@ namespace Stats {
 
 struct StatValue {
 	std::optional<Stat> stat;
-	bool activated = true;
 	float value;
+};
+
+struct DiscSubstat {
+	std::optional<Stat> stat;
+	bool activated = true;
+	uint8_t rolls = 0;
+
+	float getValue(uint8_t rarity) const {
+		if (!stat.has_value()) return 0.f;
+		return Stats::Values::subStat.at(stat.value()).at(rarity) * static_cast<float>(rolls);
+	}
 };
 
 namespace Utils {
@@ -384,6 +394,12 @@ namespace Utils {
 	template<>
 	constexpr std::string Stringify<>(const StatValue &stat) {
 		if (!stat.stat.has_value()) return "0";
-		return Formula::Percentage("", stat.value, Utils::isPercentage(stat.stat));
+		return Formula::Percentage({}, stat.value, Utils::isPercentage(stat.stat));
+	}
+
+	template<>
+	constexpr std::string Stringify<>(const std::pair<const DiscSubstat &, uint8_t> &stat) {
+		if (!stat.first.stat.has_value()) return "0";
+		return Formula::Percentage("", stat.first.getValue(stat.second), Utils::isPercentage(stat.first.stat));
 	}
 }// namespace Utils

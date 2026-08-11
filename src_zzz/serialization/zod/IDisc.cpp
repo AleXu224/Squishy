@@ -28,7 +28,7 @@ Serialization::Zod::IDisc Serialization::Zod::IDisc::fromInstance(const Disc::In
 			for (auto [subStat, dataSubStat]: std::views::zip(disc.subStats, ret)) {
 				if (!subStat.stat.has_value() || !subStat.activated) continue;
 				dataSubStat.key = keyStat.at(subStat.stat.value());
-				dataSubStat.upgrades = std::lround(subStat.value / Stats::Values::subStat.at(subStat.stat.value()).at(disc.rarity));
+				dataSubStat.upgrades = subStat.rolls;
 			}
 
 			return ret;
@@ -85,7 +85,7 @@ std::expected<std::reference_wrapper<Disc::Instance>, std::string> Serialization
 				break;
 			}
 			const auto &val = *it;
-			if (val.stat != statKey.at(dataIt->key) || val.value > (dataIt->upgrades * Stats::Values::subStat.at(statKey.at(dataIt->key)).at(disc.rarity))) {
+			if (val.stat != statKey.at(dataIt->key) || val.getValue(disc.rarity) > (dataIt->upgrades * Stats::Values::subStat.at(statKey.at(dataIt->key)).at(disc.rarity))) {
 				validSubstats = false;
 				break;
 			}
@@ -123,10 +123,10 @@ void Serialization::Zod::IDisc::writeToInstance(Disc::Instance &disc, bool overr
 
 		auto stat = statKey.at(dataIt->key);
 
-		*it = StatValue{
+		*it = DiscSubstat{
 			.stat = stat,
 			.activated = true,
-			.value = dataIt->upgrades * Stats::Values::subStat.at(stat).at(disc.rarity),
+			.rolls = static_cast<uint8_t>(dataIt->upgrades),
 		};
 		it++;
 	}

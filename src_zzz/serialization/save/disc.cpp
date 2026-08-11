@@ -9,7 +9,7 @@ Serialization::Save::Disc Serialization::Save::Disc::fromInstance(const ::Disc::
 		subStatData = DiscSubStat{
 			.stat = discSubStat.stat.value(),
 			.activated = discSubStat.activated,
-			.value = discSubStat.value,
+			.rolls = discSubStat.rolls,
 		};
 	}
 
@@ -25,13 +25,13 @@ Serialization::Save::Disc Serialization::Save::Disc::fromInstance(const ::Disc::
 }
 
 ::Disc::Instance Serialization::Save::Disc::toInstance() const {
-	std::array<StatValue, 4> subStats{};
+	std::array<DiscSubstat, 4> subStats{};
 	for (auto [subStatData, discSubStat]: std::views::zip(this->subStats, subStats)) {
 		if (!subStatData) continue;
-		discSubStat = StatValue{
+		discSubStat = DiscSubstat{
 			.stat = subStatData->stat,
 			.activated = subStatData->activated,
-			.value = subStatData->value,
+			.rolls = subStatData->rolls,
 		};
 	}
 

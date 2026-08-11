@@ -29,6 +29,9 @@ using namespace squi;
 						.color = Color::css(0xffffff, 0.2f),
 						.borderRadius = 4.f,
 						.child = Image{
+							.widget{
+								.height = 64.f,
+							},
 							.fit = squi::Image::Fit::contain,
 							.image = ImageProvider::fromFile(std::format("assets/Artifacts/{}/{}.png", Artifact::sets.at(::Store::artifacts.at(artifact).set).name, Utils::Stringify(slot))),
 						},

@@ -74,7 +74,7 @@ squi::core::Child UI::AgentStats::State::build(const Element &element) {
 					},
 					.child = UI::StatDisplay{
 						.isTransparent = transparent,
-						.stat{
+						.stat = StatValue{
 							.stat = stat,
 							.value = value,
 						},

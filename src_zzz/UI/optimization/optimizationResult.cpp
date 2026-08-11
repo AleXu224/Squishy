@@ -29,6 +29,9 @@ using namespace squi;
 						.color = Color::css(0xffffff, 0.2f),
 						.borderRadius = 4.f,
 						.child = Image{
+							.widget{
+								.height = 64.f,
+							},
 							.fit = squi::Image::Fit::contain,
 							.image = ImageProvider::fromFile(std::format("assets/Discs/{}/icon.png", Disc::sets.at(::Store::discs.at(disc).set).name)),
 						},

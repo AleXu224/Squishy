@@ -182,7 +182,7 @@ namespace Optimization {
 			if (disc.level > level) return false;
 			for (const auto &subStat: disc.subStats) {
 				if (!subStat.stat.has_value()) continue;
-				if (getSubstat(subStat.stat.value()).value > subStat.value) return false;
+				if (getSubstat(subStat.stat.value()).value > subStat.getValue(disc.rarity)) return false;
 			}
 			return true;
 		}
@@ -191,7 +191,7 @@ namespace Optimization {
 			level = disc.level;
 			for (const auto &subStat: disc.subStats) {
 				if (!subStat.stat.has_value()) continue;
-				getSubstat(subStat.stat.value()).value = subStat.value;
+				getSubstat(subStat.stat.value()).value = subStat.getValue(disc.rarity);
 			}
 		}
 	};

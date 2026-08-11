@@ -1,7 +1,8 @@
 #pragma once
 
-#include "stats/stat.hpp"
 #include "core/core.hpp"
+#include "stats/stat.hpp"
+
 
 namespace UI {
 	using namespace squi;
@@ -11,7 +12,7 @@ namespace UI {
 		bool isTransparent;
 		bool showRolls = false;
 		uint32_t rarity = 5;
-		StatValue stat;
+		std::variant<StatValue, DiscSubstat> stat;
 
 		[[nodiscard]] Child build(const Element &) const;
 	};

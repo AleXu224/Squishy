@@ -89,14 +89,14 @@ struct EngineCardContent : StatelessWidget {
 			.children{
 				UI::StatDisplay{
 					.isTransparent = false,
-					.stat{
+					.stat = StatValue{
 						.stat = Stat::atk,
 						.value = engine.stats.data->baseStats.getAtkAt(engine.stats.sheet.level, engine.stats.sheet.modification),
 					},
 				},
 				UI::StatDisplay{
 					.isTransparent = true,
-					.stat = {
+					.stat = StatValue{
 						.stat = engine.stats.data->baseStats.subStat.stat,
 						.value = engine.stats.data->baseStats.getSubstatAt(engine.stats.sheet.level, engine.stats.sheet.modification),
 					},

@@ -118,7 +118,7 @@ Optimization::SolutionsUpgrade Optimization::UpgradeOptimization::optimize() con
 			if (!subStat.stat.has_value()) continue;
 			std::println(
 				"Sub stat: {} {}",
-				Formula::Percentage(Utils::Stringify(subStat.stat.value()), subStat.value, Utils::isPercentage(subStat.stat.value())),
+				Formula::Percentage(Utils::Stringify(subStat.stat.value()), subStat.getValue(disc.rarity), Utils::isPercentage(subStat.stat.value())),
 				subStat.activated ? "" : "(Inactive)"
 			);
 		}
