@@ -48,6 +48,7 @@ namespace UI {
 				.title = RichText{
 					.text{
 						parameter.name,
+						std::format(" {}", parameter.value.value),
 					},
 					.lineWrap = true,
 				},

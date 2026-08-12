@@ -17,8 +17,9 @@ namespace Modifiers::Agent {
 				return stat.resolve(std::invoke(location, context.source.stats.sheet)).fold(context, args);
 			}
 
-			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
-				descriptor.add("Agent Base", {eval(context), member.isPercentage()});
+			void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+				// descriptor.add("Agent Base", {eval(context), member.isPercentage()});
+				stat.resolve(std::invoke(location, context.source.stats.sheet)).print(descriptor, context, prevStep);
 			}
 
 			[[nodiscard]] float eval(const Formula::Context &context) const {

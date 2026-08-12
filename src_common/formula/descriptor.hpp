@@ -46,6 +46,7 @@ namespace Formula {
 
 	struct Descriptor::Parameter {
 		Style name;
+		Value value;
 		Descriptor formula;
 	};
 
@@ -84,6 +85,9 @@ namespace Formula {
 	}
 
 	inline void Descriptor::addValue(const Value &value) {
+		if (!nameBuffer.empty()) {
+			addName("");
+		}
 		if (!value.value.empty())
 			spans.push_back(value.value);
 	}
@@ -115,7 +119,7 @@ namespace Formula {
 			spans.push_back(value.value);
 
 		if (parameter) {
-			this->parameters.emplace_back(nameSpan, std::move(*parameter));
+			this->parameters.emplace_back(nameSpan, value, std::move(*parameter));
 		}
 	}
 }// namespace Formula

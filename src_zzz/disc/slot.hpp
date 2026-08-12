@@ -34,6 +34,24 @@ namespace Disc {
 		SetSlot::twoPiece,
 		SetSlot::fourPiece,
 	};
+
+	static inline uint8_t getPartitionIndex(Partition partition) {
+		switch (partition) {
+			case Partition::one:
+				return 0;
+			case Partition::two:
+				return 1;
+			case Partition::three:
+				return 2;
+			case Partition::four:
+				return 3;
+			case Partition::five:
+				return 4;
+			case Partition::six:
+				return 5;
+		}
+		std::unreachable();
+	}
 }// namespace Disc
 
 

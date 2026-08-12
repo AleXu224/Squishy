@@ -13,8 +13,9 @@ namespace Modifiers::Character {
 			return stat.resolve(context.source.stats.sheet.stats).fold(context, args);
 		}
 
-		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
-			descriptor.add(std::format("Character Base {}", member.getName()), {eval(context), member.isPercentage()});
+		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step prevStep) const {
+			// descriptor.add(std::format("Character Base {}", member.getName()), {eval(context), member.isPercentage()});
+			stat.resolve(context.source.stats.sheet.stats).print(descriptor, context, prevStep);
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {

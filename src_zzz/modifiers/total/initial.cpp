@@ -22,6 +22,7 @@ namespace Modifiers {
 		Formula::FloatNode discSubStats;
 		Formula::FloatNode teamInitial;
 		Formula::FloatNode activeInitial;
+		SheetMemberIdentifier name;
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
 			auto ret = agentKit
 					 + agentInstance
@@ -43,7 +44,10 @@ namespace Modifiers {
 						 + discSubStats
 						 + teamInitial
 						 + activeInitial;
-			formula.print(descriptor, context, prevStep);
+
+			Formula::Descriptor formulaDescriptor;
+			formula.print(formulaDescriptor, context, prevStep);
+			descriptor.add("Initial " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
@@ -67,7 +71,8 @@ namespace Modifiers {
 			Disc::Set::initial(),
 			Disc::subStats(),
 			Team::initial(),
-			Team::activeInitial()
+			Team::activeInitial(),
+			StatNameFactory{}
 		);
 		return ret;
 	}

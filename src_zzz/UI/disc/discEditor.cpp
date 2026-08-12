@@ -8,6 +8,7 @@
 #include "widgets/container.hpp"
 #include "widgets/dialog.hpp"
 #include "widgets/dropdownButton.hpp"
+#include "widgets/iconButton.hpp"
 #include "widgets/numberBox.hpp"
 
 
@@ -15,7 +16,6 @@
 #include "widgets/row.hpp"
 #include "widgets/stack.hpp"
 #include "widgets/text.hpp"
-#include "widgets/toggleSwitch.hpp"
 
 using namespace squi;
 
@@ -73,17 +73,6 @@ squi::core::Child UI::DiscEditor::State::createSubStat(size_t subStatIndex) {
 	Child ret = DiscEditorSubstat{
 		.name = std::format("Substat {}", subStatIndex + 1),
 		.children{
-			subStatIndex == 3//
-				? ToggleSwitch{
-					  .active = subStat.activated,
-					  .statePosition = ToggleSwitch::StatePosition::Left,
-					  .onToggle = [this, &subStat](bool active) {
-						  setState([&]() {
-							  subStat.activated = active;
-						  });
-					  },
-				  }
-				: Child{},
 			DropdownButton{
 				.theme = Button::Theme::Standard(),
 				.text = subStat.stat.transform([](auto &&val) {
@@ -117,12 +106,45 @@ squi::core::Child UI::DiscEditor::State::createSubStat(size_t subStatIndex) {
 				}(),
 			},
 			NumberBox{
+				.widget{
+					.width = 48.f,
+				},
+				.disabled = true,
+				.value = [&]() {
+					if (!subStat.stat.has_value() || !subStat.activated) return 0.f;
+					auto multiplier = Utils::isPercentage(subStat.stat.value()) ? 100.f : 1.f;
+					return subStat.getValue(disc.rarity) * multiplier;
+				}(),
+				.precision = Utils::isPercentage(subStat.stat.value_or(Stat::hp)) ? 1 : 0,
+			},
+			IconButton{
+				.icon = 0xe15b,
+				.onClick = [this, &subStat]() {
+					if (subStat.rolls > 0)
+						setState([&]() {
+							subStat.rolls--;
+						});
+				},
+			},
+			NumberBox{
+				.widget{
+					.width = 32.f,
+				},
 				.disabled = !subStat.stat.has_value(),
 				.value = static_cast<float>(subStat.rolls),
 				.min = 0.f,
 				.precision = 0,
 				.onChange = [&](float val) {
 					subStat.rolls = static_cast<uint8_t>(val);
+				},
+			},
+			IconButton{
+				.icon = 0xe145,
+				.onClick = [this, &subStat]() {
+					if (subStat.rolls < 5)
+						setState([&]() {
+							subStat.rolls++;
+						});
 				},
 			},
 		},
@@ -248,11 +270,18 @@ squi::core::Child UI::DiscEditor::State::build(const Element &) {
 		},
 	};
 
+	uint8_t totalRolls = 0;
+	for (const auto &subStat: disc.subStats) {
+		if (!subStat.stat.has_value()) continue;
+		totalRolls += subStat.rolls;
+	}
+	bool rollsValid = totalRolls <= (4 + disc.level / 3);
+
 	Children buttonFooter{
 		Button{
 			.widget{.width = Size::Expand},
 			.theme = Button::Theme::Accent(element),
-			.disabled = disc.set.key == 0,
+			.disabled = disc.set.key == 0 || !rollsValid,
 			.onClick = [this]() {
 				closeEvent.notify();
 				if (widget->onSubmit) widget->onSubmit(disc);

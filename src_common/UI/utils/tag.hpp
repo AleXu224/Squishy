@@ -7,6 +7,7 @@ namespace UI {
 	struct Tag : StatelessWidget {
 		// Args
 		Key key;
+		Args widget;
 		std::string sourceStr;
 
 		[[nodiscard]] Child build(const Element &) const;

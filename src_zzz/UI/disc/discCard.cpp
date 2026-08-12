@@ -35,12 +35,38 @@ struct DiscHeader : StatelessWidget {
 	Agent::InstanceKey equippedAgent;
 
 	[[nodiscard]] Child build(const Element &) const {
-		Child icon = Image{
+		Child icon = Stack{
 			.widget{
-				.alignment = Alignment::CenterRight,
+				.width = Size::Wrap,
+				.height = Size::Wrap,
 			},
-			.fit = squi::Image::Fit::contain,
-			.image = ImageProvider::fromFile(std::format("assets/Discs/{}/icon.png", Disc::sets.at(set).name)),
+			.children{
+				Image{
+					.widget{
+						.alignment = Alignment::CenterRight,
+					},
+					.fit = squi::Image::Fit::contain,
+					.image = ImageProvider::fromFile(std::format("assets/Discs/{}/icon.png", Disc::sets.at(set).name)),
+				},
+				Box{
+					.widget{
+						.width = 24.f,
+						.height = 24.f,
+						.alignment = Alignment::BottomRight,
+						.margin = Margin{}.withRight(40.f),
+					},
+					.color = Color::black * 0.5f,
+					.borderColor = Color::black * 0.8f,
+					.borderWidth = 1.f,
+					.borderRadius = 8.f,
+					.child = Text{
+						.widget{
+							.alignment = Alignment::Center,
+						},
+						.text = std::format("{}", Disc::getPartitionIndex(partition)),
+					},
+				},
+			},
 		};
 		Child title = Column{
 			.widget{

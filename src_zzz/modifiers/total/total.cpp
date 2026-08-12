@@ -41,7 +41,7 @@ namespace Modifiers {
 		void print(Formula::Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
 			Formula::Descriptor formulaDescriptor;
 			getFormula().print(formulaDescriptor, context, Formula::Step::none);
-			descriptor.add("Total " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
+			descriptor.add("Combat " + name.getName(), {eval(context), name.isPercentage()}, std::move(formulaDescriptor));
 		}
 
 		[[nodiscard]] float eval(const Formula::Context &context) const {
