@@ -1,6 +1,7 @@
 import pascalCase from "https://deno.land/x/case@2.2.0/pascalCase.ts";
-import { Artifact } from "./artifactType.d.ts";
+import { Equipment } from "./artifactTypeNanoka.d.ts";
 import camelCase from "https://deno.land/x/case@2.2.0/camelCase.ts";
+import { ManifestNanoka } from "./manifestNanoka.d.ts";
 
 if (Deno.args[0] == undefined) {
 	console.error("Usage: artifactGenerator.ts <artifact set id>\neg: deno run .\\scripts\\artifactGenerator.ts 15026");
@@ -15,21 +16,28 @@ try {
 	Deno.exit(1);
 }
 
-const response = await fetch(`https://api.hakush.in/gi/data/en/artifact/${Deno.args[0]}.json`);
+const manifestNanokaResponse = await fetch("https://static.nanoka.cc/manifest.json");
+if (!manifestNanokaResponse.ok) {
+	console.error(`Failed to get the manifest with code ${manifestNanokaResponse.status}, "${manifestNanokaResponse.statusText}"`);
+	Deno.exit(1);
+}
+const manifestNanoka: ManifestNanoka = await manifestNanokaResponse.json();
+
+const response = await fetch(`https://static.nanoka.cc/gi/${manifestNanoka.gi.latest}/en/artifact/${Deno.args[0]}.json`);
 if (!response.ok) {
 	console.error(`Response failed with code ${response.status}, "${response.statusText}"`);
 }
-const contents: Artifact = await response.json();
+const contents: Equipment = await response.json();
 
 const data = {
-	key: contents.Id,
-	name: contents.Affix[0].Name,
-	caseableName: contents.Affix[0].Name.replaceAll("'", ""),
-	iconGoblet: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_1.webp`,
-	iconPlume: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_2.webp`,
-	iconCirclet: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_3.webp`,
-	iconFlower: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_4.webp`,
-	iconSands: `https://api.hakush.in/gi/UI/UI_RelicIcon_${contents.Id}_5.webp`,
+	key: contents.id,
+	name: contents.affix[0].name,
+	caseableName: contents.affix[0].name.replaceAll("'", ""),
+	iconGoblet: `https://static.nanoka.cc/assets/gi/UI_RelicIcon_${contents.id}_1.webp`,
+	iconPlume: `https://static.nanoka.cc/assets/gi/UI_RelicIcon_${contents.id}_2.webp`,
+	iconCirclet: `https://static.nanoka.cc/assets/gi/UI_RelicIcon_${contents.id}_3.webp`,
+	iconFlower: `https://static.nanoka.cc/assets/gi/UI_RelicIcon_${contents.id}_4.webp`,
+	iconSands: `https://static.nanoka.cc/assets/gi/UI_RelicIcon_${contents.id}_5.webp`,
 };
 
 const retHeader: string = `#pragma once

@@ -77,7 +77,7 @@ namespace Formula {
 
 			return IfElse{
 				.requirement = totalRES < 0.f,
-				.trueVal = 1.f - (totalRES / 2.f),
+				.trueVal = 1.f - (totalRES / ConstantFlat{.value = 2.f}),
 				.elseVal = IfElse{
 					.requirement = totalRES < 0.75f,
 					.trueVal = 1.f - totalRES,

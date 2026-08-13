@@ -7,6 +7,7 @@
 #include "node/atkNode.hpp"          // IWYU pragma: export
 #include "node/customAtkNode.hpp"    // IWYU pragma: export
 #include "node/directLunar.hpp"      // IWYU pragma: export
+#include "node/directStellar.hpp"    // IWYU pragma: export
 #include "node/healNode.hpp"         // IWYU pragma: export
 #include "node/infoNode.hpp"         // IWYU pragma: export
 #include "node/modsNode.hpp"         // IWYU pragma: export
@@ -16,6 +17,9 @@
 namespace Character {
 	static inline auto IsActive(const Utils::HashedString &name) {
 		return Formula::impl_IsActive{.name = name};
+	}
+	static inline auto IsActiveTeam(const Utils::HashedString &name) {
+		return Formula::impl_IsActivePassive{.name = name};
 	}
 	static inline auto GetFloat(const Utils::HashedString &name, float defaultValue = 0.f) {
 		return Formula::impl_GetFloat{.name = name, .defaultValue = defaultValue};

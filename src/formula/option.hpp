@@ -118,6 +118,56 @@ namespace Formula {
 		}
 	};
 
+	struct impl_GetFloatPassive : FormulaBase<float, Type::constant> {
+		Utils::HashedString name;
+		float defaultValue = 0.f;
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add(std::string{name.str}, {eval(context), false});
+		}
+
+		[[nodiscard]] float eval(const Context &context) const {
+			if (context.overrides != nullptr) {
+				if (auto opt = context.overrides->getOption(Utils::hashCombine(0, name.hash)); opt.has_value()) {
+					return std::visit(
+						Utils::overloaded{
+							[](const bool &active) {
+								return active ? 1.f : 0.f;
+							},
+							[&](const std::optional<uint8_t> &currentIndex) -> float {
+								auto &values = std::get<Option::ValueList>(context.team.options.at(name.hash)).values;
+								if (currentIndex.has_value() && currentIndex.value() < values.size()) {
+									return values.at(currentIndex.value());
+								} else {
+									return defaultValue;
+								}
+							},
+							[](const ::Combo::ComboFloatOption &value) {
+								return value.value;
+							},
+						},
+						opt->get().value
+					);
+				}
+			}
+
+			return std::visit(
+				Utils::overloaded{
+					[&](const Option::Boolean &opt) -> float {
+						return opt.active ? 1.f : 0.f;
+					},
+					[&](const Option::ValueList &opt) -> float {
+						return opt.getValue().value_or(defaultValue);
+					},
+					[&](const Option::ValueSlider &opt) -> float {
+						return opt.getValue();
+					},
+				},
+				context.team.options.at(name.hash)
+			);
+		}
+	};
+
 	struct impl_GetInt : FormulaBase<int32_t, Type::constant> {
 		Utils::HashedString name;
 		uint32_t defaultValue = 0.f;

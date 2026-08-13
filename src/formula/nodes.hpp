@@ -98,6 +98,28 @@ namespace Formula {
 		}
 	};
 
+	struct NodeDirectStellar : Formula::FormulaBase<float> {
+		Misc::StellarDamageType damageType{};
+		Misc::SkillStat skillStat{};
+
+		auto getFormula(const Formula::Context &context) const {
+			return Stats::fromSkillStat(Stats::fromStellarDamageType(Modifiers::total(), damageType), skillStat);
+		}
+
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(Misc::stellarDamageTypeToElement(damageType)));
+			getFormula(context).print(descriptor, context, Step::none);
+		}
+
+		[[nodiscard]] float eval(const Formula::Context &context) const {
+			return getFormula(context).eval(context);
+		}
+	};
+
 	struct NodeElementCheck : Formula::FormulaBase<float> {
 		Modifiers::SheetMemberIdentifier identifier;
 		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
@@ -227,6 +249,29 @@ namespace Formula {
 		}
 	};
 
+	struct NodeDirectStellarCheck : Formula::FormulaBase<float> {
+		Modifiers::SheetMemberIdentifier identifier;
+		Modifiers::EnemyMember<Stats::Sheet<Formula::FloatNode>::_EnemySheet> stat;
+		Misc::StellarDamageType damageType{};
+
+		auto getFormula(const Formula::Context &context) const {
+			return stat.resolve(Stats::fromStellarDamageType(Modifiers::total(), damageType).enemy);
+		}
+
+		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
+			return getFormula(context).fold(context, args);
+		}
+
+		void print(Descriptor &descriptor, const Formula::Context &context, Formula::Step) const {
+			descriptor.pushColor(Utils::elementToColor(Misc::stellarDamageTypeToElement(damageType)));
+			getFormula(context).print(descriptor, context, Step::none);
+		}
+
+		[[nodiscard]] float eval(const Formula::Context &context) const {
+			return stat.resolve(Stats::fromStellarDamageType(Modifiers::total(), damageType).enemy).eval(context);
+		}
+	};
+
 	[[nodiscard]] inline Stats::Sheet<FloatNode>::_EnemySheet getElementModifier(Utils::JankyOptional<Misc::AttackSource> source, Utils::JankyOptional<Misc::Element> element) {
 		return Modifiers::enemyFactory<Formula::FloatNode, Formula::NodeElementCheck>(        //
 			Modifiers::EnemyNameFactory{},                                                    //
@@ -266,6 +311,14 @@ namespace Formula {
 			Modifiers::EnemyNameFactory{},                                                  //
 			Modifiers::EnemyPointerFactory<Stats::Sheet<Formula::FloatNode>::_EnemySheet>{},//
 			Modifiers::constantEnemyFactory<Misc::LunarDamageType>(type)                    //
+		);
+	}
+
+	[[nodiscard]] inline Stats::Sheet<FloatNode>::_EnemySheet getStellarDamageModifier(Misc::StellarDamageType type) {
+		return Modifiers::enemyFactory<Formula::FloatNode, Formula::NodeDirectStellarCheck>(  //
+			Modifiers::EnemyNameFactory{},                                                    //
+			Modifiers::EnemyPointerFactory<Stats::Sheet<Formula::FloatNode>::_EnemySheet>{}, //
+			Modifiers::constantEnemyFactory<Misc::StellarDamageType>(type)                   //
 		);
 	}
 }// namespace Formula

@@ -35,6 +35,17 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 				}
 				std::unreachable();
 			},
+			[&](const DirectStellarData &node) -> squi::Color {
+				switch (node.damageType) {
+					case Misc::StellarDamageType::cryoStellarConduct:
+						return Utils::elementToColor(Misc::Element::cryo);
+					case Misc::StellarDamageType::electroStellarConduct:
+						return Utils::elementToColor(Misc::Element::electro);
+					case Misc::StellarDamageType::stellarSwirl:
+						return Utils::elementToColor(Misc::Element::anemo);
+				}
+				std::unreachable();
+			},
 		},
 		data
 	);
@@ -61,6 +72,9 @@ bool Node::getOptimizable(const Data &data) {
 				return false;
 			},
 			[&](const DirectLunarData &) {
+				return true;
+			},
+			[&](const DirectStellarData &) {
 				return true;
 			},
 		},

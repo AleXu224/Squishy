@@ -6,6 +6,7 @@
 #include "artifact/sets/BloodstainedChivalry.hpp"
 #include "artifact/sets/CrimsonWitchOfFlames.hpp"
 #include "artifact/sets/DeepwoodMemories.hpp"
+#include "artifact/sets/DisenchantmentInDeepShadow.hpp"
 #include "artifact/sets/EmblemOfSeveredFate.hpp"
 #include "artifact/sets/FinaleOfTheDeepGalleries.hpp"
 #include "artifact/sets/FragmentOfHarmonicWhimsy.hpp"
@@ -40,6 +41,7 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::blizzardStrayer.key, Artifact::Sets::blizzardStrayer},
 		{Artifact::Sets::crimsonWitchOfFlames.key, Artifact::Sets::crimsonWitchOfFlames},
 		{Artifact::Sets::deepwoodMemories.key, Artifact::Sets::deepwoodMemories},
+		{Artifact::Sets::disenchantmentInDeepShadow.key, Artifact::Sets::disenchantmentInDeepShadow},
 		{Artifact::Sets::emblemOfSeveredFate.key, Artifact::Sets::emblemOfSeveredFate},
 		{Artifact::Sets::finaleOfTheDeepGalleries.key, Artifact::Sets::finaleOfTheDeepGalleries},
 		{Artifact::Sets::fragmentOfHarmonicWhimsy.key, Artifact::Sets::fragmentOfHarmonicWhimsy},

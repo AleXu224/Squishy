@@ -77,6 +77,10 @@ namespace Modifiers {
 		static constexpr auto lunarBloom = Skill<&TT::lunarBloom>();
 		static constexpr auto lunarCrystallize = Skill<&TT::lunarCrystallize>();
 		static constexpr auto allLunar = Skill<&TT::allLunar>();
+
+		static constexpr auto stellarConduct = Skill<&TT::stellarConduct>();
+		static constexpr auto stellarSwirl = Skill<&TT::stellarSwirl>();
+		static constexpr auto allStellar = Skill<&TT::allStellar>();
 	};
 
 	struct StatNameFactory {
@@ -147,6 +151,10 @@ namespace Modifiers {
 		static constexpr auto lunarCrystallize = Skill<Misc::Reaction::lunarCrystallize>();
 		static constexpr auto allLunar = Skill<Misc::Reaction::allLunar>();
 		static constexpr auto moonsignLevel = Modifiers::SheetMemberIdentifier::moonsignLevel();
+
+		static constexpr auto stellarConduct = Skill<Misc::Reaction::stellarConduct>();
+		static constexpr auto stellarSwirl = Skill<Misc::Reaction::stellarSwirl>();
+		static constexpr auto allStellar = Skill<Misc::Reaction::allStellar>();
 	};
 
 	template<template<auto...> class Formula, auto... Params>
@@ -217,6 +225,10 @@ namespace Modifiers {
 		static constexpr _SkillValue<Params.lunarBloom...> lunarBloom{};
 		static constexpr _SkillValue<Params.lunarCrystallize...> lunarCrystallize{};
 		static constexpr _SkillValue<Params.allLunar...> allLunar{};
+
+		static constexpr _SkillValue<Params.stellarConduct...> stellarConduct{};
+		static constexpr _SkillValue<Params.stellarSwirl...> stellarSwirl{};
+		static constexpr _SkillValue<Params.allStellar...> allStellar{};
 	};
 
 	template<class T, class Formula>
@@ -290,6 +302,10 @@ namespace Modifiers {
 			.lunarBloom = statSkillValueFactory<T, Formula>(params.lunarBloom...),
 			.lunarCrystallize = statSkillValueFactory<T, Formula>(params.lunarCrystallize...),
 			.allLunar = statSkillValueFactory<T, Formula>(params.allLunar...),
+
+			.stellarConduct = statSkillValueFactory<T, Formula>(params.stellarConduct...),
+			.stellarSwirl = statSkillValueFactory<T, Formula>(params.stellarSwirl...),
+			.allStellar = statSkillValueFactory<T, Formula>(params.allStellar...),
 		};
 	}
 
@@ -364,6 +380,10 @@ namespace Modifiers {
 			.lunarBloom = constantStatSkillValueFactory<T>(param),
 			.lunarCrystallize = constantStatSkillValueFactory<T>(param),
 			.allLunar = constantStatSkillValueFactory<T>(param),
+
+			.stellarConduct = constantStatSkillValueFactory<T>(param),
+			.stellarSwirl = constantStatSkillValueFactory<T>(param),
+			.allStellar = constantStatSkillValueFactory<T>(param),
 		};
 	}
 

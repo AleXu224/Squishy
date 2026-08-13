@@ -53,7 +53,7 @@ namespace Node {
 		auto dmgBonus = (1.0f + emBonus + totalDMG);
 		auto crit = 1.0f + totalCritRate * totalCritDMG;
 		auto totalModifier = _getTotalEnemy(damageType, modifier.enemy);
-		auto enemy = Formula::EnemyResMultiplier{.attackSource = {}, .element = Misc::lunarDamageTypeToElement(damageType), .modifiers = totalModifier.resistance} * Formula::EnemyDefMultiplier{.modifiers = totalModifier};
+		auto enemy = Formula::EnemyResMultiplier{.attackSource = {}, .element = Misc::lunarDamageTypeToElement(damageType), .modifiers = totalModifier.resistance};
 		auto elevation = 1.0f + totalElevation;
 
 		auto finalMultiplier = getDirectLunarMultiplier(damageType);

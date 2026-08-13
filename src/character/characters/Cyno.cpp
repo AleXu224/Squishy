@@ -25,8 +25,11 @@ const Character::Data Character::Datas::cyno{
 		.ascensionStatUpgrade = {0, 0, 0.096, 0.192, 0.192, 0.288, 0.384},
 	},
 	.setup = []() -> Data::Setup {
+		auto radianceStellarConduct = IsActiveTeam("radianceStellarConduct");
+
+		auto burstActive = IsActive("burstActive");
 		auto burstEmBonus = Requires{
-			.requirement = IsActive("burstActive"),
+			.requirement = burstActive,
 			.ret = ConstantFlat{.value = 100.f},
 		};
 
@@ -40,18 +43,54 @@ const Character::Data Character::Datas::cyno{
 
 		auto a4BurstBonus = Requires{.requirement = Requirement::passive2, .ret = total.em * 1.5f};
 		auto a4BoltBbonus = Requires{.requirement = Requirement::passive2, .ret = total.em * 2.5f};
+		auto a4StarsameBoltBbonus = Requires{.requirement = Requirement::passive2, .ret = total.em * 6.f};
 		auto a4BurstModifier = Modifier{
 			.additiveDMG = a4BurstBonus,
 		};
 
+		auto c1Buff = Requires{
+			.requirement = radianceStellarConduct && burstActive && Requirement::constellation1,
+			.ret = ConstantFlat{.value = 200.f},
+		};
+		auto c1TeamBuff = Requires{
+			.requirement = !Requirement::selfBuff
+						&& radianceStellarConduct
+						&& IsActive("c1TeamBuff")
+						&& Requirement::constellation1,
+			.ret = ConstantFlat{.value = 200.f},
+		};
+
 		auto c2ElectroDmg = Requires{.requirement = Requirement::constellation2, .ret = GetFloat("c2Hits") * 0.1f};
+		auto c2Stacks = GetFloat("c2Stacks");
+		auto c2BuffBase = Requires{
+			.requirement = radianceStellarConduct
+						&& Requirement::constellation2,
+			.ret = Constant{.value = 0.16f} * c2Stacks,
+		};
+		auto c2Buff = IfElse{
+			.requirement = Requirement::selfBuff,
+			.trueVal = Requires{
+				.requirement = burstActive,
+				.ret = c2BuffBase,
+			},
+			.elseVal = Requires{
+				.requirement = IsActive("c1TeamBuff"),
+				.ret = c2BuffBase,
+			},
+		};
 
 		return Data::Setup{
 			.mods{
 				.preMod{
-					.em = burstEmBonus,
+					.em = burstEmBonus + c1Buff,
 					.electro{
 						.DMG = c2ElectroDmg,
+					},
+				},
+				.activePreMod{
+					.em = c1TeamBuff,
+					.stellarConduct{
+						.DMG = c2Buff,
 					},
 				},
 			},
@@ -62,7 +101,7 @@ const Character::Data Character::Datas::cyno{
 						.name = "Burst Active",
 						.mods{
 							.preMod{
-								.em = burstEmBonus,
+								.em = burstEmBonus + c1Buff,
 							},
 						},
 					},
@@ -81,6 +120,19 @@ const Character::Data Character::Datas::cyno{
 						},
 					},
 				},
+				.constellation1{
+					Option::Boolean{
+						.key = "c1TeamBuff",
+						.name = "After switching out while in Pactsworn Pathclearer state",
+						.teamBuff = true,
+						.displayCondition = radianceStellarConduct,
+						.mods{
+							.activePreMod{
+								.em = c1TeamBuff,
+							},
+						},
+					},
+				},
 				.constellation2{
 					Option::ValueList{
 						.key = "c2Hits",
@@ -90,6 +142,20 @@ const Character::Data Character::Datas::cyno{
 							.preMod{
 								.electro{
 									.DMG = Requires{.requirement = Requirement::constellation2, .ret = GetFloat("c2Hits") * 0.1f},
+								},
+							},
+						},
+					},
+					Option::ValueSlider{
+						.key = "c2Stacks",
+						.name = "After active character hits an opponent with a Normal Attack or Charged Attack",
+						.teamBuff = true,
+						.displayCondition = (IsActive("c1TeamBuff") || burstActive) && radianceStellarConduct,
+						.values = std::views::iota(0) | std::views::take(6) | std::ranges::to<std::vector<float>>(),
+						.mods{
+							.activePreMod{
+								.stellarConduct{
+									.DMG = c2Buff,
 								},
 							},
 						},
@@ -196,12 +262,23 @@ const Character::Data Character::Datas::cyno{
 				},
 				.passive1{
 					Node::Atk{
-						.name = "Duststalker bolt DMG",
+						.name = "Duststalker Bolt DMG",
 						.source = Misc::AttackSource::skill,
 						.formula = total.atk * 1.f,
 						.modifier = Modifier{
 							.additiveDMG = a4BoltBbonus,
-						}
+						},
+					},
+					Node::DirectStellar{
+						.name = "Duststalker Bolts - Starsame DMG",
+						.damageType = Misc::StellarDamageType::electroStellarConduct,
+						.formula = Requires{
+							.requirement = radianceStellarConduct,
+							.ret = total.atk * 2.f,
+						},
+						.modifier = Modifier{
+							.additiveDMG = a4StarsameBoltBbonus,
+						},
 					},
 				},
 				.passive2{
@@ -214,6 +291,11 @@ const Character::Data Character::Datas::cyno{
 						.name = "Duststalker Bolt DMG Increase",
 						.optimizable = true,
 						.formula = a4BoltBbonus,
+					},
+					Node::Info{
+						.name = "Duststalker Bolts - Starsame DMG Increase",
+						.optimizable = true,
+						.formula = a4StarsameBoltBbonus,
 					},
 				},
 			},

@@ -436,6 +436,9 @@ squi::core::Child UI::ComboEditor::State::build(const Element &element) {
 												[&](const Node::DirectLunarData &data) {
 													element = Misc::lunarDamageTypeToElement(data.damageType);
 												},
+												[&](const Node::DirectStellarData &data) {
+													element = Misc::stellarDamageTypeToElement(data.damageType);
+												},
 											},
 											node.data
 										);

@@ -6,6 +6,7 @@
 #include "misc/lunarDamageType.hpp"
 #include "misc/reaction.hpp"
 #include "misc/skillStat.hpp"
+#include "misc/stellarDamageType.hpp"
 #include "stats/stat.hpp"
 #include "type_traits"
 #include "utility"
@@ -364,6 +365,12 @@ namespace Stats {
 				return fromSkillStat<Sheet.lunarCrystallize, RetType>(skillStat);
 			case Misc::Reaction::allLunar:
 				return fromSkillStat<Sheet.allLunar, RetType>(skillStat);
+			case Misc::Reaction::stellarConduct:
+				return fromSkillStat<Sheet.stellarConduct, RetType>(skillStat);
+			case Misc::Reaction::stellarSwirl:
+				return fromSkillStat<Sheet.stellarSwirl, RetType>(skillStat);
+			case Misc::Reaction::allStellar:
+				return fromSkillStat<Sheet.allStellar, RetType>(skillStat);
 		}
 		std::unreachable();
 	}
@@ -405,6 +412,12 @@ namespace Stats {
 				return fromSkillStat(sheet.lunarCrystallize, skillStat);
 			case Misc::Reaction::allLunar:
 				return fromSkillStat(sheet.allLunar, skillStat);
+			case Misc::Reaction::stellarConduct:
+				return fromSkillStat(sheet.stellarConduct, skillStat);
+			case Misc::Reaction::stellarSwirl:
+				return fromSkillStat(sheet.stellarSwirl, skillStat);
+			case Misc::Reaction::allStellar:
+				return fromSkillStat(sheet.allStellar, skillStat);
 		}
 		std::unreachable();
 	}
@@ -445,6 +458,12 @@ namespace Stats {
 				return sheet.lunarCrystallize;
 			case Misc::Reaction::allLunar:
 				return sheet.allLunar;
+			case Misc::Reaction::stellarConduct:
+				return sheet.stellarConduct;
+			case Misc::Reaction::stellarSwirl:
+				return sheet.stellarSwirl;
+			case Misc::Reaction::allStellar:
+				return sheet.allStellar;
 		}
 		std::unreachable();
 	}
@@ -515,6 +534,17 @@ namespace Stats {
 				return sheet.lunarCharged;
 			case Misc::LunarDamageType::lunarCrystallize:
 				return sheet.lunarCrystallize;
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] auto &&fromStellarDamageType(auto &&sheet, Misc::StellarDamageType damageType) {
+		switch (damageType) {
+			case Misc::StellarDamageType::cryoStellarConduct:
+			case Misc::StellarDamageType::electroStellarConduct:
+				return sheet.stellarConduct;
+			case Misc::StellarDamageType::stellarSwirl:
+				return sheet.stellarSwirl;
 		}
 		std::unreachable();
 	}

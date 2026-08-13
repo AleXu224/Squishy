@@ -105,6 +105,31 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.allLunar{.DMG = moonsignBuff}}},
 		},
 	});
+	options.insert({
+		Utils::HashedString("stellarConductCoefficientStacks"),
+		Option::ValueSlider{
+			.key = "stellarConductCoefficientStacks",
+			.name = "Cryo or Electro hits recorded",
+			.displayCondition = Formula::ElementCount{.element = Misc::Element::cryo} >= 1 && Formula::ElementCount{.element = Misc::Element::electro} >= 1,
+			.values = std::views::iota(0) | std::views::take(13) | std::ranges::to<std::vector<float>>(),
+		},
+	});
+	options.insert({
+		Utils::HashedString("radianceStellarConduct"),
+		Option::Boolean{
+			.key = "radianceStellarConduct",
+			.name = "Radiance: Stellar-Conduct",
+			.displayCondition = Formula::ElementCount{.element = Misc::Element::cryo} >= 1 && Formula::ElementCount{.element = Misc::Element::electro} >= 1,
+		},
+	});
+	options.insert({
+		Utils::HashedString("radianceStellarSwirl"),
+		Option::Boolean{
+			.key = "radianceStellarSwirl",
+			.name = "Radiance: Stellar-Swirl",
+			.displayCondition = Formula::ElementCount{.element = Misc::Element::cryo} >= 1 && Formula::ElementCount{.element = Misc::Element::anemo} >= 1,
+		},
+	});
 }
 [[nodiscard]] bool Stats::Team::hasCharacter(::Character::InstanceKey key) const {
 	for (const auto &character: characters) {

@@ -160,8 +160,11 @@ namespace Stats {
 		_SkillValue lunarCharged{};
 		_SkillValue lunarBloom{};
 		_SkillValue lunarCrystallize{};
-
 		_SkillValue allLunar{};
+
+		_SkillValue stellarConduct{};
+		_SkillValue stellarSwirl{};
+		_SkillValue allStellar{};
 
 		[[nodiscard]] auto &fromElement(this auto &&self, const Misc::Element &element) {
 			return Stats::fromElement(self, element);
