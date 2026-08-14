@@ -11,8 +11,8 @@
 #include "widgets/dialog.hpp"
 #include "widgets/dropdownButton.hpp"
 #include "widgets/navigator.hpp"
-#include "widgets/numberBox.hpp"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/text.hpp"
 
 
@@ -56,14 +56,14 @@ squi::core::Child UI::EngineEditor::State::build(const Element &element) {
 	};
 
 	// Level
-	Child levelSelector = NumberBox{
+	Child levelSelector = Slider{
 		.widget{
-			.width = 40.f,
+			.width = 200.f,
 		},
+		.minValue = 1.f,
+		.maxValue = static_cast<float>(Misc::promotions.at(Misc::maxPromotionByRarity.at(engine.stats.data->baseStats.rarity)).maxLevel),
 		.value = static_cast<float>(engine.stats.sheet.level),
-		.min = 1.f,
-		.max = static_cast<float>(Misc::promotions.at(Misc::maxPromotionByRarity.at(engine.stats.data->baseStats.rarity)).maxLevel),
-		.precision = 0,
+		.ticks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f},
 		.onChange = [this](float newVal) {
 			setState([&]() {
 				engine.stats.sheet.level = std::floor(newVal);

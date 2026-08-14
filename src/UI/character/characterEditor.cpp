@@ -8,8 +8,8 @@
 #include "widgets/container.hpp"
 #include "widgets/dialog.hpp"
 #include "widgets/dropdownButton.hpp"
-#include "widgets/numberBox.hpp"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/text.hpp"
 #include <algorithm>
 #include <array>
@@ -54,14 +54,14 @@ void UI::CharacterEditor::State::clampTalents() {
 
 squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	// Level
-	Child levelSelector = NumberBox{
+	Child levelSelector = Slider{
 		.widget{
-			.width = 40.f,
+			.width = 200.f,
 		},
+		.minValue = 1.f,
+		.maxValue = 90.f,
 		.value = static_cast<float>(character->state.stats.sheet.level),
-		.min = 1.f,
-		.max = static_cast<float>(Misc::ascensions.at(Misc::maxAscensionByRarity.at(character->state.stats.data.baseStats.rarity)).maxLevel),
-		.precision = 0,
+		.ticks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f, 70.f, 80.f, 90.f},
 		.onChange = [this](float newVal) {
 			setState([&]() {
 				character->state.stats.sheet.level = std::floor(newVal);

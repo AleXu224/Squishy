@@ -11,8 +11,8 @@
 #include "widgets/dialog.hpp"
 #include "widgets/dropdownButton.hpp"
 #include "widgets/navigator.hpp"
-#include "widgets/numberBox.hpp"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/text.hpp"
 
 using namespace squi;
@@ -55,14 +55,14 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 	};
 
 	// Level
-	Child levelSelector = NumberBox{
+	Child levelSelector = Slider{
 		.widget{
-			.width = 40.f,
+			.width = 200.f,
 		},
+		.minValue = 1.f,
+		.maxValue = static_cast<float>(Misc::ascensions.at(Misc::maxAscensionByRarity.at(weapon.stats.data->baseStats.rarity)).maxLevel),
 		.value = static_cast<float>(weapon.stats.sheet.level),
-		.min = 1.f,
-		.max = static_cast<float>(Misc::ascensions.at(Misc::maxAscensionByRarity.at(weapon.stats.data->baseStats.rarity)).maxLevel),
-		.precision = 0,
+		.ticks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f, 70.f, 80.f, 90.f},
 		.onChange = [this](float newVal) {
 			setState([&]() {
 				weapon.stats.sheet.level = std::floor(newVal);

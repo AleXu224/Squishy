@@ -14,6 +14,7 @@
 
 #include "ranges"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/stack.hpp"
 #include "widgets/text.hpp"
 
@@ -164,12 +165,15 @@ squi::core::Child UI::DiscEditor::State::build(const Element &) {
 	// Level
 	Child levelSelector = EditorItem{
 		.name = "Level",
-		.child = NumberBox{
-			.value = static_cast<double>(disc.level),
-			.min = 0.f,
-			.max = 15.f,
-			.precision = 0,
-			.onChange = [this](double newVal) {
+		.child = Slider{
+			.widget{
+				.width = 200.f,
+			},
+			.minValue = 0.f,
+			.maxValue = 15.f,
+			.value = static_cast<float>(disc.level),
+			.ticks = std::vector<float>{0.f, 3.f, 6.f, 9.f, 12.f, 15.f},
+			.onChange = [this](float newVal) {
 				setState([&]() {
 					disc.level = std::floor(newVal);
 				});

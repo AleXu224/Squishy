@@ -13,6 +13,7 @@
 
 #include "ranges"
 #include "widgets/row.hpp"
+#include "widgets/slider.hpp"
 #include "widgets/stack.hpp"
 #include "widgets/text.hpp"
 #include "widgets/toggleSwitch.hpp"
@@ -144,12 +145,15 @@ squi::core::Child UI::ArtifactEditor::State::build(const Element &) {
 	// Level
 	Child levelSelector = EditorItem{
 		.name = "Level",
-		.child = NumberBox{
-			.value = static_cast<double>(artifact.level),
-			.min = 0.f,
-			.max = 20.f,
-			.precision = 0,
-			.onChange = [this](double newVal) {
+		.child = Slider{
+			.widget{
+				.width = 200.f,
+			},
+			.minValue = 0.f,
+			.maxValue = 20.f,
+			.value = static_cast<float>(artifact.level),
+			.ticks = std::vector<float>{0.f, 4.f, 8.f, 12.f, 16.f, 20.f},
+			.onChange = [this](float newVal) {
 				setState([&]() {
 					artifact.level = std::floor(newVal);
 				});
