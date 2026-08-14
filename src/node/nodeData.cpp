@@ -37,10 +37,8 @@ squi::Color Node::getColor(const Data &data, const Formula::Context &ctx) {
 			},
 			[&](const DirectStellarData &node) -> squi::Color {
 				switch (node.damageType) {
-					case Misc::StellarDamageType::cryoStellarConduct:
-						return Utils::elementToColor(Misc::Element::cryo);
-					case Misc::StellarDamageType::electroStellarConduct:
-						return Utils::elementToColor(Misc::Element::electro);
+					case Misc::StellarDamageType::stellarConduct:
+						return Utils::elementToColor(node.element.value_or(ctx.source.stats.base.element));
 					case Misc::StellarDamageType::stellarSwirl:
 						return Utils::elementToColor(Misc::Element::anemo);
 				}

@@ -21,6 +21,7 @@
 #include "weapons/FavoniusLance.hpp"
 #include "weapons/FavoniusSword.hpp"
 #include "weapons/FavoniusWarbow.hpp"
+#include "weapons/FinaleOfTheDeep.hpp"
 #include "weapons/FracturedHalo.hpp"
 #include "weapons/GoldenFrostboundOath.hpp"
 #include "weapons/HarbingerOfDawn.hpp"
@@ -40,6 +41,7 @@
 #include "weapons/ThrillingTalesOfDragonSlayers.hpp"
 #include "weapons/TomeOfTheEternalFlow.hpp"
 #include "weapons/WasterGreatsword.hpp"
+#include "weapons/WolfFang.hpp"
 
 
 void Weapon::initWeapons() {
@@ -65,6 +67,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::favoniusLance.key, Weapon::Datas::favoniusLance},
 		{Weapon::Datas::favoniusSword.key, Weapon::Datas::favoniusSword},
 		{Weapon::Datas::favoniusWarbow.key, Weapon::Datas::favoniusWarbow},
+		{Weapon::Datas::finaleOfTheDeep.key, Weapon::Datas::finaleOfTheDeep},
 		{Weapon::Datas::fracturedHalo.key, Weapon::Datas::fracturedHalo},
 		{Weapon::Datas::goldenFrostboundOath.key, Weapon::Datas::goldenFrostboundOath},
 		{Weapon::Datas::harbingerOfDawn.key, Weapon::Datas::harbingerOfDawn},
@@ -84,5 +87,6 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::thrillingTalesOfDragonSlayers.key, Weapon::Datas::thrillingTalesOfDragonSlayers},
 		{Weapon::Datas::tomeOfTheEternalFlow.key, Weapon::Datas::tomeOfTheEternalFlow},
 		{Weapon::Datas::wasterGreatsword.key, Weapon::Datas::wasterGreatsword},
+		{Weapon::Datas::wolfFang.key, Weapon::Datas::wolfFang},
 	};
 }

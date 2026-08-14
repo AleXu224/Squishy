@@ -271,7 +271,7 @@ const Character::Data Character::Datas::cyno{
 					},
 					Node::DirectStellar{
 						.name = "Duststalker Bolts - Starsame DMG",
-						.damageType = Misc::StellarDamageType::electroStellarConduct,
+						.damageType = Misc::StellarDamageType::stellarConduct,
 						.formula = Requires{
 							.requirement = radianceStellarConduct,
 							.ret = total.atk * 2.f,

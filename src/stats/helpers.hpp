@@ -540,8 +540,7 @@ namespace Stats {
 
 	[[nodiscard]] auto &&fromStellarDamageType(auto &&sheet, Misc::StellarDamageType damageType) {
 		switch (damageType) {
-			case Misc::StellarDamageType::cryoStellarConduct:
-			case Misc::StellarDamageType::electroStellarConduct:
+			case Misc::StellarDamageType::stellarConduct:
 				return sheet.stellarConduct;
 			case Misc::StellarDamageType::stellarSwirl:
 				return sheet.stellarSwirl;

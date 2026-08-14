@@ -14,6 +14,7 @@
 #include "artifact/sets/GladiatorsFinale.hpp"
 #include "artifact/sets/GoldenTroupe.hpp"
 #include "artifact/sets/HeartOfDepth.hpp"
+#include "artifact/sets/HeartOfTheFurnace.hpp"
 #include "artifact/sets/HuskOfOpulentDreams.hpp"
 #include "artifact/sets/Lavawalker.hpp"
 #include "artifact/sets/MaidenBeloved.hpp"
@@ -49,6 +50,7 @@ void Artifact::initArtifacts() {
 		{Artifact::Sets::gladiatorsFinale.key, Artifact::Sets::gladiatorsFinale},
 		{Artifact::Sets::goldenTroupe.key, Artifact::Sets::goldenTroupe},
 		{Artifact::Sets::heartOfDepth.key, Artifact::Sets::heartOfDepth},
+		{Artifact::Sets::heartOfTheFurnace.key, Artifact::Sets::heartOfTheFurnace},
 		{Artifact::Sets::huskOfOpulentDreams.key, Artifact::Sets::huskOfOpulentDreams},
 		{Artifact::Sets::lavawalker.key, Artifact::Sets::lavawalker},
 		{Artifact::Sets::maidenBeloved.key, Artifact::Sets::maidenBeloved},

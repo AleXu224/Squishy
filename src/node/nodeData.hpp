@@ -55,6 +55,7 @@ namespace Node {
 
 	struct DirectStellarData {
 		std::string name;
+		Utils::JankyOptional<Misc::Element> element{};
 		Misc::StellarDamageType damageType;
 	};
 

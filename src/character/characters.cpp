@@ -1,5 +1,6 @@
 #include "characters.hpp"
 
+#include "character/characters/Alyosha.hpp"
 #include "character/characters/Bennett.hpp"
 #include "character/characters/Chasca.hpp"
 #include "character/characters/Citlali.hpp"
@@ -16,6 +17,7 @@
 #include "character/characters/Mavuika.hpp"
 #include "character/characters/Nahida.hpp"
 #include "character/characters/Neuvillette.hpp"
+#include "character/characters/Odette.hpp"
 #include "character/characters/Skirk.hpp"
 #include "character/characters/Xilonen.hpp"
 #include "character/characters/Zibai.hpp"
@@ -23,6 +25,7 @@
 
 extern void Character::initCharacters() {
 	list = {
+		{Character::Datas::alyosha.key, Character::Datas::alyosha},
 		{Character::Datas::bennett.key, Character::Datas::bennett},
 		{Character::Datas::chasca.key, Character::Datas::chasca},
 		{Character::Datas::citlali.key, Character::Datas::citlali},
@@ -39,6 +42,7 @@ extern void Character::initCharacters() {
 		{Character::Datas::mavuika.key, Character::Datas::mavuika},
 		{Character::Datas::nahida.key, Character::Datas::nahida},
 		{Character::Datas::neuvillette.key, Character::Datas::neuvillette},
+		{Character::Datas::odette.key, Character::Datas::odette},
 		{Character::Datas::skirk.key, Character::Datas::skirk},
 		{Character::Datas::xilonen.key, Character::Datas::xilonen},
 		{Character::Datas::zibai.key, Character::Datas::zibai},
