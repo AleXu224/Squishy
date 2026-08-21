@@ -245,7 +245,7 @@ squi::core::Child UI::OptionPicker::State::build(const Element &element) {
 
 				// Team buffs
 				{
-					auto &teamOptList = widget->ctx.team.options;
+					auto &teamOptList = *widget->ctx.team.options;
 					Children teamCategoryRet;
 					for (const auto &[key, opt]: teamOptList) {
 						auto [teamBuff, condition] = std::visit(

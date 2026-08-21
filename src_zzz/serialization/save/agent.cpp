@@ -18,8 +18,8 @@ Serialization::Save::Agent Serialization::Save::Agent::fromInstance(const ::Agen
 		.coreLevel = agent.state.stats.sheet.skills.core.constant,
 		.loadoutIndex = agent.state.loadoutIndex,
 		.equippedLoadout = Serialization::Save::Loadout::fromInstance(agent.state.equippedLoadout),
-		.options = optionsFromInstance(agent.state.options),
-		.combos = comboFromInstance(agent.combos),
+		.options = optionsFromInstance(*agent.state.options),
+		.combos = comboFromInstance(*agent.combos),
 		.loadouts = [&]() {
 			std::vector<::Serialization::Save::Loadout> ret;
 			ret.reserve(agent.state.loadouts.size());
@@ -53,7 +53,7 @@ Serialization::Save::Agent Serialization::Save::Agent::fromInstance(const ::Agen
 		if (!::Store::discs.contains(equipped)) equipped.clear();
 	}
 
-	instance.combos = comboToInstance(combos);
+	instance.combos = std::make_shared<std::map<::Combo::InstanceKey, ::Combo::Combo>>(comboToInstance(combos));
 	instance.optimizationOptions = std::make_shared<::Optimization::Options>(optimizationOptions.toInstance());
 
 	instance.state.equippedLoadout.disc.refreshStats();
@@ -62,7 +62,7 @@ Serialization::Save::Agent Serialization::Save::Agent::fromInstance(const ::Agen
 	for (const auto &loadout: this->loadouts) {
 		auto &entry = loadouts.emplace_back(loadout.toInstance(instance.state.stats.base.specialty));
 		if (entry.engineInstanceKey)
-			entry.engine->data->getOpts(instance.state.options);
+			entry.engine->data->getOpts(*instance.state.options);
 
 		// Check if the disc exists
 		if (!std::holds_alternative<::Stats::Disc::Slotted>(entry.disc.equipped)) continue;
@@ -76,7 +76,7 @@ Serialization::Save::Agent Serialization::Save::Agent::fromInstance(const ::Agen
 	instance.state.loadouts = loadouts;
 
 	instance.state.init();
-	optionsToInstance(options, instance.state.options);
+	optionsToInstance(options, *instance.state.options);
 
 	return instance;
 }

@@ -18,7 +18,7 @@ namespace {
 }// namespace
 
 Node::Instance Combo::Source::Combo::resolve(const Overrides &overrides, const Formula::Context &ctx) const {
-	auto &combo = ::Store::agents.at(agentKey).combos.at(comboKey);
+	auto &combo = ::Store::agents.at(agentKey).combos->at(comboKey);
 
 	std::vector<Formula::Combo::Entry> nodes;
 	Overrides overridesStack{};

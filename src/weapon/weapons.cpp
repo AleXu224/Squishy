@@ -16,6 +16,7 @@
 #include "weapons/CalamityQueller.hpp"
 #include "weapons/Deathmatch.hpp"
 #include "weapons/DullBlade.hpp"
+#include "weapons/ExaiphanesBlade.hpp"
 #include "weapons/FavoniusCodex.hpp"
 #include "weapons/FavoniusGreatsword.hpp"
 #include "weapons/FavoniusLance.hpp"
@@ -62,6 +63,7 @@ void Weapon::initWeapons() {
 		{Weapon::Datas::calamityQueller.key, Weapon::Datas::calamityQueller},
 		{Weapon::Datas::deathmatch.key, Weapon::Datas::deathmatch},
 		{Weapon::Datas::dullBlade.key, Weapon::Datas::dullBlade},
+		{Weapon::Datas::exaiphanesBlade.key, Weapon::Datas::exaiphanesBlade},
 		{Weapon::Datas::favoniusCodex.key, Weapon::Datas::favoniusCodex},
 		{Weapon::Datas::favoniusGreatsword.key, Weapon::Datas::favoniusGreatsword},
 		{Weapon::Datas::favoniusLance.key, Weapon::Datas::favoniusLance},

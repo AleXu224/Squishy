@@ -32,7 +32,7 @@ squi::core::Child UI::WeaponPage::State::build(const Element &element) {
 							instance.updateEvent.notify();
 							for (auto &[_, character]: Store::characters) {
 								if (!instance.isUsedOn(character.instanceKey)) continue;
-								instance.stats.data->getOpts(character.state.options);
+								instance.stats.data->getOpts(*character.state.options);
 								character.updateEvent.notify();
 							}
 						},

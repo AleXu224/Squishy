@@ -17,7 +17,7 @@ Serialization::Save::Team Serialization::Save::Team::fromInstance(const ::Team::
 			return ret;
 		}(),
 		.activeAgentIndex = team.stats.activeAgentIndex,
-		.options = optionsFromInstance(team.stats.options),
+		.options = optionsFromInstance(*team.stats.options),
 	};
 }
 
@@ -26,7 +26,7 @@ Serialization::Save::Team Serialization::Save::Team::fromInstance(const ::Team::
 		.instanceKey = instanceKey,
 		.name = name,
 	};
-	optionsToInstance(options, instance.stats.options);
+	optionsToInstance(options, *instance.stats.options);
 	instance.stats.agents = [&]() {
 		std::array<::Agent::Instance *, 3> ret{};
 		for (auto [retCharRef, saveChar]: std::views::zip(ret, agents)) {

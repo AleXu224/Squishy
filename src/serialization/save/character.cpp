@@ -14,8 +14,8 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 		.burstLevel = character.state.stats.sheet.talents.burst.constant,
 		.loadoutIndex = character.state.loadoutIndex,
 		.equippedLoadout = Serialization::Save::Loadout::fromInstance(character.state.equippedLoadout),
-		.options = optionsFromInstance(character.state.options),
-		.combos = comboFromInstance(character.combos),
+		.options = optionsFromInstance(*character.state.options),
+		.combos = comboFromInstance(*character.combos),
 		.loadouts = [&]() {
 			std::vector<::Serialization::Save::Loadout> ret;
 			ret.reserve(character.state.loadouts.size());
@@ -46,7 +46,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 		if (!::Store::artifacts.contains(equipped)) equipped.clear();
 	}
 
-	instance.combos = comboToInstance(combos);
+	instance.combos = std::make_shared<std::map<::Combo::InstanceKey, ::Combo::Combo>>(comboToInstance(combos));
 	instance.optimizationOptions = std::make_shared<::Optimization::Options>(optimizationOptions.toInstance());
 
 	instance.state.equippedLoadout.artifact.refreshStats();
@@ -54,7 +54,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 	std::vector<::Stats::Loadout> loadouts{};
 	for (const auto &loadout: this->loadouts) {
 		auto &entry = loadouts.emplace_back(loadout.toInstance(instance.state.stats.base.weaponType));
-		entry.weapon->data->getOpts(instance.state.options);
+		entry.weapon->data->getOpts(*instance.state.options);
 
 		// Check if the artifact exists
 		if (!std::holds_alternative<::Stats::Artifact::Slotted>(entry.artifact.equipped)) continue;
@@ -68,7 +68,7 @@ Serialization::Save::Character Serialization::Save::Character::fromInstance(cons
 	instance.state.loadouts = loadouts;
 
 	instance.state.init();
-	optionsToInstance(options, instance.state.options);
+	optionsToInstance(options, *instance.state.options);
 
 	return instance;
 }

@@ -8,7 +8,6 @@ Character::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dat
 	  state(Stats::State{
 		  .instanceKey = instanceKey,
 		  .stats = Stats::Character(Character::list.at(dataKey)),
-		  .options{},
 		  .equippedLoadout{},
 	  }) {
 	state.init();

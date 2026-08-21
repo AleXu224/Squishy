@@ -17,6 +17,11 @@ namespace Serialization::Save {
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
 		bool useEquippedArtifacts = true;
+		bool enableUpgradeLevelUp = true;
+		bool enableUpgradeReroll = true;
+		bool enableUpgradeDefinition = true;
+		uint8_t upgradeRerollRolls = 2;
+		std::map<Stat, bool> upgradeGuaranteedSubStats{};
 
 		static Optimization fromInstance(const ::Optimization::Options &);
 		::Optimization::Options toInstance() const;

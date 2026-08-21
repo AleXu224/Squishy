@@ -10,6 +10,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 			.stat = artifactSubStat.stat.value(),
 			.activated = artifactSubStat.activated,
 			.value = artifactSubStat.value,
+			.initialValue = artifactSubStat.initialValue,
 		};
 	}
 
@@ -21,6 +22,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		.subStats = subStats,
 		.level = artifact.level,
 		.rarity = artifact.rarity,
+		.totalRolls = artifact.totalRolls,
 	};
 }
 
@@ -32,6 +34,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 			.stat = subStatData->stat,
 			.activated = subStatData->activated,
 			.value = subStatData->value,
+			.initialValue = subStatData->initialValue,
 		};
 	}
 
@@ -43,6 +46,7 @@ Serialization::Save::Artifact Serialization::Save::Artifact::fromInstance(const 
 		.subStats = subStats,
 		.level = level,
 		.rarity = rarity,
+		.totalRolls = totalRolls,
 	};
 	instance.updateStats();
 

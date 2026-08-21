@@ -12,6 +12,7 @@ namespace Serialization::Save {
 		::Stat stat;
 		bool activated = true;
 		float value;
+		std::optional<float> initialValue = std::nullopt;
 	};
 
 	struct Artifact {
@@ -22,6 +23,7 @@ namespace Serialization::Save {
 		std::array<std::optional<ArtifactSubStat>, 4> subStats{};
 		uint8_t level{};
 		uint8_t rarity = 5;
+		std::optional<uint8_t> totalRolls = std::nullopt;
 
 		static Artifact fromInstance(const ::Artifact::Instance &);
 		::Artifact::Instance toInstance() const;

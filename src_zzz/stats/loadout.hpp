@@ -6,6 +6,8 @@
 #include "stats/disc.hpp"
 #include "stats/engine.hpp"
 
+#include <memory>
+
 
 namespace Stats {
 	struct Loadout {
@@ -22,7 +24,7 @@ namespace Stats {
 		::Agent::InstanceKey instanceKey;
 		Stats::Agent stats;
 		std::optional<uint32_t> loadoutIndex = std::nullopt;
-		Option::TypesMap options;
+		std::shared_ptr<Option::TypesMap> options = std::make_shared<Option::TypesMap>();
 		Loadout equippedLoadout;
 		std::vector<Loadout> loadouts{};
 

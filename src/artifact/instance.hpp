@@ -23,6 +23,7 @@ namespace Artifact {
 		std::array<StatValue, 4> subStats{};
 		Level level{};
 		uint8_t rarity = 5;
+		std::optional<uint8_t> totalRolls = std::nullopt;
 
 		Stats::SheetSimplified<float> stats{};
 

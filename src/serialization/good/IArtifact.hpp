@@ -5,6 +5,7 @@
 #include "artifact/set.hpp"
 #include "cstdint"
 #include "expected"
+#include "optional"
 #include "string"
 #include "vector"
 
@@ -20,6 +21,7 @@ namespace Serialization::Good {
 		bool lock = false;
 		std::vector<ISubstat> substats;
 		std::vector<ISubstat> unactivatedSubstats;
+		std::optional<uint8_t> totalRolls = std::nullopt;
 
 		static IArtifact fromInstance(const Artifact::Instance &artifact);
 

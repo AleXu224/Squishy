@@ -51,7 +51,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 	resonances.allLunar.DMG.modifiers.at(0) = moonsignBuff;
 
 
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamCryoCond"),
 		Option::Boolean{
 			.key = "teamCryoCond",
@@ -60,7 +60,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.cr = cryoBuff}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamGeoCond"),
 		Option::Boolean{
 			.key = "teamGeoCond",
@@ -69,7 +69,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.all{.DMG = geoBuff1}}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamGeoCond2"),
 		Option::Boolean{
 			.key = "teamGeoCond2",
@@ -78,7 +78,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.enemy{.resistance{.geo = geoBuff2}}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamDendroCond"),
 		Option::Boolean{
 			.key = "teamDendroCond",
@@ -87,7 +87,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.em = Formula::Requires{.requirement = dendroCond && IsActive("teamDendroCond"), .ret = Formula::ConstantFlat{.value = 30.f}}}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamDendroCond2"),
 		Option::Boolean{
 			.key = "teamDendroCond2",
@@ -96,7 +96,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.em = Formula::Requires{.requirement = dendroCond && IsActive("teamDendroCond2"), .ret = Formula::ConstantFlat{.value = 20.f}}}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("teamLunarAscendantDream"),
 		Option::Boolean{
 			.key = "teamLunarAscendantDream",
@@ -105,7 +105,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.mods{.preMod{.allLunar{.DMG = moonsignBuff}}},
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("stellarConductCoefficientStacks"),
 		Option::ValueSlider{
 			.key = "stellarConductCoefficientStacks",
@@ -114,7 +114,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.values = std::views::iota(0) | std::views::take(13) | std::ranges::to<std::vector<float>>(),
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("radianceStellarConduct"),
 		Option::Boolean{
 			.key = "radianceStellarConduct",
@@ -122,7 +122,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.displayCondition = Formula::ElementCount{.element = Misc::Element::cryo} >= 1 && Formula::ElementCount{.element = Misc::Element::electro} >= 1,
 		},
 	});
-	options.insert({
+	options->insert({
 		Utils::HashedString("radianceStellarSwirl"),
 		Option::Boolean{
 			.key = "radianceStellarSwirl",

@@ -8,7 +8,6 @@ Agent::Instance::Instance(const InstanceKey &instanceKey, const DataKey &dataKey
 	  state(Stats::State{
 		  .instanceKey = instanceKey,
 		  .stats = Stats::Agent(Agent::list.at(dataKey)),
-		  .options{},
 		  .equippedLoadout{},
 	  }) {
 	state.init();

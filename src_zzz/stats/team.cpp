@@ -18,7 +18,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 	auto frostbiteBuff = Formula::Requires{.requirement = frostbiteCond, .ret = Formula::Constant{.value = 0.1f}};
 	resonances.cd.modifiers.at(0) = frostbiteBuff;
 
-	options.insert({
+	options->insert({
 		Utils::HashedString("frostbiteCond"),
 		Option::Boolean{
 			.key = "frostbiteCond",
@@ -32,7 +32,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 	auto windsweptBuff = Formula::Requires{.requirement = windsweptCond, .ret = Formula::Constant{.value = 0.1f}};
 	resonances.wind.directDMG.modifiers.at(0) = windsweptBuff;
 
-	options.insert({
+	options->insert({
 		Utils::HashedString("windsweptCond"),
 		Option::Boolean{
 			.key = "windsweptCond",
@@ -41,7 +41,7 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 		},
 	});
 
-	options.insert({
+	options->insert({
 		Utils::HashedString("enemyStunned"),
 		Option::Boolean{
 			.key = "enemyStunned",

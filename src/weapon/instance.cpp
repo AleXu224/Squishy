@@ -15,7 +15,7 @@ void Weapon::Instance::equipOn(Character::InstanceKey instanceKey, std::optional
 	auto &loadout = character.state.loadoutByIndex(loadoutIndex);
 
 	loadout.swapWeapon(this->instanceKey);
-	stats.data->getOpts(character.state.options);
+	stats.data->getOpts(*character.state.options);
 	character.updateEvent.notify();
 	updateEvent.notify();
 }

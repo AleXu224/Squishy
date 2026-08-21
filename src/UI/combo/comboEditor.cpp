@@ -224,9 +224,9 @@ namespace {
 				for (auto &opt: options) {
 					const Option::TypesMap &optsMap = [&]() -> const Option::TypesMap & {
 						if (opt.key) {
-							return Store::characters.at(opt.key).state.options;
+							return *Store::characters.at(opt.key).state.options;
 						}
-						return ctx.team.options;
+						return *ctx.team.options;
 					}();
 					std::variant<Character::InstanceKey, Team::InstanceKey> sourceKey = opt.key ? std::variant<Character::InstanceKey, Team::InstanceKey>{opt.key}
 																								: ctx.team.instanceKey;

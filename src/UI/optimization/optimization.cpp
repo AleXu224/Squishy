@@ -6,13 +6,16 @@
 #include "optimizationResult.hpp"
 #include "optimizationResultUpgrade.hpp"
 #include "optimizationSetChooser.hpp"
+#include "stats/stat.hpp"
 #include "store.hpp"
 #include "widgets/column.hpp"
 #include "widgets/container.hpp"
 #include "widgets/expander.hpp"
 #include "widgets/grid.hpp"
+#include "widgets/liteFilter.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
 #include "widgets/slider.hpp"
 #include "widgets/toggleSwitch.hpp"
 
@@ -134,6 +137,99 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 					},
 				},
 				Expander{
+					.title = "Upgrade calculator",
+					.subtitle = "Configure which upgrade systems run and their guaranteed substat rolls",
+					.content = Column{
+						.widget{
+							.padding = 4.f,
+						},
+						.spacing = 4.f,
+						.spacer = ExpanderItemSpacer{},
+						.children{
+							ExpanderItem{
+								.title = "Level up artifacts",
+								.action = ToggleSwitch{
+									.active = character.optimizationOptions->enableUpgradeLevelUp,
+									.statePosition = ToggleSwitch::StatePosition::None,
+									.onToggle = [this, storage = character.optimizationOptions](bool active) {
+										setState([&]() {
+											storage->enableUpgradeLevelUp = active;
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Reroll artifacts",
+								.action = ToggleSwitch{
+									.active = character.optimizationOptions->enableUpgradeReroll,
+									.statePosition = ToggleSwitch::StatePosition::None,
+									.onToggle = [this, storage = character.optimizationOptions](bool active) {
+										setState([&]() {
+											storage->enableUpgradeReroll = active;
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Define artifacts",
+								.action = ToggleSwitch{
+									.active = character.optimizationOptions->enableUpgradeDefinition,
+									.statePosition = ToggleSwitch::StatePosition::None,
+									.onToggle = [this, storage = character.optimizationOptions](bool active) {
+										setState([&]() {
+											storage->enableUpgradeDefinition = active;
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Reroll guaranteed rolls",
+								.action = Slider{
+									.widget{
+										.width = 250.f,
+									},
+									.minValue = 2.f,
+									.maxValue = 4.f,
+									.value = static_cast<float>(character.optimizationOptions->upgradeRerollRolls),
+									.ticks = std::vector<float>{2.f, 3.f, 4.f},
+									.onChange = [this, storage = character.optimizationOptions](float value) {
+										setState([&]() {
+											storage->upgradeRerollRolls = std::round(value);
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Guaranteed substats",
+								.action = ScrollView{
+									.widget{
+										.width = Size::Wrap,
+									},
+									.direction = squi::core::Axis::Horizontal,
+									.children{
+										LiteFilter{
+											.items = [&]() {
+												std::vector<LiteFilter::Item> ret;
+												for (const auto &stat: Stats::subStats) {
+													ret.emplace_back(LiteFilter::Item{
+														.name = Utils::Stringify(stat),
+														.onUpdate = [this, storage = character.optimizationOptions, stat](bool active) {
+															setState([&]() {
+																storage->upgradeGuaranteedSubStats[stat] = active;
+															});
+														},
+													});
+												}
+												return ret;
+											}(),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				Expander{
 					.title = "Optimize",
 					.action{
 						Row{
@@ -231,6 +327,11 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 												.gobletMainStats = storage->gobletMainStats,
 												.circletMainStats = storage->circletMainStats,
 												.nodeSource = storage->nodeSource,
+												.enableLevelUp = storage->enableUpgradeLevelUp,
+												.enableReroll = storage->enableUpgradeReroll,
+												.enableDefinition = storage->enableUpgradeDefinition,
+												.rerollGuaranteedRolls = storage->upgradeRerollRolls,
+												.guaranteedSubStats = storage->upgradeGuaranteedSubStats,
 											},
 										};
 										auto solutions = optimization.optimize();
@@ -272,7 +373,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 									Children ret;
 									uint32_t counter = 1;
 									for (const auto &solution: solutions.solutions) {
-										if (!solution.artifact) continue;
+										if (solution.kind != ::Optimization::SolutionUpgrade::Kind::definition && !solution.artifact) continue;
 										ret.emplace_back(OptimizationResultUpgrade{
 											.characterKey = widget->characterKey,
 											.solution = solution,

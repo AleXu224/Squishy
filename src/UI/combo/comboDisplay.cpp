@@ -49,7 +49,7 @@ namespace UI {
 
 			auto &character = ::Store::characters.at(characterKey);
 
-			for (const auto &[comboPair, transparent]: std::views::zip(character.combos, Utils::trueFalse)) {
+			for (const auto &[comboPair, transparent]: std::views::zip(*character.combos, Utils::trueFalse)) {
 				const auto &[comboKey, combo] = comboPair;
 				ret.emplace_back(UI::ComboDisplayEntry{
 					.transparent = transparent,

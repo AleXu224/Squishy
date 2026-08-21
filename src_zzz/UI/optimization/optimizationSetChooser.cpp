@@ -104,7 +104,7 @@ namespace {
 											});
 										},
 									},
-									widget->agent.state.options.at(
+									widget->agent.state.options->at(
 										std::visit(
 											[](auto &&val) {
 												return val.key;

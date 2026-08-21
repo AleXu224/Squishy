@@ -98,7 +98,7 @@ namespace {
 		std::variant<Character::InstanceKey, Team::InstanceKey> keyParam = characterKey;
 		if (teamKey.has_value()) keyParam = teamKey.value();
 
-		auto teamOpts = makeOptsSimple(team.stats.options);
+		auto teamOpts = makeOptsSimple(*team.stats.options);
 
 		std::vector<Node::Types> nodesPlaceholder;
 		Child teamStats = UI::DetailsSkill{
@@ -110,7 +110,7 @@ namespace {
 			.modsGenerator = std::make_shared<UI::ModsGenerator>(),
 		};
 
-		auto weaponOpts = makeOpts(character.state.loadout().weapon->data->data.opts, character.state.options);
+		auto weaponOpts = makeOpts(character.state.loadout().weapon->data->data.opts, *character.state.options);
 
 		Child weaponStats = UI::DetailsSkill{
 			.name = character.state.loadout().weapon->data->name,
@@ -125,11 +125,11 @@ namespace {
 
 		std::optional<MakeOptsRet> artifactOpts1;
 		if (character.state.loadout().artifact.bonus1.has_value())
-			artifactOpts1 = makeArtifactOpts(character.state.loadout().artifact.bonus1->bonusPtr->opts, character.state.options);
+			artifactOpts1 = makeArtifactOpts(character.state.loadout().artifact.bonus1->bonusPtr->opts, *character.state.options);
 
 		std::optional<MakeOptsRet> artifactOpts2;
 		if (character.state.loadout().artifact.bonus2.has_value())
-			artifactOpts2 = makeArtifactOpts(character.state.loadout().artifact.bonus2->bonusPtr->opts, character.state.options);
+			artifactOpts2 = makeArtifactOpts(character.state.loadout().artifact.bonus2->bonusPtr->opts, *character.state.options);
 
 		Child artifactStats1 = character.state.loadout().artifact.bonus1.has_value()
 								 ? UI::DetailsSkill{
@@ -175,7 +175,7 @@ namespace {
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> characterOpts{};
 		for (auto &optPtr: Option::CharacterList::getMembers()) {
 			const auto &optList = std::invoke(optPtr, character.state.stats.data.data->opts);
-			characterOpts.emplace_back(makeOpts(optList, character.state.options));
+			characterOpts.emplace_back(makeOpts(optList, *character.state.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::CharacterList::getMembers()) {

@@ -30,4 +30,14 @@ namespace Formula {
 	[[nodiscard]] inline auto WeaponMultiplier(bool isPercentage, const std::array<float, 5> &values) {
 		return WeaponMultiplierValue({}, isPercentage, values);
 	}
+
+	struct WeaponRefinement : FormulaBase<int32_t, Type::constant> {
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.add("Weapon Refinement", eval(context));
+		}
+
+		[[nodiscard]] int32_t eval(const Context &context) const {
+			return context.source.loadout().weapon->sheet.refinement;
+		}
+	};
 }// namespace Formula

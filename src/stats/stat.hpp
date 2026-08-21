@@ -265,6 +265,7 @@ struct StatValue {
 	std::optional<Stat> stat;
 	bool activated = true;
 	float value;
+	std::optional<float> initialValue = std::nullopt;
 };
 
 namespace Utils {

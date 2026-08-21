@@ -77,7 +77,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 
 			for (auto &opt: character.state.loadout().weapon->data->data.opts) {
 				if (!isTeamBuff(opt)) continue;
-				parseOption(character.state.options.at(
+				parseOption(character.state.options->at(
 					std::visit(
 						[](auto &&opt) {
 							return opt.key.hash;
@@ -90,7 +90,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 			if (character.state.loadout().artifact.bonus1.has_value()) {
 				for (auto &opt: character.state.loadout().artifact.bonus1->bonusPtr->opts) {
 					if (!isTeamBuff(opt)) continue;
-					parseOption(character.state.options.at(
+					parseOption(character.state.options->at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;
@@ -103,7 +103,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 			if (character.state.loadout().artifact.bonus2.has_value()) {
 				for (auto &opt: character.state.loadout().artifact.bonus2->bonusPtr->opts) {
 					if (!isTeamBuff(opt)) continue;
-					parseOption(character.state.options.at(
+					parseOption(character.state.options->at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;
@@ -126,7 +126,7 @@ squi::core::Child UI::TeamCharacterBuffsCard::State::build(const Element &elemen
 						optionData
 					);
 					if (!isTeamBuff) continue;
-					parseOption(character.state.options.at(
+					parseOption(character.state.options->at(
 						std::visit(
 							[](auto &&opt) {
 								return opt.key.hash;

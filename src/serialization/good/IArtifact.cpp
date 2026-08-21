@@ -28,6 +28,9 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 				if (!subStat.stat.has_value() || !subStat.activated) continue;
 				dataSubStat.key = keyStat.at(subStat.stat.value());
 				dataSubStat.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+				dataSubStat.initialValue = subStat.initialValue.transform([&](float v) {
+					return v * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+				});
 			}
 
 			return ret;
@@ -39,10 +42,14 @@ Serialization::Good::IArtifact Serialization::Good::IArtifact::fromInstance(cons
 				if (!subStat.stat.has_value() || subStat.activated) continue;
 				dataSubStat.key = keyStat.at(subStat.stat.value());
 				dataSubStat.value = subStat.value * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+				dataSubStat.initialValue = subStat.initialValue.transform([&](float v) {
+					return v * (Utils::isPercentage(subStat.stat) ? 100.f : 1.f);
+				});
 			}
 
 			return ret;
 		}(),
+		.totalRolls = artifact.totalRolls,
 	};
 }
 
@@ -137,6 +144,7 @@ std::expected<std::reference_wrapper<Artifact::Instance>, std::string> Serializa
 
 void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifact) const {
 	artifact.level = level;
+	artifact.totalRolls = totalRolls;
 
 	for (auto &subStat: artifact.subStats) {
 		subStat.stat = std::nullopt;
@@ -157,6 +165,9 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 			.stat = stat,
 			.activated = true,
 			.value = dataIt->value / (Utils::isPercentage(stat) ? 100.f : 1.f),
+			.initialValue = dataIt->initialValue.transform([&](float v) {
+				return v / (Utils::isPercentage(stat) ? 100.f : 1.f);
+			}),
 		};
 		it++;
 	}
@@ -173,6 +184,9 @@ void Serialization::Good::IArtifact::writeToInstance(Artifact::Instance &artifac
 			.stat = stat,
 			.activated = false,
 			.value = dataIt->value / (Utils::isPercentage(stat) ? 100.f : 1.f),
+			.initialValue = dataIt->initialValue.transform([&](float v) {
+				return v / (Utils::isPercentage(stat) ? 100.f : 1.f);
+			}),
 		};
 		it++;
 	}

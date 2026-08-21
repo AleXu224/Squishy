@@ -99,7 +99,7 @@ namespace {
 		std::variant<Agent::InstanceKey, Team::InstanceKey> keyParam = agentKey;
 		if (teamKey.has_value()) keyParam = teamKey.value();
 
-		auto teamOpts = makeOptsSimple(team.stats.options);
+		auto teamOpts = makeOptsSimple(*team.stats.options);
 
 		std::vector<Node::Types> nodesPlaceholder;
 		Child teamStats = UI::DetailsSkill{
@@ -113,7 +113,7 @@ namespace {
 
 		MakeOptsRet engineOpts{};
 		if (agent.state.loadout().engine) {
-			engineOpts = makeOpts(agent.state.loadout().engine->data->data.opts, agent.state.options);
+			engineOpts = makeOpts(agent.state.loadout().engine->data->data.opts, *agent.state.options);
 		}
 
 		Child engineStats = nullptr;
@@ -132,15 +132,15 @@ namespace {
 
 		std::optional<MakeOptsRet> discOpts1;
 		if (agent.state.loadout().disc.bonus1.has_value())
-			discOpts1 = makeDiscOpts(agent.state.loadout().disc.bonus1->bonusPtr->opts, agent.state.options);
+			discOpts1 = makeDiscOpts(agent.state.loadout().disc.bonus1->bonusPtr->opts, *agent.state.options);
 
 		std::optional<MakeOptsRet> discOpts2;
 		if (agent.state.loadout().disc.bonus2.has_value())
-			discOpts2 = makeDiscOpts(agent.state.loadout().disc.bonus2->bonusPtr->opts, agent.state.options);
+			discOpts2 = makeDiscOpts(agent.state.loadout().disc.bonus2->bonusPtr->opts, *agent.state.options);
 
 		std::optional<MakeOptsRet> discOpts3;
 		if (agent.state.loadout().disc.bonus3.has_value())
-			discOpts3 = makeDiscOpts(agent.state.loadout().disc.bonus3->bonusPtr->opts, agent.state.options);
+			discOpts3 = makeDiscOpts(agent.state.loadout().disc.bonus3->bonusPtr->opts, *agent.state.options);
 
 		Child discStats1 = agent.state.loadout().disc.bonus1.has_value()
 							 ? UI::DetailsSkill{
@@ -198,7 +198,7 @@ namespace {
 		std::vector<std::map<uint32_t, std::reference_wrapper<Option::Types>>> agentOpts{};
 		for (auto &optPtr: Option::AgentList::getMembers()) {
 			const auto &optList = std::invoke(optPtr, agent.state.stats.data.data->opts);
-			agentOpts.emplace_back(makeOpts(optList, agent.state.options));
+			agentOpts.emplace_back(makeOpts(optList, *agent.state.options));
 		}
 		std::vector<std::reference_wrapper<const std::vector<Node::Types>>> nodes{};
 		for (auto &nodePtr: Node::AgentList::getMembers()) {

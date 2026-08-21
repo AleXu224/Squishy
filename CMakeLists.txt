@@ -84,10 +84,16 @@ target_link_libraries(squishy_zzz PRIVATE squishy_zzz_lib)
 
 add_executable(squishyBench EXCLUDE_FROM_ALL benchmark.cpp)
 target_link_libraries(squishyBench PRIVATE squishy_lib)
+add_executable(squishyBenchFromSave EXCLUDE_FROM_ALL benchmarkFromSave.cpp)
+target_link_libraries(squishyBenchFromSave PRIVATE squishy_lib)
+add_executable(squishyBenchDefinition EXCLUDE_FROM_ALL benchmarkDefinition.cpp)
+target_link_libraries(squishyBenchDefinition PRIVATE squishy_lib)
 
 target_link_libraries(squishyBench PRIVATE glt)
 find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(squishyBench PRIVATE benchmark::benchmark benchmark::benchmark_main)
+target_link_libraries(squishyBenchFromSave PRIVATE benchmark::benchmark benchmark::benchmark_main)
+target_link_libraries(squishyBenchDefinition PRIVATE benchmark::benchmark benchmark::benchmark_main)
 
 add_executable(optTest EXCLUDE_FROM_ALL opt_test.cpp)
 target_link_libraries(optTest PRIVATE squishy_zzz_lib)

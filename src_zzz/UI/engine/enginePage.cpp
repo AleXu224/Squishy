@@ -32,7 +32,7 @@ squi::core::Child UI::EnginePage::State::build(const Element &element) {
 							instance.updateEvent.notify();
 							for (auto &[_, agent]: Store::agents) {
 								if (!instance.isUsedOn(agent.instanceKey)) continue;
-								instance.stats.data->getOpts(agent.state.options);
+								instance.stats.data->getOpts(*agent.state.options);
 								agent.updateEvent.notify();
 							}
 						},

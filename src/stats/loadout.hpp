@@ -5,6 +5,8 @@
 #include "stats/weapon.hpp"
 #include "weapon/key.hpp"
 
+#include <memory>
+
 namespace Stats {
 	struct Loadout {
 		::Weapon::InstanceKey weaponInstanceKey;
@@ -20,7 +22,7 @@ namespace Stats {
 		::Character::InstanceKey instanceKey;
 		Stats::Character stats;
 		std::optional<uint32_t> loadoutIndex = std::nullopt;
-		Option::TypesMap options;
+		std::shared_ptr<Option::TypesMap> options = std::make_shared<Option::TypesMap>();
 		Loadout equippedLoadout;
 		std::vector<Loadout> loadouts{};
 

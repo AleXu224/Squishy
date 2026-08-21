@@ -50,6 +50,11 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		.threeRainbow = options.threeRainbow,
 		.fiveRainbow = options.fiveRainbow,
 		.useEquippedArtifacts = options.useEquippedArtifacts,
+		.enableUpgradeLevelUp = options.enableUpgradeLevelUp,
+		.enableUpgradeReroll = options.enableUpgradeReroll,
+		.enableUpgradeDefinition = options.enableUpgradeDefinition,
+		.upgradeRerollRolls = options.upgradeRerollRolls,
+		.upgradeGuaranteedSubStats = options.upgradeGuaranteedSubStats,
 	};
 }
 
@@ -60,6 +65,10 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 	ret.threeRainbow = threeRainbow;
 	ret.fiveRainbow = fiveRainbow;
 	ret.useEquippedArtifacts = useEquippedArtifacts;
+	ret.enableUpgradeLevelUp = enableUpgradeLevelUp;
+	ret.enableUpgradeReroll = enableUpgradeReroll;
+	ret.enableUpgradeDefinition = enableUpgradeDefinition;
+	ret.upgradeRerollRolls = upgradeRerollRolls;
 
 	for (const auto &[key, value]: twoPcSets) {
 		ret.twoPcSets[key] = value;
@@ -75,6 +84,9 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 	}
 	for (const auto &[key, value]: circletMainStats) {
 		ret.circletMainStats[key] = value;
+	}
+	for (const auto &[key, value]: upgradeGuaranteedSubStats) {
+		ret.upgradeGuaranteedSubStats[key] = value;
 	}
 
 	if (nodeSource.has_value()) {

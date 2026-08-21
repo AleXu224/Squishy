@@ -105,7 +105,7 @@ namespace {
 											});
 										},
 									},
-									widget->character.state.options.at(
+									widget->character.state.options->at(
 										std::visit(
 											[](auto &&val) {
 												return val.key;

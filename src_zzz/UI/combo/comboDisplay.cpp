@@ -48,7 +48,7 @@ namespace UI {
 
 			auto &agent = ::Store::agents.at(agentKey);
 
-			for (const auto &[comboPair, transparent]: std::views::zip(agent.combos, Utils::trueFalse)) {
+			for (const auto &[comboPair, transparent]: std::views::zip(*agent.combos, Utils::trueFalse)) {
 				const auto &[comboKey, combo] = comboPair;
 				ret.emplace_back(UI::ComboDisplayEntry{
 					.transparent = transparent,

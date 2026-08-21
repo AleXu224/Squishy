@@ -67,7 +67,7 @@ namespace {
 									newCombo.name += " (Copy)";
 									::Store::lastComboId++;
 									newCombo.instanceKey.key = ::Store::lastComboId;
-									character.combos.insert(
+									character.combos->insert(
 										{
 											::Store::lastComboId,
 											std::move(newCombo),
@@ -80,7 +80,7 @@ namespace {
 							Button{
 								.onClick = [this]() {
 									auto &character = ::Store::characters.at(widget->characterKey);
-									auto &combos = character.combos;
+									auto &combos = *character.combos;
 
 									combos.erase(widget->comboKey);
 									character.optimizationOptions->removeComboIfSelected(widget->comboKey);
@@ -108,7 +108,7 @@ squi::core::Child UI::ComboList::State::build(const Element &element) {
 						auto &character = ::Store::characters.at(widget->characterKey);
 						setState([&]() {
 							::Store::lastComboId++;
-							character.combos.insert(
+							character.combos->insert(
 								{
 									::Store::lastComboId,
 									Combo::Combo{
@@ -128,7 +128,7 @@ squi::core::Child UI::ComboList::State::build(const Element &element) {
 						Children ret;
 
 						auto &character = ::Store::characters.at(widget->characterKey);
-						auto &combos = character.combos;
+						auto &combos = *character.combos;
 
 						for (auto &[key, combo]: combos) {
 							ret.emplace_back(ComboListEntry{

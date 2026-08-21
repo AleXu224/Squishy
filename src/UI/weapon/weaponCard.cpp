@@ -121,7 +121,7 @@ struct WeaponCardContent : StatelessWidget {
 								instance.updateEvent.notify();
 								for (auto &[_, character]: Store::characters) {
 									if (!weapon.isUsedOn(character.instanceKey)) continue;
-									instance.stats.data->getOpts(character.state.options);
+									instance.stats.data->getOpts(*character.state.options);
 									character.updateEvent.notify();
 								}
 							},

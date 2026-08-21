@@ -7,18 +7,18 @@
 
 
 void Stats::State::init() {
-	options.clear();
+	options->clear();
 	const auto &characterData = stats.data;
-	characterData.getOpts(options);
+	characterData.getOpts(*options);
 
-	equippedLoadout.init(options);
+	equippedLoadout.init(*options);
 
 	for (auto &loadout: loadouts) {
-		loadout.init(options);
+		loadout.init(*options);
 	}
 
 	for (const auto &[setKey, set]: ::Artifact::sets) {
-		set.getOptions(options);
+		set.getOptions(*options);
 	}
 
 	stats.sheet.init(*this);

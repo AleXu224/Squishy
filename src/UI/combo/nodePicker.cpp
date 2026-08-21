@@ -84,7 +84,7 @@ squi::core::Child UI::NodePicker::State::build(const Element &element) {
 
 				if (widget->enableCombos) {
 					Children comboRet{};
-					for (const auto &[key, combo]: character.combos) {
+					for (const auto &[key, combo]: *character.combos) {
 						auto source = Combo::Source::Combo{
 							.characterKey = character.instanceKey,
 							.comboKey = key,

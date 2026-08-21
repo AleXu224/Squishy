@@ -33,7 +33,7 @@ namespace Formula {
 				}
 			}
 
-			return ::Option::getBool(context.source.options, name);
+			return ::Option::getBool(*context.source.options, name);
 		}
 	};
 
@@ -64,7 +64,7 @@ namespace Formula {
 				}
 			}
 
-			return ::Option::getBool(context.team.options, name);
+			return ::Option::getBool(*context.team.options, name);
 		}
 	};
 
@@ -85,7 +85,7 @@ namespace Formula {
 								return active ? 1.f : 0.f;
 							},
 							[&](const std::optional<uint8_t> &currentIndex) -> float {
-								auto &values = std::get<Option::ValueList>(context.source.options.at(name.hash)).values;
+								auto &values = std::get<Option::ValueList>(context.source.options->at(name.hash)).values;
 								if (currentIndex.has_value() && currentIndex.value() < values.size()) {
 									return values.at(currentIndex.value());
 								} else {
@@ -113,7 +113,7 @@ namespace Formula {
 						return opt.getValue();
 					},
 				},
-				context.source.options.at(name.hash)
+				context.source.options->at(name.hash)
 			);
 		}
 	};
@@ -135,7 +135,7 @@ namespace Formula {
 								return active ? 1.f : 0.f;
 							},
 							[&](const std::optional<uint8_t> &currentIndex) -> float {
-								auto &values = std::get<Option::ValueList>(context.team.options.at(name.hash)).values;
+								auto &values = std::get<Option::ValueList>(context.team.options->at(name.hash)).values;
 								if (currentIndex.has_value() && currentIndex.value() < values.size()) {
 									return values.at(currentIndex.value());
 								} else {
@@ -163,7 +163,7 @@ namespace Formula {
 						return opt.getValue();
 					},
 				},
-				context.team.options.at(name.hash)
+				context.team.options->at(name.hash)
 			);
 		}
 	};
@@ -177,7 +177,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
-			auto &option = ::Option::getValueListOption(context.source.options, name);
+			auto &option = ::Option::getValueListOption(*context.source.options, name);
 
 			if (context.overrides != nullptr) {
 				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
@@ -209,7 +209,7 @@ namespace Formula {
 				}
 			}
 
-			return ::Option::getIndex(context.source.options, name, defaultValue);
+			return ::Option::getIndex(*context.source.options, name, defaultValue);
 		}
 	};
 }// namespace Formula

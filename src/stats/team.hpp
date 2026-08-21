@@ -7,6 +7,8 @@
 #include "stats/value.hpp"
 #include "team/key.hpp"
 
+#include <memory>
+
 namespace Character {
 	struct Instance;
 }
@@ -22,7 +24,7 @@ namespace Stats {
 		uint32_t activeCharacterIndex = 0;
 		Stats::Sheet<Stats::Value<float, 1>> resonances{};
 		Stats::EnemySheet<Stats::Value<float, 1>> resonancesEnemy{};
-		Option::TypesMap options{};
+		std::shared_ptr<Option::TypesMap> options = std::make_shared<Option::TypesMap>();
 
 		Team(::Team::InstanceKey);
 

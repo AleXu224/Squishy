@@ -163,18 +163,18 @@ namespace {
 
 		for (auto _: state) {
 			// benchmark::DoNotOptimize(node.formula.eval(ctx));
-			// benchmark::DoNotOptimize(compiledNode.eval(ctx));
+			benchmark::DoNotOptimize(compiledNode.eval(ctx));
 			// benchmark::DoNotOptimize(preCompiledNode.eval(ctx));
 			// (void) compiledNode.eval(ctx);
 
 			// Compile formula using the custom allocator, while also keeping the memory between runs
-			{
-				Formula::enableAllocator = true;
-				// benchmark::DoNotOptimize(node.formula.fold(ctx, {}));
-				benchmark::DoNotOptimize(preCompiledNode.fold(ctx, {}));
-			}
-			Formula::enableAllocator = false;
-			Formula::NodeAllocator::reset();
+			// {
+			// 	Formula::enableAllocator = true;
+			// 	// benchmark::DoNotOptimize(node.formula.fold(ctx, {}));
+			// 	benchmark::DoNotOptimize(preCompiledNode.fold(ctx, {}));
+			// }
+			// Formula::enableAllocator = false;
+			// Formula::NodeAllocator::reset();
 
 			// character.getArtifactStats();
 			// benchmark::DoNotOptimize(compiledNode);

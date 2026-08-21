@@ -15,7 +15,7 @@ void Engine::Instance::equipOn(Agent::InstanceKey instanceKey, std::optional<uin
 	auto &loadout = agent.state.loadoutByIndex(loadoutIndex);
 
 	loadout.swapEngine(this->instanceKey);
-	stats.data->getOpts(agent.state.options);
+	stats.data->getOpts(*agent.state.options);
 	agent.updateEvent.notify();
 	updateEvent.notify();
 }

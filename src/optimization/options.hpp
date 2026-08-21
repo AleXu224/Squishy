@@ -21,6 +21,11 @@ namespace Optimization {
 		bool threeRainbow = true;
 		bool fiveRainbow = true;
 		bool useEquippedArtifacts = true;
+		bool enableUpgradeLevelUp = true;
+		bool enableUpgradeReroll = true;
+		bool enableUpgradeDefinition = true;
+		uint8_t upgradeRerollRolls = 2;
+		std::map<Stat, bool> upgradeGuaranteedSubStats{};
 
 		Options() {
 			for (const auto &[key, set]: Artifact::sets) {
@@ -35,6 +40,9 @@ namespace Optimization {
 			}
 			for (const auto &mainStat: Stats::Artifact::circlet) {
 				circletMainStats[mainStat] = true;
+			}
+			for (const auto &subStat: Stats::subStats) {
+				upgradeGuaranteedSubStats[subStat] = true;
 			}
 		}
 
