@@ -39,6 +39,26 @@ namespace Reaction {
 			 * resMultiplier * critMultiplier;
 	}
 
+	[[nodiscard]] static Formula::FloatNode makeStellarTransformativeFormula(const Stats::Sheet<Formula::FloatNode>::_SkillValue &modifier, float multiplier, Misc::Element element) {
+		constexpr auto levelMultiplier = Formula::LevelMultiplier{};
+
+		const auto &allStellar = Modifiers::total().allStellar;
+		const auto &elemental = Stats::fromElement(Modifiers::total(), element);
+
+		auto emBonus = (Formula::ConstantFlat{.value = 6.f} * Modifiers::total().em) / (Modifiers::total().em + Formula::ConstantFlat{.value = 2000.f});
+		auto reactionBaseMultiplier = modifier.multiplicativeDMG + allStellar.multiplicativeDMG;
+		auto reactionElevation = modifier.elevation + allStellar.elevation;
+		auto reactionBonus = modifier.DMG + allStellar.DMG;
+		auto resMultiplier = Formula::EnemyResMultiplier{.attackSource{}, .element = element};
+		auto critMultiplier = 1.f + Formula::Clamp{.val1 = modifier.critRate + allStellar.critRate + elemental.critRate + Modifiers::total().cr, .min = 0.f, .max = 1.f} * (modifier.critDMG + allStellar.critDMG + elemental.critDMG + Modifiers::total().cd);
+		return multiplier
+			 * levelMultiplier
+			 * (1.f + reactionBaseMultiplier)
+			 * (1.f + reactionElevation)
+			 * (1.f + emBonus + reactionBonus)
+			 * resMultiplier * critMultiplier;
+	}
+
 	struct Transformative {
 		std::string_view name;
 		float multiplier{};
@@ -192,6 +212,41 @@ namespace Reaction {
 					Misc::Element::hydro,
 				},
 				.formula = makeLunarTransformativeFormula(Modifiers::total().lunarCrystallize, 1.6f, Misc::Element::geo),
+			};
+
+			// Stellar
+			const static inline Reaction::Transformative stellarSwirl = Reaction::Transformative{
+				.name = "Stellar-Swirl",
+				.multiplier = 0.75f,
+				.damageElement = Misc::Element::anemo,
+				.modifier = Modifiers::total().stellarSwirl,
+				.triggers{
+					Misc::Element::anemo,
+					Misc::Element::cryo,
+				},
+				.formula = makeStellarTransformativeFormula(Modifiers::total().stellarSwirl, 0.75f, Misc::Element::anemo),
+			};
+			const static inline Reaction::Transformative stellarSwirlVortexLv1 = Reaction::Transformative{
+				.name = "Stellar Vortex Lv. 1",
+				.multiplier = 2.f,
+				.damageElement = Misc::Element::cryo,
+				.modifier = Modifiers::total().stellarSwirl,
+				.triggers{
+					Misc::Element::anemo,
+					Misc::Element::cryo,
+				},
+				.formula = makeStellarTransformativeFormula(Modifiers::total().stellarSwirl, 2.f, Misc::Element::cryo),
+			};
+			const static inline Reaction::Transformative stellarSwirlVortexLv2 = Reaction::Transformative{
+				.name = "Stellar Vortex Lv. 2",
+				.multiplier = 3.f,
+				.damageElement = Misc::Element::cryo,
+				.modifier = Modifiers::total().stellarSwirl,
+				.triggers{
+					Misc::Element::anemo,
+					Misc::Element::cryo,
+				},
+				.formula = makeStellarTransformativeFormula(Modifiers::total().stellarSwirl, 3.f, Misc::Element::cryo),
 			};
 		};
 	}// namespace List

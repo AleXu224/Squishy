@@ -35,6 +35,9 @@ using namespace squi;
 				&Reaction::List::Transformative::hyperbloom,
 				&Reaction::List::Transformative::lunarCharged,
 				&Reaction::List::Transformative::lunarCrystalize,
+				&Reaction::List::Transformative::stellarSwirl,
+				&Reaction::List::Transformative::stellarSwirlVortexLv1,
+				&Reaction::List::Transformative::stellarSwirlVortexLv2,
 			};
 
 			std::vector elements{state.stats.data.baseStats.element};

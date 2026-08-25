@@ -151,6 +151,12 @@ Node::Instance Combo::Source::TransformativeReaction::resolve(const Overrides &o
 				return {Reaction::List::Transformative::lunarCharged.formula, "Lunar-Charged", Reaction::List::Transformative::lunarCharged.damageElement};
 			case Misc::TransformativeReaction::lunarCrystalize:
 				return {Reaction::List::Transformative::lunarCrystalize.formula, "Lunar-Crystalize", Reaction::List::Transformative::lunarCrystalize.damageElement};
+			case Misc::TransformativeReaction::stellarSwirl:
+				return {Reaction::List::Transformative::stellarSwirl.formula, "Stellar-Swirl", Reaction::List::Transformative::stellarSwirl.damageElement};
+			case Misc::TransformativeReaction::stellarSwirlVortexLv1:
+				return {Reaction::List::Transformative::stellarSwirlVortexLv1.formula, "Stellar Vortex Lv. 1", Reaction::List::Transformative::stellarSwirlVortexLv1.damageElement};
+			case Misc::TransformativeReaction::stellarSwirlVortexLv2:
+				return {Reaction::List::Transformative::stellarSwirlVortexLv2.formula, "Stellar Vortex Lv. 2", Reaction::List::Transformative::stellarSwirlVortexLv2.damageElement};
 		}
 		std::unreachable();
 	}();

@@ -49,6 +49,9 @@ namespace Misc {
 		hyperbloom,
 		lunarCharged,
 		lunarCrystalize,
+		stellarSwirl,
+		stellarSwirlVortexLv1,
+		stellarSwirlVortexLv2,
 	};
 
 	enum class NodeReaction : uint8_t {
@@ -104,6 +107,10 @@ namespace Misc {
 
 		TransformativeReaction::lunarCharged,
 		TransformativeReaction::lunarCrystalize,
+
+		TransformativeReaction::stellarSwirl,
+		TransformativeReaction::stellarSwirlVortexLv1,
+		TransformativeReaction::stellarSwirlVortexLv2,
 	};
 
 	const inline std::vector<NodeReaction> nodeReactions{
@@ -196,6 +203,12 @@ namespace Utils {
 				return "Lunar-Charged";
 			case Misc::TransformativeReaction::lunarCrystalize:
 				return "Lunar-Crystalize";
+			case Misc::TransformativeReaction::stellarSwirl:
+				return "Stellar-Swirl";
+			case Misc::TransformativeReaction::stellarSwirlVortexLv1:
+				return "Stellar Vortex Lv. 1";
+			case Misc::TransformativeReaction::stellarSwirlVortexLv2:
+				return "Stellar Vortex Lv. 2";
 		}
 		std::unreachable();
 	}
