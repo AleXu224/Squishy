@@ -53,18 +53,28 @@ void UI::CharacterEditor::State::clampTalents() {
 }
 
 squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
+	const auto maxLevel = Misc::maxCharacterLevelByRarity.at(character->state.stats.data.baseStats.rarity);
+	auto levelTicks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f, 70.f, 80.f, 90.f};
+	if (maxLevel >= 95)
+		levelTicks.emplace_back(95.f);
+	if (maxLevel >= 100)
+		levelTicks.emplace_back(100.f);
+
 	// Level
 	Child levelSelector = Slider{
 		.widget{
 			.width = 200.f,
 		},
 		.minValue = 1.f,
-		.maxValue = 90.f,
+		.maxValue = static_cast<float>(maxLevel),
 		.value = static_cast<float>(character->state.stats.sheet.level),
-		.ticks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f, 70.f, 80.f, 90.f},
+		.ticks = levelTicks,
 		.onChange = [this](float newVal) {
 			setState([&]() {
-				character->state.stats.sheet.level = std::floor(newVal);
+				character->state.stats.sheet.level = std::round(newVal);
+				if (newVal > 90.f) {
+					character->state.stats.sheet.level = std::round(newVal / 5.f) * 5.f;
+				}
 			});
 			clampAscension();
 			clampTalents();
@@ -72,12 +82,12 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 	};
 
 	// Ascension
-	auto ascensionItems = [this]() {
+	auto ascensionItems = [this, maxLevel]() {
 		std::vector<ContextMenu::Item> ret{};
 		auto rarity = character->state.stats.data.baseStats.rarity;
 		for (const auto &ascension: Misc::ascensionsAtLvl(character->state.stats.sheet.level, rarity)) {
 			ret.push_back(ContextMenu::Button{
-				.text = std::format("{}", ascension.maxLevel),
+				.text = std::format("{}", std::min(ascension.maxLevel, maxLevel)),
 				.callback = [this, ascension]() {
 					setState([&]() {
 						character->state.stats.sheet.ascension = ascension.ascension;
@@ -89,9 +99,12 @@ squi::core::Child UI::CharacterEditor::State::build(const Element &element) {
 		return ret;
 	}();
 	Child ascensionSelector = DropdownButton{
+		.widget{
+			.width = 80.f,
+		},
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItems.size() <= 1,
-		.text = std::format("{}", Misc::ascensions.at(character->state.stats.sheet.ascension).maxLevel),
+		.text = std::format("{}", std::min(Misc::ascensions.at(character->state.stats.sheet.ascension).maxLevel, maxLevel)),
 		.items = ascensionItems,
 	};
 

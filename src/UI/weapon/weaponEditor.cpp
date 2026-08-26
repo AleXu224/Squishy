@@ -33,7 +33,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 
 						auto rarity = Weapon::list.at(key).baseStats.rarity;
 						auto maxAscension = Misc::maxAscensionByRarity.at(rarity);
-						auto maxLvl = Misc::ascensions.at(maxAscension).maxLevel;
+						auto maxLvl = Misc::maxWeaponLevelByRarity.at(rarity);
 
 
 						setState([&]() {
@@ -60,7 +60,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 			.width = 200.f,
 		},
 		.minValue = 1.f,
-		.maxValue = static_cast<float>(Misc::ascensions.at(Misc::maxAscensionByRarity.at(weapon.stats.data->baseStats.rarity)).maxLevel),
+		.maxValue = static_cast<float>(Misc::maxWeaponLevelByRarity.at(weapon.stats.data->baseStats.rarity)),
 		.value = static_cast<float>(weapon.stats.sheet.level),
 		.ticks = std::vector<float>{1.f, 20.f, 40.f, 50.f, 60.f, 70.f, 80.f, 90.f},
 		.onChange = [this](float newVal) {
@@ -76,18 +76,19 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 	};
 
 	// Ascension
-	auto ascensionItemFactory = [this]() {
+	const auto maxWeaponLvl = Misc::maxWeaponLevelByRarity.at(weapon.stats.data->baseStats.rarity);
+	auto ascensionItemFactory = [this, maxWeaponLvl]() {
 		std::vector<ContextMenu::Item> ret{};
 		auto rarity = weapon.stats.data->baseStats.rarity;
 		for (const auto &ascension: Misc::ascensionsAtLvl(weapon.stats.sheet.level, rarity)) {
 			ret.emplace_back(ContextMenu::Button{
-				.text = std::format("{}", ascension.maxLevel),
-				.callback = [this, ascension]() {
+				.text = std::format("{}", std::min(ascension.maxLevel, maxWeaponLvl)),
+				.callback = [this, ascension, maxWeaponLvl]() {
 					setState([&]() {
 						weapon.stats.sheet.ascension = ascension.ascension;
 
-						if (weapon.stats.sheet.level > ascension.maxLevel)
-							weapon.stats.sheet.level = ascension.maxLevel;
+						if (weapon.stats.sheet.level > std::min(ascension.maxLevel, maxWeaponLvl))
+							weapon.stats.sheet.level = std::min(ascension.maxLevel, maxWeaponLvl);
 						if (weapon.stats.sheet.level < ascension.minLevel)
 							weapon.stats.sheet.level = ascension.minLevel;
 					});
@@ -96,7 +97,7 @@ squi::core::Child UI::WeaponEditor::State::build(const Element &element) {
 		}
 		return ret;
 	};
-	auto ascensionSelectorText = std::format("{}", Misc::ascensions.at(weapon.stats.sheet.ascension).maxLevel);
+	auto ascensionSelectorText = std::format("{}", std::min(Misc::ascensions.at(weapon.stats.sheet.ascension).maxLevel, maxWeaponLvl));
 	Child ascensionSelector = DropdownButton{
 		.theme = Button::Theme::Standard(),
 		.disabled = ascensionItemFactory().size() <= 1,

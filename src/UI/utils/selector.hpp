@@ -1,10 +1,13 @@
 #pragma once
 
+#include "character/data.hpp"
 #include "character/key.hpp"
 #include "core/core.hpp"
+#include "misc/ascension.hpp"
 #include "stats/loadout.hpp"
 #include "store.hpp"
 #include "widgets/dropdownButton.hpp"
+#include <algorithm>
 
 
 namespace UI {
@@ -50,7 +53,7 @@ namespace UI {
 		if (lvl <= 60) return 3;
 		if (lvl <= 70) return 4;
 		if (lvl <= 80) return 5;
-		if (lvl <= 90) return 6;
+		if (lvl <= 100) return 6;
 		throw std::runtime_error("Invalid lvl");
 	}
 	[[nodiscard]] inline uint8_t getLvlFromAscension(uint8_t ascension) {
@@ -60,7 +63,7 @@ namespace UI {
 		if (ascension == 3) return 60;
 		if (ascension == 4) return 70;
 		if (ascension == 5) return 80;
-		if (ascension == 6) return 90;
+		if (ascension == 6) return 100;
 		throw std::runtime_error("Invalid ascension");
 	}
 
@@ -71,6 +74,7 @@ namespace UI {
 		std::string titlePrefix;
 		std::function<T &()> sheetGetter;
 		Character::InstanceKey characterKey{};
+		uint8_t maxLevel = 90;
 
 		using PairType = std::pair<uint8_t, uint8_t>;
 
@@ -80,7 +84,8 @@ namespace UI {
 				.valuePrefix = "Level",
 				.getter = [this]() {
 					auto &sheet = sheetGetter();
-					return std::make_pair(sheet.level, getLvlFromAscension(sheet.ascension));
+					const auto cap = sheet.level > 90 ? sheet.level : std::min(getLvlFromAscension(sheet.ascension), maxLevel);
+					return std::make_pair(sheet.level, cap);
 				},
 				.setter = [this](const PairType &val) {
 					auto &character = Store::characters.at(characterKey);
@@ -92,22 +97,32 @@ namespace UI {
 				.printer = [](const PairType &val) {
 					return std::format("{}/{}", val.first, val.second);
 				},
-				.values = {
-					PairType{1, 20},
-					{20, 20},
-					{20, 40},
-					{40, 40},
-					{40, 50},
-					{50, 50},
-					{50, 60},
-					{60, 60},
-					{60, 70},
-					{70, 70},
-					{70, 80},
-					{80, 80},
-					{80, 90},
-					{90, 90},
-				},
+				.values = [this]() {
+					std::vector<PairType> ret{
+						PairType{1, 20},
+						{20, 20},
+						{20, 40},
+						{40, 40},
+						{40, 50},
+						{50, 50},
+						{50, 60},
+						{60, 60},
+						{60, 70},
+						{70, 70},
+						{70, 80},
+						{80, 80},
+					};
+					if (maxLevel >= 100) {
+						ret.emplace_back(80, 100);
+						ret.emplace_back(90, 100);
+						ret.emplace_back(95, 95);
+						ret.emplace_back(100, 100);
+					} else {
+						ret.emplace_back(80, 90);
+						ret.emplace_back(90, 90);
+					}
+					return ret;
+				}(),
 			};
 		}
 	};
@@ -119,12 +134,14 @@ namespace UI {
 
 
 		[[nodiscard]] Child build(const Element &) const {
+			const auto &character = Store::characters.at(characterKey);
 			return LevelSelector<Stats::CharacterSheet>{
 				.titlePrefix = "Character Level",
 				.sheetGetter = [characterKey = characterKey]() -> Stats::CharacterSheet & {
 					return Store::characters.at(characterKey).state.stats.sheet;
 				},
 				.characterKey = characterKey,
+				.maxLevel = Misc::maxCharacterLevelByRarity.at(character.state.stats.data.baseStats.rarity),
 			};
 		}
 	};

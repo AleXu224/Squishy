@@ -1,5 +1,6 @@
 #include "characterSelector.hpp"
 
+#include "algorithm"
 #include "character/characters.hpp"
 #include "character/instance.hpp"
 #include "misc/ascension.hpp"
@@ -64,7 +65,11 @@ struct CharacterSelectorCharacterCard : StatelessWidget {
 					.lineWrap = true,
 				},
 				Text{
-					.text = std::format("Lvl {}/{}", character.state.stats.sheet.level, Misc::ascensions.at(character.state.stats.sheet.ascension).maxLevel),
+					.text = [&]() {
+						const auto level = character.state.stats.sheet.level;
+						const auto cap = level > 90 ? level : std::min(Misc::ascensions.at(character.state.stats.sheet.ascension).maxLevel, Misc::maxCharacterLevelByRarity.at(character.state.stats.data.baseStats.rarity));
+						return std::format("Lvl {}/{}", level, cap);
+					}(),
 				},
 				stars,
 			},

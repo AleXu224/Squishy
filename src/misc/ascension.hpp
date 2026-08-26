@@ -21,7 +21,7 @@ namespace Misc {
 		Ascension{.ascension = 3, .minLevel = 50, .maxLevel = 60, .maxTalent = 4},
 		Ascension{.ascension = 4, .minLevel = 60, .maxLevel = 70, .maxTalent = 6},
 		Ascension{.ascension = 5, .minLevel = 70, .maxLevel = 80, .maxTalent = 8},
-		Ascension{.ascension = 6, .minLevel = 80, .maxLevel = 90, .maxTalent = 10},
+		Ascension{.ascension = 6, .minLevel = 80, .maxLevel = 100, .maxTalent = 10},
 	};
 
 	static inline auto maxAscensionByRarity = std::unordered_map<uint8_t, uint8_t>{
@@ -30,6 +30,19 @@ namespace Misc {
 		{3, 6},
 		{4, 6},
 		{5, 6},
+	};
+
+	static inline auto maxCharacterLevelByRarity = std::unordered_map<uint8_t, uint8_t>{
+		{4, 90},
+		{5, 100},
+	};
+
+	static inline auto maxWeaponLevelByRarity = std::unordered_map<uint8_t, uint8_t>{
+		{1, 70},
+		{2, 70},
+		{3, 90},
+		{4, 90},
+		{5, 90},
 	};
 
 	static inline std::vector<Ascension> ascensionsAtLvl(uint8_t lvl, uint8_t rarity) {
