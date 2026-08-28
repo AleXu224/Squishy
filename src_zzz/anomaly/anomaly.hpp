@@ -14,6 +14,7 @@ namespace Anomaly {
 		auto multiplier = baseMultiplier + modifier.additiveMultiplier + Modifiers::combat().allAnomaly.additiveMultiplier;
 		auto baseDmg = Modifiers::combat().atk * (multiplier) + modifier.additiveDMG + Modifiers::combat().allAnomaly.additiveDMG;
 		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
+		auto penRatio = Modifiers::combat().penRatio + Modifiers::combat().fromAttribute(attribute).penRatio + modifier.penRatio;
 		auto anomalyMod = Formula::Requires{
 			.requirement = Formula::ConstantBool{.value = useAnomalyMod},
 			.ret = modifier.DMG + Modifiers::combat().allAnomaly.DMG,
@@ -23,7 +24,7 @@ namespace Anomaly {
 			.trueVal = Formula::EnemyResMultiplier{.element = attribute},
 			.elseVal = Formula::Constant{.value = 1.f},
 		};
-		auto defMod = Formula::EnemyDefMultiplier{};
+		auto defMod = Formula::EnemyDefMultiplier{.penRatioOverride = penRatio};
 		// FIXME: dmg taken
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		auto apBonus = Modifiers::combat().ap / Formula::ConstantFlat{.value = 100.f};
@@ -42,9 +43,10 @@ namespace Anomaly {
 		auto multiplier = baseMultiplier + Modifiers::combat().disorder.additiveMultiplier + modifier.additiveMultiplier + Modifiers::combat().allAnomaly.additiveMultiplier;
 		auto baseDmg = Modifiers::combat().atk * (multiplier) + modifier.additiveDMG + Modifiers::combat().disorder.additiveDMG;
 		auto dmgMod = Modifiers::combat().fromAttribute(attribute).DMG + Modifiers::combat().all.DMG;
+		auto penRatio = Modifiers::combat().penRatio + Modifiers::combat().fromAttribute(attribute).penRatio + modifier.penRatio;
 		auto anomalyMod = modifier.DMG + Modifiers::combat().disorder.DMG;
 		auto resMod = Formula::EnemyResMultiplier{.element = attribute};
-		auto defMod = Formula::EnemyDefMultiplier{};
+		auto defMod = Formula::EnemyDefMultiplier{.penRatioOverride = penRatio};
 		// FIXME: dmg taken
 		auto stunMod = Formula::Requires{.requirement = Requirement::enemyStunned, .ret = Modifiers::enemy().stunMod};
 		auto apBonus = Modifiers::combat().ap / Formula::ConstantFlat{.value = 100.f};

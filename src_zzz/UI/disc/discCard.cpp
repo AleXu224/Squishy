@@ -63,7 +63,7 @@ struct DiscHeader : StatelessWidget {
 						.widget{
 							.alignment = Alignment::Center,
 						},
-						.text = std::format("{}", Disc::getPartitionIndex(partition)),
+						.text = std::format("{}", Disc::getPartitionIndex(partition) + 1),
 					},
 				},
 			},

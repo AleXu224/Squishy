@@ -1,5 +1,6 @@
 #include "agentSheet.hpp"
 
+#include "formula/agent.hpp"
 #include "formula/base.hpp"
 #include "formula/custom.hpp"
 #include "formula/prefix.hpp"
@@ -90,16 +91,19 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 			}
 		}
 	};
-	this->combat.sheerForce.modifiers.at(0) = Formula::Prefix{
-		.prefix = "Agent Base",
-		.val = Formula::Custom{
-			.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
-				return Modifiers::combat().atk * 0.1f;
-			},
-			.func = [](const Formula::Context &context) {
-				return Modifiers::combat().atk.eval(context) * 0.1f;
+	this->combat.sheerForce.modifiers.at(0) = Formula::Requires{
+		.requirement = Formula::IsAgentSpecialty{.specialty = Misc::Specialty::rupture},
+		.ret = Formula::Prefix{
+			.prefix = "Agent Base",
+			.val = Formula::Custom{
+				.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
+					return Modifiers::combat().atk * 0.1f;
+				},
+				.func = [](const Formula::Context &context) {
+					return Modifiers::combat().atk.eval(context) * 0.1f;
+				}
 			}
-		}
+		},
 	};
 
 	// Core stats

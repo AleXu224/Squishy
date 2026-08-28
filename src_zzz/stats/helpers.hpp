@@ -198,6 +198,8 @@ namespace Stats {
 				return sheet.critRate;
 			case Misc::SkillStat::critDMG:
 				return sheet.critDMG;
+			case Misc::SkillStat::penRatio:
+				return sheet.penRatio;
 		}
 		std::unreachable();
 	}
@@ -219,6 +221,8 @@ namespace Stats {
 				return Skill.critRate;
 			case Misc::SkillStat::critDMG:
 				return Skill.critDMG;
+			case Misc::SkillStat::penRatio:
+				return Skill.penRatio;
 		}
 		std::unreachable();
 	}
@@ -723,6 +727,24 @@ namespace Stats {
 				return Sheet.ether;
 			case Misc::Attribute::wind:
 				return Sheet.wind;
+		}
+		std::unreachable();
+	}
+
+	[[nodiscard]] constexpr auto &&fromEnemyResAttributeDirect(auto &&sheet, Misc::Attribute attribute) {
+		switch (attribute) {
+			case Misc::Attribute::physical:
+				return sheet.physical;
+			case Misc::Attribute::fire:
+				return sheet.fire;
+			case Misc::Attribute::ice:
+				return sheet.ice;
+			case Misc::Attribute::electric:
+				return sheet.electric;
+			case Misc::Attribute::ether:
+				return sheet.ether;
+			case Misc::Attribute::wind:
+				return sheet.wind;
 		}
 		std::unreachable();
 	}

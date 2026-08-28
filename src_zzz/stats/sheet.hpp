@@ -69,6 +69,7 @@ namespace Stats {
 			_Value multiplicativeDMG{};
 			_Value critRate{};
 			_Value critDMG{};
+			_Value penRatio{};
 			_EnemySheet enemy{};
 
 			[[nodiscard]] static consteval auto getMembers() {
@@ -80,6 +81,7 @@ namespace Stats {
 					&_SkillValue::multiplicativeDMG,
 					&_SkillValue::critRate,
 					&_SkillValue::critDMG,
+					&_SkillValue::penRatio,
 				};
 			}
 
@@ -91,6 +93,7 @@ namespace Stats {
 				if (member == &_SkillValue::multiplicativeDMG) return true;
 				if (member == &_SkillValue::critRate) return true;
 				if (member == &_SkillValue::critDMG) return true;
+				if (member == &_SkillValue::penRatio) return true;
 				return false;
 			}
 
@@ -110,6 +113,8 @@ namespace Stats {
 						return self.critRate;
 					case Misc::SkillStat::critDMG:
 						return self.critDMG;
+					case Misc::SkillStat::penRatio:
+						return self.penRatio;
 				}
 				std::unreachable();
 			}

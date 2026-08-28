@@ -20,6 +20,7 @@ namespace Modifiers {
 			static constexpr auto multiplicativeDMG = SkillType{V, &TT::_SkillValue::multiplicativeDMG};
 			static constexpr auto critRate = SkillType{V, &TT::_SkillValue::critRate};
 			static constexpr auto critDMG = SkillType{V, &TT::_SkillValue::critDMG};
+			static constexpr auto penRatio = SkillType{V, &TT::_SkillValue::penRatio};
 			static constexpr auto enemy = EnemyPointerFactoryModifier<decltype(TT::_SkillValue::enemy), V>();
 		};
 
@@ -96,6 +97,7 @@ namespace Modifiers {
 			static constexpr auto multiplicativeDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::multiplicativeDMG);
 			static constexpr auto critRate = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critRate);
 			static constexpr auto critDMG = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::critDMG);
+			static constexpr auto penRatio = Modifiers::SheetMemberIdentifier(member, Misc::SkillStat::penRatio);
 			static constexpr auto enemy = EnemyNameFactoryModifier<member>();
 		};
 
@@ -173,6 +175,7 @@ namespace Modifiers {
 			static constexpr Formula<V.multiplicativeDMG...> multiplicativeDMG{};
 			static constexpr Formula<V.critRate...> critRate{};
 			static constexpr Formula<V.critDMG...> critDMG{};
+			static constexpr Formula<V.penRatio...> penRatio{};
 			static constexpr EnemyFactory<Formula, V.enemy...> enemy{};
 		};
 
@@ -249,6 +252,7 @@ namespace Modifiers {
 			.multiplicativeDMG = formulaFactory<T, Formula>(params.multiplicativeDMG...),
 			.critRate = formulaFactory<T, Formula>(params.critRate...),
 			.critDMG = formulaFactory<T, Formula>(params.critDMG...),
+			.penRatio = formulaFactory<T, Formula>(params.penRatio...),
 			.enemy = enemyFactory<T, Formula>(params.enemy...),
 		};
 	}
@@ -330,6 +334,7 @@ namespace Modifiers {
 			.multiplicativeDMG = param,
 			.critRate = param,
 			.critDMG = param,
+			.penRatio = param,
 			.enemy = constantEnemyFactory<T>(param),
 		};
 	}

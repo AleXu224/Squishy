@@ -12,6 +12,7 @@
 
 namespace Formula {
 	struct EnemyDefMultiplier : FormulaBase<float> {
+		FloatNode penRatioOverride = Modifiers::combat().penRatio;
 		EnemyModifier modifiers{};
 
 		auto getFormula(const Formula::Context &context) const {
@@ -24,7 +25,7 @@ namespace Formula {
 						   }
 						 * (enemy.baseDef + modifiers.baseDef);
 			const auto def = baseDef * (1.f - (enemy.DEFReduction + modifiers.DEFReduction) - (enemy.DEFIgnored + modifiers.DEFIgnored));
-			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio) - Modifiers::combat().pen;
+			const auto effectiveDef = def * (1.f - penRatioOverride) - Modifiers::combat().pen;
 			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
 
@@ -45,7 +46,7 @@ namespace Formula {
 			const auto &enemy = Modifiers::enemy();
 			auto baseDef = Curves::levelMultiplier.at(std::clamp(static_cast<int32_t>(enemy.level.eval(context) + modifiers.level.eval(context)), 0, 60) - 1) * (enemy.baseDef.eval(context) + modifiers.baseDef.eval(context));
 			const auto def = baseDef * (1.f - (enemy.DEFReduction.eval(context) + modifiers.DEFReduction.eval(context)) - (enemy.DEFIgnored.eval(context) + modifiers.DEFIgnored.eval(context)));
-			const auto effectiveDef = def * (1.f - Modifiers::combat().penRatio.eval(context)) - Modifiers::combat().pen.eval(context);
+			const auto effectiveDef = def * (1.f - penRatioOverride.eval(context)) - Modifiers::combat().pen.eval(context);
 			auto levelCoeff = Curves::levelMultiplier.at(context.source.stats.sheet.level - 1) * 50.f;
 			auto defMod = levelCoeff / (levelCoeff + effectiveDef);
 
