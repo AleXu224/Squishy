@@ -13,7 +13,7 @@
 using namespace squi;
 
 squi::core::Child UI::ValueListOption::State::build(const Element &element) {
-	auto value = widget->option.getValue();
+	auto value = widget->option.getValue(widget->ctx);
 
 	auto mods = decodeOption(widget->option, widget->ctx);
 	auto borderRadiusFunc = [hasMods = !mods.empty()](Button::Theme style) {
@@ -76,7 +76,7 @@ squi::core::Child UI::ValueListOption::State::build(const Element &element) {
 
 					for (const auto &[index, item]: std::views::enumerate(widget->option.values)) {
 						ret.emplace_back(ContextMenu::Button{
-							.text = std::format("{}", item),
+							.text = std::format("{}", widget->option.getValue(widget->ctx, index).value()),
 							.callback = [this, index]() {
 								setState([&]() {
 									widget->option.currentIndex = index;

@@ -7,6 +7,7 @@
 #include "modifiers/helpers.hpp"
 #include "modifiers/statFactory.hpp"
 #include "modifiers/talentFactory.hpp"
+#include "formula/option.hpp"
 #include "modifiers/weapon/passive.hpp"
 #include "stats/team.hpp"
 
@@ -68,7 +69,7 @@ namespace Modifiers::Team {
 
 		using Ret = float;
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			auto activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			auto activeCharacter = context.team.characters.at(Formula::activeCharacterIndex(context));
 			if (!activeCharacter || activeCharacter->instanceKey != context.source.instanceKey) return Formula::ConstantFlat{};
 
 			auto formula = characterStat + weaponStat + artifactStat;
@@ -95,7 +96,7 @@ namespace Modifiers::Team {
 
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			Ret total = 0;
-			auto activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			auto activeCharacter = context.team.characters.at(Formula::activeCharacterIndex(context));
 			if (!activeCharacter || activeCharacter->instanceKey != context.source.instanceKey) return 0;
 
 			for (const auto &character: context.team.characters) {

@@ -134,10 +134,10 @@ const Character::Data Character::Datas::cyno{
 					},
 				},
 				.constellation2{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "c2Hits",
-						.prefix = "Normal Attack Hits",
-						.values{1, 2, 3, 4, 5},
+						.name = "Normal Attack Hits",
+						.values{0, 1, 2, 3, 4, 5},
 						.mods{
 							.preMod{
 								.electro{

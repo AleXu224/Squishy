@@ -1,9 +1,25 @@
 #pragma once
 
+#include "character/data.hpp"
 #include "formula/base.hpp"
 #include "reaction/reaction.hpp"
 
 namespace Formula {
+	struct CharacterName : FormulaBase<std::string, Type::constant> {
+		size_t index;
+		std::string suffix;
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addValue(eval(context));
+		}
+
+		[[nodiscard]] std::string eval(const Context &context) const {
+			auto &character = context.team.characters.at(index);
+			if (!character) return "None";
+			return std::format("{} {}", character->state.stats.data.name, suffix);
+		}
+	};
+
 	struct AmplifyingMultiplier : FormulaBase<float> {
 		Formula::FloatNode getFormula(const Formula::Context &context) const {
 			switch (context.reaction.index()) {

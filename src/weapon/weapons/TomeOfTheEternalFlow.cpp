@@ -35,10 +35,10 @@ const Weapon::Data Weapon::Datas::tomeOfTheEternalFlow{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "tomeOfTheEternalFlowCond",
-					.prefix = "HP increases or decreases",
-					.values{1, 2, 3},
+					.name = "HP increases or decreases",
+					.values{0, 1, 2, 3},
 					.mods{
 						.preMod{
 							.charged{.DMG = buff},

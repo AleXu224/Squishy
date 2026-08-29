@@ -59,7 +59,7 @@ const Character::Data Character::Datas::nahida{
 		auto c2EnemyDef = Requires{.requirement = Requirement::constellation2 && c2ReactionTriggered, .ret = Constant{.value = 0.3f}};
 
 		auto c4EmBuff = Requires{
-			.requirement = Requirement::constellation4 && IsActive("nahidaC4OpponentsAffected"),
+			.requirement = Requirement::constellation4,
 			.ret = Index{
 				.index = GetInt("nahidaC4OpponentsAffected", 1) - ConstantInt{.value = 1},
 				.isPercentage = false,
@@ -125,11 +125,11 @@ const Character::Data Character::Datas::nahida{
 					},
 				},
 				.constellation4{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "nahidaC4OpponentsAffected",
-						.prefix = "Opponents affected by All Schemes to Know's Seeds of Skandha",
+						.name = "Opponents affected by All Schemes to Know's Seeds of Skandha",
 						.teamBuff = true,
-						.values = std::views::iota(1, 5) | std::ranges::to<std::vector<uint32_t>>(),
+						.values = std::views::iota(1, 5) | std::ranges::to<std::vector<float>>(),
 						.mods{
 							.preMod{
 								.em = c4EmBuff,

@@ -18,10 +18,10 @@ const Artifact::Set Artifact::Sets::paleFlame{
 			},
 			.fourPc{
 				.opts{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "paleFlameStacks",
-						.prefix = "Elemental Skill hits",
-						.values{1, 2},
+						.name = "Elemental Skill hits",
+						.values{0, 1, 2},
 						.mods{
 							.preMod{
 								.atk_ = fourPcAtk,

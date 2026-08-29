@@ -1,5 +1,6 @@
 #include "team.hpp"
 #include "agent/instance.hpp"
+#include "formula/option.hpp"
 #include "formula/teamAgent.hpp"
 #include "modifiers/agent/kit.hpp"
 #include "modifiers/disc/set.hpp"
@@ -65,7 +66,7 @@ namespace Modifiers::Team {
 
 		using Ret = float;
 		[[nodiscard]] Formula::FloatNode fold(const Formula::Context &context, const Formula::FoldArgs &args) const {
-			auto activeAgent = context.team.agents.at(context.team.activeAgentIndex);
+			auto activeAgent = context.team.agents.at(Formula::activeAgentIndex(context));
 			if (!activeAgent || activeAgent->instanceKey != context.source.instanceKey) return Formula::ConstantFlat{};
 
 			auto formula = agentStat + engineStat + discStat;
@@ -90,7 +91,7 @@ namespace Modifiers::Team {
 
 		[[nodiscard]] constexpr Ret eval(const Formula::Context &context) const {
 			Ret total = 0;
-			auto activeAgent = context.team.agents.at(context.team.activeAgentIndex);
+			auto activeAgent = context.team.agents.at(Formula::activeAgentIndex(context));
 			if (!activeAgent || activeAgent->instanceKey != context.source.instanceKey) return 0;
 
 			for (const auto &agent: context.team.agents) {

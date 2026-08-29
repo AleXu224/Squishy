@@ -24,10 +24,10 @@ const Artifact::Set Artifact::Sets::marechausseeHunter{
 			},
 			.fourPc{
 				.opts{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "marechausseeHpChanged",
-						.prefix = "Current HP increases or decreases",
-						.values{1, 2, 3},
+						.name = "Current HP increases or decreases",
+						.values{0, 1, 2, 3},
 						.mods{
 							.preMod{
 								.cr = fourPcCr,

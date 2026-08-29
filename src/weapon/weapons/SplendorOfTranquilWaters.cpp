@@ -39,10 +39,10 @@ const Weapon::Data Weapon::Datas::splendorOfTranquilWaters{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "splendorOfTranquiWatersHpChanged",
-					.prefix = "Current character's HP increases or decreases",
-					.values{1, 2, 3},
+					.name = "Current character's HP increases or decreases",
+					.values{0, 1, 2, 3},
 					.mods{
 						.preMod{
 							.skill{
@@ -51,11 +51,11 @@ const Weapon::Data Weapon::Datas::splendorOfTranquilWaters{
 						},
 					},
 				},
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "splendorOfTranquiWatersOthersHpChanged",
-					.prefix = "Party members' HP increases or decreases",
+					.name = "Party members' HP increases or decreases",
 					.teamBuff = true,
-					.values{1, 2},
+					.values{0, 1, 2},
 					.mods{
 						.preMod{
 							.hp_ = hpIncrease,

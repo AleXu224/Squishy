@@ -3,6 +3,7 @@
 #include "agent/instance.hpp"
 #include "formula/option.hpp"
 #include "formula/requires.hpp"
+#include "formula/teamAgent.hpp"
 #include "modifiers/total/total.hpp"
 
 
@@ -55,6 +56,19 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey) {
 						.ret = 1.f + Modifiers::enemy().stunMod,
 					},
 				},
+			},
+		},
+	});
+	options->insert({
+		Utils::HashedString("activeAgent"),
+		Option::ValueList{
+			.key = "activeAgent",
+			.prefix = "Active agent override",
+			.displayCondition = Formula::TeamAgentCount{} >= 2,
+			.values{
+				Formula::AgentName{.index = 0},
+				Formula::AgentName{.index = 1},
+				Formula::AgentName{.index = 2},
 			},
 		},
 	});

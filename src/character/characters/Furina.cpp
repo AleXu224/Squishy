@@ -83,10 +83,10 @@ const Character::Data Character::Datas::furina{
 			},
 			.opts{
 				.skill{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "furinaHpDrainableCount",
-						.prefix = "Number of characters over 50% HP",
-						.values{1, 2, 3, 4},
+						.name = "Number of characters over 50% HP",
+						.values{0, 1, 2, 3, 4},
 						.nodes{
 							Node::Info{
 								.name = "Salon Members Mutliplier",
@@ -97,17 +97,17 @@ const Character::Data Character::Datas::furina{
 					},
 				},
 				.burst{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "furinaFanfare",
-						.prefix = "Fanfare",
+						.name = "Fanfare",
 						.teamBuff = true,
 						.displayCondition = character.constellation == 0,
-						.values = std::views::iota(1)
+						.values = std::views::iota(0)
 								| std::views::transform([](auto &&val) {
 									  return val * 50.f;
 								  })
-								| std::views::take(6)
-								| std::ranges::to<std::vector<uint32_t>>(),
+								| std::views::take(7)
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.teamPreMod{
 								.incHb = fanfareStacks * fanfareIncHealRatio,
@@ -117,17 +117,17 @@ const Character::Data Character::Datas::furina{
 							},
 						},
 					},
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "furinaFanfareC1",
-						.prefix = "Fanfare",
+						.name = "Fanfare",
 						.teamBuff = true,
 						.displayCondition = Requirement::constellation1,
-						.values = std::views::iota(3)
+						.values = std::views::iota(0)
 								| std::views::transform([](auto &&val) {
 									  return val * 50.f;
 								  })
-								| std::views::take(6)
-								| std::ranges::to<std::vector<uint32_t>>(),
+								| std::views::take(9)
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.teamPreMod{
 								.incHb = fanfareStacks * fanfareIncHealRatio,
@@ -139,16 +139,16 @@ const Character::Data Character::Datas::furina{
 					},
 				},
 				.constellation2{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "furinaAboveFanfareC2",
-						.prefix = "Fanfare above limit",
+						.name = "Fanfare above limit",
 						.displayCondition = GetInt("furinaFanfareC1") >= 400,
-						.values = std::views::iota(1)
+						.values = std::views::iota(0)
 								| std::views::transform([](auto &&val) {
 									  return val * 50.f;
 								  })
-								| std::views::take(8)
-								| std::ranges::to<std::vector<uint32_t>>(),
+								| std::views::take(9)
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.preMod{
 								.hp_ = c2HpIncrease,

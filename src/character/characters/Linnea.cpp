@@ -123,11 +123,11 @@ const Character::Data Character::Datas::linnea{
 							},
 						},
 					},
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "linneaC1LumiStacks",
-						.prefix = "Stacks used by Million Ton Crush",
+						.name = "Stacks used by Million Ton Crush",
 						.displayCondition = IsActive("linneaC1"),
-						.values{1, 2, 3, 4, 5},
+						.values{0, 1, 2, 3, 4, 5},
 						.nodes{
 							Node::Info{
 								.name = "Million Ton Crush DMG Increase",

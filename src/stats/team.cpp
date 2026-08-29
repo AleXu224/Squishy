@@ -2,6 +2,7 @@
 #include "formula/elemental.hpp"
 #include "formula/operators.hpp"
 #include "formula/option.hpp"
+#include "formula/reaction.hpp"
 #include "formula/requirement.hpp"
 #include "formula/requires.hpp"
 #include "formula/teamCharacter.hpp"
@@ -128,6 +129,20 @@ Stats::Team::Team(::Team::InstanceKey instanceKey) : instanceKey(instanceKey), i
 			.key = "radianceStellarSwirl",
 			.name = "Radiance: Stellar-Swirl",
 			.displayCondition = Formula::ElementCount{.element = Misc::Element::cryo} >= 1 && Formula::ElementCount{.element = Misc::Element::anemo} >= 1,
+		},
+	});
+	options->insert({
+		Utils::HashedString("activeCharacter"),
+		Option::ValueList{
+			.key = "activeCharacter",
+			.prefix = "Active character override",
+			.displayCondition = Formula::TeamCharacterCount{} >= 2,
+			.values{
+				Formula::CharacterName{.index = 0},
+				Formula::CharacterName{.index = 1},
+				Formula::CharacterName{.index = 2},
+				Formula::CharacterName{.index = 3},
+			},
 		},
 	});
 }

@@ -127,10 +127,10 @@ const Character::Data Character::Datas::citlali{
 					},
 				},
 				.constellation6{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "citlaliC6",
-						.prefix = "Nightsoul consumed",
-						.values{5, 10, 15, 20, 25, 30, 35, 40},
+						.name = "Nightsoul consumed",
+						.values{0, 5, 10, 15, 20, 25, 30, 35, 40},
 						.mods{
 							.preMod{
 								.all{.DMG = c6SelfBuff},

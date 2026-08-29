@@ -166,10 +166,10 @@ const Character::Data Character::Datas::columbina{
 					},
 				},
 				.passive1{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "columbinaA1Stacks",
-						.prefix = "After triggering Kuuvahki Interference",
-						.values{1, 2, 3},
+						.name = "After triggering Kuuvahki Interference",
+						.values{0, 1, 2, 3},
 						.mods{
 							.preMod{
 								.cr = a1Buff,

@@ -5,11 +5,27 @@
 #include "format"
 #include "formula/base.hpp"
 #include "formula/constant.hpp"
+#include "formula/option.hpp"
 #include "stats/loadout.hpp"
 #include "stats/team.hpp"
 
 
 namespace Formula {
+	struct AgentName : FormulaBase<std::string, Type::constant> {
+		size_t index;
+		std::string suffix;
+
+		void print(Descriptor &descriptor, const Context &context, Step) const {
+			descriptor.addValue(eval(context));
+		}
+
+		[[nodiscard]] std::string eval(const Context &context) const {
+			auto &agent = context.team.agents.at(index);
+			if (!agent) return "None";
+			return std::format("{} {}", agent->state.stats.data.name, suffix);
+		}
+	};
+
 	template<FormulaLike T>
 	struct TeamAgent : FormulaBase<FormulaType<T>> {
 		size_t index = 0;
@@ -53,13 +69,13 @@ namespace Formula {
 		using RetType = FormulaType<T>;
 
 		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
-			const auto &agent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &agent = context.team.agents.at(activeAgentIndex(context));
 			if (!agent) return ConstantBase<RetType>{.value = {}};
 			return formula.fold(context.withSource(agent->state), args);
 		}
 
 		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
-			const auto &agent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &agent = context.team.agents.at(activeAgentIndex(context));
 			if (!agent) return;
 			auto &stats = agent->state;
 			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
@@ -67,7 +83,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
-			const auto &agent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &agent = context.team.agents.at(activeAgentIndex(context));
 			if (!agent) return {};
 			return formula.eval(context.withSource(agent->state));
 		}
@@ -168,21 +184,21 @@ namespace Formula {
 		Formula::FloatNode formula;
 
 		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
-			const auto &activeAgent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &activeAgent = context.team.agents.at(activeAgentIndex(context));
 			if (!activeAgent) return ConstantFlat{.value = 0};
 			if (context.source.instanceKey != activeAgent->instanceKey) return ConstantFlat{.value = 0};
 			return formula.fold(context, args);
 		}
 
 		void print(Descriptor &descriptor, const Context &context, Step step) const {
-			const auto &activeAgent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &activeAgent = context.team.agents.at(activeAgentIndex(context));
 			if (!activeAgent) return;
 			if (context.source.instanceKey != activeAgent->instanceKey) return;
 			formula.print(descriptor, context, step);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			const auto &activeAgent = context.team.agents.at(context.team.activeAgentIndex);
+			const auto &activeAgent = context.team.agents.at(activeAgentIndex(context));
 			if (!activeAgent) return {};
 			if (context.source.instanceKey != activeAgent->instanceKey) return {};
 			return formula.eval(context);

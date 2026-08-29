@@ -140,10 +140,10 @@ const Character::Data Character::Datas::zibai{
 					},
 				},
 				.constellation6{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "zibaiC6Cond",
-						.prefix = "Points consumed above 70",
-						.values{5, 10, 15, 20, 25, 30},
+						.name = "Points consumed above 70",
+						.values{0, 5, 10, 15, 20, 25, 30},
 						.nodes{
 							Node::Info{
 								.name = "Spirit Steed's Stride Elevation",

@@ -19,10 +19,10 @@ const Artifact::Set Artifact::Sets::huskOfOpulentDreams{
 			},
 			.fourPc{
 				.opts{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "huskOfOpulentStacks",
-						.prefix = "Curiosity Stacks",
-						.values{1, 2, 3, 4},
+						.name = "Curiosity Stacks",
+						.values{0, 1, 2, 3, 4},
 						.mods{
 							.preMod{
 								.def_ = fourPcBuffDef,

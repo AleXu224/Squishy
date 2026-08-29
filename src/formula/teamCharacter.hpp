@@ -7,6 +7,7 @@
 #include "formula/character.hpp"
 #include "formula/clamp.hpp"
 #include "formula/constant.hpp"
+#include "formula/option.hpp"
 #include "formula/operators.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
@@ -58,13 +59,13 @@ namespace Formula {
 		using RetType = FormulaType<T>;
 
 		[[nodiscard]] NodeType<RetType> fold(const Context &context, const FoldArgs &args) const {
-			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &character = context.team.characters.at(activeCharacterIndex(context));
 			if (!character) return ConstantBase<RetType>{.value = {}};
 			return formula.fold(context.withSource(character->state), args);
 		}
 
 		void print(Descriptor &descriptor, const Context &context, Step prevStep) const {
-			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &character = context.team.characters.at(activeCharacterIndex(context));
 			if (!character) return;
 			auto &stats = character->state;
 			descriptor.pushPrefix(std::format("{} ", stats.stats.data.name));
@@ -72,7 +73,7 @@ namespace Formula {
 		}
 
 		[[nodiscard]] RetType eval(const Context &context) const {
-			const auto &character = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &character = context.team.characters.at(activeCharacterIndex(context));
 			if (!character) return {};
 			return formula.eval(context.withSource(character->state));
 		}
@@ -344,21 +345,21 @@ namespace Formula {
 		Formula::FloatNode formula;
 
 		[[nodiscard]] FloatNode fold(const Context &context, const FoldArgs &args) const {
-			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &activeCharacter = context.team.characters.at(activeCharacterIndex(context));
 			if (!activeCharacter) return ConstantFlat{.value = 0};
 			if (context.source.instanceKey != activeCharacter->instanceKey) return ConstantFlat{.value = 0};
 			return formula.fold(context, args);
 		}
 
 		void print(Descriptor &descriptor, const Context &context, Step step) const {
-			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &activeCharacter = context.team.characters.at(activeCharacterIndex(context));
 			if (!activeCharacter) return;
 			if (context.source.instanceKey != activeCharacter->instanceKey) return;
 			formula.print(descriptor, context, step);
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			const auto &activeCharacter = context.team.characters.at(context.team.activeCharacterIndex);
+			const auto &activeCharacter = context.team.characters.at(activeCharacterIndex(context));
 			if (!activeCharacter) return {};
 			if (context.source.instanceKey != activeCharacter->instanceKey) return {};
 			return formula.eval(context);

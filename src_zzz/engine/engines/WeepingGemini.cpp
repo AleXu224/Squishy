@@ -26,11 +26,11 @@ const Engine::Data Engine::Datas::weepingGemini{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "weepingGeminiCond",
-					.prefix = "A squad member inflicted an Attribute Anomaly on an enemy",
+					.name = "A squad member inflicted an Attribute Anomaly on an enemy",
 					.teamBuff = true,
-					.values{1, 2, 3, 4},
+					.values = std::views::iota(0, 5) | std::ranges::to<std::vector<float>>(),
 					.mods{
 						.combat{
 							.ap = buff,

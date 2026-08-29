@@ -41,11 +41,11 @@ const Weapon::Data Weapon::Datas::peakPatrolSong{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "peakPatrolOdeToFlowers",
-					.prefix = "After Normal or Plunging Attacks hit an opponent",
+					.name = "After Normal or Plunging Attacks hit an opponent",
 					.teamBuff = true,
-					.values{1, 2},
+					.values{0, 1, 2},
 					.mods{
 						.preMod{
 							.def_ = defBuff,

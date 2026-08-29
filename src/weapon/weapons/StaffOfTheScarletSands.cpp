@@ -32,11 +32,11 @@ const Weapon::Data Weapon::Datas::staffOfTheScarletSands{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "eHits",
-					.prefix = "Elemental Skill hits",
+					.name = "Elemental Skill hits",
 					.teamBuff = true,
-					.values{1, 2, 3},
+					.values{0, 1, 2, 3},
 					.mods{
 						.postMod{
 							.atk = eHitsAtk,

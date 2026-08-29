@@ -228,10 +228,12 @@ namespace {
 
 					std::visit(
 						Utils::overloaded{
-							[&](bool &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::Boolean>(optsMap.at(opt.hash)));
+							[&](const Option::Boolean &definition) {
+								auto *value = std::get_if<bool>(&opt.value);
+								if (!value) return;
+								localOptions.insert_or_assign(opt.hash, definition);
 								auto &optRef = std::get<Option::Boolean>(localOptions.at(opt.hash));
-								optRef.active = value;
+								optRef.active = *value;
 
 								ret.emplace_back(ComboEditorOptionContainer{
 									.entry = widget->entry,
@@ -239,10 +241,10 @@ namespace {
 									.child = UI::ToggleOption{
 										.option = optRef,
 										.instanceKey = sourceKey,
-										.onToggle = [&](bool newVal) {
+										.onToggle = [&, value](bool newVal) {
 											std::visit(
 												[&](auto &&entry) {
-													value = newVal;
+													*value = newVal;
 													entry.optionUpdateEvent.notify();
 													widget->comboUpdateEvent.notify();
 												},
@@ -253,20 +255,22 @@ namespace {
 									},
 								});
 							},
-							[&](std::optional<uint8_t> &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueList>(optsMap.at(opt.hash)));
+							[&](const Option::ValueList &definition) {
+								auto *value = std::get_if<std::optional<uint8_t>>(&opt.value);
+								if (!value) return;
+								localOptions.insert_or_assign(opt.hash, definition);
 								auto &optRef = std::get<Option::ValueList>(localOptions.at(opt.hash));
-								optRef.currentIndex = value;
+								optRef.currentIndex = *value;
 								ret.emplace_back(ComboEditorOptionContainer{
 									.entry = widget->entry,
 									.option = opt,
 									.child = UI::ValueListOption{
 										.option = optRef,
 										.instanceKey = sourceKey,
-										.onChange = [&](std::optional<uint8_t> newVal) {
+										.onChange = [&, value](std::optional<uint8_t> newVal) {
 											std::visit(
 												[&](auto &&entry) {
-													value = newVal;
+													*value = newVal;
 													entry.optionUpdateEvent.notify();
 													widget->comboUpdateEvent.notify();
 												},
@@ -277,20 +281,22 @@ namespace {
 									},
 								});
 							},
-							[&](::Combo::ComboFloatOption &value) {
-								localOptions.insert_or_assign(opt.hash, std::get<Option::ValueSlider>(optsMap.at(opt.hash)));
+							[&](const Option::ValueSlider &definition) {
+								auto *value = std::get_if<::Combo::ComboFloatOption>(&opt.value);
+								if (!value) return;
+								localOptions.insert_or_assign(opt.hash, definition);
 								auto &optRef = std::get<Option::ValueSlider>(localOptions.at(opt.hash));
-								optRef.value = value.value;
+								optRef.value = value->value;
 								ret.emplace_back(ComboEditorOptionContainer{
 									.entry = widget->entry,
 									.option = opt,
 									.child = UI::ValueSliderOption{
 										.option = optRef,
 										.instanceKey = sourceKey,
-										.onChange = [&](float newVal) {
+										.onChange = [&, value](float newVal) {
 											std::visit(
 												[&](auto &&entry) {
-													value.value = newVal;
+													value->value = newVal;
 													entry.optionUpdateEvent.notify();
 													widget->comboUpdateEvent.notify();
 												},
@@ -302,7 +308,7 @@ namespace {
 								});
 							},
 						},
-						opt.value
+						optsMap.at(opt.hash)
 					);
 				}
 

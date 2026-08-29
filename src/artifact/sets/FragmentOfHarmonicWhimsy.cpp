@@ -18,10 +18,10 @@ const Artifact::Set Artifact::Sets::fragmentOfHarmonicWhimsy{
 			},
 			.fourPc{
 				.opts{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "fragmentOfHarmonicBol",
-						.prefix = "The value of a Bond of Life increases or decreases",
-						.values{1, 2, 3},
+						.name = "The value of a Bond of Life increases or decreases",
+						.values{0, 1, 2, 3},
 						.mods{
 							.preMod{
 								.all{

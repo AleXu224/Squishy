@@ -6,6 +6,30 @@
 #include "stats/team.hpp"
 
 namespace Formula {
+	[[nodiscard]] inline const Combo::Option *matchingOverride(const Combo::Overrides *overrides, uint64_t hash, const Option::Types &definition) {
+		if (overrides == nullptr) return nullptr;
+
+		auto opt = overrides->getOption(hash);
+		if (!opt.has_value()) return nullptr;
+
+		bool matches = std::visit(
+			Utils::overloaded{
+				[&definition](const bool &) {
+					return std::holds_alternative<Option::Boolean>(definition);
+				},
+				[&definition](const std::optional<uint8_t> &) {
+					return std::holds_alternative<Option::ValueList>(definition);
+				},
+				[&definition](const ::Combo::ComboFloatOption &) {
+					return std::holds_alternative<Option::ValueSlider>(definition);
+				},
+			},
+			opt->get().value
+		);
+
+		return matches ? &opt->get() : nullptr;
+	};
+
 	struct impl_IsActive : FormulaBase<bool, Type::constant> {
 		Utils::HashedString name;
 
@@ -14,23 +38,21 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			if (context.overrides != nullptr) {
-				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
-					return std::visit(
-						Utils::overloaded{
-							[](const bool &active) {
-								return active;
-							},
-							[](const std::optional<uint8_t> &currentIndex) {
-								return currentIndex.has_value();
-							},
-							[](const ::Combo::ComboFloatOption &value) {
-								return value.value != 0.f;
-							},
+			if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(context.source.instanceKey, name.hash), context.source.options->at(name.hash))) {
+				return std::visit(
+					Utils::overloaded{
+						[](const bool &active) {
+							return active;
 						},
-						opt->get().value
-					);
-				}
+						[](const std::optional<uint8_t> &currentIndex) {
+							return currentIndex.has_value();
+						},
+						[](const ::Combo::ComboFloatOption &value) {
+							return value.value != 0.f;
+						},
+					},
+					opt->value
+				);
 			}
 
 			return ::Option::getBool(*context.source.options, name);
@@ -45,23 +67,21 @@ namespace Formula {
 		}
 
 		[[nodiscard]] bool eval(const Context &context) const {
-			if (context.overrides != nullptr) {
-				if (auto opt = context.overrides->getOption(Utils::hashCombine(0, name.hash)); opt.has_value()) {
-					return std::visit(
-						Utils::overloaded{
-							[](const bool &active) {
-								return active;
-							},
-							[](const std::optional<uint8_t> &currentIndex) {
-								return currentIndex.has_value();
-							},
-							[](const ::Combo::ComboFloatOption &value) {
-								return value.value != 0.f;
-							},
+			if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(0, name.hash), context.team.options->at(name.hash))) {
+				return std::visit(
+					Utils::overloaded{
+						[](const bool &active) {
+							return active;
 						},
-						opt->get().value
-					);
-				}
+						[](const std::optional<uint8_t> &currentIndex) {
+							return currentIndex.has_value();
+						},
+						[](const ::Combo::ComboFloatOption &value) {
+							return value.value != 0.f;
+						},
+					},
+					opt->value
+				);
 			}
 
 			return ::Option::getBool(*context.team.options, name);
@@ -77,28 +97,25 @@ namespace Formula {
 		}
 
 		[[nodiscard]] float eval(const Context &context) const {
-			if (context.overrides != nullptr) {
-				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
-					return std::visit(
-						Utils::overloaded{
-							[](const bool &active) {
-								return active ? 1.f : 0.f;
-							},
-							[&](const std::optional<uint8_t> &currentIndex) -> float {
-								auto &values = std::get<Option::ValueList>(context.source.options->at(name.hash)).values;
-								if (currentIndex.has_value() && currentIndex.value() < values.size()) {
-									return values.at(currentIndex.value());
-								} else {
-									return defaultValue;
-								}
-							},
-							[](const ::Combo::ComboFloatOption &value) {
-								return value.value;
-							},
+			auto &definition = context.source.options->at(name.hash);
+			if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(context.source.instanceKey, name.hash), definition)) {
+				return std::visit(
+					Utils::overloaded{
+						[](const bool &active) -> float {
+							return active ? 1.f : 0.f;
 						},
-						opt->get().value
-					);
-				}
+						[&](const std::optional<uint8_t> &currentIndex) -> float {
+							return currentIndex.transform([](auto &&val) {
+											return static_cast<float>(val);
+										})
+								.value_or(defaultValue);
+						},
+						[](const ::Combo::ComboFloatOption &value) -> float {
+							return value.value;
+						},
+					},
+					opt->value
+				);
 			}
 
 			return std::visit(
@@ -107,40 +124,64 @@ namespace Formula {
 						return opt.active ? 1.f : 0.f;
 					},
 					[&](const Option::ValueList &opt) -> float {
-						return opt.getValue().value_or(defaultValue);
+						return opt.currentIndex.transform([](auto &&val) {
+												   return static_cast<float>(val);
+											   })
+							.value_or(defaultValue);
 					},
 					[&](const Option::ValueSlider &opt) -> float {
 						return opt.getValue();
 					},
 				},
-				context.source.options->at(name.hash)
+				definition
 			);
 		}
 	};
 
 	struct impl_GetInt : FormulaBase<int32_t, Type::constant> {
 		Utils::HashedString name;
-		uint32_t defaultValue = 0.f;
+		uint32_t defaultValue = 0;
 
 		void print(Descriptor &descriptor, const Context &context, Step) const {
 			descriptor.add(std::string{name.str}, eval(context));
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
-			auto &option = ::Option::getValueListOption(*context.source.options, name);
-
-			if (context.overrides != nullptr) {
-				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
-					auto index = std::get<std::optional<uint8_t>>(opt->get().value);
-					if (index.has_value()) {
-						return option.values.at(index.value());
-					} else {
-						return defaultValue;
-					}
-				}
+			auto &definition = context.source.options->at(name.hash);
+			if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(context.source.instanceKey, name.hash), definition)) {
+				return std::visit(
+					Utils::overloaded{
+						[](const bool &active) -> int32_t {
+							return active ? 1 : 0;
+						},
+						[&](const std::optional<uint8_t> &currentIndex) -> int32_t {
+							return currentIndex.transform([](auto &&val) -> int32_t {
+											return val;
+										})
+								.value_or(defaultValue);
+						},
+						[](const ::Combo::ComboFloatOption &value) -> int32_t {
+							return static_cast<int32_t>(value.value);
+						},
+					},
+					opt->value
+				);
 			}
 
-			return option.getValue().value_or(defaultValue);
+			return std::visit(
+				Utils::overloaded{
+					[&](const Option::Boolean &opt) -> int32_t {
+						return opt.active ? 1 : 0;
+					},
+					[&](const Option::ValueList &opt) -> int32_t {
+						return opt.currentIndex.value_or(defaultValue);
+					},
+					[&](const Option::ValueSlider &opt) -> int32_t {
+						return opt.getValue();
+					},
+				},
+				definition
+			);
 		}
 	};
 
@@ -153,13 +194,24 @@ namespace Formula {
 		}
 
 		[[nodiscard]] int32_t eval(const Context &context) const {
-			if (context.overrides != nullptr) {
-				if (auto opt = context.overrides->getOption(Utils::hashCombine(context.source.instanceKey, name.hash)); opt.has_value()) {
-					return std::get<std::optional<uint8_t>>(opt->get().value).value_or(defaultValue);
-				}
+			auto &definition = context.source.options->at(name.hash);
+			if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(context.source.instanceKey, name.hash), definition)) {
+				return std::get<std::optional<uint8_t>>(opt->value).value_or(defaultValue);
 			}
 
 			return ::Option::getIndex(*context.source.options, name, defaultValue);
 		}
 	};
+
+	[[nodiscard]] inline uint32_t activeAgentIndex(const Context &context) {
+		static constexpr Utils::HashedString key{"activeAgent"};
+
+		uint32_t ret = ::Option::getIndex(*context.team.options, key, context.team.activeAgentIndex);
+		if (auto *opt = matchingOverride(context.overrides, Utils::hashCombine(0, key.hash), context.team.options->at(key.hash))) {
+			ret = std::get<std::optional<uint8_t>>(opt->value).value_or(ret);
+		}
+
+		if (ret >= context.team.agents.size()) return context.team.activeAgentIndex;
+		return ret;
+	}
 }// namespace Formula

@@ -26,14 +26,13 @@ const Weapon::Data Weapon::Datas::mistsplitterReforged{
 		auto multiplier3 = WeaponMultiplier(true, {0.1600, 0.2000, 0.2400, 0.2800, 0.3200});
 		auto multiplier4 = WeaponMultiplier(true, {0.2800, 0.3500, 0.4200, 0.4900, 0.5600});
 
-		auto condVal = GetIndex("mistsplitterCond");
-		auto cond = IsActive("mistsplitterCond");
+		auto stacks = GetInt("mistsplitterCond");
 
 		auto buff = Requires{
-			.requirement = cond,
+			.requirement = stacks > 0,
 			.ret = Evaluator{
 				.evaluated = Index{
-					.index = condVal,
+					.index = stacks - ConstantInt{.value = 1},
 					.indexable = std::array{multiplier2, multiplier3, multiplier4},
 				},
 				.isPercentage = true
@@ -61,10 +60,10 @@ const Weapon::Data Weapon::Datas::mistsplitterReforged{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "mistsplitterCond",
-					.prefix = "Stacks",
-					.values{1, 2, 3},
+					.name = "Stacks",
+					.values{0, 1, 2, 3},
 					.mods{
 						.preMod{
 							.pyro{.DMG = pyroBuff},

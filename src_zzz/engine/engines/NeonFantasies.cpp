@@ -39,10 +39,10 @@ const Engine::Data Engine::Datas::neonFantasies{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "neonFantasiesStacks",
-					.prefix = "After the equipper's EX Special Attack or Basic Attack deals Ether DMG",
-					.values = std::views::iota(0, 3) | std::ranges::to<std::vector<uint32_t>>(),
+					.name = "After the equipper's EX Special Attack or Basic Attack deals Ether DMG",
+					.values = std::views::iota(0, 3) | std::ranges::to<std::vector<float>>(),
 					.mods{
 						.combat{
 							.ap = selfBuff,

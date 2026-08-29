@@ -5,7 +5,6 @@
 #include "stats/sheet.hpp"
 #include "string_view"
 #include "utils/hashedString.hpp"
-#include <cstdint>
 #include <optional>
 #include <vector>
 
@@ -17,13 +16,34 @@ namespace Option {
 		bool teamBuff = false;
 		std::optional<size_t> currentIndex = std::nullopt;
 		Formula::BoolNode displayCondition{};
-		std::vector<uint32_t> values;
+		std::vector<std::variant<std::string, Formula::NodeType<std::string>>> values;
 		Stats::ModsSheet mods{};
 		std::vector<Node::Types> nodes{};
 
-		[[nodiscard]] std::optional<uint32_t> getValue() const {
-			if (!currentIndex.has_value()) return std::nullopt;
-			return values.at(currentIndex.value());
+		[[nodiscard]] std::optional<std::string> getValue(const Formula::Context &ctx, std::optional<size_t> index = std::nullopt) const {
+			std::optional<std::variant<std::string, Formula::NodeType<std::string>>> value;
+			auto overloadedIndex = index ? index : currentIndex;
+			if (overloadedIndex.has_value() && overloadedIndex.value() < values.size()) {
+				value = values.at(overloadedIndex.value());
+			}
+
+			std::optional<std::string> ret;
+
+			if (value.has_value()) {
+				std::visit(
+					Utils::overloaded{
+						[&](const std::string &val) {
+							ret = val;
+						},
+						[&](const Formula::NodeType<std::string> &val) {
+							ret = val.eval(ctx);
+						},
+					},
+					value.value()
+				);
+			}
+
+			return ret;
 		}
 	};
 }// namespace Option

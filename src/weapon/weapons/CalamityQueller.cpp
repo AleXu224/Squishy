@@ -43,11 +43,13 @@ const Weapon::Data Weapon::Datas::calamityQueller{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "calamityQuellerStacks",
-					.prefix = "After using an Elemental Skill",
+					.name = "After using an Elemental Skill",
 					.teamBuff = true,
-					.values{1, 2, 3, 4, 5, 6},
+					.values = std::views::iota(0)
+							| std::views::take(7)
+							| std::ranges::to<std::vector<float>>(),
 					.mods{
 						.preMod{
 							.atk_ = buff,

@@ -18,10 +18,10 @@ const Artifact::Set Artifact::Sets::unfinishedReverie{
 			},
 			.fourPc{
 				.opts{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "unfinishedReverieStacks",
-						.prefix = "Stacks",
-						.values{1, 2, 3, 4, 5},
+						.name = "Stacks",
+						.values{0, 1, 2, 3, 4, 5},
 						.mods{
 							.preMod{
 								.all{

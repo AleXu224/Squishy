@@ -34,14 +34,13 @@ const Character::Data Character::Datas::skirk{
 		};
 		auto burstBuff = burstStacksUsed * total.atk * serpentsSubtletyBonus;
 
-		auto riftsAbsorbed = IsActive("skirkBurstVoidRifts");
 		auto riftsAbsorbedCount = GetInt("skirkBurstVoidRifts");
 		auto zeroRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0350, 0.0400, 0.0450, 0.0500, 0.0550, 0.0600, 0.0650, 0.0700, 0.0750, 0.0800, 0.0850, 0.0900, 0.0950, 0.1000, 0.1050});
 		auto oneRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0660, 0.0720, 0.0780, 0.0840, 0.0900, 0.0960, 0.1020, 0.1080, 0.1140, 0.1200, 0.1260, 0.1320, 0.1380, 0.1440, 0.1500});
 		auto twoRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.0880, 0.0960, 0.1040, 0.1120, 0.1200, 0.1280, 0.1360, 0.1440, 0.1520, 0.1600, 0.1680, 0.1760, 0.1840, 0.1920, 0.2000});
 		auto threeRiftstBonus = Multiplier(Utils::EntryType::multiplier, LevelableTalent::burst, {0.1100, 0.1200, 0.1300, 0.1400, 0.1500, 0.1600, 0.1700, 0.1800, 0.1900, 0.2000, 0.2100, 0.2200, 0.2300, 0.2400, 0.2500});
 		auto burstNaBuff = Requires{
-			.requirement = riftsAbsorbed && Requirement::passive1,
+			.requirement = Requirement::passive1,
 			.ret = Evaluator{
 				.evaluated = Index{
 					.index = riftsAbsorbedCount,
@@ -100,13 +99,13 @@ const Character::Data Character::Datas::skirk{
 			},
 			.opts{
 				.burst{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "skirkBurstStacksUsed",
-						.prefix = "Serpent's Subtlety points over 50",
+						.name = "Serpent's Subtlety points over 50",
 						.displayCondition = !Requirement::constellation2,
-						.values = std::views::iota(1)
-								| std::views::take(12)
-								| std::ranges::to<std::vector<uint32_t>>(),
+						.values = std::views::iota(0)
+								| std::views::take(13)
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.preMod{
 								.burst{
@@ -115,13 +114,13 @@ const Character::Data Character::Datas::skirk{
 							},
 						},
 					},
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "skirkBurstStacksUsedC2",
-						.prefix = "Serpent's Subtlety points over 50",
+						.name = "Serpent's Subtlety points over 50",
 						.displayCondition = Requirement::constellation2,
-						.values = std::views::iota(1)
-								| std::views::take(24)
-								| std::ranges::to<std::vector<uint32_t>>(),
+						.values = std::views::iota(0)
+								| std::views::take(25)
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.preMod{
 								.burst{
@@ -130,9 +129,9 @@ const Character::Data Character::Datas::skirk{
 							},
 						},
 					},
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "skirkBurstVoidRifts",
-						.prefix = "Rifts absorbed",
+						.name = "Rifts absorbed",
 						.displayCondition = Requirement::passive1,
 						.values{0, 1, 2, 3},
 						.mods{
@@ -145,10 +144,10 @@ const Character::Data Character::Datas::skirk{
 					},
 				},
 				.passive2{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "skirkA4Stacks",
-						.prefix = "Nearby party members deal Hydro or Cryo DMG",
-						.values{1, 2, 3},
+						.name = "Nearby party members deal Hydro or Cryo DMG",
+						.values{0, 1, 2, 3},
 						.mods{
 							.preMod{
 								.atk_ = c4AtkBuff,

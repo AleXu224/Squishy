@@ -7,6 +7,7 @@
 #include "valueSlider.hpp"
 #include "variant"
 #include <functional>
+#include <print>
 #include <unordered_map>
 
 
@@ -39,7 +40,10 @@ namespace Option {
 					return option.active ? 1.f : 0.f;
 				},
 				[&defaultValue](const Option::ValueList &option) {
-					return static_cast<float>(option.getValue().value_or(defaultValue));
+					return option.currentIndex.transform([](auto val) {
+												  return static_cast<float>(val);
+											  })
+						.value_or(defaultValue);
 				},
 				[](const Option::ValueSlider &option) {
 					return option.getValue();
@@ -56,7 +60,7 @@ namespace Option {
 					return option.active ? 1 : 0;
 				},
 				[&defaultValue](const Option::ValueList &option) -> float {
-					return option.getValue().value_or(defaultValue);
+					return option.currentIndex.value_or(defaultValue);
 				},
 				[](const Option::ValueSlider &option) -> float {
 					return option.getValue();
@@ -67,11 +71,22 @@ namespace Option {
 	}
 
 	[[nodiscard]] inline uint32_t getIndex(const TypesMap &options, const Utils::HashedString &key, uint32_t defaultValue = 0) {
-		return std::get<Option::ValueList>(options.at(key.hash)).currentIndex.value_or(defaultValue);
-	}
-
-	[[nodiscard]] inline const ValueList &getValueListOption(const TypesMap &options, const Utils::HashedString &key) {
-		return std::get<Option::ValueList>(options.at(key.hash));
+		return std::visit(
+			Utils::overloaded{
+				[&defaultValue](const ValueList &option) -> uint32_t {
+					return option.currentIndex.value_or(defaultValue);
+				},
+				[&defaultValue, &key](const Boolean &) -> uint32_t {
+					std::println("Wrong opt selected while getting index {}", key.str);
+					return defaultValue;
+				},
+				[&defaultValue, &key](const ValueSlider &) -> uint32_t {
+					std::println("Wrong opt selected while getting index {}", key.str);
+					return defaultValue;
+				},
+			},
+			options.at(key.hash)
+		);
 	}
 
 	struct AgentList {

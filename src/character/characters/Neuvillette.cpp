@@ -36,10 +36,10 @@ const Character::Data Character::Datas::neuvillette{
 			},
 		};
 
-		auto a4Cond = IsActive("neuvilletteA4");
+		auto a4Hp = GetFloat("neuvilletteA4");
 		auto a4Buff = Requires{
-			.requirement = Requirement::passive2 && a4Cond,
-			.ret = 0.006f * (GetFloat("neuvilletteA4") - ConstantFlat{.value = 30.f}),
+			.requirement = Requirement::passive2,
+			.ret = 0.006f * (a4Hp - ConstantFlat{.value = 30.f}),
 		};
 
 		auto c2Buff = Requires{.requirement = Requirement::constellation2, .ret = a1Stacks * 0.14f};
@@ -52,10 +52,10 @@ const Character::Data Character::Datas::neuvillette{
 			},
 			.opts{
 				.passive1{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "neuvilletteA1",
-						.prefix = "Hydro reactions triggered",
-						.values{1, 2, 3},
+						.name = "Hydro reactions triggered",
+						.values{0, 1, 2, 3},
 						.nodes{
 							Node::Info{
 								.name = "Equitable Judgment Multiplier",
@@ -71,15 +71,15 @@ const Character::Data Character::Datas::neuvillette{
 					},
 				},
 				.passive2{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "neuvilletteA4",
-						.prefix = "Current HP %",
-						.values = std::views::iota(1)
-								| std::views::take(50 / 5)
+						.name = "Current HP",
+						.values = std::views::iota(0)
+								| std::views::take(50 / 5 + 1)
 								| std::views::transform([](float val) {
 									  return val * 5 + 30;
 								  })
-								| std::ranges::to<std::vector<uint32_t>>(),
+								| std::ranges::to<std::vector<float>>(),
 						.mods{
 							.preMod{
 								.hydro{.DMG = a4Buff},

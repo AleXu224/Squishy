@@ -35,11 +35,11 @@ const Engine::Data Engine::Datas::practicedPerfection{
 				},
 			},
 			.opts{
-				Option::ValueList{
+				Option::ValueSlider{
 					.key = "practicedPerfectionCond",
-					.prefix = "After inflicting Assault",
+					.name = "After inflicting Assault",
 					.teamBuff = true,
-					.values{1, 2},
+					.values = std::views::iota(0, 3) | std::ranges::to<std::vector<float>>(),
 					.mods{
 						.combat{
 							.physical{

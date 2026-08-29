@@ -42,7 +42,6 @@ const Character::Data Character::Datas::mavuika{
 		auto c4 = Requirement::constellation4;
 		auto c4Buff = Requires{.requirement = c4, .ret = Constant{.value = 0.1f}};
 
-		auto a4 = IsActive("mavuikaA4");
 		auto a4Stacks = GetInt("mavuikaA4");
 		auto a4Decay = IfElse{
 			.requirement = c4,
@@ -50,7 +49,7 @@ const Character::Data Character::Datas::mavuika{
 			.elseVal = (ConstantFlat{.value = 20.f} - a4Stacks) / ConstantFlat{.value = 20.f},
 		};
 		auto a4Buff = Requires{
-			.requirement = burstActive && a4 && Requirement::passive2,
+			.requirement = burstActive && Requirement::passive2,
 			.ret = c4Buff + burstStacks * 0.002f * a4Decay,
 		};
 
@@ -82,16 +81,17 @@ const Character::Data Character::Datas::mavuika{
 			},
 			.opts{
 				.burst{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "mavuikaBurstStacks",
-						.prefix = "Fighting Spirit consumed",
+						.name = "Fighting Spirit consumed",
 						.teamBuff = true,
-						.values = std::views::iota(100 / 10)
-								| std::views::take(11)
+						.values = std::views::iota(0)
+								| std::views::take(12)
 								| std::views::transform([](auto &&val) {
-									  return val * 10;
+									  if (val == 0) return 0;
+									  return val * 10 + 90;
 								  })
-								| std::ranges::to<std::vector<uint32_t>>(),
+								| std::ranges::to<std::vector<float>>(),
 						.nodes{
 							Node::Info{
 								.name = "Elemental Burst DMG Increase",
@@ -120,12 +120,12 @@ const Character::Data Character::Datas::mavuika{
 					},
 				},
 				.passive2{
-					Option::ValueList{
+					Option::ValueSlider{
 						.key = "mavuikaA4",
-						.prefix = "Time since burst used",
+						.name = "Time since burst used",
 						.teamBuff = true,
 						.displayCondition = burstActive,
-						.values = std::views::iota(0) | std::views::take(20) | std::ranges::to<std::vector<uint32_t>>(),
+						.values = std::views::iota(0) | std::views::take(20) | std::ranges::to<std::vector<float>>(),
 						.mods{
 							.activePreMod{
 								.all{.DMG = a4Buff},
