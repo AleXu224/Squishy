@@ -10,6 +10,7 @@
 #include "modifiers/total/initial.hpp"
 #include "modifiers/total/total.hpp"
 #include "stats/loadout.hpp"
+#include <set>
 
 
 void Stats::AgentSheet::init(Stats::State &stats) {
@@ -107,7 +108,7 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 	};
 
 	// Core stats
-	this->base.fromStat(stats.stats.base.coreStat1).modifiers.at(1) = Formula::Prefix{
+	auto coreStat1 = Formula::Prefix{
 		.prefix = "Agent Base",
 		.val = Formula::Custom{
 			.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
@@ -119,7 +120,7 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 			.isPercentage = Utils::isPercentage(stats.stats.base.coreStat1)
 		}
 	};
-	this->base.fromStat(stats.stats.base.coreStat2).modifiers.at(1) = Formula::Prefix{
+	auto coreStat2 = Formula::Prefix{
 		.prefix = "Agent Base",
 		.val = Formula::Custom{
 			.foldFunc = [](const Formula::Context &context, const Formula::FoldArgs &args) -> Formula::FloatNode {
@@ -131,8 +132,31 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 			.isPercentage = Utils::isPercentage(stats.stats.base.coreStat2)
 		}
 	};
+	// this->base.fromStat(stats.stats.base.coreStat1).modifiers.at(1) =
+	// this->base.fromStat(stats.stats.base.coreStat2).modifiers.at(1) =
 
-	std::vector<std::pair<Stat, Stat>> mulpliableStats = {
+	const std::set<Stat> nonBaseStats{
+		Stat::atk_,
+		Stat::def_,
+		Stat::hp_,
+		Stat::er_,
+		Stat::am_,
+		Stat::ap_,
+		Stat::impact_,
+	};
+
+	if (nonBaseStats.contains(stats.stats.base.coreStat1)) {
+		this->initial.fromStat(stats.stats.base.coreStat1).modifiers.at(1) = coreStat1;
+	} else {
+		this->base.fromStat(stats.stats.base.coreStat1).modifiers.at(1) = coreStat1;
+	}
+	if (nonBaseStats.contains(stats.stats.base.coreStat2)) {
+		this->initial.fromStat(stats.stats.base.coreStat2).modifiers.at(1) = coreStat2;
+	} else {
+		this->base.fromStat(stats.stats.base.coreStat2).modifiers.at(1) = coreStat2;
+	}
+
+	const std::map<Stat, Stat> multipliableStats = {
 		{Stat::atk, Stat::atk_},
 		{Stat::def, Stat::def_},
 		{Stat::hp, Stat::hp_},
@@ -142,7 +166,7 @@ void Stats::AgentSheet::init(Stats::State &stats) {
 		{Stat::impact, Stat::impact_},
 	};
 
-	for (const auto &[baseStat, percentStat]: mulpliableStats) {
+	for (const auto &[baseStat, percentStat]: multipliableStats) {
 		this->initial.fromStat(baseStat).modifiers.at(0) = Modifiers::base().fromStat(baseStat) * (1.f + Modifiers::initial().fromStat(percentStat));
 		this->combat.fromStat(baseStat).modifiers.at(1) = Modifiers::initial().fromStat(baseStat) * (1.f + Modifiers::combat().fromStat(percentStat));
 	}

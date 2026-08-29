@@ -5,6 +5,7 @@
 #include "agent/agents/NangongYu.hpp"
 #include "agent/agents/Norma.hpp"
 #include "agent/agents/Sigrid.hpp"
+#include "agent/agents/Sunna.hpp"
 #include "agent/agents/Velina.hpp"
 #include "agent/agents/Yixuan.hpp"
 #include "agent/agents/Yuzuha.hpp"
@@ -17,6 +18,7 @@ extern void Agent::initAgents() {
 		{Agent::Datas::nangongYu.key, Agent::Datas::nangongYu},
 		{Agent::Datas::norma.key, Agent::Datas::norma},
 		{Agent::Datas::sigrid.key, Agent::Datas::sigrid},
+		{Agent::Datas::sunna.key, Agent::Datas::sunna},
 		{Agent::Datas::velina.key, Agent::Datas::velina},
 		{Agent::Datas::yixuan.key, Agent::Datas::yixuan},
 		{Agent::Datas::yuzuha.key, Agent::Datas::yuzuha},

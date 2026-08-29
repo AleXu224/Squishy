@@ -50,7 +50,7 @@ namespace Modifiers::Agent {
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &instanceInitial() {
-		static auto ret = statFactory<Formula::FloatNode, Frm<1>::InstanceStats<&Stats::AgentSheet::initial>>(StatPointerFactory<Stats::Sheet<Stats::Value<float, 1>>>{}, StatNameFactory{});
+		static auto ret = statFactory<Formula::FloatNode, Frm<2>::InstanceStats<&Stats::AgentSheet::initial>>(StatPointerFactory<Stats::Sheet<Stats::Value<float, 2>>>{}, StatNameFactory{});
 		return ret;
 	}
 	const Stats::Sheet<Formula::FloatNode> &instanceCombat() {
