@@ -62,9 +62,9 @@ struct DiscEditorSubstat : StatelessWidget {
 
 void UI::DiscEditor::State::updatePartition(Disc::Partition newPartition) {
 	disc.partition = newPartition;
-	const auto &stats = Stats::Disc::byPartition(newPartition);
+	auto stats = Stats::Disc::byPartition(newPartition);
 	if (auto it = std::ranges::find(stats, disc.mainStat); it == stats.end()) {
-		disc.mainStat = stats.at(0);
+		disc.mainStat = stats[0];
 	}
 }
 

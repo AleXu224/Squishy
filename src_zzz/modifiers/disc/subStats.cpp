@@ -1,4 +1,5 @@
 #include "subStats.hpp"
+#include "formula/substatDependencies.hpp"
 #include "modifiers/statFactory.hpp"
 #include "stats/loadout.hpp"
 
@@ -11,6 +12,7 @@ namespace Modifiers::Disc {
 			if (&context.origin != &context.source) {
 				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
+			Formula::recordSubstatDependency(stat);
 			return *this;
 		}
 
@@ -35,6 +37,7 @@ namespace Modifiers::Disc {
 			if (&context.origin != &context.source || !SheetMemberIdentifier(stat).isDiscStat()) {
 				return Formula::ConstantBase<float>{.value = eval(context)};
 			}
+			Formula::recordSubstatDependency(stat);
 			return SubStatFormulaPtr{
 				.ptr = Stats::ptrFromStatSimplified<Stats::SheetSimplified<float>>(stat),
 				.stat = stat,

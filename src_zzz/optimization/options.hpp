@@ -19,6 +19,9 @@ namespace Optimization {
 		std::map<Stat, bool> partition6MainStats{};
 		uint8_t minLevel = 0;
 		bool useEquippedDiscs = true;
+		bool enableUpgradeLevelUp = true;
+		bool enableUpgradeDefinition = true;
+		std::map<Stat, bool> upgradeGuaranteedSubStats{};
 
 		Options() {
 			for (const auto &[key, set]: Disc::sets) {
@@ -34,6 +37,9 @@ namespace Optimization {
 			}
 			for (const auto &mainStat: Stats::Disc::partition6) {
 				partition6MainStats[mainStat] = true;
+			}
+			for (const auto &subStat: Stats::Disc::subStats) {
+				upgradeGuaranteedSubStats[subStat] = true;
 			}
 		}
 

@@ -53,6 +53,9 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 		.partition6MainStats = options.partition6MainStats,
 		.minLevel = options.minLevel,
 		.useEquippedDiscs = options.useEquippedDiscs,
+		.enableUpgradeLevelUp = options.enableUpgradeLevelUp,
+		.enableUpgradeDefinition = options.enableUpgradeDefinition,
+		.upgradeGuaranteedSubStats = options.upgradeGuaranteedSubStats,
 	};
 }
 
@@ -77,6 +80,11 @@ Serialization::Save::Optimization Serialization::Save::Optimization::fromInstanc
 
 	ret.useEquippedDiscs = useEquippedDiscs;
 	ret.minLevel = minLevel;
+	ret.enableUpgradeLevelUp = enableUpgradeLevelUp;
+	ret.enableUpgradeDefinition = enableUpgradeDefinition;
+	for (const auto &[key, value]: upgradeGuaranteedSubStats) {
+		ret.upgradeGuaranteedSubStats[key] = value;
+	}
 
 	if (nodeSource.has_value()) {
 		ret.nodeSource = std::visit(//

@@ -4,6 +4,8 @@
 #include "disc/set.hpp"
 #include "disc/slot.hpp"
 #include "stats/discSheet.hpp"
+#include "array"
+#include "span"
 #include "utility"
 
 
@@ -162,7 +164,7 @@ namespace Stats {
 
 		bool isTheorycraft() const;
 
-		static const inline std::vector subStats{
+		static const inline std::array<Stat, 10> subStats{
 			Stat::hp,
 			Stat::hp_,
 			Stat::atk,
@@ -175,16 +177,16 @@ namespace Stats {
 			Stat::cd,
 		};
 
-		static const inline std::vector partition1{
+		static const inline std::array<Stat, 1> partition1{
 			Stat::hp,
 		};
-		static const inline std::vector partition2{
+		static const inline std::array<Stat, 1> partition2{
 			Stat::atk,
 		};
-		static const inline std::vector partition3{
+		static const inline std::array<Stat, 1> partition3{
 			Stat::def,
 		};
-		static const inline std::vector partition4{
+		static const inline std::array<Stat, 6> partition4{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -192,7 +194,7 @@ namespace Stats {
 			Stat::cd,
 			Stat::ap,
 		};
-		static const inline std::vector partition5{
+		static const inline std::array<Stat, 10> partition5{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -204,7 +206,7 @@ namespace Stats {
 			Stat::etherDmg,
 			Stat::windDmg,
 		};
-		static const inline std::vector partition6{
+		static const inline std::array<Stat, 6> partition6{
 			Stat::hp_,
 			Stat::atk_,
 			Stat::def_,
@@ -213,7 +215,7 @@ namespace Stats {
 			Stat::er_,
 		};
 
-		static const inline std::vector mainStats{
+		static const inline std::array<Stat, 20> mainStats{
 			Stat::hp,
 			Stat::atk,
 			Stat::def,
@@ -236,7 +238,7 @@ namespace Stats {
 			Stat::windDmg,
 		};
 
-		[[nodiscard]] static const std::vector<Stat> &byPartition(::Disc::Partition partition) {
+		[[nodiscard]] static std::span<const Stat> byPartition(::Disc::Partition partition) {
 			switch (partition) {
 				case ::Disc::Partition::one:
 					return partition1;

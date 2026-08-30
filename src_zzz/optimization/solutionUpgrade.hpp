@@ -1,13 +1,30 @@
 #pragma once
 
 #include "disc/key.hpp"
+#include "disc/slot.hpp"
+#include "stats/stat.hpp"
+
+#include <array>
+#include <mutex>
 
 namespace Optimization {
 	struct SolutionUpgrade {
-		float upgradeChance;
-		float upgradeAverage;
-		float score;
-		Disc::InstanceKey disc;
+		enum class Kind : uint8_t {
+			levelUp,
+			definition,
+		};
+
+		float upgradeChance = 0.f;
+		float upgradeAverage = 0.f;
+		float score = 0.f;
+		Disc::InstanceKey disc{};
+
+		Kind kind = Kind::levelUp;
+		Disc::SetKey set{};
+		Disc::Partition partition{};
+		Stat mainStat{};
+		std::array<Stat, 2> chosenSubStats{};
+		uint8_t chosenCount = 0;
 	};
 
 	struct SolutionsUpgrade {

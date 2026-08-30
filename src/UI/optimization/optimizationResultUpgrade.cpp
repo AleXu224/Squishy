@@ -29,7 +29,7 @@ using namespace squi;
 	switch (solution.kind) {
 		case ::Optimization::SolutionUpgrade::Kind::definition:
 			type = "Definition";
-			subTitle = std::format("{} — {} ({})", Utils::Stringify(solution.slot), Utils::Stringify(solution.mainStat), Artifact::sets.at(solution.set).name);
+			subTitle = std::format("{} - {} ({})", Utils::Stringify(solution.slot), Utils::Stringify(solution.mainStat), Artifact::sets.at(solution.set).name);
 			hasChosenSubstats = true;
 			break;
 		case ::Optimization::SolutionUpgrade::Kind::reroll:

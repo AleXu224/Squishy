@@ -15,6 +15,9 @@ namespace Serialization::Save {
 		std::map<Stat, bool> partition6MainStats{};
 		uint8_t minLevel = 0;
 		bool useEquippedDiscs = true;
+		bool enableUpgradeLevelUp = true;
+		bool enableUpgradeDefinition = true;
+		std::map<Stat, bool> upgradeGuaranteedSubStats{};
 
 		static Optimization fromInstance(const ::Optimization::Options &);
 		::Optimization::Options toInstance() const;

@@ -6,13 +6,16 @@
 #include "optimizationResult.hpp"
 #include "optimizationResultUpgrade.hpp"
 #include "optimizationSetChooser.hpp"
+#include "stats/disc.hpp"
 #include "store.hpp"
 #include "widgets/column.hpp"
 #include "widgets/container.hpp"
 #include "widgets/expander.hpp"
 #include "widgets/grid.hpp"
+#include "widgets/liteFilter.hpp"
 #include "widgets/navigator.hpp"
 #include "widgets/row.hpp"
+#include "widgets/scrollview.hpp"
 #include "widgets/slider.hpp"
 #include "widgets/toggleSwitch.hpp"
 
@@ -101,6 +104,71 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 								setState([&]() {
 									storage->useEquippedDiscs = active;
 								});
+							},
+						},
+					},
+				},
+				Expander{
+					.title = "Upgrade calculator",
+					.subtitle = "Configure which upgrade systems run and their targeted substats",
+					.content = Column{
+						.widget{
+							.padding = 4.f,
+						},
+						.spacing = 4.f,
+						.spacer = ExpanderItemSpacer{},
+						.children{
+							ExpanderItem{
+								.title = "Level up discs",
+								.action = ToggleSwitch{
+									.active = agent.optimizationOptions->enableUpgradeLevelUp,
+									.statePosition = ToggleSwitch::StatePosition::None,
+									.onToggle = [this, storage = agent.optimizationOptions](bool active) {
+										setState([&]() {
+											storage->enableUpgradeLevelUp = active;
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Define discs",
+								.action = ToggleSwitch{
+									.active = agent.optimizationOptions->enableUpgradeDefinition,
+									.statePosition = ToggleSwitch::StatePosition::None,
+									.onToggle = [this, storage = agent.optimizationOptions](bool active) {
+										setState([&]() {
+											storage->enableUpgradeDefinition = active;
+										});
+									},
+								},
+							},
+							ExpanderItem{
+								.title = "Targeted substats",
+								.action = ScrollView{
+									.widget{
+										.width = Size::Wrap,
+									},
+									.direction = squi::core::Axis::Horizontal,
+									.children{
+										LiteFilter{
+											.items = [&]() {
+												std::vector<LiteFilter::Item> ret;
+												for (const auto &stat: Stats::Disc::subStats) {
+													ret.emplace_back(LiteFilter::Item{
+														.name = Utils::Stringify(stat),
+														.selected = agent.optimizationOptions->upgradeGuaranteedSubStats.at(stat),
+														.onUpdate = [this, storage = agent.optimizationOptions, stat](bool active) {
+															setState([&]() {
+																storage->upgradeGuaranteedSubStats[stat] = active;
+															});
+														},
+													});
+												}
+												return ret;
+											}(),
+										},
+									},
+								},
 							},
 						},
 					},
@@ -203,6 +271,9 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 												.partition5MainStats = storage->partition5MainStats,
 												.partition6MainStats = storage->partition6MainStats,
 												.nodeSource = storage->nodeSource,
+												.enableLevelUp = storage->enableUpgradeLevelUp,
+												.enableDefinition = storage->enableUpgradeDefinition,
+												.guaranteedSubStats = storage->upgradeGuaranteedSubStats,
 											},
 										};
 										auto solutions = optimization.optimize();
@@ -244,7 +315,7 @@ squi::core::Child UI::Optimization::State::build(const Element &element) {
 									Children ret;
 									uint32_t counter = 1;
 									for (const auto &solution: solutions.solutions) {
-										if (!solution.disc) continue;
+										if (solution.kind != ::Optimization::SolutionUpgrade::Kind::definition && !solution.disc) continue;
 										ret.emplace_back(OptimizationResultUpgrade{
 											.agentKey = widget->agentKey,
 											.solution = solution,
